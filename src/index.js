@@ -10,6 +10,8 @@ import {
 
 import AppNavigation from './routes';
 
+console.disableYellowBox = true;
+
 export default class App extends Component<{}> {
     constructor(props) {
       super(props);

@@ -28,274 +28,67 @@ export default class Home extends Component<{}> {
 
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = {
+            transparent:true,
+            opacity:1,
+            opacityHeader:0
+        };
     }
 
     render() {
         return (
             <Container>
-                <Header>
+                <Header transparent={this.state.transparent} style={{opacity:this.state.opacityHeader}}>
                     <HeaderTitle>
-                        FLASH
+                        <Image style={styles.appTextLogo} source={require("@images/app-text-icon-white.png")}/>
                     </HeaderTitle>
                 </Header>
-                <Content bounces={false}>
-                    <ImageBackground style={{width:'100%', height: 400, alignItems: 'center'}} source={require('@images/bg-black.png')}>
-                        <View style={{
-                            flexDirection: 'row',
-                            justifyContent: 'center',
-                            alignItems: 'center',
-                            marginVertical: 30,
-                        }}>
-                            <Text style={{
-                                color:'#FFFFFF',
-                                fontSize: 24,
-                                fontWeight: '600',
-                                paddingRight: 10,
-                            }}>Bal : 1032.00000000</Text>
-                            <Image style={{width:25, height: 25}}source={require('@images/app-icon.png')}/>
+                <Content bounces={false} hasHeader={false}
+                    scrollEventThrottle={20}
+                    onScroll={(e)=>{
+                        this.setState({transparent: (e.nativeEvent.contentOffset.y < 170),
+                                opacity:e.nativeEvent.contentOffset.y > 120?
+                                (e.nativeEvent.contentOffset.y > 170?0:(1 - e.nativeEvent.contentOffset.y/750)):1,
+                                opacityHeader:e.nativeEvent.contentOffset.y < 120?0:
+                                (e.nativeEvent.contentOffset.y < 170?(e.nativeEvent.contentOffset.y/200):1)})
+                    }}>
+                    <ImageBackground style={[styles.bg,{opacity: this.state.opacity}]} source={require('@images/bg.png')}>
+                        <Image style={styles.appLogo} source={require("@images/app-text-icon-white.png")}/>
+                        <Text style={styles.balanceLabel}>YOUR BALANCE</Text>
+                        <View style={styles.balanceBox}>
+                            <Image style={styles.appIcon25}
+                            source={require("@images/app-icon.png")}/>
+                            <Text style={styles.balanceText}>2125.61234564 K</Text>
                         </View>
-                        <View style={{
-                            borderBottomWidth: 2,
-                            borderBottomColor: '#ffdf26',
-                            paddingBottom: 2,
-                            marginBottom: 20,
-                        }}>
-                            <Text style={{
-                                color:'#FFFFFF',
-                                fontSize: 17,
-                                fontWeight: '600',
-                            }}>Key Performance Indicators</Text>
-                        </View>
-                        <View style={{
-                            flexDirection: 'row',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                            width: 300
-                        }}>
-                            <View style={{
-                                width: 135,
-                                alignItems: 'center'}}>
-                                <View style={{
-                                    borderBottomWidth: 1,
-                                    borderBottomColor: '#AFAFAF',
-                                    paddingBottom: 2,
-                                    marginBottom: 3,
-                                    alignItems: 'center',
-                                    width: '100%'
-                                }}>
-                                    <Text style={{
-                                        color:'#CFCFCF',
-                                        fontWeight:'600',
-                                        fontSize: 13,
-                                        borderBottomWidth: 1,
-                                        borderBottomColor: '#AFAFAF',
-                                    }}>475024</Text>
-                                </View>
-                                <Text style={{
-                                    color:'#AFAFAF',
-                                    fontSize: 11,
-                                }}>Addresses with Balance</Text>
-                            </View>
-                            <View style={{
-                                width: 135,
-                                alignItems: 'center'}}>
-                                <View style={{
-                                    borderBottomWidth: 1,
-                                    borderBottomColor: '#AFAFAF',
-                                    paddingBottom: 2,
-                                    marginBottom: 3,
-                                    alignItems: 'center',
-                                    width: '100%'
-                                }}>
-                                    <Text style={{
-                                        color:'#CFCFCF',
-                                        fontWeight:'600',
-                                        fontSize: 13,
-                                        borderBottomWidth: 1,
-                                        borderBottomColor: '#AFAFAF',
-                                    }}>75433</Text>
-                                </View>
-                                <Text style={{
-                                    color:'#AFAFAF',
-                                    fontSize: 11,
-                                }}>Total Web-wallet Signups</Text>
-                            </View>
-                        </View>
-                        <Text style={{
-                            marginTop: 25,
-                            marginBottom: 15,
-                            color:'#FFFFFF',
-                            fontSize: 15,
-                            fontWeight: '600',
-                        }}>Transactions 24h</Text>
-                        <View style={{
-                            flexDirection: 'row',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                            width: 300
-                        }}>
-                            <View style={{
-                                width: 90,
-                                alignItems: 'center'}}>
-                                <View style={{
-                                    borderBottomWidth: 1,
-                                    borderBottomColor: '#AFAFAF',
-                                    paddingBottom: 2,
-                                    marginBottom: 3,
-                                    alignItems: 'center',
-                                    width: '100%'
-                                }}>
-                                    <Text style={{
-                                        color:'#CFCFCF',
-                                        fontWeight:'600',
-                                        fontSize: 13,
-                                        borderBottomWidth: 1,
-                                        borderBottomColor: '#AFAFAF',
-                                    }}>813429</Text>
-                                </View>
-                                <Text style={{
-                                    color:'#AFAFAF',
-                                    fontSize: 11,
-                                }}>Total Txs</Text>
-                            </View>
-                            <View style={{
-                                width: 90,
-                                alignItems: 'center'}}>
-                                <View style={{
-                                    borderBottomWidth: 1,
-                                    borderBottomColor: '#AFAFAF',
-                                    paddingBottom: 2,
-                                    marginBottom: 3,
-                                    alignItems: 'center',
-                                    width: '100%'
-                                }}>
-                                    <Text style={{
-                                        color:'#CFCFCF',
-                                        fontWeight:'600',
-                                        fontSize: 13,
-                                        borderBottomWidth: 1,
-                                        borderBottomColor: '#AFAFAF',
-                                    }}>1254</Text>
-                                </View>
-                                <Text style={{
-                                    color:'#AFAFAF',
-                                    fontSize: 11,
-                                }}>Total Txs 24h</Text>
-                            </View>
-                            <View style={{
-                                width: 90,
-                                alignItems: 'center'}}>
-                                <View style={{
-                                    borderBottomWidth: 1,
-                                    borderBottomColor: '#AFAFAF',
-                                    paddingBottom: 2,
-                                    marginBottom: 3,
-                                    alignItems: 'center',
-                                    width: '100%'
-                                }}>
-                                    <Text style={{
-                                        color:'#CFCFCF',
-                                        fontWeight:'600',
-                                        fontSize: 13,
-                                        borderBottomWidth: 1,
-                                        borderBottomColor: '#AFAFAF',
-                                    }}>2.20 sec</Text>
-                                </View>
-                                <Text style={{
-                                    color:'#AFAFAF',
-                                    fontSize: 11,
-                                }}>Ave Txn Time</Text>
-                            </View>
-                        </View>
-                        <Text style={{
-                            marginTop: 25,
-                            marginBottom: 15,
-                            color:'#FFFFFF',
-                            fontSize: 15,
-                            fontWeight: '600',
-                        }}>Circulating Supply: 900 Million</Text>
-                        <View style={{
-                            flexDirection: 'row',
-                            justifyContent: 'space-between',
-                            alignItems: 'center',
-                            width: 300
-                        }}>
-                            <View style={{
-                                width: 70,
-                                alignItems: 'center'}}>
-                                <View style={{
-                                    borderBottomWidth: 1,
-                                    borderBottomColor: '#AFAFAF',
-                                    paddingBottom: 2,
-                                    marginBottom: 3,
-                                    alignItems: 'center',
-                                    width: '100%'
-                                }}>
-                                    <Text style={{
-                                        color:'#CFCFCF',
-                                        fontWeight:'600',
-                                        fontSize: 13,
-                                        borderBottomWidth: 1,
-                                        borderBottomColor: '#AFAFAF',
-                                    }}>381360</Text>
-                                </View>
-                                <Text style={{
-                                    color:'#AFAFAF',
-                                    fontSize: 11,
-                                }}>Total Blocks</Text>
-                            </View>
-                            <View style={{
-                                width: 40,
-                                alignItems: 'center'}}>
-                                <View style={{
-                                    borderBottomWidth: 1,
-                                    borderBottomColor: '#AFAFAF',
-                                    paddingBottom: 2,
-                                    marginBottom: 3,
-                                    alignItems: 'center',
-                                    width: '100%'
-                                }}>
-                                    <Text style={{
-                                        color:'#CFCFCF',
-                                        fontWeight:'600',
-                                        fontSize: 13,
-                                        borderBottomWidth: 1,
-                                        borderBottomColor: '#AFAFAF',
-                                    }}>276</Text>
-                                </View>
-                                <Text style={{
-                                    color:'#AFAFAF',
-                                    fontSize: 11,
-                                }}>Rank</Text>
-                            </View>
-                            <View style={{
-                                width: 160,
-                                alignItems: 'center'}}>
-                                <View style={{
-                                    borderBottomWidth: 1,
-                                    borderBottomColor: '#AFAFAF',
-                                    paddingBottom: 2,
-                                    marginBottom: 3,
-                                    alignItems: 'center',
-                                    width: '100%'
-                                }}>
-                                    <Text style={{
-                                        color:'#CFCFCF',
-                                        fontWeight:'600',
-                                        fontSize: 13,
-                                        borderBottomWidth: 1,
-                                        borderBottomColor: '#AFAFAF',
-                                    }}>365 sat [~0.0394 usd]</Text>
-                                </View>
-                                <Text style={{
-                                    color:'#AFAFAF',
-                                    fontSize: 11,
-                                }}>Market Price <Text style={{color: '#f00'}}>(-0.7%)</Text></Text>
-                            </View>
-                        </View>
+                        <Text style={styles.otherBalanceText}>≈ 0.56240124 BTC</Text>
+                        <Text style={styles.otherBalanceText}>≈ 00012.5624 USD</Text>
                     </ImageBackground>
                     <View>
+                        <Text style={styles.recentTxnLabel}>
+                            Recent Transactions
+                        </Text>
+                        <View style={styles.txnTab}>
+                            <Image style={styles.txnIcon} source={require('@images/receive-flash.png')} />
+                            <View style={styles.txnDetail}>
+                                <Text numberOfLines={1} style={styles.txnAmount}>+ 112516.1250
+                                <Text style={styles.txnRecvFrom}> from Maulik Vora</Text></Text>
+                                <Text style={styles.txnDateTime}>Feb 19, 2018 06:22:52 PM</Text>
+                            </View>
+                            <View style={styles.txnTag}>
+                                <Text style={styles.txnTagLabel}>Recived</Text>
+                            </View>
+                        </View>
+                        <View style={styles.txnTab}>
+                            <Image style={styles.txnIcon} source={require('@images/send-flash.png')} />
+                            <View style={styles.txnDetail}>
+                                <Text numberOfLines={1} style={styles.txnAmount}>- 2516.1250
+                                <Text style={styles.txnRecvFrom}> to Chintan Prjapati</Text></Text>
+                                <Text style={styles.txnDateTime}>Feb 18, 2018 11:02:29 AM</Text>
+                            </View>
+                            <View style={styles.txnTagSent}>
+                                <Text style={styles.txnTagLabel}>Sent</Text>
+                            </View>
+                        </View>
                     </View>
                 </Content>
             </Container>
