@@ -36,21 +36,29 @@ module.exports = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         padding: 7,
-        borderWidth: 3,
-        borderColor: '#FFA727',
-        borderRadius: 10,
-        ...Platform.select({
-            ios: {
-                shadowColor: 'rgba(0,0,0, 0.5)',
-                shadowOffset: { height: 1, width: 1 },
-                shadowOpacity: 0.7,
-            },
-            android: {
-                elevation: 5,
-            },
-        }),
+        // borderWidth: 3,
+        // borderColor: '#FFA727',
+        // borderRadius: 10,
+        // ...Platform.select({
+        //     ios: {
+        //         shadowColor: 'rgba(0,0,0, 0.9)',
+        //         shadowOffset: { height: 1, width: 1 },
+        //         shadowOpacity: 0.7,
+        //     },
+        //     android: {
+        //         elevation: 5,
+        //     },
+        // }),
     },
     balanceText:{
+        color: '#FFFFFF',
+        fontSize: 25,
+        fontWeight: 'bold',
+        paddingLeft: 10,
+    },
+    balanceTextOnly:{
+        marginTop: 40,
+        marginBottom: 20,
         color: '#FFFFFF',
         fontSize: 24,
         fontWeight: 'bold',
