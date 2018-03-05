@@ -1,17 +1,33 @@
 import {
     StyleSheet,
-    Dimensions
+    Dimensions,
+    Platform
 } from 'react-native';
+
 const { height, width } = Dimensions.get('window');
-module.exports ={
-    appTextLogo:{
-        resizeMode: 'contain',
-        height: 25,
+
+module.exports = StyleSheet.create({
+    appHeaderIcon:{
+        marginTop: 4,
+        ...Platform.select({
+            ios: {
+                width: 35,
+                height: 35,
+            },
+            android: {
+                width: 90,
+                height: 90,
+            },
+        }),
     },
     appIcon25:{
         width: 25,
         height: 25,
+    },
+    headerFAIcon:{
+        fontSize: 30,
+        color: '#FFFFFF',
     }
-};
-// #F93347
-// #FFA727
+});
+// #00AFFD
+// #009DE4

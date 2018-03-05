@@ -14,7 +14,8 @@ export default class FAB extends Component {
     render() {
         return (
             <TouchableOpacity onPress={this.props.onPress || null} activeOpacity={0.5} style={[styles.btn , this.props.style]}>
-                <Text style={[styles.btnText, this.props.textstyle]}>+</Text>
+                <Text ref={c => (this._root = c)}
+                    {...this.props} style={[styles.btnText, this.props.textstyle]} />
             </TouchableOpacity>
         )
     }
@@ -22,14 +23,14 @@ export default class FAB extends Component {
 
 const styles = StyleSheet.create({
     btn:{
-        width: 70,
-        height: 70,
-        borderRadius: 35,
+        width: 50,
+        height: 50,
+        borderRadius: 25,
         position: 'absolute',
         alignSelf: 'center',
         justifyContent: 'center',
         alignItems: 'center',
-        backgroundColor: '#2A3263',
+        backgroundColor: '#00AFFD',
         bottom: 0,
         ...Platform.select({
             ios: {
@@ -44,8 +45,8 @@ const styles = StyleSheet.create({
         bottom: 25,
     },
     btnText:{
-        fontSize: 35,
-        bottom: 2,
+        fontSize: 14,
+        fontWeight: 'bold',
         color: '#FFFFFF',
     },
 });

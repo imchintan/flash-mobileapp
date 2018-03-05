@@ -4,7 +4,6 @@ import {
     Platform,
     View,
     ViewPropTypes,
-    ImageBackground
 } from 'react-native';
 import PropTypes from "prop-types";
 
@@ -16,13 +15,13 @@ export default class Header extends Component {
     }
 
     render() {
-        let imageBackGround = this.props.transparent?{}:{source:require("@images/bg.png")};
-        let imageBackGroundStyle = this.props.transparent?styles.headerTransparent:styles.header;
         return (
-            <ImageBackground style={imageBackGroundStyle} {...imageBackGround}>
+            <View style={styles.header}>
                 {Platform.OS === 'ios'?<View style={styles.statusBar} />:null}
-                <View ref={c => (this._root = c)} {...this.props} style={[styles.headerBox,this.props.style]} />
-            </ImageBackground>
+                <View ref={c => (this._root = c)}
+                    {...this.props}
+                    style={[styles.headerBox,this.props.style]} />
+            </View>
         )
     }
 }
@@ -30,13 +29,12 @@ export default class Header extends Component {
 Header.propTypes = {
 	...ViewPropTypes,
 	style: PropTypes.oneOfType([PropTypes.object, PropTypes.number, PropTypes.array]),
-	transparent: PropTypes.bool,
 };
 
 const styles = StyleSheet.create({
     header:{
         width: '100%',
-        backgroundColor: '#F93347',
+        backgroundColor: '#00AFFD',
         ...Platform.select({
             ios: {
                 shadowColor: 'rgba(0,0,0, 0.5)',
@@ -51,13 +49,6 @@ const styles = StyleSheet.create({
         top :0,
         zIndex: 99999
     },
-    headerTransparent:{
-        width: '100%',
-        backgroundColor: 'transparent',
-        position: 'absolute',
-        top :0,
-        zIndex: 99999
-    },
     headerBox:{
         flexDirection: 'row',
         width: '100%',
@@ -66,6 +57,6 @@ const styles = StyleSheet.create({
     statusBar:{
         width: '100%',
         height: 22,
-        backgroundColor: 'transparent', //'#F93347',
+        backgroundColor: '#009DE4',
     }
 });

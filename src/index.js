@@ -8,7 +8,7 @@ import {
   View,
 } from 'react-native';
 
-import AppNavigation from './routes';
+import AppNavigation from './AppNavigation';
 
 console.disableYellowBox = true;
 
@@ -23,8 +23,6 @@ export default class App extends Component<{}> {
 
   _getProps=()=>{
         return {
-            myVisitorList:this.state.myVisitorList,
-            csvPath:this.state.csvPath,
         }
     }
 
@@ -33,7 +31,7 @@ export default class App extends Component<{}> {
     return (
         <View style={{flex:1}}>
             <StatusBar
-                backgroundColor="#b9862f"
+                backgroundColor="#009DE4"
                 barStyle="light-content"
               />
             <AppNavigation screenProps={this._getProps()}  />

@@ -17,7 +17,7 @@ export default class Loader extends Component {
             return (
                 <View style={styles.container}>
                     <View style={[styles.loader,this.props.vertical === false && {flexDirection: 'row'}]}>
-                        <ActivityIndicator size={this.props.vertical === false?"small":"large"} color="#2A3263" />
+                        <ActivityIndicator size={this.props.vertical === false?"small":"large"} color="#00AFFD" />
                         {this.props.text?<Text style={[styles.loaderText,this.props.vertical === false && {paddingTop: 0, paddingLeft: 5,}]}>{this.props.text}</Text>:null}
                     </View>
                 </View>
@@ -57,6 +57,6 @@ const styles = StyleSheet.create({
     loaderText:{
         fontSize: 14,
         paddingTop: 5,
-        color: '#2A3263',
+        color: '#00AFFD',
     },
 });

@@ -2,20 +2,20 @@
  * Navigation Routes defind
  */
 import { StackNavigator } from 'react-navigation';
-import Home from '@containers/Home';
+import Dashboard from '@containers/Dashboard';
 import Login from '@containers/Login';
 
 const routes = {
-    Home: {
-        screen: Home,
-    },
     Login: {
         screen: Login,
+    },
+    Dashboard: {
+        screen: Dashboard,
     }
 };
 
 const routeConfig = {
-    initialRouteName: 'Home',
+    initialRouteName: 'Login',
     headerMode: 'none',
     navigationOptions: {
      gesturesEnabled: false,

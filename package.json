@@ -9,6 +9,7 @@
   "dependencies": {
     "react": "16.2.0",
     "react-native": "0.53.0",
+    "react-native-camera": "^1.0.1",
     "react-native-fa-icons": "^3.0.1",
     "react-native-root-toast": "^3.0.1",
     "react-navigation": "^1.0.3",

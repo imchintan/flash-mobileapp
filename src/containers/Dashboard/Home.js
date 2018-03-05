@@ -6,15 +6,15 @@ import React, { Component } from 'react';
 import {
     View,
     Image,
-    ImageBackground,
     Text,
-
 } from 'react-native';
 import {
     Container,
     Content,
     Header,
+    HeaderLeft,
     HeaderTitle,
+    HeaderRight,
     Icon
 } from '@components';
 
@@ -28,52 +28,36 @@ export default class Home extends Component<{}> {
 
     constructor(props) {
         super(props);
-        this.state = {
-            transparent:true,
-            opacity:1,
-            opacityHeader:0
-        };
+        this.state = {};
     }
 
     render() {
         return (
             <Container>
-                <Header transparent={this.state.transparent} style={{opacity:this.state.opacityHeader}}>
+                <Header>
+                    <HeaderLeft>
+                        <Image style={{width:40,height:40}} source={{uri:'https://walletstg.flashcoin.io/assets/images/pages/account.png'}} />
+                    </HeaderLeft>
                     <HeaderTitle>
-                        <Image style={styles.appTextLogo} source={require("@images/app-text-icon-white.png")}/>
+                        <Image style={styles.appHeaderIcon} source={require("@images/app-icon.png")}/>
                     </HeaderTitle>
+                    <HeaderRight>
+                        <Icon style={styles.headerFAIcon} name='qrcode' />
+                    </HeaderRight>
                 </Header>
-                <Content bounces={false} hasHeader={false}
-                    scrollEventThrottle={20}
-                    onScroll={(e)=>{
-                        this.setState({transparent: (e.nativeEvent.contentOffset.y < 170),
-                                opacity:e.nativeEvent.contentOffset.y > 120?
-                                (e.nativeEvent.contentOffset.y > 170?0:(1 - e.nativeEvent.contentOffset.y/750)):1,
-                                opacityHeader:e.nativeEvent.contentOffset.y < 120?0:
-                                (e.nativeEvent.contentOffset.y < 170?(e.nativeEvent.contentOffset.y/200):1)})
-                    }}>
-                    <ImageBackground style={[styles.bg,{opacity: this.state.opacity}]} source={require('@images/bg.png')}>
-                        {/*
-                        <Image style={styles.appLogo} source={require("@images/app-text-icon-white.png")}/>
-                        */}
-                        <Text style={styles.balanceLabel}>YOUR BALANCE</Text>
-                        <View style={styles.balanceBox}>
-                            {/*<Image style={styles.appIcon25}
-                            source={require("@images/app-icon.png")}/> */}
-                            <Text style={styles.balanceText}>2125.61234564 k <Text style={{fontStyle: 'italic'}}>FLASH</Text></Text>
-                        </View>
-                        {/*
-                        <Text style={styles.balanceTextOnly}>2125.61234564 K <Text style={{fontStyle: 'italic'}}>FLASH</Text></Text>
-                        */}
+                <Content bounces={false}>
+                    <View style={styles.balanceBox}>
+                        <Text style={styles.balanceLabel}><Icon name='refresh' /> <Text style={styles.balanceLabelText}>Your Balance</Text></Text>
+                        <Text style={styles.balanceText}>2125.61234564 k FLASH</Text>
                         <Text style={styles.otherBalanceText}>≈ 0.56240124 BTC</Text>
                         <Text style={styles.otherBalanceText}>≈ 00012.5624 USD</Text>
-                    </ImageBackground>
+                    </View>
                     <View>
                         <Text style={styles.recentTxnLabel}>
                             Recent Transactions
                         </Text>
                         <View style={styles.txnTab}>
-                            <Image style={styles.txnIcon} source={require('@images/receive-flash.png')} />
+                            <Image style={styles.txnIcon} source={require('@images/receive-icon.png')} />
                             <View style={styles.txnDetail}>
                                 <Text numberOfLines={1} style={styles.txnAmount}>+ 112516.1250
                                 <Text style={styles.txnRecvFrom}> from Maulik Vora</Text></Text>
@@ -84,7 +68,7 @@ export default class Home extends Component<{}> {
                             </View>
                         </View>
                         <View style={styles.txnTab}>
-                            <Image style={styles.txnIcon} source={require('@images/send-flash.png')} />
+                            <Image style={styles.txnIcon} source={require('@images/send-icon.png')} />
                             <View style={styles.txnDetail}>
                                 <Text numberOfLines={1} style={styles.txnAmount}>- 2516.1250
                                 <Text style={styles.txnRecvFrom}> to Chintan Prjapati</Text></Text>
@@ -95,7 +79,7 @@ export default class Home extends Component<{}> {
                             </View>
                         </View>
                         <View style={styles.txnTab}>
-                            <Image style={styles.txnIcon} source={require('@images/receive-flash.png')} />
+                            <Image style={styles.txnIcon} source={require('@images/receive-icon.png')} />
                             <View style={styles.txnDetail}>
                                 <Text numberOfLines={1} style={styles.txnAmount}>+ 112516.1250
                                 <Text style={styles.txnRecvFrom}> from Maulik Vora</Text></Text>
@@ -106,7 +90,7 @@ export default class Home extends Component<{}> {
                             </View>
                         </View>
                         <View style={styles.txnTab}>
-                            <Image style={styles.txnIcon} source={require('@images/send-flash.png')} />
+                            <Image style={styles.txnIcon} source={require('@images/send-icon.png')} />
                             <View style={styles.txnDetail}>
                                 <Text numberOfLines={1} style={styles.txnAmount}>- 2516.1250
                                 <Text style={styles.txnRecvFrom}> to Chintan Prjapati</Text></Text>
@@ -117,7 +101,7 @@ export default class Home extends Component<{}> {
                             </View>
                         </View>
                         <View style={styles.txnTab}>
-                            <Image style={styles.txnIcon} source={require('@images/receive-flash.png')} />
+                            <Image style={styles.txnIcon} source={require('@images/receive-icon.png')} />
                             <View style={styles.txnDetail}>
                                 <Text numberOfLines={1} style={styles.txnAmount}>+ 112516.1250
                                 <Text style={styles.txnRecvFrom}> from Maulik Vora</Text></Text>
@@ -128,7 +112,7 @@ export default class Home extends Component<{}> {
                             </View>
                         </View>
                         <View style={styles.txnTab}>
-                            <Image style={styles.txnIcon} source={require('@images/send-flash.png')} />
+                            <Image style={styles.txnIcon} source={require('@images/send-icon.png')} />
                             <View style={styles.txnDetail}>
                                 <Text numberOfLines={1} style={styles.txnAmount}>- 2516.1250
                                 <Text style={styles.txnRecvFrom}> to Chintan Prjapati</Text></Text>
@@ -139,7 +123,7 @@ export default class Home extends Component<{}> {
                             </View>
                         </View>
                         <View style={styles.txnTab}>
-                            <Image style={styles.txnIcon} source={require('@images/receive-flash.png')} />
+                            <Image style={styles.txnIcon} source={require('@images/receive-icon.png')} />
                             <View style={styles.txnDetail}>
                                 <Text numberOfLines={1} style={styles.txnAmount}>+ 112516.1250
                                 <Text style={styles.txnRecvFrom}> from Maulik Vora</Text></Text>
@@ -150,7 +134,7 @@ export default class Home extends Component<{}> {
                             </View>
                         </View>
                         <View style={styles.txnTab}>
-                            <Image style={styles.txnIcon} source={require('@images/send-flash.png')} />
+                            <Image style={styles.txnIcon} source={require('@images/send-icon.png')} />
                             <View style={styles.txnDetail}>
                                 <Text numberOfLines={1} style={styles.txnAmount}>- 2516.1250
                                 <Text style={styles.txnRecvFrom}> to Chintan Prjapati</Text></Text>

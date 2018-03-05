@@ -21,7 +21,7 @@ export default class Button extends Component {
 
 const styles = StyleSheet.create({
     btn:{
-        backgroundColor: '#2A3263',
+        backgroundColor: '#00AFFD',
         alignSelf: 'center',
         borderRadius: 5,
         paddingHorizontal: 30,
