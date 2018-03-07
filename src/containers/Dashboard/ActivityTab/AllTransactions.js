@@ -12,10 +12,12 @@ import {
     Container,
     Content
 } from '@components';
-
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { ActionCreators } from '@actions';
 const styles = require("@styles/activity");
 
-export default class AllTransactions extends Component<{}> {
+class AllTransactions extends Component<{}> {
 
     static navigationOptions = {
         header: null,
@@ -178,3 +180,16 @@ export default class AllTransactions extends Component<{}> {
         );
     }
 }
+
+function mapStateToProps(state) {
+  return {
+    // email: state.email,
+    // password: state.password,
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators(ActionCreators, dispatch);
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(AllTransactions);

@@ -11,7 +11,14 @@ import {
     AsyncStorage,
     BackHandler
 } from 'react-native';
-import { TabNavigator, TabBarTop, NavigationActions } from 'react-navigation';
+import {
+    TabNavigator,
+    TabBarTop,
+    NavigationActions
+} from 'react-navigation';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { ActionCreators } from '@actions';
 import AllTransactions from '@containers/Dashboard/ActivityTab/AllTransactions';
 import PaymentReceived from '@containers/Dashboard/ActivityTab/PaymentReceived';
 import PaymentSent from '@containers/Dashboard/ActivityTab/PaymentSent';
@@ -53,7 +60,7 @@ const TabNav = TabNavigator({
     swipeEnabled: true,
 });
 
-export default class MainScreen extends React.Component {
+class ActivityTab extends React.Component {
     static navigationOptions = {
         header: null,
     }
@@ -97,3 +104,16 @@ export default class MainScreen extends React.Component {
         );
     }
 }
+
+function mapStateToProps(state) {
+  return {
+    // email: state.email,
+    // password: state.password,
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators(ActionCreators, dispatch);
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(ActivityTab);

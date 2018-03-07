@@ -11,11 +11,17 @@ import {
     AsyncStorage,
     BackHandler
 } from 'react-native';
-import { TabNavigator, TabBarBottom, NavigationActions } from 'react-navigation';
+import {
+    TabNavigator,
+    TabBarBottom,
+    NavigationActions
+} from 'react-navigation';
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { ActionCreators } from '@actions';
 import Home from '@containers/Dashboard/Home';
 import SendTab from '@containers/Dashboard/SendTab';
 import ActivityTab from '@containers/Dashboard/ActivityTab';
-// import { Logout } from '@lib';
 
 
 const TabNav = TabNavigator({
@@ -83,7 +89,7 @@ const TabNav = TabNavigator({
     swipeEnabled: false,
 });
 
-export default class MainScreen extends React.Component {
+class MainScreen extends React.Component {
     static navigationOptions = {
         header: null,
     }
@@ -123,3 +129,15 @@ export default class MainScreen extends React.Component {
         );
     }
 }
+
+function mapStateToProps(state) {
+  return {
+    isLoggedIn: state.isLoggedIn,
+  };
+}
+
+function mapDispatchToProps(dispatch) {
+  return bindActionCreators(ActionCreators, dispatch);
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(MainScreen);
