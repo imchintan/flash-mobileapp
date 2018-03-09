@@ -1,8 +1,8 @@
 import { combineReducers } from 'redux';
 import navigation from '@reducers/navigation';
-import login from '@reducers/login';
+import params from '@reducers/params';
 
 export default combineReducers({
     nav: navigation,
-    login
+    params:params,
 });

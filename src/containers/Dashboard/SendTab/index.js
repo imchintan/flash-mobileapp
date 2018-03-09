@@ -35,7 +35,7 @@ export default class ScanTab extends React.Component {
             <ScanNavigation ref={nav => { this.navigator = nav; }}
                 screenProps={{
                     // user: this.props.screenProps.user,
-                    logout: this.props.screenProps.logout,
+                    // logout: this.props.screenProps.logout,
             }}/>
         );
     }

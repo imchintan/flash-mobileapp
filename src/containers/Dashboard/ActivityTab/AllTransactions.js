@@ -7,11 +7,9 @@ import {
   View,
   Text,
   Image,
+  FlatList
 } from 'react-native';
-import {
-    Container,
-    Content
-} from '@components';
+import moment from 'moment';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ActionCreators } from '@actions';
@@ -28,163 +26,46 @@ class AllTransactions extends Component<{}> {
         this.state = {};
     }
 
+    componentDidMount(){
+        this.props.getAllTransactions();
+    }
+
     render() {
         return (
-            <Container>
-                <Content hasHeader={false} style={styles.content}>
-                    <View style={[styles.txnTab,{marginTop:10}]}>
-                        <Image style={styles.txnIcon} source={require('@images/receive-icon.png')} />
-                        <View style={styles.txnDetail}>
-                            <Text numberOfLines={1} style={styles.txnAmount}>+ 112516.1250
-                            <Text style={styles.txnRecvFrom}> from Maulik Vora</Text></Text>
-                            <Text style={styles.txnDateTime}>Feb 19, 2018 06:22:52 PM</Text>
+            <FlatList
+                style={styles.txnList}
+                showsVerticalScrollIndicator={false}
+                data={this.props.txns}
+                keyExtractor={(txn, index) => (index+'_'+txn.transaction_id)}
+                onEndReachedThreshold={2}
+                onEndReached={()=>(this.props.txns.length < this.props.total_txns) &&
+                        this.props.getAllTransactions(this.props.txns.length)}
+                renderItem={({item, index})=>{
+                    return(
+                        <View style={[styles.txnTab, !index && {marginTop:10}]}>
+                            <Image style={styles.txnIcon} source={item.receiver_profile_pic_url?{uri:item.receiver_profile_pic_url}:(item.type == 1?require('@images/send-icon.png'):require('@images/receive-icon.png'))} />
+                            <View style={styles.txnDetail}>
+                                <Text numberOfLines={1} style={styles.txnAmount}>{item.type == 1?'-':'+'} {item.amount}
+                                <Text style={styles.txnRecvFrom}> {item.type == 1?'to':'from'} {item.sender_display_name}</Text></Text>
+                                <Text style={styles.txnDateTime}> {moment(item.created_ts).format('MMM DD, YYYY hh:mm A')}</Text>
+                            </View>
+                            {item.type == 1?<View style={styles.txnTagSent}>
+                                <Text style={styles.txnTagLabel}>Sent</Text>
+                            </View>:<View style={styles.txnTag}>
+                                <Text style={styles.txnTagLabel}>Recived</Text>
+                            </View>}
                         </View>
-                        <View style={styles.txnTag}>
-                            <Text style={styles.txnTagLabel}>Recived</Text>
-                        </View>
-                    </View>
-                    <View style={styles.txnTab}>
-                        <Image style={styles.txnIcon} source={require('@images/send-icon.png')} />
-                        <View style={styles.txnDetail}>
-                            <Text numberOfLines={1} style={styles.txnAmount}>- 2516.1250
-                            <Text style={styles.txnRecvFrom}> to Chintan Prjapati</Text></Text>
-                            <Text style={styles.txnDateTime}>Feb 18, 2018 11:02:29 AM</Text>
-                        </View>
-                        <View style={styles.txnTagSent}>
-                            <Text style={styles.txnTagLabel}>Sent</Text>
-                        </View>
-                    </View>
-                    <View style={styles.txnTab}>
-                        <Image style={styles.txnIcon} source={require('@images/receive-icon.png')} />
-                        <View style={styles.txnDetail}>
-                            <Text numberOfLines={1} style={styles.txnAmount}>+ 112516.1250
-                            <Text style={styles.txnRecvFrom}> from Maulik Vora</Text></Text>
-                            <Text style={styles.txnDateTime}>Feb 19, 2018 06:22:52 PM</Text>
-                        </View>
-                        <View style={styles.txnTag}>
-                            <Text style={styles.txnTagLabel}>Recived</Text>
-                        </View>
-                    </View>
-                    <View style={styles.txnTab}>
-                        <Image style={styles.txnIcon} source={require('@images/receive-icon.png')} />
-                        <View style={styles.txnDetail}>
-                            <Text numberOfLines={1} style={styles.txnAmount}>+ 112516.1250
-                            <Text style={styles.txnRecvFrom}> from Maulik Vora</Text></Text>
-                            <Text style={styles.txnDateTime}>Feb 19, 2018 06:22:52 PM</Text>
-                        </View>
-                        <View style={styles.txnTag}>
-                            <Text style={styles.txnTagLabel}>Recived</Text>
-                        </View>
-                    </View>
-                    <View style={styles.txnTab}>
-                        <Image style={styles.txnIcon} source={require('@images/send-icon.png')} />
-                        <View style={styles.txnDetail}>
-                            <Text numberOfLines={1} style={styles.txnAmount}>- 2516.1250
-                            <Text style={styles.txnRecvFrom}> to Chintan Prjapati</Text></Text>
-                            <Text style={styles.txnDateTime}>Feb 18, 2018 11:02:29 AM</Text>
-                        </View>
-                        <View style={styles.txnTagSent}>
-                            <Text style={styles.txnTagLabel}>Sent</Text>
-                        </View>
-                    </View>
-                    <View style={styles.txnTab}>
-                        <Image style={styles.txnIcon} source={require('@images/send-icon.png')} />
-                        <View style={styles.txnDetail}>
-                            <Text numberOfLines={1} style={styles.txnAmount}>- 2516.1250
-                            <Text style={styles.txnRecvFrom}> to Chintan Prjapati</Text></Text>
-                            <Text style={styles.txnDateTime}>Feb 18, 2018 11:02:29 AM</Text>
-                        </View>
-                        <View style={styles.txnTagSent}>
-                            <Text style={styles.txnTagLabel}>Sent</Text>
-                        </View>
-                    </View>
-                    <View style={styles.txnTab}>
-                        <Image style={styles.txnIcon} source={require('@images/send-icon.png')} />
-                        <View style={styles.txnDetail}>
-                            <Text numberOfLines={1} style={styles.txnAmount}>- 2516.1250
-                            <Text style={styles.txnRecvFrom}> to Chintan Prjapati</Text></Text>
-                            <Text style={styles.txnDateTime}>Feb 18, 2018 11:02:29 AM</Text>
-                        </View>
-                        <View style={styles.txnTagSent}>
-                            <Text style={styles.txnTagLabel}>Sent</Text>
-                        </View>
-                    </View>
-                    <View style={styles.txnTab}>
-                        <Image style={styles.txnIcon} source={require('@images/receive-icon.png')} />
-                        <View style={styles.txnDetail}>
-                            <Text numberOfLines={1} style={styles.txnAmount}>+ 112516.1250
-                            <Text style={styles.txnRecvFrom}> from Maulik Vora</Text></Text>
-                            <Text style={styles.txnDateTime}>Feb 19, 2018 06:22:52 PM</Text>
-                        </View>
-                        <View style={styles.txnTag}>
-                            <Text style={styles.txnTagLabel}>Recived</Text>
-                        </View>
-                    </View>
-                    <View style={styles.txnTab}>
-                        <Image style={styles.txnIcon} source={require('@images/send-icon.png')} />
-                        <View style={styles.txnDetail}>
-                            <Text numberOfLines={1} style={styles.txnAmount}>- 2516.1250
-                            <Text style={styles.txnRecvFrom}> to Chintan Prjapati</Text></Text>
-                            <Text style={styles.txnDateTime}>Feb 18, 2018 11:02:29 AM</Text>
-                        </View>
-                        <View style={styles.txnTagSent}>
-                            <Text style={styles.txnTagLabel}>Sent</Text>
-                        </View>
-                    </View>
-                    <View style={styles.txnTab}>
-                        <Image style={styles.txnIcon} source={require('@images/send-icon.png')} />
-                        <View style={styles.txnDetail}>
-                            <Text numberOfLines={1} style={styles.txnAmount}>- 2516.1250
-                            <Text style={styles.txnRecvFrom}> to Chintan Prjapati</Text></Text>
-                            <Text style={styles.txnDateTime}>Feb 18, 2018 11:02:29 AM</Text>
-                        </View>
-                        <View style={styles.txnTagSent}>
-                            <Text style={styles.txnTagLabel}>Sent</Text>
-                        </View>
-                    </View>
-                    <View style={styles.txnTab}>
-                        <Image style={styles.txnIcon} source={require('@images/send-icon.png')} />
-                        <View style={styles.txnDetail}>
-                            <Text numberOfLines={1} style={styles.txnAmount}>- 2516.1250
-                            <Text style={styles.txnRecvFrom}> to Chintan Prjapati</Text></Text>
-                            <Text style={styles.txnDateTime}>Feb 18, 2018 11:02:29 AM</Text>
-                        </View>
-                        <View style={styles.txnTagSent}>
-                            <Text style={styles.txnTagLabel}>Sent</Text>
-                        </View>
-                    </View>
-                    <View style={styles.txnTab}>
-                        <Image style={styles.txnIcon} source={require('@images/receive-icon.png')} />
-                        <View style={styles.txnDetail}>
-                            <Text numberOfLines={1} style={styles.txnAmount}>+ 112516.1250
-                            <Text style={styles.txnRecvFrom}> from Maulik Vora</Text></Text>
-                            <Text style={styles.txnDateTime}>Feb 19, 2018 06:22:52 PM</Text>
-                        </View>
-                        <View style={styles.txnTag}>
-                            <Text style={styles.txnTagLabel}>Recived</Text>
-                        </View>
-                    </View>
-                    <View style={styles.txnTab}>
-                        <Image style={styles.txnIcon} source={require('@images/send-icon.png')} />
-                        <View style={styles.txnDetail}>
-                            <Text numberOfLines={1} style={styles.txnAmount}>- 2516.1250
-                            <Text style={styles.txnRecvFrom}> to Chintan Prjapati</Text></Text>
-                            <Text style={styles.txnDateTime}>Feb 18, 2018 11:02:29 AM</Text>
-                        </View>
-                        <View style={styles.txnTagSent}>
-                            <Text style={styles.txnTagLabel}>Sent</Text>
-                        </View>
-                    </View>
-                </Content>
-            </Container>
+                    )
+                }}
+            />
         );
     }
 }
 
-function mapStateToProps(state) {
+function mapStateToProps({params}) {
   return {
-    // email: state.email,
-    // password: state.password,
+      txns: params.allTxns || [],
+      total_txns: params.allTxns_total || 0,
   };
 }
 

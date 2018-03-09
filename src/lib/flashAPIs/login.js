@@ -1,10 +1,11 @@
-import { API_URL } from './config';
+import { API_URL, RESOURCE, APP_VERSION } from './config';
 
 module.exports = (email,password) => {
     return new Promise((resolve,reject) => {
         let form = 'email='+encodeURIComponent(email)
             +'&password='+password
-            +'&res=web';
+            +'&appversion='+APP_VERSION
+            +'&res='+RESOURCE;
         fetch(API_URL+'/login',{
             method: 'post',
             body: form,

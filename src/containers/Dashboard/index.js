@@ -1,5 +1,5 @@
 /**
- * Main Dashboard Tab Navigation Component
+ *  Dashboard Tab Navigation Component
  */
 
 import React from 'react';
@@ -16,19 +16,17 @@ import {
     TabBarBottom,
     NavigationActions
 } from 'react-navigation';
-import { connect } from 'react-redux';
-import { bindActionCreators } from 'redux';
-import { ActionCreators } from '@actions';
+
 import Home from '@containers/Dashboard/Home';
 import SendTab from '@containers/Dashboard/SendTab';
 import ActivityTab from '@containers/Dashboard/ActivityTab';
 
 
-const TabNav = TabNavigator({
+const Dashboard = TabNavigator({
     Home: { screen: Home },
     Send: { screen: SendTab },
     Activity: { screen: ActivityTab },
-    'My Account': { screen: Home },
+    'My Account': { screen: SendTab },
 },{
     navigationOptions: ({ navigation }) => ({
         tabBarIcon: ({ focused, tintColor }) => {
@@ -89,55 +87,4 @@ const TabNav = TabNavigator({
     swipeEnabled: false,
 });
 
-class MainScreen extends React.Component {
-    static navigationOptions = {
-        header: null,
-    }
-
-    constructor(props) {
-        super(props);
-        this.state = {};
-    }
-
-    componentWillMount(){
-        BackHandler.addEventListener('hardwareBackPress', this.backHandler);
-    }
-
-    componentWillUnmount(){
-        BackHandler.removeEventListener('hardwareBackPress', this.backHandler);
-    }
-
-    backHandler=()=>{
-        return true;
-    }
-
-    render() {
-        return (
-            <View style={{flex: 1}}>
-                <TabNav ref={nav => { this.navigator = nav; }}
-                    onNavigationStateChange={(prevState, currentState) => {
-                    }}
-                    screenProps={{
-                        // user: this.props.navigation.state.params,
-                        logout: () => {
-                            // Logout(this.props.navigation.state.params.sessionId);
-                            // AsyncStorage.clear();
-                            // this.props.navigation.goBack();
-                        },
-                }} />
-            </View>
-        );
-    }
-}
-
-function mapStateToProps(state) {
-  return {
-    isLoggedIn: state.isLoggedIn,
-  };
-}
-
-function mapDispatchToProps(dispatch) {
-  return bindActionCreators(ActionCreators, dispatch);
-}
-
-export default connect(mapStateToProps, mapDispatchToProps)(MainScreen);
+export default Dashboard;

@@ -7,7 +7,7 @@ import FAB from './FAB';
 import Loader from './Loader';
 import Toast from './Toast';
 import Icon from 'react-native-fa-icons';
-
+import Calendar from 'react-native-calendar-select';
 
 module.exports = {
     Container,
@@ -18,5 +18,6 @@ module.exports = {
     FAB,
     Loader,
     Toast,
-    Icon
+    Icon,
+    Calendar
 }

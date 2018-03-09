@@ -7,7 +7,10 @@ import {
 const { height, width } = Dimensions.get('window');
 const appStyles = require('./app');
 
-module.exports = StyleSheet.create({    
+module.exports = StyleSheet.create({
+    txnList: {
+        backgroundColor: '#FCFCFC',
+    },
     txnTab: {
         flexDirection: 'row',
         backgroundColor: '#FFFFFF',

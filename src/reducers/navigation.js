@@ -10,7 +10,6 @@ function navigateAction({ routeName, id }) {
 }
 
 const navigation = (state = initialState, action) => {
-    console.log(action,state);
     switch (action.type) {
         case 'Navigation/NAVIGATE':
             return AppNavigator.router.getStateForAction(
@@ -29,13 +28,7 @@ const navigation = (state = initialState, action) => {
                 state
             );
 
-        case types.NAVIGATE_BACK:
-            return AppNavigator.router.getStateForAction(
-                NavigationActions.back(),
-                state
-            );
-
-        case types.NAVIGATE_DASHBOARD:
+        case types.LOGIN_SUCCESS:
             return AppNavigator.router.getStateForAction(
                 NavigationActions.reset({
                     index: 0,
@@ -43,6 +36,12 @@ const navigation = (state = initialState, action) => {
                         NavigationActions.navigate({ routeName: 'Dashboard' }),
                     ],
                 }),
+                state
+            );
+
+        case types.NAVIGATE_BACK:
+            return AppNavigator.router.getStateForAction(
+                NavigationActions.back(),
                 state
             );
 

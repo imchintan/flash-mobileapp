@@ -15,11 +15,14 @@ import {
     Header,
     HeaderTitle,
     Content,
-    Button
+    Button,
+    Loader,
+    Toast
 } from '@components';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ActionCreators } from '@actions';
+import Validation from '@lib/validation';
 
 const styles = require("@styles/login");
 
@@ -31,31 +34,57 @@ class Login extends Component<{}> {
 
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = {
+            email: 'maulikvora59+3@gmail.com',
+            password: 'Maulik123'
+        };
+    }
+
+    componentDidMount(){
+        this.props.init()
+    }
+
+    componentWillReceiveProps(nextProps){
+        if(nextProps && nextProps.errorMsg){
+            Toast.errorTop(nextProps.errorMsg);
+        }
+    }
+
+    login=()=>{
+
+        let res = Validation.email(this.state.email)
+        if(!res.result){
+            Toast.errorTop(res.message);
+            return false;
+        }
+
+        if(!this.state.password){
+            Toast.errorTop('Password is required!');
+            return false;
+        }
+        this.props.login(this.state.email, this.state.password);
     }
 
     render() {
-        console.log(this.props.profile);
         return (
             <Container>
-                <Content hasHeader={false} bounces={false}>
-                    <View style={{
-                        flex: 1,
-                        backgroundColor: '#00AFFD',
-                        height: 150,
-                        alignItems: 'center',
-                        justifyContent: 'center',
-                    }}>
+                <View style={{
+                    flex: 1,
+                    width: '100%',
+                    paddingHorizontal: 40,
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                }}>
                     <Image style={{
-                        marginTop: 10,
-                        width: '40%',
+                        alignSelf: 'center',
+                        width: '100%',
                         resizeMode: 'contain',
-                    }}  source={require('@images/app-text-icon-white.png')}/>
-                    </View>
+                    }}  source={require('@images/app-text-icon.png')}/>
                     <View style={{
+                        width: '100%',
                         alignItems: 'center',
-                        marginHorizontal: 40,
-                        marginTop: 50,
+                        marginBottom: 50,
+                        marginTop: 30,
                     }}>
                         <View style={{
                             justifyContent: 'center',
@@ -85,7 +114,7 @@ class Login extends Component<{}> {
                             paddingHorizontal: 15,
                             height: 50,
                             borderWidth: 1.5,
-                            borderRadius: 25,
+                            borderRadius:25,
                             borderColor: '#ddd'
                         }}>
                             <TextInput
@@ -100,7 +129,7 @@ class Login extends Component<{}> {
                             />
                         </View>
                         <Button style={{
-                                marginTop: 30,
+                                marginTop: 50,
                                 width: '100%',
                                 height: 50,
                                 justifyContent: 'center',
@@ -112,7 +141,7 @@ class Login extends Component<{}> {
                                 fontWeight: '600'
                             }}
                             value={'Login'}
-                            onPress={this.props.login}
+                            onPress={this.login}
                         />
 
                         <TouchableOpacity style={{
@@ -127,7 +156,8 @@ class Login extends Component<{}> {
                             }}>Forgot password?</Text>
                         </TouchableOpacity>
                     </View>
-                </Content>
+                </View>
+                <Loader show={this.props.loading} />
             </Container>
         );
     }
@@ -135,9 +165,10 @@ class Login extends Component<{}> {
 
 function mapStateToProps(state) {
     return {
-        isLoggedIn: state.login.isLoggedIn,
-        errorMsg: state.login.errorMsg,
-        profile: state.login.profile || null
+        loading: state.params.loading,
+        isLoggedIn: state.params.isLoggedIn,
+        errorMsg: state.params.errorMsg || null,
+        profile: state.params.profile || null
     };
 }
 
