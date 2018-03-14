@@ -1,5 +1,5 @@
 /**
- * Payment Recevied Container Tab
+ * Incoming Requests Container Tab
  */
 
 import React, { Component } from 'react';
@@ -10,14 +10,14 @@ import {
   FlatList
 } from 'react-native';
 import {
-    TransactionTab
+    RequestTab
 } from '@components';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ActionCreators } from '@actions';
-const styles = require("@styles/activity");
+const styles = require("@styles/pending");
 
-class PaymentReceived extends Component<{}> {
+class IncomingRequests extends Component<{}> {
 
     static navigationOptions = {
         header: null,
@@ -29,22 +29,22 @@ class PaymentReceived extends Component<{}> {
     }
 
     componentDidMount(){
-        this.props.getReceivedTransactions();
+        this.props.getIncomingRequests();
     }
 
     render() {
         return (
             <FlatList
-                style={styles.txnList}
+                style={styles.reqList}
                 showsVerticalScrollIndicator={false}
-                data={this.props.txns}
-                keyExtractor={(txn, index) => (index+'_'+txn.transaction_id)}
-                onEndReachedThreshold={2}
-                onEndReached={()=>(this.props.txns.length < this.props.total_txns) &&
-                        this.props.getReceivedTransactions(this.props.txns.length)}
+                data={this.props.reqs}
+                keyExtractor={(req, index) => (index+'_'+req.id)}
+                onEndReachedThreshold={5}
+                onEndReached={()=>(this.props.reqs.length < this.props.total_reqs) &&
+                        this.props.getIncomingRequests(this.props.reqs.length)}
                 renderItem={({item, index})=>{
                     return(
-                        <TransactionTab txn={item} style={[!index && {marginTop:10}]} />
+                        <RequestTab req={item} style={[!index && {marginTop:10}]} />
                     );
                 }}
             />
@@ -54,8 +54,8 @@ class PaymentReceived extends Component<{}> {
 
 function mapStateToProps({params}) {
   return {
-      txns: params.receivedTxns || [],
-      total_txns: params.receivedTxns_total || 0,
+      reqs: params.inReqs || [],
+      total_reqs: params.inReqs_total || 0,
   };
 }
 
@@ -64,4 +64,4 @@ function mapDispatchToProps(dispatch) {
   return bindActionCreators(ActionCreators, dispatch);
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(PaymentReceived);
+export default connect(mapStateToProps, mapDispatchToProps)(IncomingRequests);

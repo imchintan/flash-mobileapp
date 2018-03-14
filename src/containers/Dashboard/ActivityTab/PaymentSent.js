@@ -9,7 +9,9 @@ import {
     Image,
     FlatList
 } from 'react-native';
-import moment from 'moment';
+import {
+    TransactionTab
+} from '@components';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ActionCreators } from '@actions';
@@ -39,23 +41,11 @@ class PaymentSent extends Component<{}> {
                 keyExtractor={(txn, index) => (index+'_'+txn.transaction_id)}
                 onEndReachedThreshold={2}
                 onEndReached={()=>(this.props.txns.length < this.props.total_txns) &&
-                        this.props.getAllTransactions(this.props.txns.length)}
+                        this.props.getSentTransactions(this.props.txns.length)}
                 renderItem={({item, index})=>{
                     return(
-                        <View style={[styles.txnTab, !index && {marginTop:10}]}>
-                            <Image style={styles.txnIcon} source={item.receiver_profile_pic_url?{uri:item.receiver_profile_pic_url}:(item.type == 1?require('@images/send-icon.png'):require('@images/receive-icon.png'))} />
-                            <View style={styles.txnDetail}>
-                                <Text numberOfLines={1} style={styles.txnAmount}>{item.type == 1?'-':'+'} {item.amount}
-                                <Text style={styles.txnRecvFrom}> {item.type == 1?'to':'from'} {item.sender_display_name}</Text></Text>
-                                <Text style={styles.txnDateTime}> {moment(item.created_ts).format('MMM DD, YYYY hh:mm A')}</Text>
-                            </View>
-                            {item.type == 1?<View style={styles.txnTagSent}>
-                                <Text style={styles.txnTagLabel}>Sent</Text>
-                            </View>:<View style={styles.txnTag}>
-                                <Text style={styles.txnTagLabel}>Recived</Text>
-                            </View>}
-                        </View>
-                    )
+                        <TransactionTab txn={item} style={[!index && {marginTop:10}]} />
+                    );
                 }}
             />
         );
@@ -64,6 +54,7 @@ class PaymentSent extends Component<{}> {
 function mapStateToProps({params}) {
     return {
         txns: params.sentTxns || [],
+        total_txns: params.sentTxns_total || 0,
     };
 }
 

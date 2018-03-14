@@ -25,14 +25,12 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ActionCreators } from '@actions';
 
-import AllTransactions from './AllTransactions';
-import PaymentReceived from './PaymentReceived';
-import PaymentSent from './PaymentSent';
+import IncomingRequests from './IncomingRequests';
+import OutgoingRequests from './OutgoingRequests';
 
 const TabNav = TabNavigator({
-    All: { screen: AllTransactions },
-    Received: { screen: PaymentReceived },
-    Sent: { screen: PaymentSent },
+    Incoming: { screen: IncomingRequests },
+    Outgoing: { screen: OutgoingRequests },
 },{
     navigationOptions: ({ navigation }) => ({
     }),
@@ -66,7 +64,7 @@ const TabNav = TabNavigator({
     swipeEnabled: true,
 });
 
-class ActivityTab extends React.Component {
+class PendingTab extends React.Component {
     static navigationOptions = {
         header: null,
     }
@@ -78,14 +76,14 @@ class ActivityTab extends React.Component {
     }
 
     confirmDate({startDate, endDate, startMoment, endMoment}) {
-        this.props.updateTransactionReportDate(startMoment,endMoment)
+        this.props.updateRequestReportDate(startMoment,endMoment)
     }
 
     openCalendar() {
         this.calendar && this.calendar.open();
     }
 
-    refresh = () => this.props.updateTransactionReportDate(this.props.date_from,this.props.date_to)
+    refresh = () => this.props.updateRequestReportDate(this.props.date_from,this.props.date_to)
 
     render() {
         let customI18n = {
@@ -112,11 +110,11 @@ class ActivityTab extends React.Component {
             }}>
                 <Header>
                     <Text style={{
-                        alignSelf: 'center',
-                        width: '100%',
-                        textAlign: 'center',
-                        fontSize: 16,
-                        color: '#FFF',
+                            alignSelf: 'center',
+                            width: '100%',
+                            textAlign: 'center',
+                            fontSize: 16,
+                            color: '#FFF',
                     }}>
                         <Text onPress={this.openCalendar} style={{fontWeight: '600'}}>
                         {moment(this.props.date_from).format('MMM DD, YYYY')} - {moment(this.props.date_to).format('MMM DD, YYYY')}  </Text>
@@ -153,8 +151,8 @@ class ActivityTab extends React.Component {
 
 function mapStateToProps({params}) {
   return {
-      date_from: params.date_from,
-      date_to: params.date_to,
+      date_from: params.pending_date_from,
+      date_to: params.pending_date_to,
       minDate: moment(params.profile.created_ts).format('YYYYMM01000000'),
       maxDate: moment().format('YYYYMMDD235959')
   };
@@ -164,4 +162,4 @@ function mapDispatchToProps(dispatch) {
     return bindActionCreators(ActionCreators, dispatch);
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ActivityTab);
+export default connect(mapStateToProps, mapDispatchToProps)(PendingTab);

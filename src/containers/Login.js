@@ -101,6 +101,7 @@ class Login extends Component<{}> {
                                     fontSize: 16,
                                     fontWeight: '600'
                                 }}
+                                underlineColorAndroid='transparent'
                                 placeholder={'Email address'}
                                 keyboardType={'email-address'}
                                 onChangeText={(email) => this.setState({email})}
@@ -122,6 +123,7 @@ class Login extends Component<{}> {
                                     fontSize: 16,
                                     fontWeight: '600'
                                 }}
+                                underlineColorAndroid='transparent'
                                 secureTextEntry={true}
                                 placeholder={'Password'}
                                 onChangeText={(password) => this.setState({password})}

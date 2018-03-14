@@ -3,12 +3,13 @@ import {
 } from 'react-native';
 import * as types from '@actions/types'
 import apis from '@flashAPIs'
+import { satoshiToFlash, flashToUSD, flashToBTC } from '@lib/commonFN';
 import { _logout } from '@actions/navigation'
 
 export const getBalance = (refresh = false) => {
     return (dispatch,getState) => {
         let params = getState().params;
-        apis.getBalance(params.profile.sessionToken,params.currencyType).then((d)=>{
+        apis.getBalance(params.profile.auth_version, params.profile.sessionToken, params.currencyType).then((d)=>{
             if(d.rc == 3){
                 dispatch({
                     type: types.GET_BALANCE,
@@ -30,9 +31,18 @@ export const getBalance = (refresh = false) => {
                     type: types.GET_BALANCE,
                     payload: {
                         balance:d.balance,
-                        successMsg: refresh?('Updated Balance: '+d.balance):null
+                        successMsg: refresh?('Updated Balance: '+satoshiToFlash(d.balance)+ ' FLASH'):null
                     }
                 });
+                dispatch(getCoinMarketCapDetail());
+                if(refresh){
+                    dispatch({
+                        type: types.GET_BALANCE,
+                        payload: {
+                            successMsg: null
+                        }
+                    });
+                }
             }
         }).catch(e=>{
             dispatch({
@@ -48,8 +58,7 @@ export const getBalance = (refresh = false) => {
 export const getProfile = () => {
     return (dispatch,getState) => {
         let params = getState().params;
-        dispatch({ type: types.LOADING_START });
-        apis.getProfile(params.profile.sessionToken).then((d)=>{
+        apis.getProfile(params.profile.auth_version, params.profile.sessionToken).then((d)=>{
             if(d.rc == 2){
                 dispatch({
                     type: types.GET_PROFILE,
@@ -67,6 +76,7 @@ export const getProfile = () => {
                         profile:{...params.profile,...d.profile}
                     }
                 });
+                dispatch(getWalletsByEmail());
             }
         }).catch(e=>{
             dispatch({
@@ -83,8 +93,7 @@ export const getProfile = () => {
 export const getMyWallets = () => {
     return (dispatch,getState) => {
         let params = getState().params;
-        dispatch({ type: types.LOADING_START });
-        apis.getMyWallets(params.profile.sessionToken).then((d)=>{
+        apis.getMyWallets(params.profile.auth_version, params.profile.sessionToken).then((d)=>{
             if(d.rc == 2){
                 dispatch({
                     type: types.GET_MY_WALLETS,
@@ -111,3 +120,78 @@ export const getMyWallets = () => {
         })
     }
 }
+
+export const getWalletsByEmail = () => {
+    return (dispatch,getState) => {
+        let params = getState().params;
+        apis.getWalletsByEmail(params.profile.auth_version, params.profile.sessionToken,
+            params.profile.email, params.currencyType).then((d)=>{
+            if(d.rc == 2){
+                dispatch({
+                    type: types.GET_WALLET_ADDRESS,
+                    payload: {
+                        errorMsg:d.reason,
+                    }
+                });
+            }else if(d.results.length > 0){
+                AsyncStorage.setItem('my_wallets',JSON.stringify(d.my_wallets));
+                dispatch({
+                    type: types.GET_WALLET_ADDRESS,
+                    payload: {
+                        wallet_address:d.results[0].address
+                    }
+                });
+            }
+        }).catch(e=>{
+            dispatch({
+                type: types.GET_WALLET_ADDRESS,
+                payload: {
+                    errorMsg: e.message,
+                }
+            });
+        })
+    }
+}
+
+export const getCoinMarketCapDetail = () =>{
+    return (dispatch,getState) => {
+        let params = getState().params;
+        if(!params.balance) return;
+        AsyncStorage.getItem('coinmarketcapValue',(err,succ)=>{
+            if(!succ) return;
+            let d = JSON.parse(succ);
+            dispatch({
+                type: types.GET_COIN_MARKET_CAP_VALUE,
+                payload: {
+                    balance_in_btc:flashToBTC(params.balance, Number(d.price_btc)),
+                    balance_in_usd:flashToUSD(params.balance, Number(d.price_usd)),
+                }
+            });
+        });
+        apis.getCoinMarketCapDetail().then((d)=>{
+            if(!(d && d.constructor === Array && d.length > 0)) return;
+            AsyncStorage.setItem('coinmarketcapValue',JSON.stringify(d[0]));
+            dispatch({
+                type: types.GET_COIN_MARKET_CAP_VALUE,
+                payload: {
+                    balance_in_btc:flashToBTC(params.balance, Number(d[0].price_btc)),
+                    balance_in_usd:flashToUSD(params.balance, Number(d[0].price_usd)),
+                }
+            });
+        }).catch(e=>{});
+    }
+}
+
+export const showQR = () => ({
+    type: types.SHOW_QR,
+    payload: {
+        show_qr: true,
+    }
+})
+
+export const hideQR = () => ({
+    type: types.HIDE_QR,
+    payload: {
+        show_qr: false,
+    }
+})

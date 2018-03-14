@@ -6,7 +6,6 @@ import {
 
 const { height, width } = Dimensions.get('window');
 const appStyles = require('./app');
-const activityStyles = require('./activity');
 
 const styles = StyleSheet.create({
     balanceBox:{
@@ -44,10 +43,41 @@ const styles = StyleSheet.create({
         fontStyle: 'italic',
         fontWeight: '600',
     },
+    qrCodeModal:{
+        backgroundColor: '#fffd',
+        width: '100%',
+        height: '100%',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    qrCodeModalTitle:{
+        marginBottom: 20,
+        color: '#000080',
+        fontSize: 20,
+        fontWeight: '600',
+    },
+    qrCodeModalWalletAddress:{
+        backgroundColor: '#fff',
+        justifyContent: 'center',
+        marginTop: 20,
+        width: width-60,
+        height: 50,
+        borderWidth: 1.5,
+        borderRadius:25,
+        borderColor: '#ddd'
+    },
+    qrCodeModalWalletAddressText:{
+        fontSize:14,
+        fontWeight: '500',
+        textAlign:'center'
+    },
+    qrCodeModalCloseBtn:{
+        borderRadius:25,
+        marginTop: 20
+    }
 });
 
 module.exports = {
     ...appStyles,
-    ...activityStyles,
     ...styles
 }

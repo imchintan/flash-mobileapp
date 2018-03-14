@@ -17,6 +17,12 @@ const navigation = (state = initialState, action) => {
                 state
             );
 
+        case 'Navigation/BACK':
+            return AppNavigator.router.getStateForAction(
+                NavigationActions.back(),
+                state
+            );
+
         case types.LOGOUT:
             return AppNavigator.router.getStateForAction(
                 NavigationActions.reset({
@@ -36,12 +42,6 @@ const navigation = (state = initialState, action) => {
                         NavigationActions.navigate({ routeName: 'Dashboard' }),
                     ],
                 }),
-                state
-            );
-
-        case types.NAVIGATE_BACK:
-            return AppNavigator.router.getStateForAction(
-                NavigationActions.back(),
                 state
             );
 

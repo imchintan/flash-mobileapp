@@ -17,16 +17,19 @@ import {
     NavigationActions
 } from 'react-navigation';
 
-import Home from '@containers/Dashboard/Home';
+import HomeNavigation from '@containers/Dashboard/Home';
 import SendTab from '@containers/Dashboard/SendTab';
 import ActivityTab from '@containers/Dashboard/ActivityTab';
+import PendingTab from '@containers/Dashboard/PendingTab';
+import RequestTab from '@containers/Dashboard/RequestTab';
 
 
 const Dashboard = TabNavigator({
-    Home: { screen: Home },
-    Send: { screen: SendTab },
+    Home: { screen: HomeNavigation },
     Activity: { screen: ActivityTab },
-    'My Account': { screen: SendTab },
+    Send: { screen: SendTab },
+    Request: { screen: RequestTab },
+    Pending: { screen: PendingTab },
 },{
     navigationOptions: ({ navigation }) => ({
         tabBarIcon: ({ focused, tintColor }) => {
@@ -42,8 +45,11 @@ const Dashboard = TabNavigator({
                 case 'Activity':
                     source = focused?require('@images/activity-icon-blue.png'):require('@images/activity-icon-black.png');
                     break;
-                case 'My Account':
-                    source = focused?require('@images/user-profile-icon-blue.png'):require('@images/user-profile-icon-black.png');
+                case 'Pending':
+                    source = focused?require('@images/pending-icon-blue.png'):require('@images/pending-icon-black.png');
+                    break;
+                case 'Request':
+                    source = focused?require('@images/request-icon-blue.png'):require('@images/request-icon-black.png');
                     break;
                 default:
 
@@ -87,4 +93,10 @@ const Dashboard = TabNavigator({
     swipeEnabled: false,
 });
 
-export default Dashboard;
+const EnhancedComponent = class extends React.Component {
+   render() {
+     return <Dashboard />
+   }
+ }
+
+export default EnhancedComponent;

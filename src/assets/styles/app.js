@@ -24,6 +24,11 @@ module.exports = StyleSheet.create({
         width: 25,
         height: 25,
     },
+    headerBackIcon:{
+        paddingLeft: 2,
+        fontSize: 40,
+        color: '#FFFFFF',
+    },
     headerFAIcon:{
         fontSize: 30,
         color: '#FFFFFF',

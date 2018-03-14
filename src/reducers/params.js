@@ -1,4 +1,4 @@
-import moment from 'moment';
+import moment from 'moment-timezone';
 import _ from 'lodash';
 import * as types from '@actions/types';
 
@@ -8,6 +8,8 @@ const initialState = {
     currencyType: 1,
     date_from: moment().add(-1, 'months').add(-1, 'days'),
     date_to: moment(),
+    pending_date_from: moment().add(-1, 'months').add(-1, 'days'),
+    pending_date_to: moment(),
 };
 
 const login = (state = initialState, action) => {
@@ -53,7 +55,23 @@ const login = (state = initialState, action) => {
             return { ...state, receivedTxns, receivedTxns_total};
 
         case types.RESET_TRANSACTIONS:
-            return { ...state, allTxns: [], sentTxns: [],  receivedTxns: []};
+            return { ...state, allTxns: [], sentTxns: [],  receivedTxns: [],
+                    allTxns_total: 0, sentTxns_total: 0, receivedTxns_total: 0};
+
+        case types.GET_INCOMING_REQUESTS:
+            let inReqs = _.concat(state.inReqs || [], action.payload.reqs);
+            _.sortedIndexBy(inReqs,{id: null},'id');
+            let inReqs_total = action.payload.total_reqs;
+            return { ...state, inReqs, inReqs_total};
+
+        case types.GET_OUTGOING_REQUESTS:
+            let outReqs = _.concat(state.outReqs || [], action.payload.reqs);
+            _.sortedIndexBy(outReqs,{id: null},'id');
+            let outReqs_total = action.payload.total_reqs;
+            return { ...state, outReqs, outReqs_total};
+
+        case types.RESET_REQUESTS:
+            return { ...state, inReqs: [], outReqs: [], inReqs_total: 0, outReqs_total: 0 };
 
         case types.UPDATE_TRANSACTION_REPORT_DATE:
             return { ...state, ...action.payload };
