@@ -4,9 +4,6 @@
 
 import React, { Component } from 'react';
 import {
-  View,
-  Text,
-  Image,
   FlatList
 } from 'react-native';
 import {

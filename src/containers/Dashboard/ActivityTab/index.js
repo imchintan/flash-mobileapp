@@ -16,6 +16,7 @@ import {
 import {
     Header,
     HeaderRight,
+    Content,
     Icon,
     Calendar
 } from '@components';
@@ -67,14 +68,18 @@ const TabNav = TabNavigator({
 });
 
 class ActivityTab extends React.Component {
-    static navigationOptions = {
-        header: null,
-    }
 
     constructor(props) {
         super(props);
+        this.state ={
+            showTab: false // Android issue: Component not load  
+        }
         this.confirmDate = this.confirmDate.bind(this);
         this.openCalendar = this.openCalendar.bind(this);
+    }
+
+    componentDidMount(){
+        setTimeout(()=>this.setState({showTab:true}),500);
     }
 
     confirmDate({startDate, endDate, startMoment, endMoment}) {
@@ -133,7 +138,7 @@ class ActivityTab extends React.Component {
                         />
                     </HeaderRight>
                 </Header>
-                <TabNav />
+                {this.state.showTab?<TabNav />:<View />}
                 <Calendar
                     i18n="en"
                     ref={(calendar) => {this.calendar = calendar;}}

@@ -46,12 +46,6 @@ class Home extends Component<{}> {
 
     componentWillReceiveProps(nextProps){
         if(nextProps){
-            if(nextProps.errorMsg){
-                Toast.errorTop(nextProps.errorMsg);
-            }
-            if(nextProps.successMsg){
-                Toast.successTop(nextProps.successMsg);
-            }
         }
     }
 
@@ -81,7 +75,8 @@ class Home extends Component<{}> {
                         </TouchableOpacity>
                     </HeaderLeft>
                     <HeaderTitle>
-                        <Image style={styles.appHeaderIcon} source={require("@images/app-icon.png")}/>
+                        <Image style={{resizeMode: 'contain'}}
+                            source={require('@images/app-text-icon-white.png')}/>
                     </HeaderTitle>
                     <HeaderRight>
                         <Icon style={styles.headerFAIcon} onPress={this.props.showQR} name='qrcode' />

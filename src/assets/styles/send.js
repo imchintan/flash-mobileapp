@@ -6,6 +6,7 @@ import {
 
 const { height, width } = Dimensions.get('window');
 const appStyles = require('./app');
+const requestStyles = require('./request');
 
 const styles = StyleSheet.create({
     content:{
@@ -85,5 +86,6 @@ const styles = StyleSheet.create({
 
 module.exports = {
     ...appStyles,
+    ...requestStyles,
     ...styles
 }

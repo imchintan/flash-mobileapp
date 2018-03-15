@@ -46,7 +46,7 @@ export default class RequestTab extends Component {
                                 {uri:this.props.req.receiver_profile_pic_url}:require("@images/app-icon.png")} />
                     }
                     <View style={styles.reqDetail}>
-                        <Text numberOfLines={1} style={styles.reqAmount}>{this.props.req.type == 1?'-':'+'} {this.props.req.amount}
+                        <Text numberOfLines={1} style={styles.reqAmount}>{this.props.req.type == 1?'+':'-'} {this.props.req.amount}
                         <Text style={styles.reqRecvFrom}> {this.props.req.type == 1?'to':'from'} {this.props.req.type == 1?this.props.req.receiver_display_name:this.props.req.sender_display_name}</Text></Text>
                         <Text style={styles.reqDateTime}> {moment(this.props.req.created_ts).format('MMM DD, YYYY hh:mm A')}</Text>
                     </View>
@@ -92,7 +92,7 @@ export default class RequestTab extends Component {
                                 </View>
                                 <View style={styles.reqDetailRow}>
                                     <Text style={styles.reqDetailLabel}>Note</Text>
-                                    <Text selectable={true} style={styles.reqDetailTextWithBox}>{this.props.req.memo || ''}</Text>
+                                    <Text selectable={true} style={styles.reqDetailTextWithBox}>{this.props.req.note || ''}</Text>
                                 </View>
                                 <View style={styles.reqDetailRow}>
                                     <Text style={styles.reqDetailLabel}>Date/Time</Text>
@@ -137,6 +137,8 @@ export default class RequestTab extends Component {
                             <View style={{flexDirection:'row'}}>
                                 <Button style={styles.reqBtn}
                                     textstyle={styles.reqBtnLabel}
+                                    onPress={()=>this.setState({cancelRequest:false},
+                                        ()=>!!this.props.onCancel && this.props.onCancel(this.props.req))}
                                     value='Yes' />
                                 <Button style={[styles.reqBtn,{backgroundColor: '#EFEFEF'}]}
                                     textstyle={[styles.reqBtnLabel,{color:'#333'}]}

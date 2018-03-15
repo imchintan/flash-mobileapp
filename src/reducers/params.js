@@ -73,6 +73,9 @@ const login = (state = initialState, action) => {
         case types.RESET_REQUESTS:
             return { ...state, inReqs: [], outReqs: [], inReqs_total: 0, outReqs_total: 0 };
 
+        case types.RESET_MESSAGES:
+            return { ...state, errorMsg: null, successMsg: null };
+
         case types.UPDATE_TRANSACTION_REPORT_DATE:
             return { ...state, ...action.payload };
 

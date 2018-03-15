@@ -153,6 +153,39 @@ export const getWalletsByEmail = () => {
     }
 }
 
+export const searchWallet = (term) => {
+    return (dispatch,getState) => {
+        let params = getState().params;
+        apis.searchWallet(params.profile.auth_version, params.profile.sessionToken,
+            params.currencyType, term).then((d)=>{
+                console.log(d);
+            if(d.rc == 2){
+                dispatch({
+                    type: types.SEARCH_WALLET,
+                    payload: {
+                        errorMsg:d.reason,
+                    }
+                });
+            }else if(d.total_wallets > 0){
+                dispatch({
+                    type: types.SEARCH_WALLET,
+                    payload: {
+                        search_wallet:d.wallets[0],
+                    }
+                });
+            }
+        }).catch(e=>{
+            console.log(e);
+            dispatch({
+                type: types.SEARCH_WALLET,
+                payload: {
+                    errorMsg: e.message,
+                }
+            });
+        })
+    }
+}
+
 export const getCoinMarketCapDetail = () =>{
     return (dispatch,getState) => {
         let params = getState().params;

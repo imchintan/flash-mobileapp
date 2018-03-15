@@ -12,7 +12,7 @@ export default class Button extends Component {
 
     render() {
         return (
-            <TouchableOpacity onPress={this.props.onPress || null} activeOpacity={0.5} style={[styles.btn , this.props.style]}>
+            <TouchableOpacity onPress={this.props.onPress || null} activeOpacity={0.7} style={[styles.btn , this.props.style]}>
                 <Text style={[styles.btnText, this.props.textstyle]}>{this.props.value}</Text>
             </TouchableOpacity>
         )

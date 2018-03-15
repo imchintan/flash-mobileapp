@@ -5,8 +5,8 @@
 import React from 'react';
 
 import { StackNavigator } from 'react-navigation';
-import ScanQR from '@containers/Dashboard/SendTab/ScanQR';
-import Send from '@containers/Dashboard/SendTab/Send';
+import ScanQR from './ScanQR';
+import Send from './Send';
 
 const routes = {
     ScanQR: {
@@ -24,19 +24,21 @@ const routeConfig = {
 
 const ScanNavigation = StackNavigator(routes,routeConfig);
 
-export default class ScanTab extends React.Component {
+const EnhancedComponent = class extends React.Component {
 
     constructor(props) {
         super(props);
+        this.state = {
+            scan: true,
+        };
     }
 
     render() {
-        return (
-            <ScanNavigation ref={nav => { this.navigator = nav; }}
-                screenProps={{
-                    // user: this.props.screenProps.user,
-                    // logout: this.props.screenProps.logout,
-            }}/>
-        );
+        return <ScanNavigation ref={nav => { this.navigator = nav; }}
+                    onNavigationStateChange={(prevState, currentState) => {
+                        this.setState({scan: (currentState.routes[currentState.index].routeName == 'ScanQR')});
+                    }}
+                    screenProps={{scan: this.state.scan && this.props.screenProps.scan}} />
     }
-}
+ }
+export default EnhancedComponent;

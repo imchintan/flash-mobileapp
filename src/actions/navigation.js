@@ -82,3 +82,7 @@ export const _logout = async(dispatch) => {
 export const signupSuccess = () => ({
     type: types.SIGNUP_SUCCESS
 });
+
+export const resetMessages = () => ({
+    type: types.RESET_MESSAGES
+});

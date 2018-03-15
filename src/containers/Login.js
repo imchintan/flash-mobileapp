@@ -35,8 +35,8 @@ class Login extends Component<{}> {
     constructor(props) {
         super(props);
         this.state = {
-            email: 'maulikvora59+3@gmail.com',
-            password: 'Maulik123'
+            // email: 'maulikvora59+3@gmail.com',
+            // password: 'Maulik123'
         };
     }
 
@@ -47,6 +47,7 @@ class Login extends Component<{}> {
     componentWillReceiveProps(nextProps){
         if(nextProps && nextProps.errorMsg){
             Toast.errorTop(nextProps.errorMsg);
+            this.props.resetMessages();
         }
     }
 

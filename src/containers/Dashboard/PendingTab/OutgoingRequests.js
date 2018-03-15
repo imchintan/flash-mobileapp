@@ -32,6 +32,10 @@ class OutgoingRequests extends Component<{}> {
         this.props.getOutgoingRequests();
     }
 
+    markCancelledMoneyRequests(req){
+        this.props.markCancelledMoneyRequests(req.id,req.receiver_email);
+    }
+
     render() {
         return (
             <FlatList
@@ -44,7 +48,11 @@ class OutgoingRequests extends Component<{}> {
                         this.props.getOutgoingRequests(this.props.reqs.length)}
                 renderItem={({item, index})=>{
                     return(
-                        <RequestTab outgoing={true} req={item} style={[!index && {marginTop:10}]} />
+                        <RequestTab
+                            outgoing={true}
+                            req={item}
+                            onCancel={this.markCancelledMoneyRequests.bind(this)}
+                            style={[!index && {marginTop:10}]} />
                     );
                 }}
             />

@@ -5,18 +5,21 @@
 import React from 'react';
 import {
     View,
-    Text,
     Image,
     Platform,
-    AsyncStorage,
-    BackHandler
 } from 'react-native';
+import {
+    Loader,
+    Toast
+} from '@components'
 import {
     TabNavigator,
     TabBarBottom,
     NavigationActions
 } from 'react-navigation';
-
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { ActionCreators } from '@actions';
 import HomeNavigation from '@containers/Dashboard/Home';
 import SendTab from '@containers/Dashboard/SendTab';
 import ActivityTab from '@containers/Dashboard/ActivityTab';
@@ -64,6 +67,7 @@ const Dashboard = TabNavigator({
         style: {
             backgroundColor: '#FFFFFF',
             borderTopWidth: 0,
+            height: 60,
             ...Platform.select({
                 ios: {
                     shadowColor: 'rgba(0,0,0,0.15)',
@@ -76,7 +80,7 @@ const Dashboard = TabNavigator({
             }),
         },
         tabStyle:{
-            paddingVertical: 2,
+            paddingTop: 5,
             borderLeftWidth: 0.25,
             borderRightWidth: 0.25,
             borderColor: '#D6DCDA',
@@ -85,6 +89,7 @@ const Dashboard = TabNavigator({
         },
         labelStyle:{
             fontSize: 12,
+            paddingBottom: 7,
         },
     },
     tabBarPosition: 'bottom',
@@ -94,9 +99,52 @@ const Dashboard = TabNavigator({
 });
 
 const EnhancedComponent = class extends React.Component {
-   render() {
-     return <Dashboard />
-   }
- }
 
-export default EnhancedComponent;
+    constructor(props) {
+        super(props);
+        this.state = {
+            scan: false,
+        };
+    }
+    componentWillReceiveProps(nextProps){
+        if(nextProps){
+            if(nextProps.errorMsg){
+                Toast.errorTop(nextProps.errorMsg);
+                this.props.resetMessages();
+            }
+            if(nextProps.successMsg){
+                Toast.successTop(nextProps.successMsg);
+                this.props.resetMessages();
+            }
+        }
+    }
+
+    render() {
+        return(
+            <View style={{flex:1}}>
+                <Dashboard ref={nav => { this.navigator = nav; }}
+                    onNavigationStateChange={(prevState, currentState) => {
+                        this.setState({scan: (currentState.routes[currentState.index].routeName == 'Send')});
+                    }}
+                    screenProps={{scan: this.state.scan}} />
+                <Loader show={this.props.loading} />
+            </View>
+        )
+    }
+}
+
+function mapStateToProps({params}) {
+    return {
+        loading: params.loading,
+        isLoggedIn: params.isLoggedIn,
+        errorMsg: params.errorMsg || null,
+        successMsg: params.successMsg || null,
+        txn: {},
+    };
+}
+
+function mapDispatchToProps(dispatch) {
+    return bindActionCreators(ActionCreators, dispatch);
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(EnhancedComponent);

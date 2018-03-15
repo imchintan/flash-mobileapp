@@ -91,10 +91,11 @@ export default class TransactionTab extends Component {
                                     <Text style={styles.txnDetailLabel}>Amount</Text>
                                     <Text selectable={true} style={[styles.txnDetailText,{fontWeight: '600'}]}>{this.props.txn.type == 1?'-':'+'} {this.props.txn.amount} FLASH</Text>
                                 </View>
+                                {this.props.txn.type == 1?
                                 <View style={styles.txnDetailRow}>
                                     <Text style={styles.txnDetailLabel}>Fee</Text>
                                     <Text selectable={true} style={styles.txnDetailText}>0.001 FLASH</Text>
-                                </View>
+                                </View>:null}
                                 <View style={styles.txnDetailRow}>
                                     <Text style={styles.txnDetailLabel}>Note</Text>
                                     <Text selectable={true} style={styles.txnDetailTextWithBox}>{this.props.txn.memo || ''}</Text>
