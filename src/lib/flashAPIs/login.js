@@ -1,4 +1,4 @@
-import { API_URL, RESOURCE, APP_VERSION } from './config';
+import { API_URL, RESOURCE, APP_VERSION } from '@lib/config';
 
 module.exports = (email,password) => {
     return new Promise((resolve,reject) => {

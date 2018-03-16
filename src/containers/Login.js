@@ -22,7 +22,7 @@ import {
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ActionCreators } from '@actions';
-import Validation from '@lib/validation';
+import * as Validation from '@lib/validation';
 
 const styles = require("@styles/login");
 
@@ -54,7 +54,7 @@ class Login extends Component<{}> {
     login=()=>{
 
         let res = Validation.email(this.state.email)
-        if(!res.result){
+        if(!res.success){
             Toast.errorTop(res.message);
             return false;
         }

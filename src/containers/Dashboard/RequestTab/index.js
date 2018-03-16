@@ -23,7 +23,7 @@ import moment from 'moment-timezone';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ActionCreators } from '@actions';
-import Validation from '@lib/validation';
+import * as Validation from '@lib/validation';
 const styles = require("@styles/request");
 
 class RequestTab extends Component<{}> {
@@ -56,31 +56,40 @@ class RequestTab extends Component<{}> {
     }
 
     resetState(){
-        this.setState({email:'',amount:'',note:'',isVerify: false, search_wallet: null})
+        this.setState({
+            email:'',
+            amount:'',
+            note:'',
+            isVerify: false,
+            isAmtVerify: false,
+            search_wallet: null
+        });
     }
 
     verifyAmount(){
         this.setState({isAmtVerify: false});
         if(!this.state.amount) return false;
-        if(isNaN(this.state.amount)){
-            return Toast.errorTop('Invalid amount!');
-        }
-        let [d1,d2] = this.state.amount.toString().split('.');
 
-        if(!!d2 && d2.length > 8)
-            this.setState({isAmtVerify: true, amount:(Math.floor(Number(this.state.amount*100000000))/100000000).toString()});
-        else
-            this.setState({isAmtVerify: true, amount:Number(this.state.amount).toString()});
+        let res = Validation.amount(this.state.amount);
+        if(!res.success){
+            return Toast.errorTop(res.message);
+        }
+
+        this.setState({isAmtVerify: true, amount:res.amount});
     }
 
     verifyAddress(){
-        if(!this.state.email) return false;
         if(this.state.search_wallet && this.state.search_wallet.email === this.state.email) return false;
+
+        this.setState({isVerify:false,search_wallet:null});
+
+        if(!this.state.email) return false;
+
         let res = Validation.email(this.state.email);
-        if(!res.result){
+        if(!res.success){
             return Toast.errorTop(res.message);
         }
-        this.setState({isVerify:false,search_wallet:null});
+
         this.props.searchWallet(this.state.email);
     }
 
@@ -221,9 +230,6 @@ class RequestTab extends Component<{}> {
 function mapStateToProps({params}) {
     return {
         loading: params.loading,
-        isLoggedIn: params.isLoggedIn,
-        currencyType: params.currencyType,
-        wallet_address: params.wallet_address || null,
         search_wallet: params.search_wallet || null,
     };
 }

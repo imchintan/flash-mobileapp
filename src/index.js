@@ -39,7 +39,7 @@ const middleware = createReactNavigationReduxMiddleware(
 );
 const addListener = createReduxBoundAddListener("root");
 
-class App extends React.Component {  
+class App extends React.Component {
     render() {
         return (
             <View style={{flex:1}}>

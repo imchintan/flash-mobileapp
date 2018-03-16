@@ -1,41 +1,64 @@
-let name=(n)=>{
-    let data={result:true, message:''};
+import { NETWORKS } from './config';
+import { Address } from './wallet';
+
+export const name = (n) => {
     let regEX = /^[a-zA-Z .]*$/;
     if(!n){
-        return data={result:false,message:'Name is required!'};
+        return {success:false,message:'Name is required!'};
     }
-
     if(n && !regEX.test(n)){
-        return data={result:false,message:'Name contains only character!'};
+        return {success:false,message:'Name contains only character!'};
     }
-    return data;
+    return {success:true, message:''};
 }
 
-let email=(e)=>{
-    let data={result:true, message:''};
+export const email = (e) => {
     let regEX = /^(?:[\w\!\#\$\%\&\'\*\+\-\/\=\?\^\`\{\|\}\~]+\.)*[\w\!\#\$\%\&\'\*\+\-\/\=\?\^\`\{\|\}\~]+@(?:(?:(?:[a-zA-Z0-9](?:[a-zA-Z0-9\-](?!\.)){0,61}[a-zA-Z0-9]?\.)+[a-zA-Z0-9](?:[a-zA-Z0-9\-](?!$)){0,61}[a-zA-Z0-9]?)|(?:\[(?:(?:[01]?\d{1,2}|2[0-4]\d|25[0-5])\.){3}(?:[01]?\d{1,2}|2[0-4]\d|25[0-5])\]))$/;
     if(!e){
-        return data={result:false,message:'Email address is required!'};
+        return {success:false,message:'Email address is required!'};
     }
 
     if(!regEX.test(e)){
-      return data={result:false,message:'Invalid email address!'};
+      return {success:false,message:'Invalid email address!'};
     }
-    return data;
+    return {success:true, message:''};
 }
 
-let phone = (c) =>{
-    let data={result:true, message:''};
+export const phone = (c) => {
     let regEX = /^[0-9+-]*$/;
     if( c && !regEX.test(c)){
-      return data={result:false,message:'Contact number contains only number!'};
+      return {success:false,message:'Contact number contains only number!'};
     }
-    return data;
+    return {success:true, message:''};
 }
 
+export const amount = (amt,dec=8) => {
+    let result={success:true, message:''};
+    if(!amt || isNaN(amt)){
+         return {success:false,message:'Invalid amount!'};
+    }
 
-module.exports = {
-    name,
-    email,
-    phone,
+    let [d1,d2] = amt.toString().split('.');
+    if(!!d2 && d2.length > dec)
+        amt = (Math.floor(Number(amt*Math.pow(10,dec)))/Math.pow(10,dec)).toString();
+    else
+        amt = Number(amt).toString();
+
+    return {success:true, message:'', amount: amt};
+}
+
+export function flashAddress(value) {
+  try {
+    let address = Address.fromBase58Check(value);
+    if (
+      address.version === NETWORKS.FLASH.pubKeyHash ||
+      address.version === NETWORKS.FLASH.scriptHash
+    ) {
+      return true;
+    } else {
+      return false;
+    }
+  } catch (e) {
+    return false;
+  }
 }
