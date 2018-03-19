@@ -49,3 +49,9 @@ export const NETWORKS = {
     dustThreshold: 546,
   }
 }
+
+export const MOMENT_FORMAT = {
+    DATE: 'MMM DD, YYYY',
+    DATE_TIME: 'MMM DD, YYYY hh:mm A',
+    DATE_TIME_2: 'MMM DD, YYYY hh:mm:ss A',
+};

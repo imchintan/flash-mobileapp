@@ -31,7 +31,6 @@ class Settings extends Component<{}> {
     }
 
     render() {
-        console.log(this.props.wallet_address);
         return (
             <Content hasHeader={false}>
                 <View style={styles.profile}>

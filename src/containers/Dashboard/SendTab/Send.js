@@ -36,10 +36,17 @@ class Send extends Component<{}> {
 
     componentWillReceiveProps(nextProps){
         if(nextProps){
-            if(nextProps.search_wallet && this.state.term == nextProps.search_wallet.email){
+            console.log('nextProps.sendTxnSuccess', nextProps.sendTxnSuccess);
+            if(nextProps.sendTxnSuccess){
+                this.setState({sendTxnSuccess:nextProps.sendTxnSuccess, visibleMsg: true});
+                this.props.resetMessages();
+            }
+            if(nextProps.search_wallet
+                && this.state.term == nextProps.search_wallet.email){
                 this.setState({
                     isVerify:true,
-                    search_wallet:nextProps.search_wallet
+                    search_wallet:nextProps.search_wallet,
+                    publicAddress:nextProps.search_wallet.address
                 });
             }
             if(!nextProps.loading && this.props.loading !== nextProps.loading){
@@ -57,7 +64,9 @@ class Send extends Component<{}> {
             publicAddress: publicAddress || null,
             isVerify: false,
             isAmtVerify: false,
-            search_wallet: null
+            isAddressVerify: false,
+            search_wallet: null,
+            sendTxnSuccess: null,
         };
     }
 
@@ -65,6 +74,10 @@ class Send extends Component<{}> {
         this.childNav={};
         this.currentState = 'Scan';
         BackHandler.addEventListener('hardwareBackPress', this.backHandler);
+    }
+
+    componentDidMount(){
+        this.verifyAddress();
     }
 
     componentWillUnmount(){
@@ -100,21 +113,31 @@ class Send extends Component<{}> {
     }
 
     verifyAddress(){
-        if(this.state.search_wallet && this.state.search_wallet.email === this.state.term) return false;
+        if(this.state.term === this.props.profile.email ||
+            this.state.term === this.props.wallet_address) return false;
+        if(this.state.search_wallet &&
+            this.state.search_wallet.email === this.state.term) return false;
 
-        this.setState({isVerify:false,search_wallet:null});
+        this.setState({isVerify:false, isAddressVerify:false,
+            search_wallet:null, publicAddress: null});
 
         if(!this.state.term) return false;
 
         let res = Validation.email(this.state.term);
-        if(!res.success){
-            return Toast.errorTop(res.message);
+        if(res.success){
+            return this.props.searchWallet(this.state.term);
         }
-        this.props.searchWallet(this.state.term);
+
+        res =Validation.flashAddress(this.state.term);
+        if(!res.success){
+            return Toast.errorTop("Address is invalid!");
+        }else{
+            this.setState({isAddressVerify:true, publicAddress: this.state.term});
+        }
     }
 
     confirmRequest(){
-        if(!this.state.isVerify){
+        if(!this.state.isVerify && !this.state.isAddressVerify){
             return Toast.errorTop("Address is invalid!");
         }
         if(!this.state.isAmtVerify){
@@ -128,7 +151,8 @@ class Send extends Component<{}> {
             <Container>
                 <Header>
                     <HeaderLeft>
-                        <Icon onPress={()=>this.props.navigation.goBack()} style={styles.headerBackIcon} name='angle-left' />
+                        <Icon onPress={()=>this.props.navigation.goBack()}
+                            style={styles.headerBackIcon} name='angle-left' />
                     </HeaderLeft>
                     <HeaderTitle>
                         Send
@@ -137,7 +161,9 @@ class Send extends Component<{}> {
                 <Content>
                     <View style={styles.requestBox}>
                         <View style={styles.requestRow}>
-                            <Text style={styles.requestRowLabel}>Email/Public address</Text>
+                            <Text style={styles.requestRowLabel}>
+                                Email/Public address
+                            </Text>
                             <View style={styles.requestRowInputBox}>
                                 <TextInput
                                     underlineColorAndroid='transparent'
@@ -148,7 +174,8 @@ class Send extends Component<{}> {
                                     onBlur={this.verifyAddress.bind(this)}
                                     onChangeText={(term) => this.setState({term})}
                                 />
-                                {this.state.isVerify || this.state.isAddressVerify?<Icon style={{
+                                {this.state.isVerify || this.state.isAddressVerify?
+                                    <Icon style={{
                                         color: 'green',
                                         fontSize: 30,
                                         position: 'absolute',
@@ -185,12 +212,14 @@ class Send extends Component<{}> {
                                     style={styles.requestRowInput}
                                     placeholder={'Enter note (optional)'}
                                     value={this.state.note || ''}
-                                    onChangeText={(note) => note.length <= 50 && this.setState({note})}
+                                    onChangeText={(note) => note.length <= 50 &&
+                                        this.setState({note})}
                                 />
                             </View>
                             <Text style={styles.requestRowNote}>Max Characters 50</Text>
                         </View>
-                        <View style={[styles.requestRow,{flexDirection: 'row', justifyContent: 'center'}]}>
+                        <View style={[styles.requestRow,{flexDirection: 'row',
+                            justifyContent: 'center'}]}>
                             <Button
                                 onPress={this.confirmRequest.bind(this)}
                                 value='Continue' />
@@ -210,20 +239,32 @@ class Send extends Component<{}> {
                         <View style={styles.reqDetailBox}>
                             <View style={styles.reqDetailHeader}>
                                 <Text style={styles.reqDetailTitle}>Confirm Transaction</Text>
-                                <Icon style={styles.reqDetailCloseIcon} onPress={()=>this.setState({visible:false})} name='close' />
+                                <Icon style={styles.reqDetailCloseIcon}
+                                    onPress={()=>this.setState({visible:false})} name='close' />
                             </View>
                             <View style={styles.reqDetailBody}>
                                 <Text style={styles.reqAmtText}>{this.state.amount} FLASH</Text>
+                                <Text style={styles.reqFeeText}>
+                                    + 0.001 FLASH transaction fee
+                                </Text>
                                 <Icon style={styles.reqDownArrow} name='arrow-down'/>
                                 <View style={styles.reqDetailRow}>
                                     <Image style={styles.reqDetailIcon}
                                         defaultSource={require("@images/app-icon.png")}
-                                        source={this.state.search_wallet?(this.state.search_wallet.profile_pic_url?
+                                        source={this.state.search_wallet?
+                                            (this.state.search_wallet.profile_pic_url?
                                             {uri:this.state.search_wallet.profile_pic_url}:
-                                            require('@images/app-icon.png')):require('@images/app-icon.png')} />
+                                            require('@images/app-icon.png'))
+                                            :require('@images/app-icon.png')} />
                                     <View>
-                                        <Text style={styles.reqDetailText}>{this.state.search_wallet?this.state.search_wallet.display_name:''}</Text>
-                                        <Text style={styles.reqDetailText}>{this.state.search_wallet?this.state.search_wallet.email:''}</Text>
+                                        {this.state.search_walle?
+                                            <Text style={styles.reqDetailText}>
+                                                {this.state.search_wallet?this.state.search_wallet.display_name:''}
+                                            </Text>:null
+                                        }
+                                        <Text style={styles.reqDetailText}>
+                                            {this.state.term}
+                                        </Text>
                                     </View>
                                 </View>
                             </View>
@@ -236,18 +277,53 @@ class Send extends Component<{}> {
                                 <Button
                                     onPress={()=>this.setState({visible:false},
                                         ()=>{
-                                            console.log('press');
-                                            // this.props.addMoneyRequest(this.state.amount,
-                                            //     this.state.search_wallet.email,
-                                            //     this.state.search_wallet.username,
-                                            //     this.state.note
-                                            // )
+                                            let receiver_bare_uid =
+                                                this.state.search_wallet?
+                                                this.state.search_wallet.email:null;
+                                            let receiver_id =
+                                                this.state.search_wallet?
+                                                this.state.search_wallet.username:null;
+
+                                            this.props.rawTransaction(this.state.amount,
+                                                this.state.publicAddress, this.state.note,
+                                                receiver_bare_uid, receiver_id);
                                         })
                                     }
                                     style={styles.reqBtn}
                                     textstyle={styles.reqBtnLabel}
-                                    value='Request' />
+                                    value='Send' />
                             </View>
+                        </View>
+                    </View>
+                </Modal>
+                <Modal
+                    transparent={true}
+                    visible={!!this.state.visibleMsg}
+                    onRequestClose={()=>this.setState({visibleMsg:false})}>
+                    <View style={styles.reqDetailModal}>
+                        <View style={styles.reqDetailBox}>
+                            <View style={styles.reqDetailHeader}>
+                                <Text style={styles.reqDetailTitle}>Transaction Successful</Text>
+                                <Icon style={styles.reqDetailCloseIcon}
+                                    onPress={()=>this.setState({visibleMsg:false})} name='close' />
+                            </View>
+                        </View>
+                        <View style={styles.reqDetailBody}>
+                            <Text style={{
+                                fontSize: 15,
+                                color: '#333',
+                                marginBottom: 25,
+                            }}>
+                                Processing time: {this.state.sendTxnSuccess?
+                                        Number(this.state.sendTxnSuccess.processing_duration)
+                                        .toFixed(3):'0.000'} second(s){"\n\n"}
+                                Your transaction will appear in your activity tab shortly.
+                            </Text>
+                            <Button
+                                onPress={()=>this.setState({visibleMsg:false,sendTxnSuccess:null})}
+                                style={styles.reqBtn}
+                                textstyle={styles.reqBtnLabel}
+                                value='Close' />
                         </View>
                     </View>
                 </Modal>
@@ -260,6 +336,9 @@ function mapStateToProps({params}) {
     return {
         loading: params.loading,
         search_wallet: params.search_wallet || null,
+        profile: params.profile || null,
+        wallet_address: params.wallet_address || null,
+        sendTxnSuccess: params.sendTxnSuccess || null,
     };
 }
 

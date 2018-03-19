@@ -88,6 +88,7 @@ const styles = StyleSheet.create({
     reqDetailBody:{
         backgroundColor: '#FFFFFF',
         padding: 15,
+        width: width - 40,
     },
     reqDetailRow:{
         flexDirection: 'row',
@@ -126,7 +127,11 @@ const styles = StyleSheet.create({
     reqBtnLabel:{
         fontSize: 16,
         fontWeight: '500'
-    }
+    },
+    reqFeeText:{
+        alignSelf: 'center',
+        color: '#008fd0'
+    },
 });
 
 module.exports = {

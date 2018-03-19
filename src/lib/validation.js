@@ -33,7 +33,6 @@ export const phone = (c) => {
 }
 
 export const amount = (amt,dec=8) => {
-    let result={success:true, message:''};
     if(!amt || isNaN(amt)){
          return {success:false,message:'Invalid amount!'};
     }
@@ -48,17 +47,15 @@ export const amount = (amt,dec=8) => {
 }
 
 export function flashAddress(value) {
-  try {
-    let address = Address.fromBase58Check(value);
-    if (
-      address.version === NETWORKS.FLASH.pubKeyHash ||
-      address.version === NETWORKS.FLASH.scriptHash
-    ) {
-      return true;
-    } else {
-      return false;
+    try {
+        let address = Address.fromBase58Check(value);
+        if (address.version === NETWORKS.FLASH.pubKeyHash ||
+            address.version === NETWORKS.FLASH.scriptHash ) {
+            return {success:true,message:''};
+        } else {
+            return {success:false,message:'Invalid address!'};
+        }
+    } catch (e) {
+        return {success:false,message:'Invalid address!'};
     }
-  } catch (e) {
-    return false;
-  }
 }

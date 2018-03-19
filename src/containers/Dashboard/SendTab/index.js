@@ -18,7 +18,7 @@ const routes = {
 };
 
 const routeConfig = {
-    initialRouteName: 'Send',
+    initialRouteName: 'ScanQR',
     headerMode: 'none'
 };
 
@@ -29,7 +29,7 @@ const EnhancedComponent = class extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            scan: false,
+            scan: true,
         };
     }
 

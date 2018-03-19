@@ -1465,7 +1465,8 @@ function XaesHash(data, keyByteSize, salt, ip, ar, qm, gs) {
 	for (var i=0; i<n; i++) {
 		xaes = new Xaes(k.slice(i*keyByteSize, (i+1)*keyByteSize), ip, ar, qm, gs);
 		h = XorByteArray(xaes.encrypt(h), h);
-		delete xaes;
+		// delete xaes;
+		xaes = null;
 	}
 	i--;
 
@@ -1514,7 +1515,8 @@ function XaesHashBigFile(data, keyByteSize, blockLength, ip, ar, qm, gs) {	// Im
 			}
 		xaes = new Xaes(key, ip, ar, qm, gs);
 		h = XorByteArray(xaes.encrypt(h), h);
-		delete xaes;
+		// delete xaes;
+        xaes = null;
 	}
 	i--;
 	hEnd = (new Xaes(XorByteArray(key, h), ip, ar, qm, gs)).encrypt(h);

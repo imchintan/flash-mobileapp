@@ -52,7 +52,6 @@ class Home extends Component<{}> {
     componentDidMount(){
         this.props.getBalance();
         this.props.getProfile();
-        this.props.getMyWallets();
         this.props.getRecentTransactions();
         // this.coinmarketcapValue = setInterval(this.props.getCoinMarketCapDetail, 60000);
     }

@@ -3,24 +3,33 @@
   "version": "0.0.1",
   "private": true,
   "scripts": {
-    "start": "node node_modules/react-native/local-cli/cli.js start",
-    "test": "jest"
+    "postinstall": "rn-nodeify --install stream,buffer,events,assert,crypto --hack"
   },
   "dependencies": {
+    "assert": "^1.4.1",
+    "bip39": "^2.5.0",
+    "bitcoinjs-lib": "^3.3.2",
+    "bs58check": "^2.1.1",
+    "events": "^1.1.1",
     "moment-timezone": "^0.5.14",
+    "node-libs-react-native": "github:abec/node-libs-react-native",
     "react": "16.2.0",
     "react-native": "0.53.0",
     "react-native-calendar-select": "^0.1.2",
     "react-native-camera": "^1.0.1",
     "react-native-fa-icons": "^3.0.1",
     "react-native-qrcode": "^0.2.6",
+    "react-native-randombytes": "^3.0.0",
     "react-native-root-toast": "^3.0.1",
     "react-navigation": "^1.0.3",
     "react-navigation-redux-helpers": "^1.0.1",
     "react-redux": "^5.0.7",
+    "readable-stream": "^1.0.33",
     "redux": "^3.7.2",
     "redux-logger": "^3.0.6",
-    "redux-thunk": "^2.2.0"
+    "redux-thunk": "^2.2.0",
+    "stream-browserify": "^1.0.0",
+    "tweetnacl": "^1.0.0"
   },
   "devDependencies": {
     "babel-jest": "22.2.2",
@@ -30,5 +39,23 @@
   },
   "jest": {
     "preset": "react-native"
+  },
+  "react-native": {
+    "_stream_transform": "readable-stream/transform",
+    "_stream_readable": "readable-stream/readable",
+    "_stream_writable": "readable-stream/writable",
+    "_stream_duplex": "readable-stream/duplex",
+    "_stream_passthrough": "readable-stream/passthrough",
+    "stream": "stream-browserify",
+    "crypto": "react-native-crypto"
+  },
+  "browser": {
+    "_stream_transform": "readable-stream/transform",
+    "_stream_readable": "readable-stream/readable",
+    "_stream_writable": "readable-stream/writable",
+    "_stream_duplex": "readable-stream/duplex",
+    "_stream_passthrough": "readable-stream/passthrough",
+    "stream": "stream-browserify",
+    "crypto": "react-native-crypto"
   }
 }

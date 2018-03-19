@@ -90,37 +90,6 @@ export const getProfile = () => {
     }
 }
 
-export const getMyWallets = () => {
-    return (dispatch,getState) => {
-        let params = getState().params;
-        apis.getMyWallets(params.profile.auth_version, params.profile.sessionToken).then((d)=>{
-            if(d.rc == 2){
-                dispatch({
-                    type: types.GET_MY_WALLETS,
-                    payload: {
-                        errorMsg:d.reason,
-                    }
-                });
-            }else{
-                AsyncStorage.setItem('my_wallets',JSON.stringify(d.my_wallets));
-                dispatch({
-                    type: types.GET_MY_WALLETS,
-                    payload: {
-                        my_wallets:d.my_wallets
-                    }
-                });
-            }
-        }).catch(e=>{
-            dispatch({
-                type: types.GET_MY_WALLETS,
-                payload: {
-                    errorMsg: e.message,
-                }
-            });
-        })
-    }
-}
-
 export const getWalletsByEmail = () => {
     return (dispatch,getState) => {
         let params = getState().params;
@@ -158,7 +127,6 @@ export const searchWallet = (term) => {
         let params = getState().params;
         apis.searchWallet(params.profile.auth_version, params.profile.sessionToken,
             params.currencyType, term).then((d)=>{
-                console.log(d);
             if(d.rc == 2){
                 dispatch({
                     type: types.SEARCH_WALLET,
