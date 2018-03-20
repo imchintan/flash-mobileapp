@@ -6,8 +6,9 @@ import {
 
 const { height, width } = Dimensions.get('window');
 const appStyles = require('./app');
+const sendStyles = require("@styles/send");
 
-module.exports = StyleSheet.create({
+const styles = StyleSheet.create({
     reqList: {
         backgroundColor: '#FCFCFC',
     },
@@ -25,3 +26,9 @@ module.exports = StyleSheet.create({
         fontWeight: '500',
     },
 });
+
+module.exports = {
+    ...appStyles,
+    ...sendStyles,
+    ...styles
+}

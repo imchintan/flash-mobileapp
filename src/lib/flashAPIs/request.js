@@ -139,6 +139,51 @@ export const markRejectedMoneyRequests = (auth_version, sessionToken='',
 }
 
 /**
+ * Mark Sent Money Requests
+ * @param  {Number} auth_version           [description]
+ * @param  {String} [sessionToken='']      [description]
+ * @param  {Number} [currency_type=1]      [description]
+ * @param  {Number} [request_id=0]         [description]
+ * @param  {String} [sender_bare_uid='']   [description]
+ * @param  {String} [note_processing='']   [description]
+ * @return {Promise}                       [description]
+ */
+export const markSentMoneyRequests = (auth_version, sessionToken='',
+    currency_type = 1, request_id=0, sender_bare_uid='', note_processing='') => {
+    return new Promise((resolve,reject) => {
+        fetch(API_URL+'/mark-sent-money-requests',{
+            method: 'POST',
+            body: JSON.stringify({
+                currency_type,
+                request_id,
+                sender_bare_uid,
+                note_processing,
+                appversion:APP_VERSION,
+                res:RESOURCE,
+            }),
+            headers: {
+               'Content-Type': 'application/json; charset=utf-8',
+               'authorization': sessionToken,
+               'fl_auth_version': auth_version
+            },
+        })
+        .then(async res =>{
+            let _res = await res.text();
+            if(_res.toLowerCase().indexOf("session") == -1){
+                return JSON.parse(_res);
+            }else{
+                return {rc:3,reason:_res};
+            }
+        })
+        .then(json => resolve(json))
+        .catch(e =>{
+            console.log(e);
+            reject('Something went wrong!')
+        });
+    });
+}
+
+/**
  * Get user transactions request
  * @param  {Number} auth_version      [description]
  * @param  {String} [sessionToken=''] [description]

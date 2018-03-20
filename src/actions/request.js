@@ -114,6 +114,38 @@ export const markRejectedMoneyRequests = (request_id, sender_bare_uid, note_proc
     }
 }
 
+export const markSentMoneyRequests = (request_id, sender_bare_uid, note_processing='') => {
+    return (dispatch,getState) => {
+        let params = getState().params;
+        apis.markSentMoneyRequests(params.profile.auth_version, params.profile.sessionToken,
+            params.currencyType, request_id, sender_bare_uid, note_processing).then((d)=>{
+            if(d.rc == 1){
+                dispatch({
+                    type: types.MARK_REJECTED_MONEY_REQUESTS,
+                    payload: {
+                        successMsg: 'You have sent a request.',
+                    }
+                });
+                dispatch(updateRequestReportDate(params.pending_date_from,params.pending_date_to));
+            }else{
+                dispatch({
+                    type: types.MARK_REJECTED_MONEY_REQUESTS,
+                    payload: {
+                        errorMsg:d.reason,
+                    }
+                });
+            }
+        }).catch(e=>{
+            dispatch({
+                type: types.MARK_CANCELLED_MONEY_REQUESTS,
+                payload: {
+                    errorMsg: e.message,
+                }
+            });
+        })
+    }
+}
+
 export const rosterOperation = (op=1, to='') => {
     return (dispatch,getState) => {
         let params = getState().params;

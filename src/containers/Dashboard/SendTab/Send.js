@@ -96,6 +96,7 @@ class Send extends Component<{}> {
             isAddressVerify: false,
             isAmtVerify: false,
             search_wallet: null,
+            publicAddress: null,
         });
     }
 

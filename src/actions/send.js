@@ -6,16 +6,23 @@ import apis from '@flashAPIs'
 import moment from 'moment-timezone';
 import { getBalance } from '@actions/account'
 import { updateTransactionReportDate, getRecentTransactions } from '@actions/transactions'
-import { updateRequestReportDate } from '@actions/request'
+import { updateRequestReportDate, markSentMoneyRequests } from '@actions/request'
 
 export const rawTransaction = (amount=0, receiver_public_address='', memo='',
-    receiver_bare_uid=null, receiver_id=null) => {
+    receiver_bare_uid=null, receiver_id=null, request_id=0) => {
     return (dispatch,getState) => {
         dispatch({ type: types.LOADING_START });
         let params = getState().params;
         apis.rawTransaction(params.profile.auth_version, params.profile.sessionToken,
             params.currencyType, amount, receiver_public_address, memo).then((d)=>{
-            if(d.rc !== 1){
+            if(d.rc == 1){
+                dispatch({type: types.RAW_TRANSACTION});
+                let wallet = getActiveWallet(params.decryptedWallets, params.currencyType);
+                let tx = wallet.signTx(d.transaction.rawtx);
+                let ip = params.ip;
+                dispatch(addTransaction(amount, ip, memo, receiver_bare_uid, receiver_id,
+                    receiver_public_address, tx.toHex(), tx.getId(), request_id));
+            }else{
                 dispatch({
                     type: types.RAW_TRANSACTION,
                     payload: {
@@ -23,13 +30,6 @@ export const rawTransaction = (amount=0, receiver_public_address='', memo='',
                         loading: false
                     }
                 });
-            }else{
-                dispatch({type: types.RAW_TRANSACTION});
-                let wallet = getActiveWallet(params.decryptedWallets, params.currencyType);
-                let tx = wallet.signTx(d.transaction.rawtx);
-                let ip = params.ip;
-                dispatch(addTransaction(amount, ip, memo, receiver_bare_uid, receiver_id,
-                    receiver_public_address, tx.toHex(), tx.getId()));
             }
         }).catch(e=>{
             dispatch({
@@ -44,13 +44,19 @@ export const rawTransaction = (amount=0, receiver_public_address='', memo='',
 }
 
 export const addTransaction = (amount, ip, memo, receiver_bare_uid, receiver_id,
-        receiver_public_address, transaction_hex, transaction_id) => {
+        receiver_public_address, transaction_hex, transaction_id, request_id) => {
     return (dispatch,getState) => {
         let params = getState().params;
         apis.addTransaction(params.profile.auth_version, params.profile.sessionToken,
             params.currencyType, amount, ip, memo, receiver_bare_uid, receiver_id,
             receiver_public_address, transaction_hex, transaction_id).then((d)=>{
-            if(d.rc !== 1){
+            if(d.rc == 1){
+                dispatch({type: types.ADD_TRANSACTION});
+                if(receiver_bare_uid) dispatch(addRoster(receiver_bare_uid));
+                if(request_id && request_id>0) dispatch(markSentMoneyRequests(request_id, receiver_bare_uid, memo));
+                dispatch(transactionById(d.id, 0, amount, ip, memo, receiver_bare_uid, receiver_id,
+                    receiver_public_address, transaction_hex, transaction_id));
+            }else{
                 dispatch({
                     type: types.ADD_TRANSACTION,
                     payload: {
@@ -58,11 +64,6 @@ export const addTransaction = (amount, ip, memo, receiver_bare_uid, receiver_id,
                         loading: false
                     }
                 });
-            }else{
-                dispatch({type: types.ADD_TRANSACTION});
-                if(receiver_bare_uid) dispatch(addRoster(receiver_bare_uid));
-                dispatch(transactionById(d.id, 0, amount, ip, memo, receiver_bare_uid, receiver_id,
-                    receiver_public_address, transaction_hex, transaction_id));
             }
         }).catch(e=>{
             dispatch({

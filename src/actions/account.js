@@ -122,8 +122,9 @@ export const getWalletsByEmail = () => {
     }
 }
 
-export const searchWallet = (term) => {
+export const searchWallet = (term, loading=false) => {
     return (dispatch,getState) => {
+        if(loading) dispatch({ type: types.LOADING_START });
         let params = getState().params;
         apis.searchWallet(params.profile.auth_version, params.profile.sessionToken,
             params.currencyType, term).then((d)=>{
@@ -142,6 +143,7 @@ export const searchWallet = (term) => {
                     }
                 });
             }
+            if(loading) dispatch({ type: types.LOADING_END });
         }).catch(e=>{
             console.log(e);
             dispatch({
@@ -150,6 +152,7 @@ export const searchWallet = (term) => {
                     errorMsg: e.message,
                 }
             });
+            if(loading) dispatch({ type: types.LOADING_END });
         })
     }
 }

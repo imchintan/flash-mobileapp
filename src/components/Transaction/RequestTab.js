@@ -62,58 +62,91 @@ export default class RequestTab extends Component {
                 <Modal
                     transparent={true}
                     visible={!!this.state.visible}
-                    onRequestClose={()=>this.setState({visible:false})}>
+                    onRequestClose={()=>this.setState({visible:false,
+                        reject: false, accept: false, note: ''})}>
                     <View style={styles.reqDetailModal}>
                         <View style={styles.reqDetailBox}>
                             <View style={styles.reqDetailHeader}>
                                 <Text style={styles.reqDetailTitle}>
-                                    {this.state.reject?'Reject Request':'Request Details'}
+                                    {this.state.reject?'Reject Request':(
+                                    this.state.accept?'Confirm Transaction':
+                                    'Request Details')}
                                 </Text>
                                 <Icon style={styles.reqDetailCloseIcon}
                                     onPress={()=>this.setState({visible:false,
-                                        reject: false, note: ''})}
+                                        reject: false, accept: false, note: ''})}
                                     name='close' />
                             </View>
                             <View style={styles.reqDetailBody}>
-                                <View style={styles.reqDetailRow}>
-                                    {this.props.req.type == 1?
-                                        <Image style={styles.reqDetailIcon}
-                                            defaultSource={require("@images/app-icon.png")}
-                                            source={this.props.req.sender_profile_pic_url?
-                                                {uri:this.props.req.sender_profile_pic_url}:
-                                                require('@images/app-icon.png')} />:
-                                        <Image style={styles.reqDetailIcon}
-                                            defaultSource={require("@images/app-icon.png")}
-                                            source={this.props.req.receiver_profile_pic_url?
-                                                {uri:this.props.req.receiver_profile_pic_url}:
-                                                require('@images/app-icon.png')} />
-                                    }
-                                    <View>
-                                        <Text style={styles.reqDetailText}>
-                                            {this.props.req.type == 1?'Recipient':'Name'}
-                                            : {this.props.req.type == 1?this.props.req.receiver_display_name:
-                                            this.props.req.sender_display_name}</Text>
-                                        <Text selectable={true} style={styles.reqDetailText}>
-                                            Email: {this.props.req.type == 1?this.props.req.receiver_email:
-                                            this.props.req.sender_email}</Text>
+                                {this.state.accept?<View style={styles.reqDetailRow}>
+                                    <Text style={styles.reqDetailLabel}>Amount</Text>
+                                    <Text selectable={true} style={styles.reqDetailText}>
+                                        {this.props.req.amount.toFixed(2)} FLASH</Text>
+                                </View>:null}
+                                {(this.state.reject || this.state.accept)?<View>
+                                    <View style={styles.reqDetailRow}>
+                                        <Text style={styles.reqDetailLabel}>Note</Text>
+                                        <View>
+                                            <TextInput
+                                                style={styles.reqDetailTextWithBox}
+                                                multiline = {true}
+                                                numberOfLines = {4}
+                                                placeholder={'Enter note (optional)'}
+                                                underlineColorAndroid='transparent'
+                                                value={this.state.note || ''}
+                                                onChangeText={(note) => note.length <= 50 && this.setState({note})}
+                                            />
+                                            <Text style={styles.requestRowNote}>Max Characters 50</Text>
+                                        </View>
                                     </View>
-                                </View>
-                                {this.state.reject?<Icon style={styles.reqDownArrow} name='arrow-down'/>:null}
-                                {this.state.reject?<View style={styles.reqDetailRow}>
-                                    <Text style={styles.reqDetailLabel}>Note</Text>
-                                    <View>
-                                        <TextInput
-                                            style={styles.reqDetailTextWithBox}
-                                            multiline = {true}
-                                            numberOfLines = {4}
-                                            placeholder={'Enter note (optional)'}
-                                            underlineColorAndroid='transparent'
-                                            value={this.state.note || ''}
-                                            onChangeText={(note) => note.length <= 50 && this.setState({note})}
-                                        />
-                                        <Text style={styles.requestRowNote}>Max Characters 50</Text>
+                                    <Icon style={styles.reqDownArrow} name='arrow-down'/>
+                                    <View style={styles.reqDetailRow}>
+                                        {this.props.req.type == 1?
+                                            <Image style={styles.reqDetailIcon}
+                                                defaultSource={require("@images/app-icon.png")}
+                                                source={this.props.req.sender_profile_pic_url?
+                                                    {uri:this.props.req.sender_profile_pic_url}:
+                                                    require('@images/app-icon.png')} />:
+                                            <Image style={styles.reqDetailIcon}
+                                                defaultSource={require("@images/app-icon.png")}
+                                                source={this.props.req.receiver_profile_pic_url?
+                                                    {uri:this.props.req.receiver_profile_pic_url}:
+                                                    require('@images/app-icon.png')} />
+                                        }
+                                        <View>
+                                            <Text style={styles.reqDetailText}>
+                                                {this.props.req.type == 1?'Recipient':'Name'}
+                                                : {this.props.req.type == 1?this.props.req.receiver_display_name:
+                                                this.props.req.sender_display_name}</Text>
+                                            <Text selectable={true} style={styles.reqDetailText}>
+                                                Email: {this.props.req.type == 1?this.props.req.receiver_email:
+                                                this.props.req.sender_email}</Text>
+                                        </View>
                                     </View>
                                 </View>:<View>
+                                    <View style={styles.reqDetailRow}>
+                                        {this.props.req.type == 1?
+                                            <Image style={styles.reqDetailIcon}
+                                                defaultSource={require("@images/app-icon.png")}
+                                                source={this.props.req.sender_profile_pic_url?
+                                                    {uri:this.props.req.sender_profile_pic_url}:
+                                                    require('@images/app-icon.png')} />:
+                                            <Image style={styles.reqDetailIcon}
+                                                defaultSource={require("@images/app-icon.png")}
+                                                source={this.props.req.receiver_profile_pic_url?
+                                                    {uri:this.props.req.receiver_profile_pic_url}:
+                                                    require('@images/app-icon.png')} />
+                                        }
+                                        <View>
+                                            <Text style={styles.reqDetailText}>
+                                                {this.props.req.type == 1?'Recipient':'Name'}
+                                                : {this.props.req.type == 1?this.props.req.receiver_display_name:
+                                                this.props.req.sender_display_name}</Text>
+                                            <Text selectable={true} style={styles.reqDetailText}>
+                                                Email: {this.props.req.type == 1?this.props.req.receiver_email:
+                                                this.props.req.sender_email}</Text>
+                                        </View>
+                                    </View>
                                     <View style={styles.reqDetailRow}>
                                         <Text style={styles.reqDetailLabel}>Amount</Text>
                                         <Text selectable={true} style={styles.reqDetailText}>
@@ -139,26 +172,36 @@ export default class RequestTab extends Component {
                                             .format('MMM DD, YYYY hh:mm A')}</Text>
                                     </View>
                                 </View>}
+
                             </View>
                             {this.props.outgoing?
                                 <Button style={[styles.reqBtn,{backgroundColor: '#D04100',width: '100%'}]}
                                     textstyle={styles.reqBtnLabel}
                                     onPress={()=>this.setState({cancelRequest:true,visible:false})}
-                                    value='Cancel Request' />:(this.state.reject?
+                                    value='Cancel Request' />:((this.state.reject || this.state.accept)?
                                     <View style={{flexDirection:'row'}}>
                                         <Button style={[styles.reqBtn,{backgroundColor: '#EFEFEF'}]}
                                             textstyle={[styles.reqBtnLabel,{color:'#333'}]}
-                                            onPress={()=>this.setState({reject: false, note: ''})}
+                                            onPress={()=>this.setState({reject: false, accept: false, note: ''})}
                                             value='Cancel' />
                                         <Button style={styles.reqBtn}
                                             textstyle={styles.reqBtnLabel}
-                                            onPress={()=>this.setState({reject: false,visible:false},
-                                                ()=>this.props.reject(this.props.req.id,
-                                                this.props.req.sender_email, this.state.note))}
+                                            onPress={()=>{
+                                                if(this.state.reject)
+                                                    this.props.reject(this.props.req.id,
+                                                        this.props.req.sender_email,
+                                                        this.state.note);
+                                                else if(this.state.accept)
+                                                    this.props.accept(this.props.req,
+                                                        this.state.note);
+                                                this.setState({reject: false,
+                                                    accept: false, visible:false});
+                                            }}
                                             value='Send' />
                                     </View>:<View style={{flexDirection:'row'}}>
                                         <Button style={styles.reqBtn}
                                             textstyle={styles.reqBtnLabel}
+                                            onPress={()=>this.setState({accept: true})}
                                             value='Accept' />
                                         <Button style={[styles.reqBtn,{backgroundColor: '#EFEFEF'}]}
                                             textstyle={[styles.reqBtnLabel,{color:'#333'}]}
@@ -357,7 +400,8 @@ const styles = StyleSheet.create({
         fontSize: 20,
         color: '#d55',
         alignSelf: 'center',
-        marginBottom: 15,
+        marginTop: 5,
+        marginBottom: 10,
     },
     requestRowNote:{
         fontSize: 13,

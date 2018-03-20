@@ -96,7 +96,7 @@ class Home extends Component<{}> {
                         <Text style={styles.recentTxnLabel}>Recent Transactions</Text>
                         {
                             this.props.txns.map(txn=>
-                                <TransactionTab txn={txn} key={'_txn_'+txn.transaction_id} />
+                                <TransactionTab txn={txn} key={'_txn_'+txn.transaction_id+'_'+Math.random().toString(36).substr(2, 5)} />
                             )
                         }
                         {this.props.txns.length == 0?<Text style={styles.txnListEmpty}>
