@@ -5,6 +5,8 @@ export const LOGOUT = 'LOGOUT';
 export const LOADING_START = 'LOADING_START';
 export const LOADING_END = 'LOADING_END';
 
+export const FORGOT_PASSWORD = 'FORGOT_PASSWORD';
+
 export const LOGIN_SUCCESS = 'LOGIN_SUCCESS';
 export const LOGIN_FAILED = 'LOGIN_FAILED';
 

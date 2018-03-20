@@ -4,6 +4,7 @@
 import { StackNavigator } from 'react-navigation';
 import Dashboard from '@containers/Dashboard';
 import Login from '@containers/Login';
+import ForgotPassword from '@containers/ForgotPassword';
 
 const routes = {
     Login: {
@@ -11,6 +12,9 @@ const routes = {
     },
     Dashboard: {
         screen: Dashboard,
+    },
+    ForgotPassword: {
+        screen: ForgotPassword,
     }
 };
 

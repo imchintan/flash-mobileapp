@@ -45,6 +45,40 @@ export const init = () => {
     }
 }
 
+export const forgotPassword = (email) => {
+    return (dispatch,getState) => {
+        dispatch({ type: types.LOADING_START });
+        apis.forgotPassword(email).then((d)=>{
+            if(d.rc == 1){
+                dispatch({
+                    type: types.FORGOT_PASSWORD,
+                    payload: {
+                        successMsg: "We sent you an email with a link to reset your password.\n\nPlease check your email inbox/spam folder.",
+                        loading:false
+                    }
+                });
+            }else{
+                dispatch({
+                    type: types.FORGOT_PASSWORD,
+                    payload: {
+                        errorMsg:d.reason,
+                        loading:false
+                    }
+                });
+            }
+
+        }).catch(e=>{
+            dispatch({
+                type: types.FORGOT_PASSWORD,
+                payload: {
+                    errorMsg: e.message,
+                    loading:false
+                }
+            });
+        })
+    }
+}
+
 export const login = (email,password) => {
     return (dispatch,getState) => {
         dispatch({ type: types.LOADING_START });
