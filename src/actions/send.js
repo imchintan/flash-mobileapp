@@ -15,7 +15,7 @@ export const rawTransaction = (amount=0, receiver_public_address='', memo='',
         let params = getState().params;
         apis.rawTransaction(params.profile.auth_version, params.profile.sessionToken,
             params.currencyType, amount, receiver_public_address, memo).then((d)=>{
-            if(d.rc == 2){
+            if(d.rc !== 1){
                 dispatch({
                     type: types.RAW_TRANSACTION,
                     payload: {
@@ -50,7 +50,7 @@ export const addTransaction = (amount, ip, memo, receiver_bare_uid, receiver_id,
         apis.addTransaction(params.profile.auth_version, params.profile.sessionToken,
             params.currencyType, amount, ip, memo, receiver_bare_uid, receiver_id,
             receiver_public_address, transaction_hex, transaction_id).then((d)=>{
-            if(d.rc == 2){
+            if(d.rc !== 1){
                 dispatch({
                     type: types.ADD_TRANSACTION,
                     payload: {
@@ -83,7 +83,7 @@ export const transactionById = (id, index, amount, ip, memo, receiver_bare_uid,
         apis.transactionById(params.profile.auth_version, params.profile.sessionToken,
             params.currencyType, amount, ip, memo, receiver_bare_uid, receiver_id,
             receiver_public_address, transaction_hex, transaction_id).then((d)=>{
-            if(d.rc == 2){
+            if(d.rc !== 1){
                 dispatch({
                     type: types.TRANSACTION_BY_ID,
                     payload: {
@@ -93,7 +93,6 @@ export const transactionById = (id, index, amount, ip, memo, receiver_bare_uid,
                 });
             }else{
                 if(d.txn.status > 0){
-                    console.log(d);
                     dispatch({
                         type: types.TRANSACTION_BY_ID,
                         payload: {
@@ -148,7 +147,7 @@ export const addRoster = (bare_uid='') => {
         let params = getState().params;
         apis.addRoster(params.profile.auth_version,
             params.profile.sessionToken, bare_uid).then((d)=>{
-            if(d.rc == 2){
+            if(d.rc !== 1){
                 dispatch({
                     type: types.ADD_ROASTER,
                     payload: {

@@ -72,13 +72,14 @@ class ActivityTab extends React.Component {
     constructor(props) {
         super(props);
         this.state ={
-            showTab: false // Android issue: Component not load  
+            showTab: false // Android issue: Component not load
         }
         this.confirmDate = this.confirmDate.bind(this);
         this.openCalendar = this.openCalendar.bind(this);
     }
 
     componentDidMount(){
+        this.refresh();
         setTimeout(()=>this.setState({showTab:true}),500);
     }
 
@@ -138,8 +139,8 @@ class ActivityTab extends React.Component {
                         />
                     </HeaderRight>
                 </Header>
-                {this.state.showTab?<TabNav />:<View />}
-                <Calendar
+                {this.state.showTab?<TabNav />:null}
+                {this.state.showTab?<Calendar
                     i18n="en"
                     ref={(calendar) => {this.calendar = calendar;}}
                     customI18n={customI18n}
@@ -150,7 +151,7 @@ class ActivityTab extends React.Component {
                     startDate={this.props.date_from}
                     endDate={this.props.date_to}
                     onConfirm={this.confirmDate}
-                />
+                />:null}
             </View>
         );
     }
@@ -160,7 +161,7 @@ function mapStateToProps({params}) {
   return {
       date_from: params.date_from,
       date_to: params.date_to,
-      minDate: moment(params.profile.created_ts).format('YYYYMM01000000'),
+      minDate: moment(params.profile.created_ts).format('YYYYMMDD000000'),
       maxDate: moment().format('YYYYMMDD235959')
   };
 }

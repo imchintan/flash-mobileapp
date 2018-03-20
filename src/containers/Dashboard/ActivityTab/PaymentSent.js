@@ -6,12 +6,14 @@ import React, { Component } from 'react';
 import {
     View,
     Text,
-    Image,
     FlatList
 } from 'react-native';
 import {
+    Loader,
+    Button,
     TransactionTab
 } from '@components';
+import moment from 'moment-timezone';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ActionCreators } from '@actions';
@@ -28,26 +30,41 @@ class PaymentSent extends Component<{}> {
         this.state = {};
     }
 
-    componentDidMount(){
-        this.props.getSentTransactions();
-    }
-
     render() {
         return (
-            <FlatList
-                style={styles.txnList}
-                showsVerticalScrollIndicator={false}
-                data={this.props.txns}
-                keyExtractor={(txn, index) => (index+'_'+txn.transaction_id)}
-                onEndReachedThreshold={2}
-                onEndReached={()=>(this.props.txns.length < this.props.total_txns) &&
-                        this.props.getSentTransactions(this.props.txns.length)}
-                renderItem={({item, index})=>{
-                    return(
-                        <TransactionTab txn={item} style={[!index && {marginTop:10}]} />
-                    );
-                }}
-            />
+            <View style={{flex:1}}>
+                <FlatList
+                    style={styles.txnList}
+                    showsVerticalScrollIndicator={false}
+                    data={this.props.txns}
+                    keyExtractor={(txn, index) => (index+'_'+txn.transaction_id)}
+                    onEndReachedThreshold={2}
+                    onEndReached={()=>(this.props.txns.length < this.props.total_txns) &&
+                            this.props.getSentTransactions(this.props.txns.length)}
+                    renderItem={({item, index})=>{
+                        return(
+                            <TransactionTab txn={item} style={[!index && {marginTop:10}]} />
+                        );
+                    }}
+                    ListEmptyComponent={()=>{
+                        return(
+                            <View>
+                                <Text style={styles.txnListEmpty}>
+                                    You have other transactions before this date range.
+                                    Please click Show All Activity to view.
+                                </Text>
+                                <Button
+                                    onPress={()=>this.props.updateTransactionReportDate(this.props.minDate,
+                                        this.props.maxDate)}
+                                    style={styles.txnShowAllBtn}
+                                    textstyle={styles.txnShowAllBtnText}
+                                    value='Show All Activity' />
+                            </View>
+                        )
+                    }}
+                />
+                <Loader show={this.props.loading} />
+            </View>
         );
     }
 }
@@ -55,6 +72,9 @@ function mapStateToProps({params}) {
     return {
         txns: params.sentTxns || [],
         total_txns: params.sentTxns_total || 0,
+        loading: params.sentTxns_loading || false,
+        minDate: moment(params.profile.created_ts),
+        maxDate: moment()
     };
 }
 

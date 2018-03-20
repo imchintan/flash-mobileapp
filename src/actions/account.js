@@ -3,7 +3,7 @@ import {
 } from 'react-native';
 import * as types from '@actions/types'
 import apis from '@flashAPIs'
-import { satoshiToFlash, flashToUSD, flashToBTC } from '@lib/commonFN';
+import { satoshiToFlash, flashToUSD, flashToBTC } from '@lib/utils';
 import { _logout } from '@actions/navigation'
 
 export const getBalance = (refresh = false) => {
@@ -18,7 +18,7 @@ export const getBalance = (refresh = false) => {
                     }
                 });
                 setTimeout(()=>_logout(dispatch),500);
-            }else if(d.rc == 2){
+            }else if(d.rc !== 1){
                 dispatch({
                     type: types.GET_BALANCE,
                     payload: {
@@ -59,7 +59,7 @@ export const getProfile = () => {
     return (dispatch,getState) => {
         let params = getState().params;
         apis.getProfile(params.profile.auth_version, params.profile.sessionToken).then((d)=>{
-            if(d.rc == 2){
+            if(d.rc !== 1){
                 dispatch({
                     type: types.GET_PROFILE,
                     payload: {
@@ -95,7 +95,7 @@ export const getWalletsByEmail = () => {
         let params = getState().params;
         apis.getWalletsByEmail(params.profile.auth_version, params.profile.sessionToken,
             params.profile.email, params.currencyType).then((d)=>{
-            if(d.rc == 2){
+            if(d.rc !== 1){
                 dispatch({
                     type: types.GET_WALLET_ADDRESS,
                     payload: {
@@ -127,7 +127,7 @@ export const searchWallet = (term) => {
         let params = getState().params;
         apis.searchWallet(params.profile.auth_version, params.profile.sessionToken,
             params.currencyType, term).then((d)=>{
-            if(d.rc == 2){
+            if(d.rc !== 1){
                 dispatch({
                     type: types.SEARCH_WALLET,
                     payload: {

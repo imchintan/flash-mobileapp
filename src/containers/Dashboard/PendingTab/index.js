@@ -79,6 +79,7 @@ class PendingTab extends React.Component {
     }
 
     componentDidMount(){
+        this.refresh();
         setTimeout(()=>this.setState({showTab:true}),500);
     }
 
@@ -117,11 +118,11 @@ class PendingTab extends React.Component {
             }}>
                 <Header>
                     <Text style={{
-                            alignSelf: 'center',
-                            width: '100%',
-                            textAlign: 'center',
-                            fontSize: 16,
-                            color: '#FFF',
+                        alignSelf: 'center',
+                        width: '100%',
+                        textAlign: 'center',
+                        fontSize: 16,
+                        color: '#FFF',
                     }}>
                         <Text onPress={this.openCalendar} style={{fontWeight: '600'}}>
                         {moment(this.props.date_from).format('MMM DD, YYYY')} - {moment(this.props.date_to).format('MMM DD, YYYY')}  </Text>
@@ -138,8 +139,8 @@ class PendingTab extends React.Component {
                         />
                     </HeaderRight>
                 </Header>
-                {this.state.showTab?<TabNav />:<View />}
-                <Calendar
+                {this.state.showTab?<TabNav />:null}
+                {this.state.showTab?<Calendar
                     i18n="en"
                     ref={(calendar) => {this.calendar = calendar;}}
                     customI18n={customI18n}
@@ -150,7 +151,7 @@ class PendingTab extends React.Component {
                     startDate={this.props.date_from}
                     endDate={this.props.date_to}
                     onConfirm={this.confirmDate}
-                />
+                />:null}
             </View>
         );
     }

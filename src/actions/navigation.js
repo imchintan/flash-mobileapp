@@ -40,7 +40,6 @@ export const init = () => {
             dispatch({ type: types.LOADING_END });
         }
         utils.publicIP().then(ip => {
-            console.log(ip);
             dispatch({ type: types.SET_PUBLIC_IP, ip });
         });
     }
@@ -85,7 +84,7 @@ export const login = (email,password) => {
 export const getMyWallets = (profile,password) => {
     return (dispatch,getState) => {
         apis.getMyWallets(profile.auth_version, profile.sessionToken).then((d)=>{
-            if(d.rc == 2){
+            if(d.rc !== 1){
                 dispatch({
                     type: types.GET_MY_WALLETS,
                     payload: {
@@ -103,10 +102,12 @@ export const getMyWallets = (profile,password) => {
                 decryptWallets(dispatch, profile, d.my_wallets, profile.auth_version, 'Maulik123');
             }
         }).catch(e=>{
+            console.log(e.stack);
             dispatch({
                 type: types.GET_MY_WALLETS,
                 payload: {
                     errorMsg: e.message,
+                    stack: e.stack,
                 }
             });
         })

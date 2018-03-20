@@ -36,7 +36,6 @@ class Send extends Component<{}> {
 
     componentWillReceiveProps(nextProps){
         if(nextProps){
-            console.log('nextProps.sendTxnSuccess', nextProps.sendTxnSuccess);
             if(nextProps.sendTxnSuccess){
                 this.setState({sendTxnSuccess:nextProps.sendTxnSuccess, visibleMsg: true});
                 this.props.resetMessages();

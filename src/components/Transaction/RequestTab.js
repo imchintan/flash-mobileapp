@@ -4,6 +4,7 @@ import {
     Platform,
     View,
     Text,
+    TextInput,
     Image,
     TouchableOpacity,
     Modal,
@@ -39,16 +40,22 @@ export default class RequestTab extends Component {
                         <Image style={styles.reqIcon}
                             defaultSource={require("@images/app-icon.png")}
                             source={this.props.req.sender_profile_pic_url?
-                                {uri:this.props.req.sender_profile_pic_url}:require("@images/app-icon.png")} />:
+                                {uri:this.props.req.sender_profile_pic_url}:
+                                require("@images/app-icon.png")} />:
                         <Image style={styles.reqIcon}
                             defaultSource={require("@images/app-icon.png")}
                             source={this.props.req.receiver_profile_pic_url?
-                                {uri:this.props.req.receiver_profile_pic_url}:require("@images/app-icon.png")} />
+                                {uri:this.props.req.receiver_profile_pic_url}:
+                                require("@images/app-icon.png")} />
                     }
                     <View style={styles.reqDetail}>
-                        <Text numberOfLines={1} style={styles.reqAmount}>{this.props.req.type == 1?'+':'-'} {this.props.req.amount}
-                        <Text style={styles.reqRecvFrom}> {this.props.req.type == 1?'to':'from'} {this.props.req.type == 1?this.props.req.receiver_display_name:this.props.req.sender_display_name}</Text></Text>
-                        <Text style={styles.reqDateTime}> {moment(this.props.req.created_ts).format('MMM DD, YYYY hh:mm A')}</Text>
+                        <Text numberOfLines={1} style={styles.reqAmount}>
+                            {this.props.req.type == 1?'+':'-'} {this.props.req.amount}
+                        <Text style={styles.reqRecvFrom}> {this.props.req.type == 1?'to ':'from '}
+                            {this.props.req.type == 1?this.props.req.receiver_display_name:
+                            this.props.req.sender_display_name}</Text></Text>
+                        <Text style={styles.reqDateTime}> {moment(this.props.req.created_ts)
+                            .format('MMM DD, YYYY hh:mm A')}</Text>
                     </View>
                     <Icon style={styles.reqDetailArrow} name='angle-right' />
                 </TouchableOpacity>
@@ -59,8 +66,13 @@ export default class RequestTab extends Component {
                     <View style={styles.reqDetailModal}>
                         <View style={styles.reqDetailBox}>
                             <View style={styles.reqDetailHeader}>
-                                <Text style={styles.reqDetailTitle}>Request Details</Text>
-                                <Icon style={styles.reqDetailCloseIcon} onPress={()=>this.setState({visible:false})} name='close' />
+                                <Text style={styles.reqDetailTitle}>
+                                    {this.state.reject?'Reject Request':'Request Details'}
+                                </Text>
+                                <Icon style={styles.reqDetailCloseIcon}
+                                    onPress={()=>this.setState({visible:false,
+                                        reject: false, note: ''})}
+                                    name='close' />
                             </View>
                             <View style={styles.reqDetailBody}>
                                 <View style={styles.reqDetailRow}>
@@ -68,50 +80,92 @@ export default class RequestTab extends Component {
                                         <Image style={styles.reqDetailIcon}
                                             defaultSource={require("@images/app-icon.png")}
                                             source={this.props.req.sender_profile_pic_url?
-                                                {uri:this.props.req.sender_profile_pic_url}:require('@images/app-icon.png')} />:
+                                                {uri:this.props.req.sender_profile_pic_url}:
+                                                require('@images/app-icon.png')} />:
                                         <Image style={styles.reqDetailIcon}
                                             defaultSource={require("@images/app-icon.png")}
                                             source={this.props.req.receiver_profile_pic_url?
-                                                {uri:this.props.req.receiver_profile_pic_url}:require('@images/app-icon.png')} />
+                                                {uri:this.props.req.receiver_profile_pic_url}:
+                                                require('@images/app-icon.png')} />
                                     }
                                     <View>
-                                        <Text style={styles.reqDetailText}>{this.props.req.type == 1?'Recipient':'Name'}
-                                        : {this.props.req.type == 1?this.props.req.receiver_display_name:this.props.req.sender_display_name}</Text>
-                                        <Text selectable={true} style={styles.reqDetailText}>Email: {this.props.req.type == 1?this.props.req.receiver_email:this.props.req.sender_email}</Text>
+                                        <Text style={styles.reqDetailText}>
+                                            {this.props.req.type == 1?'Recipient':'Name'}
+                                            : {this.props.req.type == 1?this.props.req.receiver_display_name:
+                                            this.props.req.sender_display_name}</Text>
+                                        <Text selectable={true} style={styles.reqDetailText}>
+                                            Email: {this.props.req.type == 1?this.props.req.receiver_email:
+                                            this.props.req.sender_email}</Text>
                                     </View>
                                 </View>
-                                <View style={styles.reqDetailRow}>
-                                    <Text style={styles.reqDetailLabel}>Amount</Text>
-                                    <Text selectable={true} style={styles.reqDetailText}>{this.props.req.amount.toFixed(2)} FLASH</Text>
-                                </View>
-                                <View style={styles.reqDetailRow}>
-                                    <Text style={styles.reqDetailLabel}>Status</Text>
-                                    <Text selectable={true} style={styles.reqDetailText}>{this.props.req.status == 0?(this.props.outgoing?'Awaiting Acceptance':'Pending'):(
-                                        this.props.req.status == 1?'Confirmed':'Failed'
-                                    )}</Text>
-                                </View>
-                                <View style={styles.reqDetailRow}>
+                                {this.state.reject?<Icon style={styles.reqDownArrow} name='arrow-down'/>:null}
+                                {this.state.reject?<View style={styles.reqDetailRow}>
                                     <Text style={styles.reqDetailLabel}>Note</Text>
-                                    <Text selectable={true} style={styles.reqDetailTextWithBox}>{this.props.req.note || ''}</Text>
-                                </View>
-                                <View style={styles.reqDetailRow}>
-                                    <Text style={styles.reqDetailLabel}>Date/Time</Text>
-                                    <Text selectable={true} style={styles.reqDetailText}>{moment(this.props.req.created_ts).format('MMM DD, YYYY hh:mm A')}</Text>
-                                </View>
+                                    <View>
+                                        <TextInput
+                                            style={styles.reqDetailTextWithBox}
+                                            multiline = {true}
+                                            numberOfLines = {4}
+                                            placeholder={'Enter note (optional)'}
+                                            underlineColorAndroid='transparent'
+                                            value={this.state.note || ''}
+                                            onChangeText={(note) => note.length <= 50 && this.setState({note})}
+                                        />
+                                        <Text style={styles.requestRowNote}>Max Characters 50</Text>
+                                    </View>
+                                </View>:<View>
+                                    <View style={styles.reqDetailRow}>
+                                        <Text style={styles.reqDetailLabel}>Amount</Text>
+                                        <Text selectable={true} style={styles.reqDetailText}>
+                                            {this.props.req.amount.toFixed(2)} FLASH</Text>
+                                    </View>
+                                    <View style={styles.reqDetailRow}>
+                                        <Text style={styles.reqDetailLabel}>Status</Text>
+                                        <Text selectable={true} style={styles.reqDetailText}>
+                                            {this.props.req.status == 0?(this.props.outgoing?
+                                            'Awaiting Acceptance':'Pending'):
+                                            (this.props.req.status == 1?'Confirmed':'Failed'
+                                        )}</Text>
+                                    </View>
+                                    <View style={styles.reqDetailRow}>
+                                        <Text style={styles.reqDetailLabel}>Note</Text>
+                                        <Text selectable={true} style={styles.reqDetailTextWithBox}>
+                                            {this.props.req.note || ''}</Text>
+                                    </View>
+                                    <View style={styles.reqDetailRow}>
+                                        <Text style={styles.reqDetailLabel}>Date/Time</Text>
+                                        <Text selectable={true} style={styles.reqDetailText}>
+                                            {moment(this.props.req.created_ts)
+                                            .format('MMM DD, YYYY hh:mm A')}</Text>
+                                    </View>
+                                </View>}
                             </View>
                             {this.props.outgoing?
                                 <Button style={[styles.reqBtn,{backgroundColor: '#D04100',width: '100%'}]}
                                     textstyle={styles.reqBtnLabel}
                                     onPress={()=>this.setState({cancelRequest:true,visible:false})}
-                                    value='Cancel Request' />:
-                                <View style={{flexDirection:'row'}}>
-                                    <Button style={styles.reqBtn}
-                                    textstyle={styles.reqBtnLabel}
-                                    value='Accept' />
-                                    <Button style={[styles.reqBtn,{backgroundColor: '#EFEFEF'}]}
-                                    textstyle={[styles.reqBtnLabel,{color:'#333'}]}
-                                    value='Reject' />
-                                </View>
+                                    value='Cancel Request' />:(this.state.reject?
+                                    <View style={{flexDirection:'row'}}>
+                                        <Button style={[styles.reqBtn,{backgroundColor: '#EFEFEF'}]}
+                                            textstyle={[styles.reqBtnLabel,{color:'#333'}]}
+                                            onPress={()=>this.setState({reject: false, note: ''})}
+                                            value='Cancel' />
+                                        <Button style={styles.reqBtn}
+                                            textstyle={styles.reqBtnLabel}
+                                            onPress={()=>this.setState({reject: false,visible:false},
+                                                ()=>this.props.reject(this.props.req.id,
+                                                this.props.req.sender_email, this.state.note))}
+                                            value='Send' />
+                                    </View>:<View style={{flexDirection:'row'}}>
+                                        <Button style={styles.reqBtn}
+                                            textstyle={styles.reqBtnLabel}
+                                            value='Accept' />
+                                        <Button style={[styles.reqBtn,{backgroundColor: '#EFEFEF'}]}
+                                            textstyle={[styles.reqBtnLabel,{color:'#333'}]}
+                                            onPress={()=>this.setState({reject: true})}
+                                            value='Reject' />
+                                    </View>
+                                )
                             }
                         </View>
                     </View>
@@ -298,5 +352,16 @@ const styles = StyleSheet.create({
     reqBtnLabel:{
         fontSize: 16,
         fontWeight: '500'
-    }
+    },
+    reqDownArrow:{
+        fontSize: 20,
+        color: '#d55',
+        alignSelf: 'center',
+        marginBottom: 15,
+    },
+    requestRowNote:{
+        fontSize: 13,
+        paddingHorizontal: 5,
+        color: '#9B9B9B'
+    },
 });

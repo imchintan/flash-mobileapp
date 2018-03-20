@@ -4,18 +4,24 @@ import {
     Platform,
     View,
     Text,
-    ActivityIndicator
+    ActivityIndicator,
+    ViewPropTypes,
 } from 'react-native';
+import PropTypes from "prop-types";
+
 export default class Loader extends Component {
     constructor(props) {
         super(props);
         this.state = {};
     }
+    static defaultProps = {
+        transparent: false,
+    }
 
     render() {
         if(this.props.show)
             return (
-                <View style={styles.container}>
+                <View {...this.props} style={[styles.container, this.props.transparent && {backgroundColor: 'transparent'}]}>
                     <View style={[styles.loader,this.props.vertical === false && {flexDirection: 'row'}]}>
                         <ActivityIndicator size={this.props.vertical === false?"small":"large"} color="#00AFFD" />
                         {this.props.text?<Text style={[styles.loaderText,this.props.vertical === false && {paddingTop: 0, paddingLeft: 5,}]}>{this.props.text}</Text>:null}
@@ -25,6 +31,11 @@ export default class Loader extends Component {
         return null;
     }
 }
+
+Loader.propTypes = {
+	...ViewPropTypes,
+	transparent: PropTypes.bool,
+};
 
 const styles = StyleSheet.create({
     container:{

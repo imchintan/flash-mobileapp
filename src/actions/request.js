@@ -11,7 +11,7 @@ export const addMoneyRequest = (amount=0, bare_uid='', to='', note='') => {
         let params = getState().params;
         apis.addMoneyRequest(params.profile.auth_version, params.profile.sessionToken,
             params.currencyType, amount, bare_uid, to, note).then((d)=>{
-            if(d.rc == 2){
+            if(d.rc !== 1){
                 dispatch({
                     type: types.ADD_MONEY_REQUEST,
                     payload: {
@@ -48,7 +48,7 @@ export const markCancelledMoneyRequests = (request_id=0, receiver_bare_uid='') =
         let params = getState().params;
         apis.markCancelledMoneyRequests(params.profile.auth_version, params.profile.sessionToken,
             params.currencyType, request_id, receiver_bare_uid).then((d)=>{
-            if(d.rc == 2){
+            if(d.rc !== 1){
                 dispatch({
                     type: types.MARK_CANCELLED_MONEY_REQUESTS,
                     payload: {
@@ -78,12 +78,48 @@ export const markCancelledMoneyRequests = (request_id=0, receiver_bare_uid='') =
     }
 }
 
+export const markRejectedMoneyRequests = (request_id, sender_bare_uid, note_processing='') => {
+    return (dispatch,getState) => {
+        dispatch({ type: types.LOADING_START });
+        let params = getState().params;
+        apis.markRejectedMoneyRequests(params.profile.auth_version, params.profile.sessionToken,
+            params.currencyType, request_id, sender_bare_uid, note_processing).then((d)=>{
+            if(d.rc == 1){
+                dispatch({
+                    type: types.MARK_REJECTED_MONEY_REQUESTS,
+                    payload: {
+                        successMsg: 'You have rejected a request.',
+                        loading: false,
+                    }
+                });
+                dispatch(updateRequestReportDate(params.pending_date_from,params.pending_date_to));
+            }else{
+                dispatch({
+                    type: types.MARK_REJECTED_MONEY_REQUESTS,
+                    payload: {
+                        errorMsg:d.reason,
+                        loading: false,
+                    }
+                });
+            }
+        }).catch(e=>{
+            dispatch({
+                type: types.MARK_CANCELLED_MONEY_REQUESTS,
+                payload: {
+                    errorMsg: e.message,
+                    loading: false,
+                }
+            });
+        })
+    }
+}
+
 export const rosterOperation = (op=1, to='') => {
     return (dispatch,getState) => {
         let params = getState().params;
         apis.rosterOperation(params.profile.auth_version,
             params.profile.sessionToken, op, to).then((d)=>{
-            if(d.rc == 2){
+            if(d.rc !== 1){
                 dispatch({
                     type: types.ROSTER_OPERATION,
                     payload: {
@@ -136,7 +172,7 @@ export const getIncomingRequests = (start=0) => {
         let date_to = params.pending_date_to.format('YYYY-MM-DDTHH:mm:00.000\\Z');
         apis.getRequests(params.profile.auth_version, params.profile.sessionToken,
             params.currencyType, date_from, date_to, 2, start).then((d)=>{
-            if(d.rc == 2){
+            if(d.rc !== 1){
                 dispatch({
                     type: types.GET_INCOMING_REQUESTS,
                     payload: {
@@ -170,7 +206,7 @@ export const getOutgoingRequests = (start=0) => {
         let date_to = params.pending_date_to.format('YYYY-MM-DDTHH:mm:00.000\\Z');
         apis.getRequests(params.profile.auth_version, params.profile.sessionToken,
             params.currencyType, date_from, date_to, 1, start).then((d)=>{
-            if(d.rc == 2){
+            if(d.rc !== 1){
                 dispatch({
                     type: types.GET_OUTGOING_REQUESTS,
                     payload: {

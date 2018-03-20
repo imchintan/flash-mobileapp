@@ -21,6 +21,7 @@ import {
     TransactionTab,
     Icon,
     Button,
+    Loader,
     Toast,
     QRCode
 } from '@components';
@@ -28,7 +29,7 @@ import moment from 'moment-timezone';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ActionCreators } from '@actions';
-import { satoshiToFlash } from '@lib/commonFN';
+import { satoshiToFlash, flashNFormatter } from '@lib/utils';
 
 const { height, width } = Dimensions.get('window');
 const styles = require("@styles/home");
@@ -69,7 +70,6 @@ class Home extends Component<{}> {
                             <Image style={{width:35,height:35, borderRadius: 20}}
                                 defaultSource={require('@images/user-profile-icon-white.png')}
                                 source={require('@images/user-profile-icon-white.png')}
-                                // source={{uri:'https://content-static.upwork.com/uploads/2014/10/01073427/profilephoto1.jpg'}}
                             />
                         </TouchableOpacity>
                     </HeaderLeft>
@@ -88,17 +88,21 @@ class Home extends Component<{}> {
                                 <Icon name='refresh' /> <Text style={styles.balanceLabelText}>Your Balance</Text>
                             </Text>
                         </TouchableOpacity>
-                        <Text style={styles.balanceText}>{satoshiToFlash(this.props.balance)} FLASH</Text>
+                        <Text style={styles.balanceText}>{flashNFormatter(satoshiToFlash(this.props.balance),2)} FLASH</Text>
                         <Text style={styles.otherBalanceText}>≈ {this.props.balance_in_btc} BTC</Text>
                         <Text style={styles.otherBalanceText}>≈ {this.props.balance_in_usd} USD</Text>
                     </View>
-                    <View>
+                    <View style={styles.txnList}>
                         <Text style={styles.recentTxnLabel}>Recent Transactions</Text>
                         {
                             this.props.txns.map(txn=>
                                 <TransactionTab txn={txn} key={'_txn_'+txn.transaction_id} />
                             )
                         }
+                        {this.props.txns.length == 0?<Text style={styles.txnListEmpty}>
+                            There is no recent transactions.
+                        </Text>:null}
+                        <Loader transparent show={this.props.loading}/>
                     </View>
                 </Content>
                 <Modal
@@ -129,7 +133,7 @@ class Home extends Component<{}> {
 
 function mapStateToProps({params}) {
     return {
-        loading: params.loading,
+        loading: params.recentTxns_loading || false,
         isLoggedIn: params.isLoggedIn,
         errorMsg: params.errorMsg || null,
         successMsg: params.successMsg || null,

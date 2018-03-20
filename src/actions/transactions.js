@@ -32,7 +32,7 @@ export const getRecentTransactions = () => {
         let params = getState().params;
         apis.getTransactions(params.profile.auth_version, params.profile.sessionToken,
             params.currencyType, params.profile.created_ts).then((d)=>{
-            if(d.rc == 2){
+            if(d.rc !== 1){
                 dispatch({
                     type: types.GET_RECENT_TRANSACTIONS,
                     payload: {
@@ -66,7 +66,7 @@ export const getAllTransactions = (start=0) => {
         let date_to = params.date_to.format('YYYY-MM-DDTHH:mm:00.000\\Z');
         apis.getTransactions(params.profile.auth_version, params.profile.sessionToken,
             params.currencyType, date_from, date_to, 0, start).then((d)=>{
-            if(d.rc == 2){
+            if(d.rc !== 1){
                 dispatch({
                     type: types.GET_ALL_TRANSACTIONS,
                     payload: {
@@ -100,7 +100,7 @@ export const getSentTransactions = (start=0) => {
         let date_to = params.date_to.format('YYYY-MM-DDTHH:mm:00.000\\Z');
         apis.getTransactions(params.profile.auth_version, params.profile.sessionToken,
             params.currencyType, date_from, date_to, 1, start).then((d)=>{
-            if(d.rc == 2){
+            if(d.rc !== 1){
                 dispatch({
                     type: types.GET_SENT_TRANSACTIONS,
                     payload: {
@@ -134,7 +134,7 @@ export const getReceivedTransactions = (start=0) => {
         let date_to = params.date_to.format('YYYY-MM-DDTHH:mm:00.000\\Z');
         apis.getTransactions(params.profile.auth_version, params.profile.sessionToken,
             params.currencyType, date_from, date_to, 2, start).then((d)=>{
-            if(d.rc == 2){
+            if(d.rc !== 1){
                 dispatch({
                     type: types.GET_RECEIVED_TRANSACTIONS,
                     payload: {

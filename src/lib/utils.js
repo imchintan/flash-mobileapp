@@ -6,6 +6,8 @@ import Wallet from './wallet';
 import Premium from 'Premium';
 import nacl from 'tweetnacl';
 
+var Buffer = require('buffer').Buffer;
+
 export const publicIP = async endpoint => {
   const response = await fetch(endpoint || 'https://api.ipify.org');
   const ip = response.text();
@@ -94,7 +96,7 @@ export const flashNFormatter = (num, digits) => {
         { value: 1E18, symbol: "E" }
     ];
     let rx = /\.0+$|(\.[0-9]*[1-9])0+$/;
-    for (let i = si.length - 1; i > 0; i--) {
+    for (var i = si.length - 1; i > 0; i--) {
         if (num >= si[i].value) break;
     }
     return (num / si[i].value).toFixed(digits).replace(rx, "$1") + si[i].symbol;
@@ -242,6 +244,39 @@ export const encodeBase64 = (arr) => {
         for (i = 0; i < len; i++) s.push(String.fromCharCode(arr[i]));
         return btoa(s.join(''));
     }
+}
+
+const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';
+
+export const btoa = (input = '')  => {
+    let str = input;
+    let output = '';
+    for (let block = 0, charCode, i = 0, map = chars;
+    str.charAt(i | 0) || (map = '=', i % 1);
+    output += map.charAt(63 & block >> 8 - i % 1 * 8)) {
+        charCode = str.charCodeAt(i += 3/4);
+        if (charCode > 0xFF) {
+            throw new Error("'btoa' failed: The string to be encoded contains characters outside of the Latin1 range.");
+        }
+        block = block << 8 | charCode;
+    }
+    return output;
+}
+
+export const atob = (input = '') => {
+    let str = input.replace(/=+$/, '');
+    let output = '';
+    if (str.length % 4 == 1) {
+        throw new Error("'atob' failed: The string to be decoded is not correctly encoded.");
+    }
+    for (let bc = 0, bs = 0, buffer, i = 0;
+        buffer = str.charAt(i++);
+        ~buffer && (bs = bc % 4 ? bs * 64 + buffer : buffer,
+        bc++ % 4) ? output += String.fromCharCode(255 & bs >> (-2 * bc & 6)) : 0
+    ) {
+        buffer = chars.indexOf(buffer);
+    }
+    return output;
 }
 
 /**

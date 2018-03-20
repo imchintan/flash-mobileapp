@@ -74,7 +74,17 @@ const styles = StyleSheet.create({
     qrCodeModalCloseBtn:{
         borderRadius:25,
         marginTop: 20
-    }
+    },
+    txnList: {
+        flex: 1,
+        minHeight: 200,
+    },
+    txnListEmpty: {
+        marginTop: 70,
+        fontSize: 18,
+        padding: 20,
+        textAlign: 'center'
+    },
 });
 
 module.exports = {
