@@ -21,7 +21,8 @@ const login = (state = initialState, action) => {
             return { ...state, loading: false};
 
         case types.LOGIN_SUCCESS:
-            return { ...state, isLoggedIn: true, recentTxns_loading: true,errorMsg: null, ...action.payload || {}};
+        case types.VERIFY_2FA_SUCCESS:
+            return { ...state, isLoggedIn: true, recentTxns_loading: true, errorMsg: null, ...action.payload || {}};
 
         case types.LOGIN_FAILED:
             return { ...state, isLoggedIn: false, ...action.payload || {}};
@@ -83,6 +84,20 @@ const login = (state = initialState, action) => {
         case types.UPDATE_REQUEST_REPORT_DATE:
             return { ...state, ...action.payload,
                 outReqs_loading: true, inReqs_loading: true };
+
+        case types.CONFIRM_2FA_SUCCESS:
+            return { ...state, recovery_obj_2fa: null, loading: false,
+                profile: {...state.profile, totp_enabled: true},
+                successMsg: "Two Phase Authentication has been successfully setup. "+
+                "You will now need to enter the Google authenticator code every time you login."};
+
+        case types.TURN_OFF_2FA_SUCCESS:
+            return { ...state, recovery_obj_2fa: null, loading: false,
+                profile: {...state.profile, totp_enabled: false},
+                successMsg:"Two phase authentication has been turn off successfully"};
+
+        case types.RESET_2FA:
+            return { ...state, recovery_obj_2fa: null};
 
         default:
             return { ...state, ...action.payload || {}};

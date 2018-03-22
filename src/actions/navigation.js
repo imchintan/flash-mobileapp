@@ -5,10 +5,12 @@ import * as types from '@actions/types'
 import apis from '@flashAPIs'
 import Wallet from '@lib/wallet'
 import * as utils from '@lib/utils'
+import { getCoinMarketCapDetail } from '@actions/account';
 
 export const init = () => {
     return async (dispatch,getState) => {
         dispatch({ type: types.LOADING_START });
+        dispatch(getCoinMarketCapDetail());
         let user = await AsyncStorage.getItem('user');
         if(user){
             let payload = {
@@ -84,15 +86,16 @@ export const login = (email,password) => {
         dispatch({ type: types.LOADING_START });
         apis.login(email,password).then((d)=>{
             if(d.rc == 1){
-                AsyncStorage.setItem('user',JSON.stringify(d.profile));
+                if(!d.profile.totp_enabled)AsyncStorage.setItem('user',JSON.stringify(d.profile));
                 dispatch({
-                    type: types.LOGIN_SUCCESS,
+                    type: (!d.profile.totp_enabled)?types.LOGIN_SUCCESS:types.VERIFY_2FA,
                     payload: {
                         profile:d.profile,
+                        password:(!d.profile.totp_enabled)?null:password,
                         loading:false
                     }
                 });
-                dispatch(getMyWallets(d.profile,password));
+                if(!d.profile.totp_enabled)dispatch(getMyWallets(d.profile,password));
             }else{
                 dispatch({
                     type: types.LOGIN_FAILED,
@@ -109,6 +112,46 @@ export const login = (email,password) => {
                 payload: {
                     errorMsg: e.message,
                     loading:false
+                }
+            });
+        })
+    }
+}
+
+export const check2FA = (code) =>{
+    return (dispatch,getState) => {
+        dispatch({ type: types.LOADING_START });
+        let params = getState().params;
+        apis.check2FA(params.profile.auth_version, params.profile.idToken,code)
+        .then((d)=>{
+            if(d.rc == 1){
+                let profile = {...params.profile,...d.profile};
+                let password = params.password;
+                AsyncStorage.setItem('user',JSON.stringify(profile));
+                dispatch({
+                    type: types.VERIFY_2FA_SUCCESS,
+                    payload: {
+                        profile,
+                        password:null,
+                        loading:false
+                    }
+                });
+                dispatch(getMyWallets(profile,password));
+            }else{
+                dispatch({
+                    type: types.VERIFY_2FA_FAILED,
+                    payload: {
+                        errorMsg:d.reason,
+                        loading:false,
+                    }
+                });
+            }
+        }).catch(e=>{
+            dispatch({
+                type: types.VERIFY_2FA_FAILED,
+                payload: {
+                    errorMsg: e.message,
+                    loading:false,
                 }
             });
         })
@@ -133,10 +176,9 @@ export const getMyWallets = (profile,password) => {
                         my_wallets:d.my_wallets
                     }
                 });
-                decryptWallets(dispatch, profile, d.my_wallets, profile.auth_version, 'Maulik123');
+                decryptWallets(dispatch, profile, d.my_wallets, profile.auth_version, password);
             }
         }).catch(e=>{
-            console.log(e.stack);
             dispatch({
                 type: types.GET_MY_WALLETS,
                 payload: {
@@ -156,6 +198,7 @@ export const _logout = async(dispatch) => {
     dispatch({ type: types.LOADING_START });
     await AsyncStorage.clear();
     dispatch({ type: types.LOGOUT });
+    dispatch(getCoinMarketCapDetail());
 }
 
 export const signupSuccess = () => ({

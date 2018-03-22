@@ -34,6 +34,18 @@ const navigation = (state = initialState, action) => {
                 state
             );
 
+        case types.VERIFY_2FA:
+            return AppNavigator.router.getStateForAction(
+                NavigationActions.reset({
+                    index: 0,
+                    actions: [
+                        NavigationActions.navigate({ routeName: 'Verify2FA' }),
+                    ],
+                }),
+                state
+            );
+
+        case types.VERIFY_2FA_SUCCESS:
         case types.LOGIN_SUCCESS:
             return AppNavigator.router.getStateForAction(
                 NavigationActions.reset({

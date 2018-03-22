@@ -10,6 +10,7 @@ import Toast from './Toast';
 import Icon from 'react-native-fa-icons';
 import Calendar from 'react-native-calendar-select';
 import QRCode from 'react-native-qrcode';
+import { Switch } from 'react-native-switch';
 
 module.exports = {
     Container,
@@ -23,5 +24,6 @@ module.exports = {
     Toast,
     Icon,
     Calendar,
-    QRCode
+    QRCode,
+    Switch
 }

@@ -192,3 +192,144 @@ export const searchWallet = (auth_version, sessionToken='',
         });
     });
 }
+
+/**
+ * Start 2FA
+ * @param  {Number} auth_version      [description]
+ * @param  {String} [sessionToken=''] [description]
+ * @return {Promise}                  [description]
+ */
+export const start2FA = (auth_version, sessionToken='') => {
+    return new Promise((resolve,reject) => {
+        fetch(API_URL+'/start-2fa-code',{
+            method: 'POST',
+            body: JSON.stringify({
+                appversion:APP_VERSION,
+                res:RESOURCE,
+            }),
+            headers: {
+               'Content-Type': 'application/json; charset=utf-8',
+               'authorization': sessionToken,
+               'fl_auth_version': auth_version
+            },
+        })
+        .then(async res =>{
+            let _res = await res.text();
+            if(_res.toLowerCase().indexOf("session") == -1){
+                return JSON.parse(_res);
+            }else{
+                return {rc:3,reason:_res};
+            }
+        })
+        .then(json => resolve(json))
+        .catch(e =>{
+            console.log(e);
+            reject('Something went wrong!')
+        });
+    });
+}
+
+/**
+ * Turn off 2FA
+ * @param  {Number} auth_version      [description]
+ * @param  {String} [sessionToken=''] [description]
+ * @return {Promise}                  [description]
+ */
+export const turnOff2FA = (auth_version, sessionToken='') => {
+    return new Promise((resolve,reject) => {
+        fetch(API_URL+'/turn-off-2fa',{
+            method: 'POST',
+            body: JSON.stringify({
+                appversion:APP_VERSION,
+                res:RESOURCE,
+            }),
+            headers: {
+               'Content-Type': 'application/json; charset=utf-8',
+               'authorization': sessionToken,
+               'fl_auth_version': auth_version
+            },
+        })
+        .then(async res =>{
+            let _res = await res.text();
+            if(_res.toLowerCase().indexOf("session") == -1){
+                return JSON.parse(_res);
+            }else{
+                return {rc:3,reason:_res};
+            }
+        })
+        .then(json => resolve(json))
+        .catch(e =>{
+            console.log(e);
+            reject('Something went wrong!')
+        });
+    });
+}
+
+/**
+ * Confirm 2FA
+ * @param  {Number} auth_version      [description]
+ * @param  {String} [sessionToken=''] [description]
+ * @param  {String} code              [description]
+ * @return {Promise}                  [description]
+ */
+export const confirm2FA = (auth_version, sessionToken, code) => {
+    return new Promise((resolve,reject) => {
+        fetch(API_URL+'/confirm-2fa-code',{
+            method: 'POST',
+            body: JSON.stringify({
+                code,
+                appversion:APP_VERSION,
+                res:RESOURCE,
+            }),
+            headers: {
+               'Content-Type': 'application/json; charset=utf-8',
+               'authorization': sessionToken,
+               'fl_auth_version': auth_version
+            },
+        })
+        .then(async res =>{
+            let _res = await res.text();
+            if(_res.toLowerCase().indexOf("session") == -1){
+                return JSON.parse(_res);
+            }else{
+                return {rc:3,reason:_res};
+            }
+        })
+        .then(json => resolve(json))
+        .catch(e =>{
+            console.log(e);
+            reject('Something went wrong!')
+        });
+    });
+}
+
+/**
+ * Check 2FA
+ * @param  {Number} auth_version      [description]
+ * @param  {String} [idToken='']      [description]
+ * @param  {String} code              [description]
+ * @return {Promise}                  [description]
+ */
+export const check2FA = (auth_version, idToken, code) => {
+    return new Promise((resolve,reject) => {
+        fetch(API_URL+'/check-2fa-code',{
+            method: 'POST',
+            body: JSON.stringify({
+                idToken,
+                code,
+                appversion:APP_VERSION,
+                res:RESOURCE,
+            }),
+            headers: {
+               'Content-Type': 'application/json; charset=utf-8',
+               'fl_auth_version': auth_version
+            },
+        })
+        .then(res => res.json())
+        .then(json => resolve(json))
+        .catch(e =>{
+            console.log(e);
+            reject('Something went wrong!')
+        });
+    });
+}

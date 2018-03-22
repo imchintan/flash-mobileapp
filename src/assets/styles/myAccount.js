@@ -39,6 +39,42 @@ const styles = StyleSheet.create({
         fontSize: 16,
         color: '#333'
     },
+    profileSettingRow:{
+        marginBottom: 15,
+        paddingHorizontal: 15,
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+    },
+    profileSettingLabel:{
+        fontSize: 16,
+        color: '#4A4A4A'
+    },
+    profileSettingValue:{
+        fontSize: 18,
+        fontWeight: "500",
+        color: '#333'
+    },
+    setting2faTitle:{
+        marginTop: 10,
+        marginBottom: 5,
+        fontSize: 22,
+        fontWeight: "500",
+        color: '#333'
+    },
+    setting2faNote:{
+        flexDirection: 'row',
+        paddingHorizontal: 15,
+        paddingTop: 5,
+    },
+    setting2faNoteBold:{
+        fontWeight: "500",
+        color: '#333'
+    },
+    setting2faNoteText:{
+        fontSize: 14,
+        color: '#4A4A4A'
+    },
 });
 
 module.exports = {

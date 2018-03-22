@@ -60,25 +60,25 @@ class MyProfile extends Component<{}> {
                     <View style={styles.profileRow}>
                         <Text style={styles.profileRowLabel}>Timezone</Text>
                         <View style={styles.profileRowInputBox}>
-                        <TextInput
-                            editable={false}
-                            underlineColorAndroid='transparent'
-                            style={styles.profileRowInput}
-                            placeholder={'Select your timezone'}
-                            value={this.props.profile.timezone || moment.tz.guess()}
-                        />
+                            <TextInput
+                                editable={false}
+                                underlineColorAndroid='transparent'
+                                style={styles.profileRowInput}
+                                placeholder={'Select your timezone'}
+                                value={this.props.profile.timezone || moment.tz.guess()}
+                            />
                         </View>
                     </View>
                     <View style={styles.profileRow}>
                         <Text style={styles.profileRowLabel}>Phone number</Text>
                         <View style={styles.profileRowInputBox}>
-                        <TextInput
-                            editable={false}
-                            underlineColorAndroid='transparent'
-                            style={styles.profileRowInput}
-                            placeholder={'Enter phone number'}
-                            value={this.props.profile.phone}
-                        />
+                            <TextInput
+                                editable={false}
+                                underlineColorAndroid='transparent'
+                                style={styles.profileRowInput}
+                                placeholder={'Enter phone number'}
+                                value={this.props.profile.phone}
+                            />
                         </View>
                     </View>
                 </View>

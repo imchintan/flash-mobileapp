@@ -103,7 +103,7 @@ export const getWalletsByEmail = () => {
                     }
                 });
             }else if(d.results.length > 0){
-                AsyncStorage.setItem('my_wallets',JSON.stringify(d.my_wallets));
+                AsyncStorage.setItem('wallet_addresses',JSON.stringify(d.results));
                 dispatch({
                     type: types.GET_WALLET_ADDRESS,
                     payload: {
@@ -160,9 +160,10 @@ export const searchWallet = (term, loading=false) => {
 export const getCoinMarketCapDetail = () =>{
     return (dispatch,getState) => {
         let params = getState().params;
-        if(!params.balance) return;
+        if(!params.balance)
+            params.balance = 0;
         AsyncStorage.getItem('coinmarketcapValue',(err,succ)=>{
-            if(!succ) return;
+            if(err || !succ) return;
             let d = JSON.parse(succ);
             dispatch({
                 type: types.GET_COIN_MARKET_CAP_VALUE,
@@ -185,6 +186,106 @@ export const getCoinMarketCapDetail = () =>{
         }).catch(e=>{});
     }
 }
+
+export const start2FA = () =>{
+    return (dispatch,getState) => {
+        dispatch({ type: types.LOADING_START });
+        let params = getState().params;
+        apis.start2FA(params.profile.auth_version, params.profile.sessionToken)
+        .then((d)=>{
+            if(d.rc == 1){
+                let otpUri = decodeURIComponent(d.info.otpUri);
+                let recovery_obj_2fa = {
+                    otpUri,
+                    totp_key: otpUri.split('secret=')[1].substring(0, 16)
+                }
+                dispatch({
+                    type: types.START_2FA,
+                    payload: {
+                        recovery_obj_2fa,
+                        loading:false,
+                    }
+                });
+            }else{
+                dispatch({
+                    type: types.START_2FA,
+                    payload: {
+                        errorMsg:d.reason,
+                        loading:false,
+                    }
+                });
+            }
+        }).catch(e=>{
+            dispatch({
+                type: types.START_2FA,
+                payload: {
+                    errorMsg: e.message,
+                    loading:false,
+                }
+            });
+        })
+    }
+}
+
+export const turnOff2FA = () =>{
+    return (dispatch,getState) => {
+        dispatch({ type: types.LOADING_START });
+        let params = getState().params;
+        apis.turnOff2FA(params.profile.auth_version, params.profile.sessionToken)
+        .then((d)=>{
+            if(d.rc == 1){
+                dispatch({type: types.TURN_OFF_2FA_SUCCESS});
+            }else{
+                dispatch({
+                    type: types.TURN_OFF_2FA_FAILED,
+                    payload: {
+                        errorMsg:d.reason,
+                        loading:false,
+                    }
+                });
+            }
+        }).catch(e=>{
+            dispatch({
+                type: types.TURN_OFF_2FA_FAILED,
+                payload: {
+                    errorMsg: e.message,
+                    loading:false,
+                }
+            });
+        })
+    }
+}
+
+export const confirm2FA = (code) =>{
+    return (dispatch,getState) => {
+        dispatch({ type: types.LOADING_START });
+        let params = getState().params;
+        apis.confirm2FA(params.profile.auth_version, params.profile.sessionToken,
+             code).then((d)=>{
+            if(d.rc == 1){
+                dispatch({type: types.CONFIRM_2FA_SUCCESS});
+            }else{
+                dispatch({
+                    type: types.CONFIRM_2FA_FAILED,
+                    payload: {
+                        errorMsg:d.reason,
+                        loading:false,
+                    }
+                });
+            }
+        }).catch(e=>{
+            dispatch({
+                type: types.CONFIRM_2FA_FAILED,
+                payload: {
+                    errorMsg: e.message,
+                    loading:false,
+                }
+            });
+        })
+    }
+}
+
+export const reset2FA = () => ({type: types.RESET_2FA})
 
 export const showQR = () => ({
     type: types.SHOW_QR,
