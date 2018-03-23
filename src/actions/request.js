@@ -10,7 +10,7 @@ export const addMoneyRequest = (amount=0, bare_uid='', to='', note='') => {
         dispatch({ type: types.LOADING_START });
         let params = getState().params;
         apis.addMoneyRequest(params.profile.auth_version, params.profile.sessionToken,
-            params.currencyType, amount, bare_uid, to, note).then((d)=>{
+            params.currency_type, amount, bare_uid, to, note).then((d)=>{
             if(d.rc !== 1){
                 dispatch({
                     type: types.ADD_MONEY_REQUEST,
@@ -47,7 +47,7 @@ export const markCancelledMoneyRequests = (request_id=0, receiver_bare_uid='') =
         dispatch({ type: types.LOADING_START });
         let params = getState().params;
         apis.markCancelledMoneyRequests(params.profile.auth_version, params.profile.sessionToken,
-            params.currencyType, request_id, receiver_bare_uid).then((d)=>{
+            params.currency_type, request_id, receiver_bare_uid).then((d)=>{
             if(d.rc !== 1){
                 dispatch({
                     type: types.MARK_CANCELLED_MONEY_REQUESTS,
@@ -83,7 +83,7 @@ export const markRejectedMoneyRequests = (request_id, sender_bare_uid, note_proc
         dispatch({ type: types.LOADING_START });
         let params = getState().params;
         apis.markRejectedMoneyRequests(params.profile.auth_version, params.profile.sessionToken,
-            params.currencyType, request_id, sender_bare_uid, note_processing).then((d)=>{
+            params.currency_type, request_id, sender_bare_uid, note_processing).then((d)=>{
             if(d.rc == 1){
                 dispatch({
                     type: types.MARK_REJECTED_MONEY_REQUESTS,
@@ -118,7 +118,7 @@ export const markSentMoneyRequests = (request_id, sender_bare_uid, note_processi
     return (dispatch,getState) => {
         let params = getState().params;
         apis.markSentMoneyRequests(params.profile.auth_version, params.profile.sessionToken,
-            params.currencyType, request_id, sender_bare_uid, note_processing).then((d)=>{
+            params.currency_type, request_id, sender_bare_uid, note_processing).then((d)=>{
             if(d.rc == 1){
                 dispatch({
                     type: types.MARK_SENT_MONEY_REQUESTS,
@@ -203,7 +203,7 @@ export const getIncomingRequests = (start=0) => {
         let date_from = params.pending_date_from.format('YYYY-MM-DDTHH:mm:00.000\\Z');
         let date_to = params.pending_date_to.format('YYYY-MM-DDTHH:mm:00.000\\Z');
         apis.getRequests(params.profile.auth_version, params.profile.sessionToken,
-            params.currencyType, date_from, date_to, 2, start).then((d)=>{
+            params.currency_type, date_from, date_to, 2, start).then((d)=>{
             if(d.rc !== 1){
                 dispatch({
                     type: types.GET_INCOMING_REQUESTS,
@@ -237,7 +237,7 @@ export const getOutgoingRequests = (start=0) => {
         let date_from = params.pending_date_from.format('YYYY-MM-DDTHH:mm:00.000\\Z');
         let date_to = params.pending_date_to.format('YYYY-MM-DDTHH:mm:00.000\\Z');
         apis.getRequests(params.profile.auth_version, params.profile.sessionToken,
-            params.currencyType, date_from, date_to, 1, start).then((d)=>{
+            params.currency_type, date_from, date_to, 1, start).then((d)=>{
             if(d.rc !== 1){
                 dispatch({
                     type: types.GET_OUTGOING_REQUESTS,

@@ -31,7 +31,7 @@ export const getRecentTransactions = () => {
     return (dispatch,getState) => {
         let params = getState().params;
         apis.getTransactions(params.profile.auth_version, params.profile.sessionToken,
-            params.currencyType, params.profile.created_ts).then((d)=>{
+            params.currency_type, params.profile.created_ts).then((d)=>{
             if(d.rc !== 1){
                 dispatch({
                     type: types.GET_RECENT_TRANSACTIONS,
@@ -65,7 +65,7 @@ export const getAllTransactions = (start=0) => {
         let date_from = params.date_from.format('YYYY-MM-DDTHH:mm:00.000\\Z');
         let date_to = params.date_to.format('YYYY-MM-DDTHH:mm:00.000\\Z');
         apis.getTransactions(params.profile.auth_version, params.profile.sessionToken,
-            params.currencyType, date_from, date_to, 0, start).then((d)=>{
+            params.currency_type, date_from, date_to, 0, start).then((d)=>{
             if(d.rc !== 1){
                 dispatch({
                     type: types.GET_ALL_TRANSACTIONS,
@@ -99,7 +99,7 @@ export const getSentTransactions = (start=0) => {
         let date_from = params.date_from.format('YYYY-MM-DDTHH:mm:00.000\\Z');
         let date_to = params.date_to.format('YYYY-MM-DDTHH:mm:00.000\\Z');
         apis.getTransactions(params.profile.auth_version, params.profile.sessionToken,
-            params.currencyType, date_from, date_to, 1, start).then((d)=>{
+            params.currency_type, date_from, date_to, 1, start).then((d)=>{
             if(d.rc !== 1){
                 dispatch({
                     type: types.GET_SENT_TRANSACTIONS,
@@ -133,7 +133,7 @@ export const getReceivedTransactions = (start=0) => {
         let date_from = params.date_from.format('YYYY-MM-DDTHH:mm:00.000\\Z');
         let date_to = params.date_to.format('YYYY-MM-DDTHH:mm:00.000\\Z');
         apis.getTransactions(params.profile.auth_version, params.profile.sessionToken,
-            params.currencyType, date_from, date_to, 2, start).then((d)=>{
+            params.currency_type, date_from, date_to, 2, start).then((d)=>{
             if(d.rc !== 1){
                 dispatch({
                     type: types.GET_RECEIVED_TRANSACTIONS,

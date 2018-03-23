@@ -14,10 +14,10 @@ export const rawTransaction = (amount=0, receiver_public_address='', memo='',
         dispatch({ type: types.LOADING_START });
         let params = getState().params;
         apis.rawTransaction(params.profile.auth_version, params.profile.sessionToken,
-            params.currencyType, amount, receiver_public_address, memo).then((d)=>{
+            params.currency_type, amount, receiver_public_address, memo).then((d)=>{
             if(d.rc == 1){
                 dispatch({type: types.RAW_TRANSACTION});
-                let wallet = getActiveWallet(params.decryptedWallets, params.currencyType);
+                let wallet = getActiveWallet(params.decryptedWallets, params.currency_type);
                 let tx = wallet.signTx(d.transaction.rawtx);
                 let ip = params.ip;
                 dispatch(addTransaction(amount, ip, memo, receiver_bare_uid, receiver_id,
@@ -48,7 +48,7 @@ export const addTransaction = (amount, ip, memo, receiver_bare_uid, receiver_id,
     return (dispatch,getState) => {
         let params = getState().params;
         apis.addTransaction(params.profile.auth_version, params.profile.sessionToken,
-            params.currencyType, amount, ip, memo, receiver_bare_uid, receiver_id,
+            params.currency_type, amount, ip, memo, receiver_bare_uid, receiver_id,
             receiver_public_address, transaction_hex, transaction_id).then((d)=>{
             if(d.rc == 1){
                 dispatch({type: types.ADD_TRANSACTION});
@@ -82,7 +82,7 @@ export const transactionById = (id, index, amount, ip, memo, receiver_bare_uid,
     return (dispatch,getState) => {
         let params = getState().params;
         apis.transactionById(params.profile.auth_version, params.profile.sessionToken,
-            params.currencyType, amount, ip, memo, receiver_bare_uid, receiver_id,
+            params.currency_type, amount, ip, memo, receiver_bare_uid, receiver_id,
             receiver_public_address, transaction_hex, transaction_id).then((d)=>{
             if(d.rc !== 1){
                 dispatch({
@@ -111,7 +111,7 @@ export const transactionById = (id, index, amount, ip, memo, receiver_bare_uid,
                         payload: {
                             sendTxnSuccess: {
                                 amount,
-                                currency_type: params.currencyType,
+                                currency_type: params.currency_type,
                                 id,
                                 processing_duration: 2,
                                 receiver_id,

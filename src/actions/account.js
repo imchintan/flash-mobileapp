@@ -1,15 +1,16 @@
 import {
     AsyncStorage
 } from 'react-native';
-import * as types from '@actions/types'
-import apis from '@flashAPIs'
+import * as types from '@actions/types';
+import apis from '@flashAPIs';
 import { satoshiToFlash, flashToUSD, flashToBTC } from '@lib/utils';
-import { _logout } from '@actions/navigation'
+import { _logout } from '@actions/navigation';
+import { getActiveWallet } from '@actions/send';
 
 export const getBalance = (refresh = false) => {
     return (dispatch,getState) => {
         let params = getState().params;
-        apis.getBalance(params.profile.auth_version, params.profile.sessionToken, params.currencyType).then((d)=>{
+        apis.getBalance(params.profile.auth_version, params.profile.sessionToken, params.currency_type).then((d)=>{
             if(d.rc == 3){
                 dispatch({
                     type: types.GET_BALANCE,
@@ -94,7 +95,7 @@ export const getWalletsByEmail = () => {
     return (dispatch,getState) => {
         let params = getState().params;
         apis.getWalletsByEmail(params.profile.auth_version, params.profile.sessionToken,
-            params.profile.email, params.currencyType).then((d)=>{
+            params.profile.email, params.currency_type).then((d)=>{
             if(d.rc !== 1){
                 dispatch({
                     type: types.GET_WALLET_ADDRESS,
@@ -103,12 +104,14 @@ export const getWalletsByEmail = () => {
                     }
                 });
             }else if(d.results.length > 0){
-                dispatch({
-                    type: types.GET_WALLET_ADDRESS,
-                    payload: {
-                        wallet_address:d.results[0].address
-                    }
-                });
+                let wallet = getActiveWallet(d.results, params.currency_type);
+                if(wallet)
+                    dispatch({
+                        type: types.GET_WALLET_ADDRESS,
+                        payload: {
+                            wallet_address:wallet.address
+                        }
+                    });
             }
         }).catch(e=>{
             dispatch({
@@ -126,7 +129,7 @@ export const searchWallet = (term, loading=false) => {
         if(loading) dispatch({ type: types.LOADING_START });
         let params = getState().params;
         apis.searchWallet(params.profile.auth_version, params.profile.sessionToken,
-            params.currencyType, term).then((d)=>{
+            params.currency_type, term).then((d)=>{
             if(d.rc !== 1){
                 dispatch({
                     type: types.SEARCH_WALLET,

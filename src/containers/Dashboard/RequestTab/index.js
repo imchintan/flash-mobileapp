@@ -43,7 +43,7 @@ class RequestTab extends Component<{}> {
 
     componentWillReceiveProps(nextProps){
         if(nextProps){
-            if(nextProps.search_wallet && this.state.email == nextProps.search_wallet.email){
+            if(nextProps.search_wallet && this.state.email.toLowerCase() == nextProps.search_wallet.email.toLowerCase()){
                 this.setState({
                     isVerify:true,
                     search_wallet:nextProps.search_wallet
@@ -115,11 +115,14 @@ class RequestTab extends Component<{}> {
                             <Text style={styles.requestRowLabel}>Email</Text>
                             <View style={styles.requestRowInputBox}>
                                 <TextInput
+                                    ref={'_input_email'}
                                     underlineColorAndroid='transparent'
                                     style={styles.requestRowInput}
                                     keyboardType='email-address'
+                                    returnKeyType='next'
                                     placeholder='Enter email address'
                                     onBlur={this.verifyAddress.bind(this)}
+                                    onSubmitEditing={()=>this.refs._input_amount.focus()}
                                     value={this.state.email || ''}
                                     onChangeText={(email) => this.setState({email})}
                                 />
@@ -140,11 +143,14 @@ class RequestTab extends Component<{}> {
                             }]}>
                                 <Text style={styles.requestRowAmtLabel}>FLASH</Text>
                                 <TextInput
+                                    ref={'_input_amount'}
                                     underlineColorAndroid='transparent'
                                     style={[styles.requestRowInput,{paddingLeft:10}]}
                                     keyboardType='numeric'
+                                    returnKeyType='next'
                                     placeholder='Enter amount'
                                     onBlur={this.verifyAmount.bind(this)}
+                                    onSubmitEditing={()=>this.refs._input_amount.focus()}
                                     value={this.state.amount || ''}
                                     onChangeText={(amount) => this.setState({amount})}
                                 />
@@ -154,6 +160,7 @@ class RequestTab extends Component<{}> {
                             <Text style={styles.requestRowLabel}>Note</Text>
                             <View style={[styles.requestRowInputBox,{height: 100}]}>
                                 <TextInput
+                                    ref={'_input_note'}
                                     multiline = {true}
                                     numberOfLines = {4}
                                     underlineColorAndroid='transparent'

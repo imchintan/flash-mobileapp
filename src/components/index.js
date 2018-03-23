@@ -7,6 +7,7 @@ import FAB from './FAB';
 import Loader from './Loader';
 import Transaction from './Transaction';
 import Toast from './Toast';
+import TabBarBottom from './TabBarBottom';
 import Icon from 'react-native-fa-icons';
 import Calendar from 'react-native-calendar-select';
 import QRCode from 'react-native-qrcode';
@@ -22,6 +23,7 @@ module.exports = {
     Loader,
     ...Transaction,
     Toast,
+    TabBarBottom,
     Icon,
     Calendar,
     QRCode,

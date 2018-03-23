@@ -41,7 +41,7 @@ class Send extends Component<{}> {
                 this.props.resetMessages();
             }
             if(nextProps.search_wallet
-                && this.state.term == nextProps.search_wallet.email){
+                && this.state.term.toLowerCase() == nextProps.search_wallet.email.toLowerCase()){
                 this.setState({
                     isVerify:true,
                     search_wallet:nextProps.search_wallet,
@@ -79,7 +79,12 @@ class Send extends Component<{}> {
     }
 
     componentDidMount(){
-        this.verifyAddress();
+        if(this.state.term){
+            this.verifyAddress();
+            this.refs._input_amount.focus();
+        }else{
+            this.refs._input_term.focus();
+        }
     }
 
     componentWillUnmount(){
@@ -188,12 +193,15 @@ class Send extends Component<{}> {
                             </Text>
                             <View style={styles.requestRowInputBox}>
                                 <TextInput
+                                    ref={'_input_term'}
                                     underlineColorAndroid='transparent'
                                     style={styles.requestRowInput}
                                     keyboardType='email-address'
+                                    returnKeyType='next'
                                     placeholder='Enter email or public address'
                                     value={this.state.term}
                                     onBlur={this.verifyAddress.bind(this)}
+                                    onSubmitEditing={()=>this.refs._input_amount.focus()}
                                     onChangeText={(term) => this.setState({term})}
                                 />
                                 {this.state.isVerify || this.state.isAddressVerify?
@@ -214,9 +222,12 @@ class Send extends Component<{}> {
                             }]}>
                                 <Text style={styles.requestRowAmtLabel}>FLASH</Text>
                                 <TextInput
+                                    ref={'_input_amount'}
                                     underlineColorAndroid='transparent'
                                     style={[styles.requestRowInput,{paddingLeft:10}]}
                                     keyboardType='numeric'
+                                    returnKeyType='next'
+                                    onSubmitEditing={()=>this.refs._input_note.focus()}
                                     placeholder='Enter amount'
                                     value={this.state.amount || ''}
                                     onBlur={this.verifyAmount.bind(this)}
@@ -228,6 +239,7 @@ class Send extends Component<{}> {
                             <Text style={styles.requestRowLabel}>Note</Text>
                             <View style={[styles.requestRowInputBox,{height: 100}]}>
                                 <TextInput
+                                    ref={'_input_note'}
                                     multiline = {true}
                                     numberOfLines = {4}
                                     underlineColorAndroid='transparent'
@@ -329,6 +341,7 @@ class Send extends Component<{}> {
                                     <TextInput
                                         underlineColorAndroid='transparent'
                                         style={styles.requestRowInput}
+                                        secureTextEntry={true}
                                         placeholder={'Enter your password'}
                                         value={this.state.password || ''}
                                         onChangeText={(password) => this.setState({password})}

@@ -10,11 +10,11 @@ import {
 } from 'react-native';
 import {
     Loader,
-    Toast
+    Toast,
+    TabBarBottom
 } from '@components'
 import {
     TabNavigator,
-    TabBarBottom,
     NavigationActions
 } from 'react-navigation';
 import { connect } from 'react-redux';

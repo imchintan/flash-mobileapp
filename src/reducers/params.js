@@ -5,7 +5,7 @@ import * as types from '@actions/types';
 const initialState = {
     isLoggedIn: false,
     loading: false,
-    currencyType: 1,
+    currency_type: 1,
     date_from: moment().add(-1, 'months').add(-1, 'days'),
     date_to: moment(),
     pending_date_from: moment().add(-1, 'months').add(-1, 'days'),

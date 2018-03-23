@@ -201,6 +201,7 @@ class IncomingRequests extends Component<{}> {
                                         underlineColorAndroid='transparent'
                                         style={styles.requestRowInput}
                                         placeholder={'Enter your password'}
+                                        secureTextEntry={true}
                                         value={this.state.password || ''}
                                         onChangeText={(password) => this.setState({password})}
                                     />

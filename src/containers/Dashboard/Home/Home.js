@@ -137,7 +137,7 @@ function mapStateToProps({params}) {
         isLoggedIn: params.isLoggedIn,
         errorMsg: params.errorMsg || null,
         successMsg: params.successMsg || null,
-        currencyType: params.currencyType,
+        currency_type: params.currency_type,
         balance: params.balance || 0,
         txns: params.recentTxns || [],
         wallet_address: params.wallet_address || null,

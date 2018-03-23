@@ -35,6 +35,8 @@ class Login extends Component<{}> {
     constructor(props) {
         super(props);
         this.state = {
+            email: 'maulikvora59+3@gmail.com',
+            password: 'Maulik123'
         };
     }
 
@@ -100,9 +102,11 @@ class Login extends Component<{}> {
                                     fontSize: 16,
                                     fontWeight: '600'
                                 }}
+                                onSubmitEditing={()=>this.refs._input_passowrd.focus()}
                                 underlineColorAndroid='transparent'
                                 placeholder={'Email address'}
                                 keyboardType={'email-address'}
+                                returnKeyType='next'
                                 onChangeText={(email) => this.setState({email})}
                                 value={this.state.email || ''}
                             />
@@ -118,14 +122,17 @@ class Login extends Component<{}> {
                             borderColor: '#ddd'
                         }}>
                             <TextInput
+                                ref={'_input_passowrd'}
                                 style={{
                                     fontSize: 16,
                                     fontWeight: '600'
                                 }}
                                 underlineColorAndroid='transparent'
                                 secureTextEntry={true}
+                                returnKeyType='done'
                                 placeholder={'Password'}
                                 onChangeText={(password) => this.setState({password})}
+                                onSubmitEditing={this.login}
                                 value={this.state.password || ''}
                             />
                         </View>
