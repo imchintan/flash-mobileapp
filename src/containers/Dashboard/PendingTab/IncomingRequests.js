@@ -8,6 +8,7 @@ import {
   Text,
   Image,
   FlatList,
+  TextInput,
   Modal
 } from 'react-native';
 import {
@@ -51,6 +52,9 @@ class IncomingRequests extends Component<{}> {
             if(!this.state.visible && !nextProps.loading && this.props.loading !== nextProps.loading){
                 this.resetState();
             }
+            if(nextProps.decryptedWallets && this.props.decryptedWallets !== nextProps.decryptedWallets){
+                this.sendMoney(true);
+            }
         }
     }
 
@@ -65,6 +69,24 @@ class IncomingRequests extends Component<{}> {
     accept(req, note){
         this.setState({req,note},
             ()=>this.props.searchWallet(req.sender_email, true));
+    }
+
+    sendMoney(force=false){
+        if(!force && !this.props.decryptedWallets) return this.setState({visible:false, visibleGetPassword: true});
+        if(!this.state.isConfirm) return ;
+        this.setState({visible:false, visibleGetPassword:false, isConfirm: false},
+            ()=>{
+                let receiver_bare_uid =
+                    this.state.search_wallet?
+                    this.state.search_wallet.email:null;
+                let receiver_id =
+                    this.state.search_wallet?
+                    this.state.search_wallet.username:null;
+
+                this.props.rawTransaction(this.state.req.amount,
+                    this.state.publicAddress, this.state.note,
+                    receiver_bare_uid, receiver_id, this.state.req.id);
+        })
     }
 
     render() {
@@ -146,20 +168,58 @@ class IncomingRequests extends Component<{}> {
                                     textstyle={[styles.reqBtnLabel,{color:'#333'}]}
                                     value='Cancel' />
                                 <Button
-                                    onPress={()=>this.setState({visible:false},
-                                        ()=>{
-                                            let receiver_bare_uid =
-                                                this.state.search_wallet?
-                                                this.state.search_wallet.email:null;
-                                            let receiver_id =
-                                                this.state.search_wallet?
-                                                this.state.search_wallet.username:null;
-                                            this.setState({visible:false},
-                                                ()=>this.props.rawTransaction(this.state.req.amount,
-                                                this.state.publicAddress, this.state.note,
-                                                receiver_bare_uid, receiver_id, this.state.req.id));
-                                        })
-                                    }
+                                    onPress={()=>this.setState({isConfirm: true},this.sendMoney.bind(this))}
+                                    style={styles.reqBtn}
+                                    textstyle={styles.reqBtnLabel}
+                                    value='Send' />
+                            </View>
+                        </View>
+                    </View>
+                </Modal>
+                <Modal
+                    transparent={true}
+                    visible={!!this.state.visibleGetPassword}
+                    onRequestClose={()=>this.setState({visibleGetPassword:false})}>
+                    <View style={styles.reqDetailModal}>
+                        <View style={styles.reqDetailBox}>
+                            <View style={styles.reqDetailHeader}>
+                                <Text style={styles.reqDetailTitle}>Password</Text>
+                                <Icon style={styles.reqDetailCloseIcon}
+                                    onPress={()=>this.setState({visibleGetPassword:false})} name='close' />
+                            </View>
+                            <View style={styles.reqDetailBody}>
+                                <Text style={{
+                                    fontSize: 15,
+                                    color: '#333',
+                                    textAlign: 'center',
+                                    marginBottom: 15,
+                                }}>
+                                    For additional security check, Please enter your password.
+                                </Text>
+                                <View style={styles.requestRowInputBox}>
+                                    <TextInput
+                                        underlineColorAndroid='transparent'
+                                        style={styles.requestRowInput}
+                                        placeholder={'Enter your password'}
+                                        value={this.state.password || ''}
+                                        onChangeText={(password) => this.setState({password})}
+                                    />
+                                </View>
+                            </View>
+                            <View style={{flexDirection:'row'}}>
+                                <Button
+                                    onPress={()=>this.setState({visibleGetPassword:false})}
+                                    style={[styles.reqBtn,{backgroundColor: '#EFEFEF'}]}
+                                    textstyle={[styles.reqBtnLabel,{color:'#333'}]}
+                                    value='Cancel' />
+                                <Button
+                                    onPress={()=>{
+                                        if(!this.state.password){
+                                            return Toast.errorTop("Password is invalid!");
+                                        }
+                                        this.setState({visibleGetPassword:false},
+                                            ()=>this.props.decryptWallets(this.state.password));
+                                    }}
                                     style={styles.reqBtn}
                                     textstyle={styles.reqBtnLabel}
                                     value='Send' />
@@ -212,6 +272,7 @@ function mapStateToProps({params}) {
       loading: params.loading || false,
       search_wallet: params.search_wallet || null,
       sendTxnSuccess: params.sendTxnSuccess || null,
+      decryptedWallets: params.decryptedWallets || null,
       minDate: moment(params.profile.created_ts),
       maxDate: moment()
   };

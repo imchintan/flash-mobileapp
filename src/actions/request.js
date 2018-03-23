@@ -121,7 +121,7 @@ export const markSentMoneyRequests = (request_id, sender_bare_uid, note_processi
             params.currencyType, request_id, sender_bare_uid, note_processing).then((d)=>{
             if(d.rc == 1){
                 dispatch({
-                    type: types.MARK_REJECTED_MONEY_REQUESTS,
+                    type: types.MARK_SENT_MONEY_REQUESTS,
                     payload: {
                         successMsg: 'You have sent a request.',
                     }
@@ -129,7 +129,7 @@ export const markSentMoneyRequests = (request_id, sender_bare_uid, note_processi
                 dispatch(updateRequestReportDate(params.pending_date_from,params.pending_date_to));
             }else{
                 dispatch({
-                    type: types.MARK_REJECTED_MONEY_REQUESTS,
+                    type: types.MARK_SENT_MONEY_REQUESTS,
                     payload: {
                         errorMsg:d.reason,
                     }

@@ -103,7 +103,6 @@ export const getWalletsByEmail = () => {
                     }
                 });
             }else if(d.results.length > 0){
-                AsyncStorage.setItem('wallet_addresses',JSON.stringify(d.results));
                 dispatch({
                     type: types.GET_WALLET_ADDRESS,
                     payload: {

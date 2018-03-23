@@ -9,25 +9,17 @@ import { getCoinMarketCapDetail } from '@actions/account';
 
 export const init = () => {
     return async (dispatch,getState) => {
-        dispatch({ type: types.LOADING_START });
+        utils.publicIP().then(ip => {
+            dispatch({ type: types.SET_PUBLIC_IP, ip });
+        });
         dispatch(getCoinMarketCapDetail());
+        dispatch({ type: types.LOADING_START });
         let user = await AsyncStorage.getItem('user');
         if(user){
             let payload = {
                 profile:JSON.parse(user),
                 loading:false
             };
-
-            let my_wallets = await AsyncStorage.getItem('my_wallets');
-            if(my_wallets){
-                payload.my_wallets = JSON.parse(my_wallets)
-            }
-
-            let decryptedWallets = await AsyncStorage.getItem('decryptedWallets');
-            if(decryptedWallets){
-                let _decryptedWallets = JSON.parse(decryptedWallets);
-                payload.decryptedWallets = _decryptedWallets.map(a=>new Wallet(a.accounts,a.currency_type));
-            }
 
             let balance = await AsyncStorage.getItem('balance');
             if(balance){
@@ -37,13 +29,10 @@ export const init = () => {
                 type: types.LOGIN_SUCCESS,
                 payload
             });
-
+            dispatch(getMyWallets(payload.profile));
         }else{
             dispatch({ type: types.LOADING_END });
         }
-        utils.publicIP().then(ip => {
-            dispatch({ type: types.SET_PUBLIC_IP, ip });
-        });
     }
 }
 
@@ -158,7 +147,7 @@ export const check2FA = (code) =>{
     }
 }
 
-export const getMyWallets = (profile,password) => {
+export const getMyWallets = (profile,password=null) => {
     return (dispatch,getState) => {
         apis.getMyWallets(profile.auth_version, profile.sessionToken).then((d)=>{
             if(d.rc !== 1){
@@ -169,14 +158,13 @@ export const getMyWallets = (profile,password) => {
                     }
                 });
             }else{
-                AsyncStorage.setItem('my_wallets',JSON.stringify(d.my_wallets));
                 dispatch({
                     type: types.GET_MY_WALLETS,
                     payload: {
                         my_wallets:d.my_wallets
                     }
                 });
-                decryptWallets(dispatch, profile, d.my_wallets, profile.auth_version, password);
+                if(password || profile.auth_version == 3) dispatch(decryptWallets(password));
             }
         }).catch(e=>{
             dispatch({
@@ -187,6 +175,50 @@ export const getMyWallets = (profile,password) => {
                 }
             });
         })
+    }
+}
+
+export const decryptWallets = (password) => {
+    return (dispatch,getState) => {
+        try {
+            dispatch({ type: types.LOADING_START });
+            let params = getState().params;
+            let profile = params.profile;
+            let auth_version = params.profile.auth_version;
+            let wallets = params.my_wallets;
+            let userKey = {
+                  idToken: profile.idToken,
+                  encryptedPrivKey: profile.privateKey,
+                  publicKey: profile.publicKey,
+            };
+            decryptedWallets = null;
+            if (auth_version === 3) {
+                decryptedWallets = decryptPassphraseV1(wallets, userKey);
+            } else {
+                if (password) {
+                    decryptedWallets = decryptPassphraseV2(profile.email, wallets, password, userKey);
+                } else {
+                    // Store CAS version 2 account wallet
+                    // Only decrypt wallet if user send money
+                    decryptedWallets = wallets;
+                }
+            }
+            dispatch({
+                type: types.STORE_FOUNTAIN_SECRET,
+                payload: {
+                    decryptedWallets,
+                    loading: false,
+                }
+            });
+        } catch (e) {
+            dispatch({
+                type: types.STORE_FOUNTAIN_SECRET,
+                payload: {
+                    errorMsg: 'Please check your password!',
+                    loading: false,
+                }
+            });
+        }
     }
 }
 
@@ -208,35 +240,6 @@ export const signupSuccess = () => ({
 export const resetMessages = () => ({
     type: types.RESET_MESSAGES
 });
-
-
-
-export const decryptWallets = (dispatch, profile, wallets, auth_version, password) => {
-    let userKey = {
-          idToken: profile.idToken,
-          encryptedPrivKey: profile.privateKey,
-          publicKey: profile.publicKey,
-    };
-    decryptedWallets = null;
-    if (auth_version === 3) {
-        decryptedWallets = decryptPassphraseV1(wallets, userKey);
-    } else {
-        if (password) {
-            decryptedWallets = decryptPassphraseV2(profile.email, wallets, password, userKey);
-        } else {
-            // Store CAS version 2 account wallet
-            // Only decrypt wallet if user send money
-            decryptedWallets = wallets;
-        }
-    }
-    AsyncStorage.setItem('decryptedWallets',JSON.stringify(decryptedWallets));
-    dispatch({
-        type: types.STORE_FOUNTAIN_SECRET,
-        payload: {
-            decryptedWallets
-        }
-    });
-}
 
 /**
  * Decrypt CAS version 1 account wallet

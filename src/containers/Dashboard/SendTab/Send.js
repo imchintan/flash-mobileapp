@@ -37,7 +37,7 @@ class Send extends Component<{}> {
     componentWillReceiveProps(nextProps){
         if(nextProps){
             if(nextProps.sendTxnSuccess){
-                this.setState({sendTxnSuccess:nextProps.sendTxnSuccess, visibleMsg: true});
+                this.setState({sendTxnSuccess:nextProps.sendTxnSuccess, visibleMsg: true, isConfirm: false});
                 this.props.resetMessages();
             }
             if(nextProps.search_wallet
@@ -50,6 +50,9 @@ class Send extends Component<{}> {
             }
             if(!nextProps.loading && this.props.loading !== nextProps.loading){
                 this.resetState();
+            }
+            if(nextProps.decryptedWallets && this.props.decryptedWallets !== nextProps.decryptedWallets){
+                this.sendMoney(true);
             }
         }
     }
@@ -144,6 +147,25 @@ class Send extends Component<{}> {
             return Toast.errorTop("Amount must be at least 1");
         }
         this.setState({visible:true});
+    }
+
+    sendMoney(force=false){
+        if(!force && !this.props.decryptedWallets) return this.setState({visible:false, visibleGetPassword: true});
+        if(!this.state.isConfirm) return ;
+        this.setState({visible:false, visibleGetPassword:false, isConfirm: false},
+            ()=>{
+                let receiver_bare_uid =
+                    this.state.search_wallet?
+                    this.state.search_wallet.email:null;
+                let receiver_id =
+                    this.state.search_wallet?
+                    this.state.search_wallet.username:null;
+
+                this.props.rawTransaction(this.state.amount,
+                    this.state.publicAddress, this.state.note,
+                    receiver_bare_uid, receiver_id);
+
+        })
     }
 
     render() {
@@ -275,20 +297,58 @@ class Send extends Component<{}> {
                                     textstyle={[styles.reqBtnLabel,{color:'#333'}]}
                                     value='Cancel' />
                                 <Button
-                                    onPress={()=>this.setState({visible:false},
-                                        ()=>{
-                                            let receiver_bare_uid =
-                                                this.state.search_wallet?
-                                                this.state.search_wallet.email:null;
-                                            let receiver_id =
-                                                this.state.search_wallet?
-                                                this.state.search_wallet.username:null;
-
-                                            this.props.rawTransaction(this.state.amount,
-                                                this.state.publicAddress, this.state.note,
-                                                receiver_bare_uid, receiver_id);
-                                        })
-                                    }
+                                    onPress={()=>this.setState({isConfirm: true},this.sendMoney.bind(this))}
+                                    style={styles.reqBtn}
+                                    textstyle={styles.reqBtnLabel}
+                                    value='Send' />
+                            </View>
+                        </View>
+                    </View>
+                </Modal>
+                <Modal
+                    transparent={true}
+                    visible={!!this.state.visibleGetPassword}
+                    onRequestClose={()=>this.setState({visibleGetPassword:false})}>
+                    <View style={styles.reqDetailModal}>
+                        <View style={styles.reqDetailBox}>
+                            <View style={styles.reqDetailHeader}>
+                                <Text style={styles.reqDetailTitle}>Password</Text>
+                                <Icon style={styles.reqDetailCloseIcon}
+                                    onPress={()=>this.setState({visibleGetPassword:false})} name='close' />
+                            </View>
+                            <View style={styles.reqDetailBody}>
+                                <Text style={{
+                                    fontSize: 15,
+                                    color: '#333',
+                                    textAlign: 'center',
+                                    marginBottom: 15,
+                                }}>
+                                    For additional security check, Please enter your password.
+                                </Text>
+                                <View style={styles.requestRowInputBox}>
+                                    <TextInput
+                                        underlineColorAndroid='transparent'
+                                        style={styles.requestRowInput}
+                                        placeholder={'Enter your password'}
+                                        value={this.state.password || ''}
+                                        onChangeText={(password) => this.setState({password})}
+                                    />
+                                </View>
+                            </View>
+                            <View style={{flexDirection:'row'}}>
+                                <Button
+                                    onPress={()=>this.setState({visibleGetPassword:false})}
+                                    style={[styles.reqBtn,{backgroundColor: '#EFEFEF'}]}
+                                    textstyle={[styles.reqBtnLabel,{color:'#333'}]}
+                                    value='Cancel' />
+                                <Button
+                                    onPress={()=>{
+                                        if(!this.state.password){
+                                            return Toast.errorTop("Password is invalid!");
+                                        }
+                                        this.setState({visibleGetPassword:false},
+                                            ()=>this.props.decryptWallets(this.state.password));
+                                    }}
                                     style={styles.reqBtn}
                                     textstyle={styles.reqBtnLabel}
                                     value='Send' />
@@ -320,7 +380,7 @@ class Send extends Component<{}> {
                                 Your transaction will appear in your activity tab shortly.
                             </Text>
                             <Button
-                                onPress={()=>this.setState({visibleMsg:false,sendTxnSuccess:null})}
+                                onPress={()=>this.setState({visibleMsg:false,sendTxnSuccess:null, isConfirm: false})}
                                 style={styles.reqBtn}
                                 textstyle={styles.reqBtnLabel}
                                 value='Close' />
@@ -339,6 +399,7 @@ function mapStateToProps({params}) {
         profile: params.profile || null,
         wallet_address: params.wallet_address || null,
         sendTxnSuccess: params.sendTxnSuccess || null,
+        decryptedWallets: params.decryptedWallets || null,
     };
 }
 

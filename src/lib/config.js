@@ -2,9 +2,9 @@
 import { Platform } from 'react-native';
 
 export const  APP_VERSION = 1;
-export const  APP_MODE = 'DEV'; // DEV , PROD
+export const  APP_MODE = 'PROD'; // DEV , PROD
 export const  RESOURCE = 'app';
-export const  API_URL = 'https://dev03keys.flashcoin.io/api';
+export const  API_URL = 'https://keys.flashcoin.io/api';
 
 
 export const CURRENCY_TYPE = {
