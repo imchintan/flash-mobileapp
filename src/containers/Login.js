@@ -34,10 +34,7 @@ class Login extends Component<{}> {
 
     constructor(props) {
         super(props);
-        this.state = {
-            email: 'maulikvora59+3@gmail.com',
-            password: 'Maulik123'
-        };
+        this.state = {};
     }
 
     componentDidMount(){
@@ -152,17 +149,44 @@ class Login extends Component<{}> {
                             onPress={this.login}
                         />
 
-                        <TouchableOpacity style={{
-                            marginTop: 20,
-                            borderBottomWidth: 0.5,
-                            borderColor: '#666666'
-                        }} onPress={()=>this.props.navigation.navigate('ForgotPassword')}>
+                        <TouchableOpacity
+                            style={{
+                                marginTop: 20,
+                                borderBottomWidth: 0.5,
+                                borderColor: '#666666'
+                            }}
+                            // onPress={()=>this.props.navigation.navigate('ForgotPassword')}
+                            >
                             <Text style={{
                                 fontSize: 13,
                                 fontWeight: '400',
                                 color: '#666666'
                             }}>Forgot password?</Text>
                         </TouchableOpacity>
+                        <View style={{
+                            flexDirection: 'row',
+                            marginTop: 25,
+                        }}>
+                            <Text style={{
+                                fontSize: 13,
+                                fontWeight: '400',
+                                color: '#666666'
+                            }}>{"Don't have an account? "}</Text>
+                            <TouchableOpacity
+                                style={{
+                                    borderBottomWidth: 0.5,
+                                    borderColor: '#666666'
+                                }}
+                                // onPress={()=>this.props.navigation.navigate('ForgotPassword')}
+                                >
+                                <Text style={{
+                                    fontSize: 13,
+                                    fontWeight: '500',
+                                    color: '#009DE4'
+                                }}>Create one</Text>
+                            </TouchableOpacity>
+
+                        </View>
                     </View>
                 </View>
                 <Loader show={this.props.loading} />

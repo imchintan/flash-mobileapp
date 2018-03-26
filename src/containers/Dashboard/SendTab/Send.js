@@ -40,8 +40,8 @@ class Send extends Component<{}> {
                 this.setState({sendTxnSuccess:nextProps.sendTxnSuccess, visibleMsg: true, isConfirm: false});
                 this.props.resetMessages();
             }
-            if(nextProps.search_wallet
-                && this.state.term.toLowerCase() == nextProps.search_wallet.email.toLowerCase()){
+            if(nextProps.search_wallet && this.state.term &&
+                this.state.term.toLowerCase() == nextProps.search_wallet.email.toLowerCase()){
                 this.setState({
                     isVerify:true,
                     search_wallet:nextProps.search_wallet,
@@ -73,8 +73,6 @@ class Send extends Component<{}> {
     }
 
     componentWillMount(){
-        this.childNav={};
-        this.currentState = 'Scan';
         BackHandler.addEventListener('hardwareBackPress', this.backHandler);
     }
 

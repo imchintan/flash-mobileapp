@@ -43,7 +43,8 @@ class RequestTab extends Component<{}> {
 
     componentWillReceiveProps(nextProps){
         if(nextProps){
-            if(nextProps.search_wallet && this.state.email.toLowerCase() == nextProps.search_wallet.email.toLowerCase()){
+            if(nextProps.search_wallet && this.state.email &&
+                this.state.email.toLowerCase() == nextProps.search_wallet.email.toLowerCase()){
                 this.setState({
                     isVerify:true,
                     search_wallet:nextProps.search_wallet
