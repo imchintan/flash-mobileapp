@@ -34,7 +34,7 @@ Header.propTypes = {
 const styles = StyleSheet.create({
     header:{
         width: '100%',
-        backgroundColor: '#00AFFD',
+        backgroundColor: '#191714',
         ...Platform.select({
             ios: {
                 shadowColor: 'rgba(0,0,0, 0.5)',
@@ -57,6 +57,6 @@ const styles = StyleSheet.create({
     statusBar:{
         width: '100%',
         height: 22,
-        backgroundColor: '#009DE4',
+        backgroundColor: '#000000',
     }
 });

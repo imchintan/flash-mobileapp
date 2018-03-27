@@ -2,8 +2,9 @@ import React, { Component } from 'react';
 import {
     StyleSheet,
     TouchableOpacity,
-    Text
 } from 'react-native';
+import Text from './Text';
+
 export default class Button extends Component {
     constructor(props) {
         super(props);
@@ -21,7 +22,7 @@ export default class Button extends Component {
 
 const styles = StyleSheet.create({
     btn:{
-        backgroundColor: '#00AFFD',
+        backgroundColor: '#E0AE27',
         alignSelf: 'center',
         borderRadius: 5,
         paddingHorizontal: 30,
@@ -29,6 +30,6 @@ const styles = StyleSheet.create({
     },
     btnText:{
         fontSize: 20,
-        color: '#FFFFFF',
+        color: '#191714',
     },
 });

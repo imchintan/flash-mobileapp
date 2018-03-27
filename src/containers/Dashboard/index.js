@@ -40,32 +40,32 @@ const Dashboard = TabNavigator({
             let source = '';
             switch (routeName) {
                 case 'Home':
-                    source = focused?require('@images/home-icon-blue.png'):require('@images/home-icon-black.png');
+                    source = focused?require('@images/home-icon-royal-yellow.png'):require('@images/home-icon-white.png');
                     break;
                 case 'Send':
-                    source = focused?require('@images/send-icon-blue.png'):require('@images/send-icon-black.png');
+                    source = focused?require('@images/send-icon-royal-yellow.png'):require('@images/send-icon-white.png');
                     break;
                 case 'Activity':
-                    source = focused?require('@images/activity-icon-blue.png'):require('@images/activity-icon-black.png');
+                    source = focused?require('@images/activity-icon-royal-yellow.png'):require('@images/activity-icon-white.png');
                     break;
                 case 'Pending':
-                    source = focused?require('@images/pending-icon-blue.png'):require('@images/pending-icon-black.png');
+                    source = focused?require('@images/pending-icon-royal-yellow.png'):require('@images/pending-icon-white.png');
                     break;
                 case 'Request':
-                    source = focused?require('@images/request-icon-blue.png'):require('@images/request-icon-black.png');
+                    source = focused?require('@images/request-icon-royal-yellow.png'):require('@images/request-icon-white.png');
                     break;
                 default:
 
             }
-            return <Image style={{width:20,height:20}} source={source}/>
+            return <Image style={{width:25,height:25}} source={source}/>
         },
     }),
     tabBarOptions: {
-        activeTintColor: '#00AFFD',
-        inactiveTintColor: '#333333',
-        activeBackgroundColor: '#FAFBFB',
+        activeTintColor: '#E0AE27',
+        inactiveTintColor: '#FFFFFF',
+        activeBackgroundColor: '#000000',
         style: {
-            backgroundColor: '#FFFFFF',
+            backgroundColor: '#191714',
             borderTopWidth: 0,
             height: 60,
             ...Platform.select({
@@ -88,8 +88,9 @@ const Dashboard = TabNavigator({
             height: '100%'
         },
         labelStyle:{
-            fontSize: 12,
-            paddingBottom: 7,
+            fontSize: 14,
+            paddingBottom: 5,
+            fontFamily: 'Microsoft Tai Le'
         },
     },
     tabBarPosition: 'bottom',

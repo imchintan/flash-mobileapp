@@ -26,11 +26,11 @@ module.exports = StyleSheet.create({
     },
     headerBackIcon:{
         paddingLeft: 2,
-        fontSize: 40,
+        fontSize: 50,
         color: '#FFFFFF',
     },
     headerFAIcon:{
-        fontSize: 30,
+        fontSize: 40,
         color: '#FFFFFF',
     }
 });

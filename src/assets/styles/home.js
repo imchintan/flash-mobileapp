@@ -10,38 +10,38 @@ const appStyles = require('./app');
 const styles = StyleSheet.create({
     balanceBox:{
         alignItems: 'center',
-        backgroundColor: '#00AFFD',
+        backgroundColor: '#000000',
         paddingVertical: 20,
+        marginTop: 2,
     },
     balanceLabel:{
         color: '#FFFFFF',
-        fontSize: 16,
+        fontSize: 24,
         fontWeight: '400',
     },
-    balanceLabelText:{
-        fontStyle: 'italic',
+    balanceRefresh:{
+        color: '#FFFFFF',
+        fontSize: 30,
+        position: 'absolute',
+        top: 10,
+        right: 10
     },
     balanceText:{
-        marginVertical: 10,
-        color: '#FFFFFF',
-        fontSize: 25,
+        marginVertical: 8,
+        color: '#E0AE27',
+        fontSize: 40,
         fontWeight: 'bold',
         paddingLeft: 10,
     },
     otherBalanceText:{
         color: '#FFFFFF',
-        fontSize: 14,
-        fontWeight: '600',
-        fontStyle: 'italic',
-        paddingVertical: 2,
+        fontSize: 18,
     },
     recentTxnLabel: {
-        margin: 20,
-        marginBottom: 10,
-        color: '#000080',
-        fontSize: 18,
-        fontStyle: 'italic',
-        fontWeight: '600',
+        marginHorizontal: 20,
+        marginVertical: 10,
+        color: '#000000',
+        fontSize: 22,
     },
     qrCodeModal:{
         backgroundColor: '#fffd',

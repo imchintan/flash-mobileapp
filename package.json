@@ -8,7 +8,7 @@
   "dependencies": {
     "assert": "^1.4.1",
     "bip39": "^2.5.0",
-    "bitcoinjs-lib": "^3.3.2",
+    "bitcoinjs-lib": "^2.3.0",
     "bs58check": "^2.1.1",
     "events": "^1.1.1",
     "moment-timezone": "^0.5.14",

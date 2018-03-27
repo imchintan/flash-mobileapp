@@ -3,6 +3,7 @@ import Header from './Header';
 import Content from './Content';
 import Footer from './Footer';
 import Button from './Button';
+import Text from './Text';
 import FAB from './FAB';
 import Loader from './Loader';
 import Transaction from './Transaction';
@@ -19,6 +20,7 @@ module.exports = {
     Content,
     ...Footer,
     Button,
+    Text,
     FAB,
     Loader,
     ...Transaction,

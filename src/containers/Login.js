@@ -5,7 +5,7 @@
 import React, { Component } from 'react';
 import {
     View,
-    Text,
+    Text as RNText,
     Image,
     TextInput,
     TouchableOpacity
@@ -16,6 +16,7 @@ import {
     HeaderTitle,
     Content,
     Button,
+    Text,
     Loader,
     Toast
 } from '@components';
@@ -34,7 +35,8 @@ class Login extends Component<{}> {
 
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = {
+        };
     }
 
     componentDidMount(){
@@ -65,7 +67,7 @@ class Login extends Component<{}> {
 
     render() {
         return (
-            <Container>
+            <Container style={{backgroundColor:'#191714'}}>
                 <View style={{
                     flex: 1,
                     width: '100%',
@@ -74,30 +76,31 @@ class Login extends Component<{}> {
                     justifyContent: 'center',
                 }}>
                     <Image style={{
+                        width: '60%',
+                        maxHeight: 250,
                         alignSelf: 'center',
-                        width: '80%',
                         resizeMode: 'contain',
-                    }}  source={require('@images/app-text-icon.png')}/>
+                    }}  source={require('@images/app-text-icon-white-vertical.png')}/>
                     <View style={{
                         width: '100%',
                         alignItems: 'center',
                         marginBottom: 50,
-                        marginTop: 30,
                     }}>
                         <View style={{
                             justifyContent: 'center',
                             marginTop: 20,
                             width: '100%',
                             paddingHorizontal: 15,
-                            height: 50,
+                            height: 60,
                             borderWidth: 1.5,
-                            borderRadius: 25,
-                            borderColor: '#ddd'
+                            borderRadius:30,
+                            borderColor: '#ddd',
+                            backgroundColor:'#FFFFFF'
                         }}>
                             <TextInput
                                 style={{
                                     fontSize: 16,
-                                    fontWeight: '600'
+                                    fontWeight: '400'
                                 }}
                                 onSubmitEditing={()=>this.refs._input_passowrd.focus()}
                                 underlineColorAndroid='transparent'
@@ -110,19 +113,20 @@ class Login extends Component<{}> {
                         </View>
                         <View style={{
                             justifyContent: 'center',
-                            marginTop: 20,
+                            marginTop: 30,
                             width: '100%',
                             paddingHorizontal: 15,
-                            height: 50,
+                            height: 60,
                             borderWidth: 1.5,
-                            borderRadius:25,
-                            borderColor: '#ddd'
+                            borderRadius:30,
+                            borderColor: '#ddd',
+                            backgroundColor:'#FFFFFF'
                         }}>
                             <TextInput
                                 ref={'_input_passowrd'}
                                 style={{
                                     fontSize: 16,
-                                    fontWeight: '600'
+                                    fontWeight: '400'
                                 }}
                                 underlineColorAndroid='transparent'
                                 secureTextEntry={true}
@@ -134,55 +138,47 @@ class Login extends Component<{}> {
                             />
                         </View>
                         <Button style={{
-                                marginTop: 50,
-                                width: '100%',
+                                marginTop: 30,
+                                width: 180,
                                 height: 50,
                                 justifyContent: 'center',
                                 alignItems: 'center',
                                 borderRadius: 25,
                             }}
                             textstyle={{
-                                fontSize: 20,
-                                fontWeight: '600'
+                                fontSize: 22,
+                                fontWeight: '400'
                             }}
-                            value={'Login'}
+                            value={'LOGIN'}
                             onPress={this.login}
                         />
 
                         <TouchableOpacity
                             style={{
-                                marginTop: 20,
-                                borderBottomWidth: 0.5,
-                                borderColor: '#666666'
+                                marginTop: 50,
                             }}
                             // onPress={()=>this.props.navigation.navigate('ForgotPassword')}
                             >
                             <Text style={{
-                                fontSize: 13,
+                                fontSize: 15,
                                 fontWeight: '400',
-                                color: '#666666'
+                                color: '#FFFFFF'
                             }}>Forgot password?</Text>
                         </TouchableOpacity>
                         <View style={{
                             flexDirection: 'row',
-                            marginTop: 25,
+                            marginTop: 20,
                         }}>
                             <Text style={{
-                                fontSize: 13,
+                                fontSize: 15,
                                 fontWeight: '400',
-                                color: '#666666'
+                                color: '#FFFFFF'
                             }}>{"Don't have an account? "}</Text>
-                            <TouchableOpacity
-                                style={{
-                                    borderBottomWidth: 0.5,
-                                    borderColor: '#666666'
-                                }}
-                                // onPress={()=>this.props.navigation.navigate('ForgotPassword')}
-                                >
+                            <TouchableOpacity>
                                 <Text style={{
-                                    fontSize: 13,
-                                    fontWeight: '500',
-                                    color: '#009DE4'
+                                    fontSize: 15,
+                                    fontWeight: '400',
+                                    color: '#E0AE27'
                                 }}>Create one</Text>
                             </TouchableOpacity>
 

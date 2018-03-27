@@ -6,7 +6,6 @@ import React, { Component } from 'react';
 import {
     View,
     Image,
-    Text,
     Modal,
     TouchableOpacity,
     Dimensions
@@ -22,6 +21,7 @@ import {
     Icon,
     Button,
     Loader,
+    Text,
     Toast,
     QRCode
 } from '@components';
@@ -67,7 +67,7 @@ class Home extends Component<{}> {
                 <Header>
                     <HeaderLeft>
                         <TouchableOpacity onPress={()=>this.props.navigation.navigate('MyAccount')}>
-                            <Image style={{width:35,height:35, borderRadius: 20}}
+                            <Image style={{width:40,height:40, borderRadius: 20}}
                                 defaultSource={require('@images/user-profile-icon-white.png')}
                                 source={require('@images/user-profile-icon-white.png')}
                             />
@@ -83,11 +83,8 @@ class Home extends Component<{}> {
                 </Header>
                 <Content bounces={false}>
                     <View style={styles.balanceBox}>
-                        <TouchableOpacity onPress={()=>this.props.getBalance(true)}>
-                            <Text style={styles.balanceLabel}>
-                                <Icon name='refresh' /> <Text style={styles.balanceLabelText}>Your Balance</Text>
-                            </Text>
-                        </TouchableOpacity>
+                        <Icon onPress={()=>this.props.getBalance(true)} style={styles.balanceRefresh} name='refresh' />
+                        <Text style={styles.balanceLabel}>Your Balance</Text>
                         <Text style={styles.balanceText}>{flashNFormatter(satoshiToFlash(this.props.balance),2)} FLASH</Text>
                         <Text style={styles.otherBalanceText}>≈ {this.props.balance_in_btc} BTC</Text>
                         <Text style={styles.otherBalanceText}>≈ {this.props.balance_in_usd} USD</Text>

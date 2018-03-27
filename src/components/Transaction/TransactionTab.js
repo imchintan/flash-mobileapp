@@ -196,20 +196,23 @@ const styles = StyleSheet.create({
     },
     txnDetailCloseIcon:{
         fontSize: 20,
-        color: '#007db6',
+        color: '#FFDD4D',
+        opacity: 0.5,
+        padding: 5,
+        paddingRight: 0
     },
     txnDetailHeader:{
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        backgroundColor: '#009DE4',
+        backgroundColor: '#191714',
         paddingHorizontal: 15,
         paddingVertical: 12,
     },
     txnDetailTitle:{
-        fontSize: 16,
-        fontWeight: '600',
-        color: '#FFF',
+        fontSize: 18,
+        // fontWeight: '500',
+        color: '#E0AE27',
     },
     txnDetailBody:{
         backgroundColor: '#FFFFFF',

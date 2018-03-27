@@ -30,7 +30,7 @@ import reducer from '@reducers'
 console.disableYellowBox = true;
 
 // middleware that logs actions
-const loggerMiddleware = createLogger({ predicate: () => __DEV__ });
+const loggerMiddleware = createLogger({ predicate: () => true });
 
 // Note: createReactNavigationReduxMiddleware must be run before createReduxBoundAddListener
 const middleware = createReactNavigationReduxMiddleware(
@@ -44,7 +44,7 @@ class App extends React.Component {
         return (
             <View style={{flex:1}}>
                 <StatusBar
-                    backgroundColor="#009DE4"
+                    backgroundColor="#000000"
                     barStyle="light-content"
                   />
                 <AppNavigator navigation={addNavigationHelpers({

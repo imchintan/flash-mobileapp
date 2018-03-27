@@ -336,20 +336,20 @@ const styles = StyleSheet.create({
     },
     reqDetailCloseIcon:{
         fontSize: 20,
-        color: '#007db6',
+        color: '#FFDD4D',
     },
     reqDetailHeader:{
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        backgroundColor: '#009DE4',
+        backgroundColor: '#191714',
         paddingHorizontal: 15,
         paddingVertical: 12,
     },
     reqDetailTitle:{
-        fontSize: 16,
-        fontWeight: '600',
-        color: '#FFF',
+        fontSize: 18,
+        fontWeight: '500',
+        color: '#E0AE27',
     },
     reqDetailBody:{
         backgroundColor: '#FFFFFF',
