@@ -1,4 +1,4 @@
-import { NETWORKS } from './config';
+import { NETWORKS } from '@src/config';
 import { Address } from './wallet';
 
 export const name = (n) => {

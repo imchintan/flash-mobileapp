@@ -48,6 +48,7 @@ export const getRecentTransactions = () => {
                     }
                 });
             }
+            dispatch({ type: types.LOADING, payload:{refreshingHome:false} });
         }).catch(e=>{
             dispatch({
                 type: types.GET_RECENT_TRANSACTIONS,
@@ -55,12 +56,20 @@ export const getRecentTransactions = () => {
                     errorMsg: e.message,
                 }
             });
+            dispatch({ type: types.LOADING, payload:{refreshingHome:false} });
         })
     }
 }
 
-export const getAllTransactions = (start=0) => {
+export const getAllTransactions = (start=0, reset=false) => {
     return (dispatch,getState) => {
+        if(reset)
+            dispatch({
+                type: types.CUSTOM_ACTION,
+                payload: {
+                    allTxns_loading: true
+                }
+            });
         let params = getState().params;
         let date_from = params.date_from.format('YYYY-MM-DDTHH:mm:00.000\\Z');
         let date_to = params.date_to.format('YYYY-MM-DDTHH:mm:00.000\\Z');
@@ -78,7 +87,8 @@ export const getAllTransactions = (start=0) => {
                     type: types.GET_ALL_TRANSACTIONS,
                     payload: {
                         total_txns:d.total_txns,
-                        txns:d.txns
+                        txns:d.txns,
+                        reset
                     }
                 });
             }
@@ -93,8 +103,15 @@ export const getAllTransactions = (start=0) => {
     }
 }
 
-export const getSentTransactions = (start=0) => {
+export const getSentTransactions = (start=0,reset=false) => {
     return (dispatch,getState) => {
+        if(reset)
+            dispatch({
+                type: types.CUSTOM_ACTION,
+                payload: {
+                    sentTxns_loading: true
+                }
+            });
         let params = getState().params;
         let date_from = params.date_from.format('YYYY-MM-DDTHH:mm:00.000\\Z');
         let date_to = params.date_to.format('YYYY-MM-DDTHH:mm:00.000\\Z');
@@ -112,7 +129,8 @@ export const getSentTransactions = (start=0) => {
                     type: types.GET_SENT_TRANSACTIONS,
                     payload: {
                         total_txns:d.total_txns,
-                        txns:d.txns
+                        txns:d.txns,
+                        reset
                     }
                 });
             }
@@ -127,8 +145,15 @@ export const getSentTransactions = (start=0) => {
     }
 }
 
-export const getReceivedTransactions = (start=0) => {
+export const getReceivedTransactions = (start=0, reset=false) => {
     return (dispatch,getState) => {
+        if(reset)
+            dispatch({
+                type: types.CUSTOM_ACTION,
+                payload: {
+                    receivedTxns_loading: true
+                }
+            });
         let params = getState().params;
         let date_from = params.date_from.format('YYYY-MM-DDTHH:mm:00.000\\Z');
         let date_to = params.date_to.format('YYYY-MM-DDTHH:mm:00.000\\Z');
@@ -146,7 +171,8 @@ export const getReceivedTransactions = (start=0) => {
                     type: types.GET_RECEIVED_TRANSACTIONS,
                     payload: {
                         total_txns:d.total_txns,
-                        txns:d.txns
+                        txns:d.txns,
+                        reset
                     }
                 });
             }

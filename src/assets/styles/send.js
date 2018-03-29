@@ -12,6 +12,7 @@ const styles = StyleSheet.create({
     content:{
         flex: 1,
         flexDirection: 'row',
+        backgroundColor: '#191714'
     },
     preview: {
         flex: 1,
@@ -69,18 +70,14 @@ const styles = StyleSheet.create({
     fabText:{
         fontSize: 18,
     },
-    scanQRLabel:{
+    scanQRBtn:{
         position: 'absolute',
-        top: 35,
-        fontSize: 18,
-        color: '#FFFFFF',
-        textAlign: 'center',
-        width: '100%',
-        zIndex: 999
+        alignSelf: 'center',
+        top: '45%'
     },
     scanQRBoxImg:{
         flex: 1,
-        width: '100%',
+        width: '100%'
     },
 });
 

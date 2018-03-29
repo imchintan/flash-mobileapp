@@ -7,6 +7,7 @@ import {
   View,
   BackHandler,
   TextInput,
+  TouchableOpacity,
   Image,
   Modal
 } from 'react-native';
@@ -27,6 +28,8 @@ import { bindActionCreators } from 'redux';
 import { ActionCreators } from '@actions';
 import * as Validation from '@lib/validation';
 const styles = require("@styles/send");
+import { flashToSatoshi } from '@lib/utils';
+import { PROFILE_URL } from '@src/config';
 
 class Send extends Component<{}> {
 
@@ -114,7 +117,6 @@ class Send extends Component<{}> {
         if(!res.success){
             return Toast.errorTop(res.message);
         }
-
         this.setState({isAmtVerify: true, amount:res.amount});
     }
 
@@ -146,9 +148,13 @@ class Send extends Component<{}> {
         if(!this.state.isVerify && !this.state.isAddressVerify){
             return Toast.errorTop("Address is invalid!");
         }
-        if(!this.state.isAmtVerify){
+        if(!this.state.isAmtVerify || parseFloat(this.state.amount) < 1){
             return Toast.errorTop("Amount must be at least 1");
         }
+        if(flashToSatoshi(parseFloat(this.state.amount)+0.001) > this.props.balance){
+            return Toast.errorTop("You do not have enough fee to make this payment");
+        }
+
         this.setState({visible:true});
     }
 
@@ -176,8 +182,10 @@ class Send extends Component<{}> {
             <Container>
                 <Header>
                     <HeaderLeft>
-                        <Icon onPress={()=>this.props.navigation.goBack()}
-                            style={styles.headerBackIcon} name='angle-left' />
+                        <TouchableOpacity>
+                            <Icon onPress={()=>this.props.navigation.goBack()}
+                                style={styles.headerBackIcon} name='angle-left' />
+                        </TouchableOpacity>
                     </HeaderLeft>
                     <HeaderTitle>
                         Send
@@ -271,8 +279,8 @@ class Send extends Component<{}> {
                         <View style={styles.reqDetailBox}>
                             <View style={styles.reqDetailHeader}>
                                 <Text style={styles.reqDetailTitle}>Confirm Transaction</Text>
-                                <Icon style={styles.reqDetailCloseIcon}
-                                    onPress={()=>this.setState({visible:false})} name='close' />
+                                <Text style={styles.reqDetailCloseIcon}
+                                    onPress={()=>this.setState({visible:false})} >X</Text>
                             </View>
                             <View style={styles.reqDetailBody}>
                                 <Text style={styles.reqAmtText}>{this.state.amount} FLASH</Text>
@@ -285,11 +293,11 @@ class Send extends Component<{}> {
                                         defaultSource={require("@images/app-icon.png")}
                                         source={this.state.search_wallet?
                                             (this.state.search_wallet.profile_pic_url?
-                                            {uri:this.state.search_wallet.profile_pic_url}:
+                                            {uri:PROFILE_URL+this.state.search_wallet.profile_pic_url}:
                                             require('@images/app-icon.png'))
                                             :require('@images/app-icon.png')} />
                                     <View>
-                                        {this.state.search_walle?
+                                        {this.state.search_wallet?
                                             <Text style={styles.reqDetailText}>
                                                 {this.state.search_wallet?this.state.search_wallet.display_name:''}
                                             </Text>:null
@@ -323,8 +331,8 @@ class Send extends Component<{}> {
                         <View style={styles.reqDetailBox}>
                             <View style={styles.reqDetailHeader}>
                                 <Text style={styles.reqDetailTitle}>Password</Text>
-                                <Icon style={styles.reqDetailCloseIcon}
-                                    onPress={()=>this.setState({visibleGetPassword:false})} name='close' />
+                                <Text style={styles.reqDetailCloseIcon}
+                                    onPress={()=>this.setState({visibleGetPassword:false})}>X</Text>
                             </View>
                             <View style={styles.reqDetailBody}>
                                 <Text style={{
@@ -375,8 +383,8 @@ class Send extends Component<{}> {
                         <View style={styles.reqDetailBox}>
                             <View style={styles.reqDetailHeader}>
                                 <Text style={styles.reqDetailTitle}>Transaction Successful</Text>
-                                <Icon style={styles.reqDetailCloseIcon}
-                                    onPress={()=>this.setState({visibleMsg:false})} name='close' />
+                                <Text style={styles.reqDetailCloseIcon}
+                                    onPress={()=>this.setState({visibleMsg:false})}>X</Text>
                             </View>
                         </View>
                         <View style={styles.reqDetailBody}>
@@ -408,6 +416,7 @@ function mapStateToProps({params}) {
         loading: params.loading,
         search_wallet: params.search_wallet || null,
         profile: params.profile || null,
+        balance: params.balance || 0,
         wallet_address: params.wallet_address || null,
         sendTxnSuccess: params.sendTxnSuccess || null,
         decryptedWallets: params.decryptedWallets || null,

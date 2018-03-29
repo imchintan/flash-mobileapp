@@ -1,7 +1,9 @@
 
 //action
+export const CUSTOM_ACTION = 'CUSTOM_ACTION';
 export const LOGOUT = 'LOGOUT';
 
+export const LOADING = 'LOADING';
 export const LOADING_START = 'LOADING_START';
 export const LOADING_END = 'LOADING_END';
 

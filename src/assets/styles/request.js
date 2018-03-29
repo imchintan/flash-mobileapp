@@ -45,10 +45,10 @@ const styles = StyleSheet.create({
         paddingVertical: 14,
         borderTopLeftRadius:25,
         borderBottomLeftRadius:25,
-        backgroundColor: '#ddd',
+        backgroundColor: '#191714',
         fontSize: 14,
         fontWeight: '500',
-        color: '#666',
+        color: '#E0AE27',
     },
     requestRowClearBtn:{
         marginLeft: 10,
@@ -69,21 +69,22 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
     },
     reqDetailCloseIcon:{
-        fontSize: 20,
-        color: '#007db6',
+        fontSize: 18,
+        color: '#E0AE27',
+        padding: 5,
+        paddingRight: 0
     },
     reqDetailHeader:{
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        backgroundColor: '#009DE4',
+        backgroundColor: '#191714',
         paddingHorizontal: 15,
-        paddingVertical: 12,
+        paddingVertical: 8,
     },
     reqDetailTitle:{
-        fontSize: 16,
-        fontWeight: '600',
-        color: '#FFF',
+        fontSize: 18,
+        color: '#E0AE27',
     },
     reqDetailBody:{
         backgroundColor: '#FFFFFF',
@@ -93,6 +94,7 @@ const styles = StyleSheet.create({
     reqDetailRow:{
         flexDirection: 'row',
         alignSelf: 'center',
+        alignItems: 'center',
         marginBottom: 10,
     },
     reqDetailIcon:{
@@ -104,7 +106,7 @@ const styles = StyleSheet.create({
     reqAmtText:{
         fontSize: 30,
         fontWeight: '500',
-        color: '#4A4A4A',
+        color: '#191714',
         alignSelf: 'center',
         paddingVertical: 5,
     },
@@ -119,14 +121,14 @@ const styles = StyleSheet.create({
         color: '#333333',
     },
     reqBtn:{
-        backgroundColor: '#008fd0',
+        backgroundColor: '#191714',
         width:'50%',
         borderRadius: 0,
         alignItems: 'center',
     },
     reqBtnLabel:{
-        fontSize: 16,
-        fontWeight: '500'
+        fontSize: 18,
+        color: '#FFFFFF',
     },
     reqFeeText:{
         alignSelf: 'center',

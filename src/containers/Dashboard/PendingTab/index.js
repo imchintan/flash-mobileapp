@@ -5,7 +5,8 @@
 import React from 'react';
 import {
     View,
-    Platform
+    Platform,
+    TouchableOpacity
 } from 'react-native';
 import {
     TabNavigator,
@@ -80,7 +81,6 @@ class PendingTab extends React.Component {
     }
 
     componentDidMount(){
-        this.refresh();
         setTimeout(()=>this.setState({showTab:true}),500);
     }
 
@@ -119,26 +119,25 @@ class PendingTab extends React.Component {
                 }),
             }}>
                 <Header>
-                    <Text style={{
+                    <TouchableOpacity style={{
                         alignSelf: 'center',
                         width: '100%',
-                        textAlign: 'center',
-                        fontSize: 18,
-                        color: '#FFF',
-                    }}>
-                        <Text onPress={this.openCalendar}>
-                        {moment(this.props.date_from).format('MMM DD, YYYY')} - {moment(this.props.date_to).format('MMM DD, YYYY')}  </Text>
-                        <Icon onPress={this.openCalendar} style={{fontSize: 20}} name='calendar'/>
-                    </Text>
+                    }} onPress={this.openCalendar}>
+                        <Text style={{
+                            textAlign: 'center',
+                            fontSize: 18,
+                            color: '#FFF',
+                        }}>
+                            <Text>
+                                {moment(this.props.date_from).format('MMM DD, YYYY')} - {moment(this.props.date_to).format('MMM DD, YYYY')+'  '}
+                            </Text>
+                            <Icon onPress={this.openCalendar} style={{fontSize: 20}} name='calendar'/>
+                        </Text>
+                    </TouchableOpacity>
                     <HeaderRight>
-                         <Icon
-                            onPress={this.refresh}
-                             style={{
-                                 fontSize: 22,
-                                 color: '#FFF'
-                             }}
-                            name='refresh'
-                        />
+                        <TouchableOpacity onPress={this.refresh}>
+                            <Icon style={{ fontSize: 22, color: '#FFF'}} name='refresh'/>
+                        </TouchableOpacity>
                     </HeaderRight>
                 </Header>
                 {this.state.showTab?<TabNav />:null}

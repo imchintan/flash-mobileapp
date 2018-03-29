@@ -18,13 +18,6 @@ const styles = StyleSheet.create({
         padding: 20,
         textAlign: 'center'
     },
-    reqShowAllBtn:{
-        backgroundColor: '#FFB400'
-    },
-    reqShowAllBtnText:{
-        fontSize: 16,
-        fontWeight: '500',
-    },
 });
 
 module.exports = {

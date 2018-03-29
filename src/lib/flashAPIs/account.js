@@ -1,4 +1,4 @@
-import { API_URL, RESOURCE, APP_VERSION } from '@lib/config';
+import { API_URL, RESOURCE, APP_VERSION } from '@src/config';
 
 /**
  * Get user balance

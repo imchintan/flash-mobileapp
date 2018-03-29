@@ -5,12 +5,13 @@
 import React, { Component } from 'react';
 import {
   View,
-  Text,
-  FlatList
+  FlatList,
+  RefreshControl
 } from 'react-native';
 import {
     Loader,
     Button,
+    Text,
     RequestTab
 } from '@components';
 import moment from 'moment-timezone';
@@ -30,6 +31,10 @@ class OutgoingRequests extends Component<{}> {
         this.state = {};
     }
 
+    componentDidMount(){
+        this.props.getOutgoingRequests();
+    }
+
     markCancelledMoneyRequests(req){
         this.props.markCancelledMoneyRequests(req.id,req.receiver_email);
     }
@@ -38,37 +43,37 @@ class OutgoingRequests extends Component<{}> {
         return (
             <View style={{flex:1}}>
                 <FlatList
+                    refreshControl={
+                        <RefreshControl
+                            colors={['#191714']}
+                            tintColor='#191714'
+                            refreshing={false}
+                            onRefresh={()=>this.props.getOutgoingRequests(0,true)}/>
+                    }
                     style={styles.reqList}
                     showsVerticalScrollIndicator={false}
                     data={this.props.reqs}
                     keyExtractor={(req, index) => (index+'_'+req.id)}
                     onEndReachedThreshold={5}
                     onEndReached={()=>(this.props.reqs.length < this.props.total_reqs) &&
-                            this.props.getOutgoingRequests(this.props.reqs.length)}
-                    renderItem={({item, index})=>{
-                        return(
-                            <RequestTab
-                                outgoing={true}
-                                req={item}
-                                onCancel={this.markCancelledMoneyRequests.bind(this)}
-                                style={[!index && {marginTop:10}]} />
-                        );
-                    }}
-                    ListEmptyComponent={()=>{
-                        return(
-                            <View>
-                                <Text style={styles.reqListEmpty}>
-                                    There is no request in this date range.
-                                </Text>
-                                <Button
-                                    onPress={()=>this.props.updateRequestReportDate(this.props.minDate,
-                                        this.props.maxDate)}
-                                    style={styles.reqShowAllBtn}
-                                    textstyle={styles.reqShowAllBtnText}
-                                    value='Show All Requests' />
-                            </View>
-                        )
-                    }}
+                        this.props.getOutgoingRequests(this.props.reqs.length)}
+                    renderItem={({item, index})=>
+                        <RequestTab
+                            outgoing={true}
+                            req={item}
+                            onCancel={this.markCancelledMoneyRequests.bind(this)}
+                            style={[!index && {marginTop:10}]} />
+                    }
+                    ListEmptyComponent={()=>
+                        <View>
+                            <Text style={styles.reqListEmpty}>
+                                There is no request in this date range.
+                            </Text>
+                            <Button value='Show All Requests'
+                                onPress={()=>this.props.updateRequestReportDate(this.props.minDate,
+                                    this.props.maxDate)}/>
+                        </View>
+                    }
                 />
                 <Loader show={this.props.loading} />
             </View>

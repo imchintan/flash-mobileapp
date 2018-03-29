@@ -5,12 +5,13 @@
 import React, { Component } from 'react';
 import {
     View,
-    Text,
-    FlatList
+    FlatList,
+    RefreshControl
 } from 'react-native';
 import {
     Loader,
     Button,
+    Text,
     TransactionTab
 } from '@components';
 import moment from 'moment-timezone';
@@ -30,10 +31,21 @@ class PaymentSent extends Component<{}> {
         this.state = {};
     }
 
+    componentDidMount(){
+        setTimeout(()=>this.props.getSentTransactions(),1000);
+    }
+
     render() {
         return (
             <View style={{flex:1}}>
                 <FlatList
+                    refreshControl={
+                        <RefreshControl
+                            colors={['#191714']}
+                            tintColor='#191714'
+                            refreshing={false}
+                            onRefresh={()=>this.props.getSentTransactions(0,true)}/>
+                    }
                     style={styles.txnList}
                     showsVerticalScrollIndicator={false}
                     data={this.props.txns}
@@ -53,12 +65,9 @@ class PaymentSent extends Component<{}> {
                                     You have other transactions before this date range.
                                     Please click Show All Activity to view.
                                 </Text>
-                                <Button
+                                <Button value='Show All Activity'
                                     onPress={()=>this.props.updateTransactionReportDate(this.props.minDate,
-                                        this.props.maxDate)}
-                                    style={styles.txnShowAllBtn}
-                                    textstyle={styles.txnShowAllBtnText}
-                                    value='Show All Activity' />
+                                        this.props.maxDate)}/>
                             </View>
                         )
                     }}

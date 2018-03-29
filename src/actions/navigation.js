@@ -86,15 +86,28 @@ export const login = (email,password) => {
                 });
                 if(!d.profile.totp_enabled)dispatch(getMyWallets(d.profile,password));
             }else{
+                let errorMsg = d.reason;
+                if(d.status !== 'ACCOUNT_LOCKED'){
+                    if(d.failed_count && d.failed_count >= 3){
+                        let attmpt_count = '4th';
+                        if(d.failed_count == 3)
+                            attmpt_count = '3rd';
+
+                        errorMsg = 'Email or password is not correct. This is your '+d.failed_count+
+                        ' failed attempt. After 5 failed attempts, your account will be locked.';
+
+                    }else{
+                        errorMsg = 'Email or password is not correct';
+                    }
+                }
                 dispatch({
                     type: types.LOGIN_FAILED,
                     payload: {
-                        errorMsg:d.reason,
+                        errorMsg,
                         loading:false
                     }
                 });
             }
-
         }).catch(e=>{
             dispatch({
                 type: types.LOGIN_FAILED,

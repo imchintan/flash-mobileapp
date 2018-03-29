@@ -5,12 +5,13 @@
 import React, { Component } from 'react';
 import {
     View,
-    Text,
-    FlatList
+    FlatList,
+    RefreshControl
 } from 'react-native';
 import {
     Loader,
     Button,
+    Text,
     TransactionTab
 } from '@components';
 import moment from 'moment-timezone';
@@ -30,17 +31,28 @@ class AllTransactions extends Component<{}> {
         this.state = {};
     }
 
+    componentDidMount(){
+        this.props.getAllTransactions();
+    }
+
     render() {
         return (
             <View style={{flex:1}}>
                 <FlatList
+                    refreshControl={
+                        <RefreshControl
+                            colors={['#191714']}
+                            tintColor='#191714'
+                            refreshing={false}
+                            onRefresh={()=>this.props.getAllTransactions(0,true)}/>
+                    }
                     style={styles.txnList}
                     showsVerticalScrollIndicator={false}
                     data={this.props.txns}
                     keyExtractor={(txn, index) => (index+'_'+txn.transaction_id)}
                     onEndReachedThreshold={2}
                     onEndReached={()=>(this.props.txns.length < this.props.total_txns) &&
-                            this.props.getAllTransactions(this.props.txns.length)}
+                        this.props.getAllTransactions(this.props.txns.length)}
                     renderItem={({item, index})=>{
                         return(
                             <TransactionTab txn={item} style={[!index && {marginTop:10}]} />
@@ -53,12 +65,9 @@ class AllTransactions extends Component<{}> {
                                     You have other transactions before this date range.
                                     Please click Show All Activity to view.
                                 </Text>
-                                <Button
+                                <Button value='Show All Activity'
                                     onPress={()=>this.props.updateTransactionReportDate(this.props.minDate,
-                                        this.props.maxDate)}
-                                    style={styles.txnShowAllBtn}
-                                    textstyle={styles.txnShowAllBtnText}
-                                    value='Show All Activity' />
+                                        this.props.maxDate)}/>
                             </View>
                         )
                     }}

@@ -29,14 +29,14 @@ const EnhancedComponent = class extends React.Component {
     constructor(props) {
         super(props);
         this.state = {
-            scan: true,
+            scan: false,
         };
     }
 
     render() {
         return <ScanNavigation ref={nav => { this.navigator = nav; }}
                     onNavigationStateChange={(prevState, currentState) => {
-                        this.setState({scan: (currentState.routes[currentState.index].routeName == 'ScanQR')});
+                        this.setState({scan: false});
                     }}
                     screenProps={{scan: this.state.scan && this.props.screenProps.scan}} />
     }

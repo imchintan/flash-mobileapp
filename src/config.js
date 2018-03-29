@@ -1,11 +1,24 @@
-
 import { Platform } from 'react-native';
 
-export const  APP_VERSION = 1;
-export const  APP_MODE = 'PROD'; // DEV , PROD
 export const  RESOURCE = 'app';
-export const  API_URL = 'https://keys.flashcoin.io/api';
+export const  APP_MODE = 'PROD'; // DEV , PROD
+export const  APP_VERSION = 1;
 
+let appUrl;
+
+if(APP_MODE == 'PROD')
+    appUrl = 'https://mkeys.flashcoin.io';
+else
+    appUrl = 'https://dev03keys.flashcoin.io';
+
+export const API_URL = appUrl+'/api';
+export const PROFILE_URL = appUrl+'/profile/';
+
+export const MOMENT_FORMAT = {
+    DATE: 'MMM DD, YYYY',
+    DATE_TIME: 'MMM DD, YYYY hh:mm A',
+    DATE_TIME_2: 'MMM DD, YYYY hh:mm:ss A',
+};
 
 export const CURRENCY_TYPE = {
   FLASH: 1,
@@ -49,9 +62,3 @@ export const NETWORKS = {
     dustThreshold: 546,
   }
 }
-
-export const MOMENT_FORMAT = {
-    DATE: 'MMM DD, YYYY',
-    DATE_TIME: 'MMM DD, YYYY hh:mm A',
-    DATE_TIME_2: 'MMM DD, YYYY hh:mm:ss A',
-};

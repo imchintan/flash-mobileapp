@@ -20,11 +20,14 @@ const styles = StyleSheet.create({
         fontWeight: '400',
     },
     balanceRefresh:{
-        color: '#FFFFFF',
-        fontSize: 30,
+        padding: 5,
         position: 'absolute',
         top: 10,
         right: 10
+    },
+    balanceRefreshIcon:{
+        color: '#FFFFFF',
+        fontSize: 30,
     },
     balanceText:{
         marginVertical: 8,
@@ -44,7 +47,7 @@ const styles = StyleSheet.create({
         fontSize: 22,
     },
     qrCodeModal:{
-        backgroundColor: '#000c',
+        backgroundColor: '#191714',
         width: '100%',
         height: '100%',
         alignItems: 'center',

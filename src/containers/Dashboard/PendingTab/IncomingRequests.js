@@ -5,15 +5,16 @@
 import React, { Component } from 'react';
 import {
   View,
-  Text,
   Image,
   FlatList,
   TextInput,
-  Modal
+  Modal,
+  RefreshControl
 } from 'react-native';
 import {
     Loader,
     Button,
+    Text,
     RequestTab,
     Icon
 } from '@components';
@@ -21,6 +22,7 @@ import moment from 'moment-timezone';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ActionCreators } from '@actions';
+import { PROFILE_URL } from '@src/config';
 const styles = require("@styles/pending");
 
 class IncomingRequests extends Component<{}> {
@@ -32,6 +34,10 @@ class IncomingRequests extends Component<{}> {
     constructor(props) {
         super(props);
         this.state = {};
+    }
+
+    componentDidMount(){
+        this.props.getIncomingRequests();
     }
 
     componentWillReceiveProps(nextProps){
@@ -93,36 +99,36 @@ class IncomingRequests extends Component<{}> {
         return (
             <View style={{flex:1}}>
                 <FlatList
+                    refreshControl={
+                        <RefreshControl
+                            colors={['#191714']}
+                            tintColor='#191714'
+                            refreshing={false}
+                            onRefresh={()=>this.props.getIncomingRequests(0,true)}/>
+                    }
                     style={styles.reqList}
                     showsVerticalScrollIndicator={false}
                     data={this.props.reqs}
                     keyExtractor={(req, index) => (index+'_'+req.id)}
                     onEndReachedThreshold={5}
                     onEndReached={()=>(this.props.reqs.length < this.props.total_reqs) &&
-                            this.props.getIncomingRequests(this.props.reqs.length)}
-                    renderItem={({item, index})=>{
-                        return(
-                            <RequestTab req={item} style={[!index && {marginTop:10}]}
-                                reject={this.props.markRejectedMoneyRequests}
-                                accept={this.accept.bind(this)}
-                            />
-                        );
-                    }}
-                    ListEmptyComponent={()=>{
-                        return(
-                            <View>
-                                <Text style={styles.reqListEmpty}>
-                                    There is no request in this date range.
-                                </Text>
-                                <Button
-                                    onPress={()=>this.props.updateRequestReportDate(this.props.minDate,
-                                        this.props.maxDate)}
-                                    style={styles.reqShowAllBtn}
-                                    textstyle={styles.reqShowAllBtnText}
-                                    value='Show All Requests' />
-                            </View>
-                        )
-                    }}
+                        this.props.getIncomingRequests(this.props.reqs.length)}
+                    renderItem={({item, index})=>
+                        <RequestTab req={item} style={[!index && {marginTop:10}]}
+                            reject={this.props.markRejectedMoneyRequests}
+                            accept={this.accept.bind(this)}
+                        />
+                    }
+                    ListEmptyComponent={()=>
+                        <View>
+                            <Text style={styles.reqListEmpty}>
+                                There is no request in this date range.
+                            </Text>
+                            <Button value='Show All Requests'
+                                onPress={()=>this.props.updateRequestReportDate(this.props.minDate,
+                                    this.props.maxDate)}/>
+                        </View>
+                    }
                 />
                 <Modal
                     transparent={true}
@@ -146,7 +152,7 @@ class IncomingRequests extends Component<{}> {
                                         defaultSource={require("@images/app-icon.png")}
                                         source={this.state.search_wallet?
                                             (this.state.search_wallet.profile_pic_url?
-                                            {uri:this.state.search_wallet.profile_pic_url}:
+                                            {uri:PROFILE_URL+this.state.search_wallet.profile_pic_url}:
                                             require('@images/app-icon.png'))
                                             :require('@images/app-icon.png')} />
                                     <View>

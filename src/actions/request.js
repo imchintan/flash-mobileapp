@@ -197,8 +197,15 @@ export const updateRequestReportDate = (pending_date_from, pending_date_to) => {
 }
 
 
-export const getIncomingRequests = (start=0) => {
+export const getIncomingRequests = (start=0, reset=false) => {
     return (dispatch,getState) => {
+        if(reset)
+            dispatch({
+                type: types.CUSTOM_ACTION,
+                payload: {
+                    inReqs_loading: true
+                }
+            });
         let params = getState().params;
         let date_from = params.pending_date_from.format('YYYY-MM-DDTHH:mm:00.000\\Z');
         let date_to = params.pending_date_to.format('YYYY-MM-DDTHH:mm:00.000\\Z');
@@ -216,7 +223,8 @@ export const getIncomingRequests = (start=0) => {
                     type: types.GET_INCOMING_REQUESTS,
                     payload: {
                         total_reqs:d.total_money_reqs,
-                        reqs:d.money_requests
+                        reqs:d.money_requests,
+                        reset
                     }
                 });
             }
@@ -231,8 +239,15 @@ export const getIncomingRequests = (start=0) => {
     }
 }
 
-export const getOutgoingRequests = (start=0) => {
+export const getOutgoingRequests = (start=0, reset=false) => {
     return (dispatch,getState) => {
+        if(reset)
+            dispatch({
+                type: types.CUSTOM_ACTION,
+                payload: {
+                    outReqs_loading: true
+                }
+            });
         let params = getState().params;
         let date_from = params.pending_date_from.format('YYYY-MM-DDTHH:mm:00.000\\Z');
         let date_to = params.pending_date_to.format('YYYY-MM-DDTHH:mm:00.000\\Z');
@@ -250,7 +265,8 @@ export const getOutgoingRequests = (start=0) => {
                     type: types.GET_OUTGOING_REQUESTS,
                     payload: {
                         total_reqs:d.total_money_reqs,
-                        reqs:d.money_requests
+                        reqs:d.money_requests,
+                        reset
                     }
                 });
             }

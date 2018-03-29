@@ -11,7 +11,9 @@ import {
 import {
     Loader,
     Toast,
-    TabBarBottom
+    Text,
+    TabBarBottom,
+    BadgeTabIcon
 } from '@components'
 import {
     TabNavigator,
@@ -32,9 +34,9 @@ const Dashboard = TabNavigator({
     Activity: { screen: ActivityTab },
     Send: { screen: SendTab },
     Request: { screen: RequestTab },
-    Pending: { screen: PendingTab },
+    Pending: { screen: PendingTab }
 },{
-    navigationOptions: ({ navigation }) => ({
+    navigationOptions: ({ navigation, screenProps }) => ({
         tabBarIcon: ({ focused, tintColor }) => {
             const { routeName } = navigation.state;
             let source = '';
@@ -50,6 +52,27 @@ const Dashboard = TabNavigator({
                     break;
                 case 'Pending':
                     source = focused?require('@images/pending-icon-royal-yellow.png'):require('@images/pending-icon-white.png');
+                    if(screenProps.totalPending){
+                        return (
+                            <View>
+                                <Image style={{width:25,height:25, marginTop: 5}} source={source}/>
+                                <Text style={{
+                                    minWidth:26,
+                                    borderRadius:13,
+                                    backgroundColor: focused?'#FFF':'#E0AE27',
+                                    position: 'absolute',
+                                    right: -15,
+                                    top: -4,
+                                    textAlign: 'center',
+                                    color:'#000',
+                                    fontSize: 16,
+                                    fontWeight: '500',
+                                    paddingVertical: 3,
+                                    paddingHorizontal: 5,
+                                }}>{screenProps.totalPending < 100? screenProps.totalPending: '99+'}</Text>
+                            </View>
+                        )
+                    }
                     break;
                 case 'Request':
                     source = focused?require('@images/request-icon-royal-yellow.png'):require('@images/request-icon-white.png');
@@ -57,7 +80,7 @@ const Dashboard = TabNavigator({
                 default:
 
             }
-            return <Image style={{width:25,height:25}} source={source}/>
+            return <Image style={{width:25,height:25, marginTop: 5}} source={source}/>
         },
     }),
     tabBarOptions: {
@@ -67,7 +90,7 @@ const Dashboard = TabNavigator({
         style: {
             backgroundColor: '#191714',
             borderTopWidth: 0,
-            height: 60,
+            height: 70,
             ...Platform.select({
                 ios: {
                     shadowColor: 'rgba(0,0,0,0.15)',
@@ -89,7 +112,7 @@ const Dashboard = TabNavigator({
         },
         labelStyle:{
             fontSize: 14,
-            paddingBottom: 5,
+            paddingBottom: 7,
             fontFamily: 'Microsoft Tai Le'
         },
     },
@@ -105,7 +128,11 @@ const EnhancedComponent = class extends React.Component {
         super(props);
         this.state = {
             scan: false,
+            loader: true,
         };
+    }
+    componentDidMount(){
+        setTimeout(()=>this.setState({loader:false}),2000);
     }
     componentWillReceiveProps(nextProps){
         if(nextProps){
@@ -127,8 +154,8 @@ const EnhancedComponent = class extends React.Component {
                     onNavigationStateChange={(prevState, currentState) => {
                         this.setState({scan: (currentState.routes[currentState.index].routeName == 'Send')});
                     }}
-                    screenProps={{scan: this.state.scan}} />
-                <Loader show={this.props.loading} />
+                    screenProps={{scan: this.state.scan, totalPending: this.props.totalPending}} />
+                <Loader show={this.props.loading || this.state.loader} />
             </View>
         )
     }
@@ -140,6 +167,7 @@ function mapStateToProps({params}) {
         isLoggedIn: params.isLoggedIn,
         errorMsg: params.errorMsg || null,
         successMsg: params.successMsg || null,
+        totalPending: params.totalPending || 0,
         txn: {},
     };
 }

@@ -1,4 +1,4 @@
-import { API_URL, RESOURCE, APP_VERSION } from '@lib/config';
+import { API_URL, RESOURCE, APP_VERSION } from '@src/config';
 import moment from 'moment-timezone';
 
 /**
@@ -16,7 +16,7 @@ import moment from 'moment-timezone';
  */
 export const getTransactions = (auth_version, sessionToken='', currency_type = 1,
     date_from=moment().add(-1, 'months').add(-1, 'days').format('YYYY-MM-DDTHH:mm:00.000\\Z') ,
-    date_to=moment().format('YYYY-MM-DDTHH:mm:00.000\\Z'),
+    date_to=moment().format('YYYY-MM-DDT23:59:59.000\\Z'),
     type= 0, start=0, order='desc', size=10) => {
     return new Promise((resolve,reject) => {
         fetch(API_URL+'/get-transactions',{

@@ -6,7 +6,6 @@ import React, { Component } from 'react';
 import {
     StyleSheet,
     View,
-    Text,
     Image,
     TextInput,
     TouchableOpacity
@@ -18,6 +17,7 @@ import {
     Content,
     Button,
     Icon,
+    Text,
     Loader,
     Toast
 } from '@components';
@@ -100,17 +100,14 @@ class Verify2FA extends Component<{}> {
                                 value={this.state.verification_code || ''}
                             />
                         </View>
-                        <Button style={{
+                        <Button
+                            style={{
                                 marginTop: 30,
                                 width: '100%',
                                 height: 50,
                                 justifyContent: 'center',
                                 alignItems: 'center',
                                 borderRadius: 25,
-                            }}
-                            textstyle={{
-                                fontSize: 20,
-                                fontWeight: '600'
                             }}
                             value={'Verify'}
                             onPress={()=>{
@@ -120,7 +117,8 @@ class Verify2FA extends Component<{}> {
                                 this.props.check2FA(this.state.verification_code);
                             }}
                         />
-                        <Button style={{
+                        <Button
+                            style={{
                                 marginTop: 30,
                                 width: '100%',
                                 height: 50,
@@ -128,11 +126,6 @@ class Verify2FA extends Component<{}> {
                                 justifyContent: 'center',
                                 alignItems: 'center',
                                 borderRadius: 25,
-                            }}
-                            textstyle={{
-                                fontSize: 20,
-                                color: '#333',
-                                fontWeight: '600'
                             }}
                             value={'Cancel'}
                             onPress={()=>this.props.logout()}

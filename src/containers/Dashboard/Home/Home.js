@@ -8,6 +8,8 @@ import {
     Image,
     Modal,
     TouchableOpacity,
+    ActivityIndicator,
+    RefreshControl,
     Dimensions
 } from 'react-native';
 import {
@@ -30,7 +32,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ActionCreators } from '@actions';
 import { satoshiToFlash, flashNFormatter } from '@lib/utils';
-
+import { PROFILE_URL } from '@src/config';
 const { height, width } = Dimensions.get('window');
 const styles = require("@styles/home");
 
@@ -45,31 +47,29 @@ class Home extends Component<{}> {
         this.state = {};
     }
 
-    componentWillReceiveProps(nextProps){
-        if(nextProps){
-        }
-    }
-
     componentDidMount(){
         this.props.getBalance();
-        this.props.getProfile();
         this.props.getRecentTransactions();
-        // this.coinmarketcapValue = setInterval(this.props.getCoinMarketCapDetail, 60000);
+        this.props.getProfile();
+        this.coinmarketcapValue = setInterval(this.props.getCoinMarketCapDetail, 60000);
     }
 
     componentWillUnMount(){
-        // clearInterval(this.coinmarketcapValue);
+        clearInterval(this.coinmarketcapValue);
     }
 
     render() {
+        console.log(this.props.txns);
         return (
             <Container>
                 <Header>
                     <HeaderLeft>
-                        <TouchableOpacity onPress={()=>this.props.navigation.navigate('MyAccount')}>
-                            <Image style={{width:40,height:40, borderRadius: 20}}
+                        <TouchableOpacity style={{padding:5}} onPress={()=>this.props.navigation.navigate('MyAccount')}>
+                            <Image style={{width:34,height:34, borderRadius: 17}}
                                 defaultSource={require('@images/user-profile-icon-white.png')}
-                                source={require('@images/user-profile-icon-white.png')}
+                                source={this.props.profile.profile_pic_url?
+                                    {uri: PROFILE_URL+this.props.profile.profile_pic_url}
+                                    :require('@images/user-profile-icon-white.png')}
                             />
                         </TouchableOpacity>
                     </HeaderLeft>
@@ -78,12 +78,24 @@ class Home extends Component<{}> {
                             source={require('@images/app-text-icon-white.png')}/>
                     </HeaderTitle>
                     <HeaderRight>
-                        <Icon style={styles.headerFAIcon} onPress={this.props.showQR} name='qrcode' />
+                        <TouchableOpacity>
+                            <Icon style={styles.headerFAIcon} onPress={this.props.showQR} name='qrcode' />
+                        </TouchableOpacity>
                     </HeaderRight>
                 </Header>
-                <Content bounces={false}>
+                <Content bounces={false}
+                    refreshControl={
+                        <RefreshControl
+                            colors={['#191714']}
+                            tintColor='#191714'
+                            refreshing={!!this.props.refreshing}
+                            onRefresh={()=>this.props.refreshingHome()}/>
+                    }>
                     <View style={styles.balanceBox}>
-                        <Icon onPress={()=>this.props.getBalance(true)} style={styles.balanceRefresh} name='refresh' />
+                        <TouchableOpacity style={styles.balanceRefresh} onPress={()=>this.props.getBalance(true)}>
+                            {this.props.balanceLoader?<ActivityIndicator size="large" color="#FFFFFF" />:
+                            <Icon style={styles.balanceRefreshIcon} name='refresh' />}
+                        </TouchableOpacity>
                         <Text style={styles.balanceLabel}>Your Balance</Text>
                         <Text style={styles.balanceText}>{flashNFormatter(satoshiToFlash(this.props.balance),2)} FLASH</Text>
                         <Text style={styles.otherBalanceText}>≈ {this.props.balance_in_btc} BTC</Text>
@@ -108,11 +120,16 @@ class Home extends Component<{}> {
                     onRequestClose={this.props.hideQR}>
                     <View style={styles.qrCodeModal}>
                         <Text style={styles.qrCodeModalTitle}>Wallet Address</Text>
-                        <QRCode
-                            value={'flashcoin:'+this.props.wallet_address}
-                            size={width-70}
-                            bgColor='#191714'
-                            fgColor='#FFFFFF'/>
+                        <View style={{
+                            borderWidth: 10,
+                            borderColor: '#FFFFFF',
+                        }}>
+                            <QRCode
+                                value={'flashcoin:'+this.props.wallet_address}
+                                size={width-80}
+                                bgColor='#191714'
+                                fgColor='#FFFFFF'/>
+                        </View>
                         <View style={styles.qrCodeModalWalletAddress}>
                             <Text selectable={true} style={styles.qrCodeModalWalletAddressText}>
                                 {this.props.wallet_address}
@@ -130,7 +147,10 @@ class Home extends Component<{}> {
 
 function mapStateToProps({params}) {
     return {
+        profile: params.profile,
         loading: params.recentTxns_loading || false,
+        balanceLoader: params.balanceLoader || false,
+        refreshing: params.refreshingHome || false,
         isLoggedIn: params.isLoggedIn,
         errorMsg: params.errorMsg || null,
         successMsg: params.successMsg || null,

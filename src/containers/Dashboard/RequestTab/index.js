@@ -24,6 +24,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ActionCreators } from '@actions';
 import * as Validation from '@lib/validation';
+import { PROFILE_URL } from '@src/config';
 const styles = require("@styles/request");
 
 class RequestTab extends Component<{}> {
@@ -98,7 +99,7 @@ class RequestTab extends Component<{}> {
         if(!this.state.isVerify){
             return Toast.errorTop("Address is invalid!");
         }
-        if(!this.state.isAmtVerify){
+        if(!this.state.isAmtVerify || parseFloat(this.state.amount) < 1){
             return Toast.errorTop("Amount must be at least 1");
         }
         this.setState({visible:true});
@@ -193,7 +194,7 @@ class RequestTab extends Component<{}> {
                         <View style={styles.reqDetailBox}>
                             <View style={styles.reqDetailHeader}>
                                 <Text style={styles.reqDetailTitle}>Confirm Payment Request</Text>
-                                <Icon style={styles.reqDetailCloseIcon} onPress={()=>this.setState({visible:false})} name='close' />
+                                <Text style={styles.reqDetailCloseIcon} onPress={()=>this.setState({visible:false})} >X</Text>
                             </View>
                             <View style={styles.reqDetailBody}>
                                 <Text style={styles.reqAmtText}>{this.state.amount} FLASH</Text>
@@ -202,7 +203,7 @@ class RequestTab extends Component<{}> {
                                     <Image style={styles.reqDetailIcon}
                                         defaultSource={require("@images/app-icon.png")}
                                         source={this.state.search_wallet?(this.state.search_wallet.profile_pic_url?
-                                            {uri:this.state.search_wallet.profile_pic_url}:
+                                            {uri:PROFILE_URL+this.state.search_wallet.profile_pic_url}:
                                             require('@images/app-icon.png')):require('@images/app-icon.png')} />
                                     <View>
                                         <Text style={styles.reqDetailText}>{this.state.search_wallet?this.state.search_wallet.display_name:''}</Text>

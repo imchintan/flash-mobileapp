@@ -6,16 +6,25 @@ import apis from '@flashAPIs';
 import { satoshiToFlash, flashToUSD, flashToBTC } from '@lib/utils';
 import { _logout } from '@actions/navigation';
 import { getActiveWallet } from '@actions/send';
+import { getRecentTransactions } from '@actions/transactions';
 
 export const getBalance = (refresh = false) => {
     return (dispatch,getState) => {
         let params = getState().params;
+        if(!!params.balanceLoader) return;
+        dispatch({
+            type: types.LOADING,
+            payload: {
+                balanceLoader: true,
+            }
+        });
         apis.getBalance(params.profile.auth_version, params.profile.sessionToken, params.currency_type).then((d)=>{
             if(d.rc == 3){
                 dispatch({
                     type: types.GET_BALANCE,
                     payload: {
                         errorMsg:d.reason,
+                        balanceLoader: false,
                     }
                 });
                 setTimeout(()=>_logout(dispatch),500);
@@ -24,6 +33,7 @@ export const getBalance = (refresh = false) => {
                     type: types.GET_BALANCE,
                     payload: {
                         errorMsg:d.reason,
+                        balanceLoader: false,
                     }
                 });
             }else{
@@ -32,24 +42,18 @@ export const getBalance = (refresh = false) => {
                     type: types.GET_BALANCE,
                     payload: {
                         balance:d.balance,
+                        balanceLoader: false,
                         successMsg: refresh?('Updated Balance: '+satoshiToFlash(d.balance)+ ' FLASH'):null
                     }
                 });
                 dispatch(getCoinMarketCapDetail());
-                if(refresh){
-                    dispatch({
-                        type: types.GET_BALANCE,
-                        payload: {
-                            successMsg: null
-                        }
-                    });
-                }
             }
         }).catch(e=>{
             dispatch({
                 type: types.GET_BALANCE,
                 payload: {
                     errorMsg: e.message,
+                    balanceLoader: false,
                 }
             });
         })
@@ -77,7 +81,7 @@ export const getProfile = () => {
                         profile:{...params.profile,...d.profile}
                     }
                 });
-                dispatch(getWalletsByEmail());
+                setTimeout(()=>dispatch(getWalletsByEmail()),500);
             }
         }).catch(e=>{
             dispatch({
@@ -156,6 +160,14 @@ export const searchWallet = (term, loading=false) => {
             });
             if(loading) dispatch({ type: types.LOADING_END });
         })
+    }
+}
+
+export const refreshingHome = () =>{
+    return (dispatch,getState) => {
+        dispatch({ type: types.LOADING, payload:{refreshingHome:true} });
+        dispatch(getBalance());
+        dispatch(getRecentTransactions());
     }
 }
 

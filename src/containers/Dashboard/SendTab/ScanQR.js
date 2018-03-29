@@ -15,6 +15,7 @@ import {
     Icon,
     Toast,
     Text,
+    Button,
     FAB
 } from '@components';
 import Camera from 'react-native-camera';
@@ -31,7 +32,11 @@ class ScanQR extends Component<{}> {
 
     constructor(props) {
         super(props);
-        this.state = { scan: true };
+        this.state = { scan: false };
+    }
+
+    componentWillReceiveProps(props) {
+        this.setState({scan:props.screenProps.scan});
     }
 
     onBarCodeRead = (e) => {
@@ -50,7 +55,7 @@ class ScanQR extends Component<{}> {
         }
         let publicAddress = _data[1];
         this.props.navigation.navigate('Send',{publicAddress});
-        setTimeout(()=>this.setState({scan:true}),2000);
+        // setTimeout(()=>this.setState({scan:true}),2000);
     }
 
     render() {
@@ -67,7 +72,7 @@ class ScanQR extends Component<{}> {
                 </View>
                 <FAB style={styles.fab} textstyle={styles.fabText}>OR</FAB>
                 <View style={styles.content}>
-                    {this.props.screenProps.scan && this.state.scan?
+                    {this.state.scan?
                         <Camera
                             ref={(cam) => {
                                 this.camera = cam;
@@ -78,9 +83,13 @@ class ScanQR extends Component<{}> {
                             <Image style={styles.scanQRBoxImg} source={require('@images/scan-qr.png')} />
                         </Camera>:<View style={[styles.preview,{backgroundColor: '#222'}]}>
                             <Image style={styles.scanQRBoxImg} source={require('@images/scan-qr.png')} />
+                            <Button
+                                style={styles.scanQRBtn}
+                                onPress={()=>this.setState({scan:true})}
+                                value="Scan QR"/>
                         </View>
                     }
-                    <Text style={styles.scanQRLabel}>Scan QR</Text>
+
                 </View>
             </Container>
         );

@@ -16,6 +16,8 @@ import Button from '@components/Button';
 import moment from 'moment-timezone';
 import PropTypes from "prop-types";
 
+import { PROFILE_URL } from '@src/config';
+
 const { height, width } = Dimensions.get('window');
 
 export default class RequestTab extends Component {
@@ -39,13 +41,13 @@ export default class RequestTab extends Component {
                     {this.props.req.type == 1?
                         <Image style={styles.reqIcon}
                             defaultSource={require("@images/app-icon.png")}
-                            source={this.props.req.sender_profile_pic_url?
-                                {uri:this.props.req.sender_profile_pic_url}:
+                            source={this.props.req.receiver_profile_pic_url?
+                                {uri:PROFILE_URL+this.props.req.receiver_profile_pic_url}:
                                 require("@images/app-icon.png")} />:
                         <Image style={styles.reqIcon}
                             defaultSource={require("@images/app-icon.png")}
-                            source={this.props.req.receiver_profile_pic_url?
-                                {uri:this.props.req.receiver_profile_pic_url}:
+                            source={this.props.req.sender_profile_pic_url?
+                                {uri:PROFILE_URL+this.props.req.sender_profile_pic_url}:
                                 require("@images/app-icon.png")} />
                     }
                     <View style={styles.reqDetail}>
@@ -99,11 +101,11 @@ export default class RequestTab extends Component {
                                     </View>
                                     <Icon style={styles.reqDownArrow} name='arrow-down'/>
                                     <View style={styles.reqDetailRow}>
-                                        {this.props.req.type == 1?
+                                        {this.props.req.type == 2?
                                             <Image style={styles.reqDetailIcon}
                                                 defaultSource={require("@images/app-icon.png")}
                                                 source={this.props.req.sender_profile_pic_url?
-                                                    {uri:this.props.req.sender_profile_pic_url}:
+                                                    {uri:PROFILE_URL+this.props.req.sender_profile_pic_url}:
                                                     require('@images/app-icon.png')} />:
                                             <Image style={styles.reqDetailIcon}
                                                 defaultSource={require("@images/app-icon.png")}
@@ -123,16 +125,16 @@ export default class RequestTab extends Component {
                                     </View>
                                 </View>:<View>
                                     <View style={styles.reqDetailRow}>
-                                        {this.props.req.type == 1?
+                                        {this.props.req.type == 2?
                                             <Image style={styles.reqDetailIcon}
                                                 defaultSource={require("@images/app-icon.png")}
                                                 source={this.props.req.sender_profile_pic_url?
-                                                    {uri:this.props.req.sender_profile_pic_url}:
+                                                    {uri:PROFILE_URL+this.props.req.sender_profile_pic_url}:
                                                     require('@images/app-icon.png')} />:
                                             <Image style={styles.reqDetailIcon}
                                                 defaultSource={require("@images/app-icon.png")}
                                                 source={this.props.req.receiver_profile_pic_url?
-                                                    {uri:this.props.req.receiver_profile_pic_url}:
+                                                    {uri:PROFILE_URL+this.props.req.receiver_profile_pic_url}:
                                                     require('@images/app-icon.png')} />
                                         }
                                         <View>

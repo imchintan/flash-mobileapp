@@ -1,4 +1,4 @@
-import { APP_MODE, CURRENCY_TYPE, Address, NETWORKS, MOMENT_FORMAT } from './config';
+import { APP_MODE, CURRENCY_TYPE, Address, NETWORKS, MOMENT_FORMAT } from '@src/config';
 import _tmp from 'moment-timezone';
 import bitcoin from 'bitcoinjs-lib'
 import moment from 'moment-timezone';

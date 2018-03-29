@@ -13,6 +13,7 @@ import Text from './../Text';
 import Icon from 'react-native-fa-icons';
 import moment from 'moment-timezone';
 import PropTypes from "prop-types";
+import { PROFILE_URL } from '@src/config';
 
 const { height, width } = Dimensions.get('window');
 
@@ -35,24 +36,24 @@ export default class TransactionTab extends Component {
                     {this.props.txn.type == 1?
                         <Image style={styles.txnIcon}
                             defaultSource={require("@images/app-icon.png")}
-                            source={this.props.txn.sender_profile_pic_url?
-                                {uri:this.props.txn.sender_profile_pic_url}:require('@images/send-icon.png')} />:
+                            source={this.props.txn.receiver_profile_pic_url?
+                                {uri:PROFILE_URL+this.props.txn.receiver_profile_pic_url}:require('@images/send-icon.png')} />:
                         <Image style={styles.txnIcon}
                             defaultSource={require("@images/app-icon.png")}
-                            source={this.props.txn.receiver_profile_pic_url?
-                                {uri:this.props.txn.receiver_profile_pic_url}:require('@images/receive-icon.png')} />
+                            source={this.props.txn.sender_profile_pic_url?
+                                {uri:PROFILE_URL+this.props.txn.sender_profile_pic_url}:require('@images/receive-icon.png')} />
                     }
                     <View style={styles.txnDetail}>
                         <Text numberOfLines={1} style={styles.txnAmount}>{this.props.txn.type == 1?'-':'+'} {this.props.txn.amount}
-                        <Text style={styles.txnRecvFrom}> {this.props.txn.type == 1?'to':'from'} {this.props.txn.type == 1?this.props.txn.receiver_display_name:this.props.txn.sender_display_name}</Text></Text>
+                        <Text style={styles.txnRecvFrom}> {this.props.txn.type == 1?'to':'from'} {this.props.txn.type == 1?
+                                (this.props.txn.receiver_display_name || 'Anonymous'):(this.props.txn.sender_display_name || 'Anonymous')}</Text></Text>
                         <Text style={styles.txnDateTime}> {moment(this.props.txn.created_ts).format('MMM DD, YYYY hh:mm A')}</Text>
                     </View>
-                    <View style={[styles.txnStatus,
-                        this.props.txn.status == 'confirmed' && {backgroundColor: '#007E33'},
-                        this.props.txn.status == 'pending' && {backgroundColor: '#FFB400'}
-
-                    ]}>
-                        <Text style={styles.txnStatusLabel}>{this.props.txn.status.toUpperCase()}</Text>
+                    <View style={styles.txnStatus}>
+                        <Text style={[styles.txnStatusLabel,
+                            this.props.txn.status == 'confirmed' && {color: '#007E33'},
+                            this.props.txn.status == 'pending' && {color: '#FFB400'}
+                        ]}>{this.props.txn.status.toUpperCase()}</Text>
                     </View>
                 </TouchableOpacity>
                 <Modal
@@ -71,20 +72,24 @@ export default class TransactionTab extends Component {
                                     <Text selectable={true} style={styles.txnDetailText}>{moment(this.props.txn.created_ts).format('MMM DD, YYYY hh:mm A')}</Text>
                                 </View>
                                 <View style={styles.txnDetailRow}>
-                                    {this.props.txn.type == 1?
+                                    {this.props.txn.type == 2?
                                         <Image style={styles.txnDetailIcon}
                                             defaultSource={require("@images/app-icon.png")}
                                             source={this.props.txn.sender_profile_pic_url?
-                                                {uri:this.props.txn.sender_profile_pic_url}:require('@images/app-icon.png')} />:
+                                                {uri:PROFILE_URL+this.props.txn.sender_profile_pic_url}:require('@images/app-icon.png')} />:
                                         <Image style={styles.txnDetailIcon}
                                             defaultSource={require("@images/app-icon.png")}
                                             source={this.props.txn.receiver_profile_pic_url?
-                                                {uri:this.props.txn.receiver_profile_pic_url}:require('@images/app-icon.png')} />
+                                                {uri:PROFILE_URL+this.props.txn.receiver_profile_pic_url}:require('@images/app-icon.png')} />
                                     }
                                     <View>
                                         <Text style={styles.txnDetailText}>{this.props.txn.type == 1?'Recipient':'Name'}
-                                            : {this.props.txn.type == 1?this.props.txn.receiver_display_name:this.props.txn.sender_display_name}</Text>
-                                        <Text selectable={true} style={styles.txnDetailText}>Email: {this.props.txn.type == 1?this.props.txn.receiver_email:this.props.txn.sender_email}</Text>
+                                            : {this.props.txn.type == 1?
+                                                (this.props.txn.receiver_display_name || 'Anonymous')
+                                                :(this.props.txn.sender_display_name || 'Anonymous')}</Text>
+                                        <Text selectable={true} style={styles.txnDetailText}>Email: {this.props.txn.type == 1?
+                                            (this.props.txn.receiver_email || 'Anonymous')
+                                            :(this.props.txn.sender_email || 'Anonymous')}</Text>
                                     </View>
                                 </View>
                                 <View style={styles.txnDetailRow}>
@@ -147,8 +152,9 @@ const styles = StyleSheet.create({
         }),
     },
     txnIcon: {
-        width: 35,
+        width: 36,
         height: 36,
+        borderRadius: 18,
         resizeMode: 'contain',
     },
     txnDetail:{
@@ -174,14 +180,14 @@ const styles = StyleSheet.create({
         width: 90,
         height: 36,
         borderRadius: 18,
-        backgroundColor: '#D04100',
+        // backgroundColor: '#D04100',
         alignItems: 'center',
         justifyContent: 'center'
     },
     txnStatusLabel:{
-        color: '#FFFFFF',
-        fontSize: 13,
-        fontWeight: 'bold',
+        color: '#D04100',
+        fontSize: 15,
+        fontWeight: '500',
     },
     txnDetailModal:{
         backgroundColor: '#0007',

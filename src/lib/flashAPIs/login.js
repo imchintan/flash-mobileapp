@@ -1,4 +1,4 @@
-import { API_URL, RESOURCE, APP_VERSION } from '@lib/config';
+import { API_URL, RESOURCE, APP_VERSION } from '@src/config';
 
 export const login = (email,password) => {
     return new Promise((resolve,reject) => {

@@ -25,13 +25,14 @@ module.exports = StyleSheet.create({
         height: 25,
     },
     headerBackIcon:{
-        paddingLeft: 2,
+        paddingLeft: 3,
         paddingRight: 10,
-        fontSize: 50,
+        fontSize: 40,
         color: '#FFFFFF',
     },
     headerFAIcon:{
-        fontSize: 40,
+        fontSize: 30,
+        padding: 5,
         color: '#FFFFFF',
     },
     webViewFP:{
@@ -43,5 +44,3 @@ module.exports = StyleSheet.create({
         width,
     }
 });
-// #00AFFD
-// #009DE4

@@ -6,7 +6,8 @@ import React from 'react';
 import {
     View,
     Text,
-    Platform
+    Platform,
+    TouchableOpacity
 } from 'react-native';
 import {
     TabNavigator,
@@ -96,11 +97,16 @@ class MyAccount extends React.Component {
             }}>
                 <Header>
                     <HeaderLeft>
-                        <Icon onPress={()=>this.props.navigation.goBack()} style={styles.headerBackIcon} name='angle-left' />
+                        <TouchableOpacity>
+                            <Icon onPress={()=>this.props.navigation.goBack()}
+                                style={styles.headerBackIcon} name='angle-left' />
+                        </TouchableOpacity>
                     </HeaderLeft>
                     <HeaderTitle>My Account</HeaderTitle>
                     <HeaderRight>
-                        <Icon style={styles.headerFAIcon} onPress={this.props.logout} name='power-off' />
+                        <TouchableOpacity>
+                            <Icon style={styles.headerFAIcon} onPress={this.props.logout} name='power-off' />
+                        </TouchableOpacity>
                     </HeaderRight>
                 </Header>
                 <TabNav />

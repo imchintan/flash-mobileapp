@@ -1,7 +1,7 @@
 import bitcoin from 'bitcoinjs-lib'
 import bip39 from 'bip39';
 import base58check from 'bs58check';
-import { CURRENCY_TYPE, APP_MODE, NETWORKS, NETWORK_NAME } from './config';
+import { CURRENCY_TYPE, APP_MODE, NETWORKS, NETWORK_NAME } from '@src/config';
 
 export default class Wallet {
     accounts = null;
