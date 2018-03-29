@@ -29,7 +29,7 @@ const styles = StyleSheet.create({
             },
         }),
         height: 100,
-        backgroundColor:'#222222',
+        backgroundColor:'#000000',
         alignItems: 'center',
         justifyContent: 'center'
     },
@@ -45,42 +45,42 @@ const styles = StyleSheet.create({
         bottom: 5,
     },
     sendFormPlaceholder:{
-        fontSize: 15,
+        fontSize: 18,
         color: '#A4A4A4',
     },
     fab:{
         zIndex: 9999,
         ...Platform.select({
             ios: {
-                top: 155,
+                top: 150,
             },
             android: {
-                top: 133,
+                top: 127,
             },
         }),
-        width: 40,
-        height: 40,
-        borderRadius: 20,
+        width: 50,
+        height: 50,
+        borderRadius: 25,
         shadowColor: 'rgba(255,255,255, 0.9)',
         shadowOffset: { height: 0, width: 0 },
         shadowOpacity: 0.7,
         backgroundColor: '#333'
     },
     fabText:{
-        fontSize: 12,
+        fontSize: 18,
     },
     scanQRLabel:{
         position: 'absolute',
         top: 35,
-        fontSize: 15,
-        fontWeight: 'bold',
+        fontSize: 18,
         color: '#FFFFFF',
+        textAlign: 'center',
+        width: '100%',
         zIndex: 999
     },
     scanQRBoxImg:{
         flex: 1,
         width: '100%',
-        zIndex: 900
     },
 });
 

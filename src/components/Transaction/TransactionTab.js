@@ -3,13 +3,13 @@ import {
     StyleSheet,
     Platform,
     View,
-    Text,
     Image,
     TouchableOpacity,
     Modal,
     ViewPropTypes,
     Dimensions
 } from 'react-native';
+import Text from './../Text';
 import Icon from 'react-native-fa-icons';
 import moment from 'moment-timezone';
 import PropTypes from "prop-types";
@@ -63,7 +63,7 @@ export default class TransactionTab extends Component {
                         <View style={styles.txnDetailBox}>
                             <View style={styles.txnDetailHeader}>
                                 <Text style={styles.txnDetailTitle}>Transaction Details</Text>
-                                <Icon style={styles.txnDetailCloseIcon} onPress={()=>this.setState({visible:false})} name='close' />
+                                <Text style={styles.txnDetailCloseIcon} onPress={()=>this.setState({visible:false})} >X</Text>
                             </View>
                             <View style={styles.txnDetailBody}>
                                 <View style={styles.txnDetailRow}>
@@ -195,9 +195,8 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
     },
     txnDetailCloseIcon:{
-        fontSize: 20,
-        color: '#FFDD4D',
-        opacity: 0.5,
+        fontSize: 18,
+        color: '#E0AE27',
         padding: 5,
         paddingRight: 0
     },
@@ -207,11 +206,10 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         backgroundColor: '#191714',
         paddingHorizontal: 15,
-        paddingVertical: 12,
+        paddingVertical: 8,
     },
     txnDetailTitle:{
         fontSize: 18,
-        // fontWeight: '500',
         color: '#E0AE27',
     },
     txnDetailBody:{

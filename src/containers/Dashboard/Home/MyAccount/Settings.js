@@ -5,7 +5,6 @@
 import React, { Component } from 'react';
 import {
   View,
-  Text,
   TextInput,
   Dimensions
 } from 'react-native';
@@ -14,6 +13,7 @@ import {
     QRCode,
     Switch,
     Button,
+    Text,
     Toast
 } from '@components';
 
@@ -75,7 +75,7 @@ class Settings extends Component<{}> {
                             value={!!this.props.profile.totp_enabled || !!this.state.totp_enabled}
                             activeText={''}
                             inActiveText={''}
-                            backgroundActive={'#009DE4'}
+                            backgroundActive={'#E0AE27'}
                             barHeight={34}
                             circleBorderWidth={0}
                             onValueChange={(totp_enabled)=>{

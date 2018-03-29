@@ -5,7 +5,6 @@
 import React, { Component } from 'react';
 import {
   View,
-  Text,
   Image
 } from 'react-native';
 import {
@@ -15,6 +14,7 @@ import {
     Content,
     Icon,
     Toast,
+    Text,
     FAB
 } from '@components';
 import Camera from 'react-native-camera';
@@ -76,12 +76,11 @@ class ScanQR extends Component<{}> {
                             style={styles.preview}
                             aspect={Camera.constants.Aspect.fill}>
                             <Image style={styles.scanQRBoxImg} source={require('@images/scan-qr.png')} />
-                            <Text style={styles.scanQRLabel}>Scan QR</Text>
                         </Camera>:<View style={[styles.preview,{backgroundColor: '#222'}]}>
                             <Image style={styles.scanQRBoxImg} source={require('@images/scan-qr.png')} />
-                            <Text style={styles.scanQRLabel}>Scan QR</Text>
                         </View>
                     }
+                    <Text style={styles.scanQRLabel}>Scan QR</Text>
                 </View>
             </Container>
         );

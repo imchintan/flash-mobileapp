@@ -16,14 +16,15 @@ export default class Loader extends Component {
     }
     static defaultProps = {
         transparent: false,
+        style: {},
     }
 
     render() {
         if(this.props.show)
             return (
-                <View {...this.props} style={[styles.container, this.props.transparent && {backgroundColor: 'transparent'}]}>
+                <View {...this.props} style={[styles.container, this.props.style,this.props.transparent && {backgroundColor: 'transparent'}]}>
                     <View style={[styles.loader,this.props.vertical === false && {flexDirection: 'row'}]}>
-                        <ActivityIndicator size={this.props.vertical === false?"small":"large"} color="#00AFFD" />
+                        <ActivityIndicator size={this.props.vertical === false?"small":"large"} color="#191714" />
                         {this.props.text?<Text style={[styles.loaderText,this.props.vertical === false && {paddingTop: 0, paddingLeft: 5,}]}>{this.props.text}</Text>:null}
                     </View>
                 </View>
@@ -52,7 +53,7 @@ const styles = StyleSheet.create({
         padding: 15,
         alignItems: 'center',
         justifyContent: 'center',
-        backgroundColor: '#FFF',
+        backgroundColor: '#E0AE27',
         borderRadius: 5,
         ...Platform.select({
             ios: {
@@ -68,6 +69,6 @@ const styles = StyleSheet.create({
     loaderText:{
         fontSize: 14,
         paddingTop: 5,
-        color: '#00AFFD',
+        color: '#191714',
     },
 });

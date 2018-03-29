@@ -111,8 +111,8 @@ class Home extends Component<{}> {
                         <QRCode
                             value={'flashcoin:'+this.props.wallet_address}
                             size={width-70}
-                            bgColor='#000'
-                            fgColor='#fff'/>
+                            bgColor='#191714'
+                            fgColor='#FFFFFF'/>
                         <View style={styles.qrCodeModalWalletAddress}>
                             <Text selectable={true} style={styles.qrCodeModalWalletAddressText}>
                                 {this.props.wallet_address}

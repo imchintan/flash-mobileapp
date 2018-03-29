@@ -3,7 +3,6 @@ import {
     StyleSheet,
     Platform,
     View,
-    Text,
     TextInput,
     Image,
     TouchableOpacity,
@@ -11,6 +10,7 @@ import {
     ViewPropTypes,
     Dimensions
 } from 'react-native';
+import Text from './../Text';
 import Icon from 'react-native-fa-icons';
 import Button from '@components/Button';
 import moment from 'moment-timezone';
@@ -72,10 +72,8 @@ export default class RequestTab extends Component {
                                     this.state.accept?'Confirm Transaction':
                                     'Request Details')}
                                 </Text>
-                                <Icon style={styles.reqDetailCloseIcon}
-                                    onPress={()=>this.setState({visible:false,
-                                        reject: false, accept: false, note: ''})}
-                                    name='close' />
+                                <Text style={styles.reqDetailCloseIcon}
+                                onPress={()=>this.setState({visible:false})}>X</Text>
                             </View>
                             <View style={styles.reqDetailBody}>
                                 {this.state.accept?<View style={styles.reqDetailRow}>
@@ -237,8 +235,8 @@ export default class RequestTab extends Component {
                                     onPress={()=>this.setState({cancelRequest:false},
                                         ()=>!!this.props.onCancel && this.props.onCancel(this.props.req))}
                                     value='Yes' />
-                                <Button style={[styles.reqBtn,{backgroundColor: '#EFEFEF'}]}
-                                    textstyle={[styles.reqBtnLabel,{color:'#333'}]}
+                                <Button style={[styles.reqBtn,{backgroundColor: '#E0AE27'}]}
+                                    textstyle={[styles.reqBtnLabel,{color:'#000'}]}
                                     onPress={()=>this.setState({cancelRequest:false})}
                                     value='No' />
                             </View>
@@ -335,8 +333,10 @@ const styles = StyleSheet.create({
         paddingHorizontal: 20,
     },
     reqDetailCloseIcon:{
-        fontSize: 20,
-        color: '#FFDD4D',
+        fontSize: 18,
+        color: '#E0AE27',
+        padding: 5,
+        paddingRight: 0
     },
     reqDetailHeader:{
         flexDirection: 'row',
@@ -344,11 +344,10 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         backgroundColor: '#191714',
         paddingHorizontal: 15,
-        paddingVertical: 12,
+        paddingVertical: 8,
     },
     reqDetailTitle:{
         fontSize: 18,
-        fontWeight: '500',
         color: '#E0AE27',
     },
     reqDetailBody:{
@@ -387,14 +386,14 @@ const styles = StyleSheet.create({
         borderRadius: 10,
     },
     reqBtn:{
-        backgroundColor: '#008fd0',
+        backgroundColor: '#191714',
         width:'50%',
         borderRadius: 0,
         alignItems: 'center',
     },
     reqBtnLabel:{
-        fontSize: 16,
-        fontWeight: '500'
+        fontSize: 18,
+        color: '#FFFFFF',
     },
     reqDownArrow:{
         fontSize: 20,

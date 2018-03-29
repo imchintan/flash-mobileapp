@@ -5,10 +5,10 @@
 import React, { Component } from 'react';
 import {
   View,
-  Text,
   TextInput
 } from 'react-native';
 import {
+    Text,
     Content
 } from '@components';
 import moment from 'moment-timezone';

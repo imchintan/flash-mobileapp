@@ -5,6 +5,7 @@ import { StackNavigator } from 'react-navigation';
 import Dashboard from '@containers/Dashboard';
 import Login from '@containers/Login';
 import ForgotPassword from '@containers/ForgotPassword';
+import SignUP from '@containers/SignUP';
 import Verify2FA from '@containers/Verify2FA';
 
 const routes = {
@@ -16,6 +17,9 @@ const routes = {
     },
     ForgotPassword: {
         screen: ForgotPassword,
+    },
+    SignUP: {
+        screen: SignUP,
     },
     Verify2FA: {
         screen: Verify2FA,

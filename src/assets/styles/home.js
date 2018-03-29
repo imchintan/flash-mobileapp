@@ -44,7 +44,7 @@ const styles = StyleSheet.create({
         fontSize: 22,
     },
     qrCodeModal:{
-        backgroundColor: '#fffd',
+        backgroundColor: '#000c',
         width: '100%',
         height: '100%',
         alignItems: 'center',
@@ -52,9 +52,8 @@ const styles = StyleSheet.create({
     },
     qrCodeModalTitle:{
         marginBottom: 20,
-        color: '#000080',
-        fontSize: 20,
-        fontWeight: '600',
+        color: '#E0AE27',
+        fontSize: 24,
     },
     qrCodeModalWalletAddress:{
         backgroundColor: '#fff',

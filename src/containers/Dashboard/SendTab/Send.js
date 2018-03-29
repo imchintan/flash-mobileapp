@@ -5,7 +5,6 @@
 import React, { Component } from 'react';
 import {
   View,
-  Text,
   BackHandler,
   TextInput,
   Image,
@@ -18,6 +17,7 @@ import {
     HeaderTitle,
     Content,
     Icon,
+    Text,
     Button,
     Toast
 } from '@components';

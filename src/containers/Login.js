@@ -36,6 +36,8 @@ class Login extends Component<{}> {
     constructor(props) {
         super(props);
         this.state = {
+            // email: 'maulikvora59+3@gmail.com',
+            // password: 'Maulik123'
         };
     }
 
@@ -68,121 +70,49 @@ class Login extends Component<{}> {
     render() {
         return (
             <Container style={{backgroundColor:'#191714'}}>
-                <View style={{
-                    flex: 1,
-                    width: '100%',
-                    paddingHorizontal: 40,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                }}>
-                    <Image style={{
-                        width: '60%',
-                        maxHeight: 250,
-                        alignSelf: 'center',
-                        resizeMode: 'contain',
-                    }}  source={require('@images/app-text-icon-white-vertical.png')}/>
-                    <View style={{
-                        width: '100%',
-                        alignItems: 'center',
-                        marginBottom: 50,
-                    }}>
-                        <View style={{
-                            justifyContent: 'center',
-                            marginTop: 20,
-                            width: '100%',
-                            paddingHorizontal: 15,
-                            height: 60,
-                            borderWidth: 1.5,
-                            borderRadius:30,
-                            borderColor: '#ddd',
-                            backgroundColor:'#FFFFFF'
-                        }}>
-                            <TextInput
-                                style={{
-                                    fontSize: 16,
-                                    fontWeight: '400'
-                                }}
-                                onSubmitEditing={()=>this.refs._input_passowrd.focus()}
-                                underlineColorAndroid='transparent'
-                                placeholder={'Email address'}
-                                keyboardType={'email-address'}
-                                returnKeyType='next'
-                                onChangeText={(email) => this.setState({email})}
-                                value={this.state.email || ''}
-                            />
-                        </View>
-                        <View style={{
-                            justifyContent: 'center',
-                            marginTop: 30,
-                            width: '100%',
-                            paddingHorizontal: 15,
-                            height: 60,
-                            borderWidth: 1.5,
-                            borderRadius:30,
-                            borderColor: '#ddd',
-                            backgroundColor:'#FFFFFF'
-                        }}>
-                            <TextInput
-                                ref={'_input_passowrd'}
-                                style={{
-                                    fontSize: 16,
-                                    fontWeight: '400'
-                                }}
-                                underlineColorAndroid='transparent'
-                                secureTextEntry={true}
-                                returnKeyType='done'
-                                placeholder={'Password'}
-                                onChangeText={(password) => this.setState({password})}
-                                onSubmitEditing={this.login}
-                                value={this.state.password || ''}
-                            />
-                        </View>
-                        <Button style={{
-                                marginTop: 30,
-                                width: 180,
-                                height: 50,
-                                justifyContent: 'center',
-                                alignItems: 'center',
-                                borderRadius: 25,
-                            }}
-                            textstyle={{
-                                fontSize: 22,
-                                fontWeight: '400'
-                            }}
-                            value={'LOGIN'}
-                            onPress={this.login}
+                <View style={styles.loginBox}>
+                    <Image style={styles.appLogo}  source={require('@images/app-text-icon-white-vertical.png')}/>
+                    <View style={styles.loginInputRow}>
+                        <TextInput
+                            style={styles.loginInput}
+                            onSubmitEditing={()=>this.refs._input_passowrd.focus()}
+                            underlineColorAndroid='transparent'
+                            placeholder={'Email address'}
+                            keyboardType={'email-address'}
+                            returnKeyType='next'
+                            onChangeText={(email) => this.setState({email})}
+                            value={this.state.email || ''}
                         />
+                    </View>
+                    <View style={styles.loginInputRow}>
+                        <TextInput
+                            ref={'_input_passowrd'}
+                            style={styles.loginInput}
+                            underlineColorAndroid='transparent'
+                            secureTextEntry={true}
+                            returnKeyType='done'
+                            placeholder={'Password'}
+                            onChangeText={(password) => this.setState({password})}
+                            onSubmitEditing={this.login}
+                            value={this.state.password || ''}
+                        />
+                    </View>
+                    <Button style={styles.loginBtn}
+                        textstyle={styles.loginBtnLabel}
+                        value={'LOGIN'}
+                        onPress={this.login}
+                    />
 
+                    <TouchableOpacity style={{marginTop: 50}}
+                        onPress={()=>this.props.navigation.navigate('ForgotPassword')}>
+                        <Text style={styles.loginFormOtherText}>Forgot password?</Text>
+                    </TouchableOpacity>
+                    <View style={{flexDirection: 'row',marginTop: 10}}>
+                        <Text style={styles.loginFormOtherText}>{"Don't have an account? "}</Text>
                         <TouchableOpacity
-                            style={{
-                                marginTop: 50,
-                            }}
-                            // onPress={()=>this.props.navigation.navigate('ForgotPassword')}
-                            >
-                            <Text style={{
-                                fontSize: 15,
-                                fontWeight: '400',
-                                color: '#FFFFFF'
-                            }}>Forgot password?</Text>
+                        onPress={()=>this.props.navigation.navigate('SignUP')}>
+                            <Text style={[styles.loginFormOtherText,{color: '#E0AE27'}]}>Create one</Text>
                         </TouchableOpacity>
-                        <View style={{
-                            flexDirection: 'row',
-                            marginTop: 20,
-                        }}>
-                            <Text style={{
-                                fontSize: 15,
-                                fontWeight: '400',
-                                color: '#FFFFFF'
-                            }}>{"Don't have an account? "}</Text>
-                            <TouchableOpacity>
-                                <Text style={{
-                                    fontSize: 15,
-                                    fontWeight: '400',
-                                    color: '#E0AE27'
-                                }}>Create one</Text>
-                            </TouchableOpacity>
-
-                        </View>
                     </View>
                 </View>
                 <Loader show={this.props.loading} />

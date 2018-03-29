@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import {
     StyleSheet,
-    View,
-    Text
+    View
 } from 'react-native';
+import Text from './../Text';
 export default class HeaderTitle extends Component {
     constructor(props) {
         super(props);
@@ -29,8 +29,8 @@ const styles = StyleSheet.create({
         left: '20%'
     },
     headerTitleText:{
-        fontSize: 20,
-        fontWeight: '600',
+        fontSize: 22,
+        fontWeight: '500',
         color: '#FFFFFF'
     },
 });

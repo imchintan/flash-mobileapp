@@ -26,12 +26,21 @@ module.exports = StyleSheet.create({
     },
     headerBackIcon:{
         paddingLeft: 2,
+        paddingRight: 10,
         fontSize: 50,
         color: '#FFFFFF',
     },
     headerFAIcon:{
         fontSize: 40,
         color: '#FFFFFF',
+    },
+    webViewFP:{
+        marginTop: -20,
+        width,
+    },
+    webViewCreateWallet:{
+        marginTop: 10,
+        width,
     }
 });
 // #00AFFD

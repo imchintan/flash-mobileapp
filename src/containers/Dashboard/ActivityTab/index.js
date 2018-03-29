@@ -5,7 +5,6 @@
 import React from 'react';
 import {
     View,
-    Text,
     Platform
 } from 'react-native';
 import {
@@ -18,6 +17,7 @@ import {
     HeaderRight,
     Content,
     Icon,
+    Text,
     Calendar
 } from '@components';
 import moment from 'moment-timezone';
@@ -38,13 +38,13 @@ const TabNav = TabNavigator({
     navigationOptions: ({ navigation }) => ({
     }),
     tabBarOptions: {
-        activeTintColor: '#FFFFFF',
+        activeTintColor: '#E0AE27',
         indicatorStyle:{
-            backgroundColor: '#FFFFFF',
+            backgroundColor: '#E0AE27',
             height: 3,
         },
         style: {
-            backgroundColor: '#14A6EE',
+            backgroundColor: '#191714',
             ...Platform.select({
                 ios: {
                     shadowColor: 'rgba(0,0,0, 0.5)',
@@ -57,7 +57,7 @@ const TabNav = TabNavigator({
             }),
         },
         labelStyle: {
-            fontWeight: 'bold',
+            fontSize: 16
         },
     },
     showIcon: false,
@@ -101,8 +101,9 @@ class ActivityTab extends React.Component {
            'date': 'MMM DD, YYYY'  // date format
          };
         let color = {
-            mainColor: '#00AFFD',
-            subColor: '#f0f0f0'
+            mainColor: '#191714',
+            subColor: '#E0AE27',
+            borderColor: 'rgba(224, 174, 39, 0.5)'
         };
         return (
             <View style={{
@@ -121,10 +122,10 @@ class ActivityTab extends React.Component {
                         alignSelf: 'center',
                         width: '100%',
                         textAlign: 'center',
-                        fontSize: 16,
+                        fontSize: 18,
                         color: '#FFF',
                     }}>
-                        <Text onPress={this.openCalendar} style={{fontWeight: '600'}}>
+                        <Text onPress={this.openCalendar}>
                         {moment(this.props.date_from).format('MMM DD, YYYY')} - {moment(this.props.date_to).format('MMM DD, YYYY')}  </Text>
                         <Icon onPress={this.openCalendar} style={{fontSize: 20}} name='calendar'/>
                     </Text>
@@ -132,7 +133,7 @@ class ActivityTab extends React.Component {
                          <Icon
                             onPress={this.refresh}
                              style={{
-                                 fontSize: 20,
+                                 fontSize: 22,
                                  color: '#FFF'
                              }}
                             name='refresh'

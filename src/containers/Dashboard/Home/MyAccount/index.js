@@ -42,13 +42,13 @@ const TabNav = TabNavigator({
     navigationOptions: ({ navigation }) => ({
     }),
     tabBarOptions: {
-        activeTintColor: '#FFFFFF',
+        activeTintColor: '#E0AE27',
         indicatorStyle:{
-            backgroundColor: '#FFFFFF',
+            backgroundColor: '#E0AE27',
             height: 3,
         },
         style: {
-            backgroundColor: '#14A6EE',
+            backgroundColor: '#191714',
             ...Platform.select({
                 ios: {
                     shadowColor: 'rgba(0,0,0, 0.5)',
@@ -61,7 +61,8 @@ const TabNav = TabNavigator({
             }),
         },
         labelStyle: {
-            fontWeight: 'bold',
+            fontSize: 16,
+            fontFamily: 'Microsoft Tai Le',
         },
     },
     showIcon: false,
