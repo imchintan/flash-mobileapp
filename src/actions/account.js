@@ -43,7 +43,7 @@ export const getBalance = (refresh = false) => {
                     payload: {
                         balance:d.balance,
                         balanceLoader: false,
-                        successMsg: refresh?('Updated Balance: '+satoshiToFlash(d.balance)+ ' FLASH'):null
+                        infoMsg: refresh?('Updated Balance: '+satoshiToFlash(d.balance)+ ' FLASH'):null
                     }
                 });
                 dispatch(getCoinMarketCapDetail());
@@ -64,15 +64,7 @@ export const getProfile = () => {
     return (dispatch,getState) => {
         let params = getState().params;
         apis.getProfile(params.profile.auth_version, params.profile.sessionToken).then((d)=>{
-            if(d.rc !== 1){
-                dispatch({
-                    type: types.GET_PROFILE,
-                    payload: {
-                        errorMsg:d.reason,
-                        loading:false
-                    }
-                });
-            }else{
+            if(d.rc == 1){
                 AsyncStorage.mergeItem('user',JSON.stringify(d.profile));
                 dispatch({
                     type: types.GET_PROFILE,
@@ -82,7 +74,16 @@ export const getProfile = () => {
                     }
                 });
                 setTimeout(()=>dispatch(getWalletsByEmail()),500);
+            }else{
+                dispatch({
+                    type: types.GET_PROFILE,
+                    payload: {
+                        errorMsg:d.reason,
+                        loading:false
+                    }
+                });
             }
+            dispatch(getRecentTransactions());
         }).catch(e=>{
             dispatch({
                 type: types.GET_PROFILE,

@@ -33,7 +33,7 @@ const TabNav = TabNavigator({
     Incoming: { screen: IncomingRequests },
     Outgoing: { screen: OutgoingRequests },
 },{
-    navigationOptions: ({ navigation }) => ({
+    navigationOptions: ({ navigation, screenProps }) => ({
     }),
     tabBarOptions: {
         activeTintColor: '#E0AE27',
@@ -140,7 +140,7 @@ class PendingTab extends React.Component {
                         </TouchableOpacity>
                     </HeaderRight>
                 </Header>
-                {this.state.showTab?<TabNav />:null}
+                {this.state.showTab?<TabNav screenProps={{inReqs_total: this.props.inReqs_total, outReqs_total: this.props.outReqs_total}} />:null}
                 {this.state.showTab?<Calendar
                     i18n="en"
                     ref={(calendar) => {this.calendar = calendar;}}
@@ -163,7 +163,9 @@ function mapStateToProps({params}) {
       date_from: params.pending_date_from,
       date_to: params.pending_date_to,
       minDate: moment(params.profile.created_ts).format('YYYYMM01000000'),
-      maxDate: moment().format('YYYYMMDD235959')
+      maxDate: moment().format('YYYYMMDD235959'),
+      inReqs_total: params.inReqs_total || 0,
+      outReqs_total: params.outReqs_total || 0,
   };
 }
 

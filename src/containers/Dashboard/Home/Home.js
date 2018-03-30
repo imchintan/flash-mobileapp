@@ -47,19 +47,7 @@ class Home extends Component<{}> {
         this.state = {};
     }
 
-    componentDidMount(){
-        this.props.getBalance();
-        this.props.getRecentTransactions();
-        this.props.getProfile();
-        this.coinmarketcapValue = setInterval(this.props.getCoinMarketCapDetail, 60000);
-    }
-
-    componentWillUnMount(){
-        clearInterval(this.coinmarketcapValue);
-    }
-
     render() {
-        console.log(this.props.txns);
         return (
             <Container>
                 <Header>
@@ -97,7 +85,9 @@ class Home extends Component<{}> {
                             <Icon style={styles.balanceRefreshIcon} name='refresh' />}
                         </TouchableOpacity>
                         <Text style={styles.balanceLabel}>Your Balance</Text>
-                        <Text style={styles.balanceText}>{flashNFormatter(satoshiToFlash(this.props.balance),2)} FLASH</Text>
+                        <TouchableOpacity  onPress={()=>this.setState({fullBalance:true})}>
+                            <Text style={styles.balanceText}>{flashNFormatter(satoshiToFlash(this.props.balance),2)} FLASH</Text>
+                        </TouchableOpacity>
                         <Text style={styles.otherBalanceText}>≈ {this.props.balance_in_btc} BTC</Text>
                         <Text style={styles.otherBalanceText}>≈ {this.props.balance_in_usd} USD</Text>
                     </View>
@@ -137,6 +127,34 @@ class Home extends Component<{}> {
                         </View>
                         <View>
                             <Button onPress={this.props.hideQR} style={styles.qrCodeModalCloseBtn} value='Close' />
+                        </View>
+                    </View>
+                </Modal>
+                <Modal
+                    transparent={true}
+                    visible={!!this.state.fullBalance}
+                    onRequestClose={()=>this.setState({fullBalance:false})}>
+                    <View style={styles.reqDetailModal}>
+                        <View style={styles.reqDetailBox}>
+                            <View style={styles.reqDetailHeader}>
+                                <Text style={styles.reqDetailTitle}>Flash Balance</Text>
+                                <Text style={styles.reqDetailCloseIcon}
+                                    onPress={()=>this.setState({fullBalance:false})}>X</Text>
+                            </View>
+                        </View>
+                        <View style={styles.reqDetailBody}>
+                            <Text style={{
+                                fontSize: 35,
+                                fontWeight: 'bold',
+                                textAlign: 'center',
+                                color: '#000000',
+                                marginBottom: 25,
+                            }}>{satoshiToFlash(this.props.balance)} FLASH</Text>
+                            <Button
+                                onPress={()=>this.setState({fullBalance:false})}
+                                style={[styles.reqBtn,{backgroundColor:'#E0AE27'}]}
+                                textstyle={[styles.reqBtnLabel,{color: '#191714'}]}
+                                value='Close' />
                         </View>
                     </View>
                 </Modal>

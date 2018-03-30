@@ -67,8 +67,11 @@ export const NAVIGATE_DASHBOARD = 'NAVIGATE_DASHBOARD';
 export const NAVIGATE_BACK = 'NAVIGATE_BACK';
 
 
-// Send/Request Coin
+// Send/Request Payment
 export const SEARCH_WALLET = 'SEARCH_WALLET';
 export const RAW_TRANSACTION = 'RAW_TRANSACTION';
 export const ADD_TRANSACTION = 'ADD_TRANSACTION';
 export const TRANSACTION_BY_ID = 'TRANSACTION_BY_ID';
+
+//Messages
+export const GET_MESSAGES = 'GET_MESSAGES';

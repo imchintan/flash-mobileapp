@@ -6,9 +6,11 @@ let commonProps = {
     shadow: true,
     animation: true,
     hideOnPress: true,
+    opacity: 0.9,
     textStyle:{
-        fontSize: 14,
-    }
+        fontSize: 16,
+        fontFamily: 'Microsoft Tai Le',
+    },
 }
 let topProps = {
     ...Platform.select({
@@ -35,6 +37,14 @@ let successProps = {
 let warnProps = {
     backgroundColor: '#FF8800'
 }
+let infoProps = {
+    backgroundColor: '#E0AE27',
+    textStyle:{
+        fontSize: 16,
+        fontFamily: 'Microsoft Tai Le',
+        color: '#191714',
+    },
+}
 
 module.exports = {
     ...Toast,
@@ -55,15 +65,18 @@ module.exports = {
     }),
     showTop: (msg)=> Toast.show(msg,{
         ...commonProps,
-        ...topProps
+        ...topProps,
+        ...infoProps
     }),
     showBottom: (msg)=> Toast.show(msg,{
         ...commonProps,
-        ...bottomProps
+        ...bottomProps,
+        ...infoProps
     }),
     show: (msg)=> Toast.show(msg,{
         ...commonProps,
-        ...centerProps
+        ...centerProps,
+        ...infoProps
     }),
     successTop: (msg)=> Toast.show(msg,{
         ...commonProps,

@@ -22,8 +22,10 @@ const styles = require("@styles/pending");
 
 class OutgoingRequests extends Component<{}> {
 
-    static navigationOptions = {
-        header: null,
+    static navigationOptions = ({ navigation, screenProps }) =>{
+        return ({
+            title:'Outgoing'+(screenProps.outReqs_total > 0?` (${screenProps.outReqs_total})` :''),
+        })
     }
 
     constructor(props) {

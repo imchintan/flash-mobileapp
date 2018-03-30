@@ -27,8 +27,10 @@ const styles = require("@styles/pending");
 
 class IncomingRequests extends Component<{}> {
 
-    static navigationOptions = {
-        header: null,
+    static navigationOptions = ({ navigation, screenProps }) =>{
+        return ({
+            title:'Incoming'+(screenProps.inReqs_total > 0?` (${screenProps.inReqs_total})` :''),
+        })
     }
 
     constructor(props) {

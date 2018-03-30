@@ -132,12 +132,26 @@ const EnhancedComponent = class extends React.Component {
         };
     }
     componentDidMount(){
+        this.props.getBalance();
+        this.props.getProfile();
         setTimeout(()=>this.setState({loader:false}),2000);
+        this.coinmarketcapValue = setInterval(this.props.getCoinMarketCapDetail, 60000);
+        this.getMessages = setInterval(this.props.getMessages, 10000);
     }
+
+    componentWillUnmount(){
+        clearInterval(this.coinmarketcapValue);
+        clearInterval(this.getMessages);
+    }
+
     componentWillReceiveProps(nextProps){
         if(nextProps){
             if(nextProps.errorMsg){
                 Toast.errorTop(nextProps.errorMsg);
+                this.props.resetMessages();
+            }
+            if(nextProps.infoMsg){
+                Toast.showTop(nextProps.infoMsg);
                 this.props.resetMessages();
             }
             if(nextProps.successMsg){
@@ -167,6 +181,7 @@ function mapStateToProps({params}) {
         isLoggedIn: params.isLoggedIn,
         errorMsg: params.errorMsg || null,
         successMsg: params.successMsg || null,
+        infoMsg: params.infoMsg || null,
         totalPending: params.totalPending || 0,
         txn: {},
     };

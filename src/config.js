@@ -20,11 +20,6 @@ export const MOMENT_FORMAT = {
     DATE_TIME_2: 'MMM DD, YYYY hh:mm:ss A',
 };
 
-export const CURRENCY_TYPE = {
-  FLASH: 1,
-  BTC: 2,
-};
-
 const NETWORK_NAME = 'flashcoin';
 
 export const NETWORKS = {
@@ -62,3 +57,23 @@ export const NETWORKS = {
     dustThreshold: 546,
   }
 }
+
+export const CURRENCY_TYPE = {
+  FLASH: 1,
+  BTC: 2,
+};
+
+export const CURRENCY_TYPE_UNIT = {
+  1: 'Flash',
+  2: 'BTC',
+};
+
+export const CURRENCY_TYPE_UNIT_UPCASE = {
+  1: 'FLASH',
+  2: 'BTC',
+};
+
+export const CURRENCY_ICON_URL = {
+  1: 'assets/images/flash-icon.png',
+  2: 'assets/images/btc-icon.png',
+};

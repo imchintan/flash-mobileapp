@@ -1,6 +1,7 @@
 import {
     AsyncStorage
 } from 'react-native';
+import moment from 'moment-timezone';
 import * as types from '@actions/types'
 import apis from '@flashAPIs'
 import Wallet from '@lib/wallet'
@@ -24,6 +25,10 @@ export const init = () => {
             let balance = await AsyncStorage.getItem('balance');
             if(balance){
                 payload.balance = JSON.parse(balance)
+            }
+            let last_message_datetime = await AsyncStorage.getItem('last_message_datetime');
+            if(last_message_datetime){
+                payload.last_message_datetime = Number(last_message_datetime);
             }
             dispatch({
                 type: types.LOGIN_SUCCESS,

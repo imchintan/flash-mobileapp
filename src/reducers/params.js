@@ -10,6 +10,7 @@ const initialState = {
     date_to: moment(),
     pending_date_from: moment().add(-1, 'months').add(-1, 'days'),
     pending_date_to: moment(),
+    last_message_datetime: new Date().getTime(),
 };
 
 const login = (state = initialState, action) => {
@@ -22,7 +23,9 @@ const login = (state = initialState, action) => {
 
         case types.LOGIN_SUCCESS:
         case types.VERIFY_2FA_SUCCESS:
-            return { ...state, isLoggedIn: true, recentTxns_loading: true, errorMsg: null, ...action.payload || {}};
+            return { ...state, isLoggedIn: true, recentTxns_loading: true,
+                    last_message_datetime: new Date().getTime(),
+                    errorMsg: null, ...action.payload || {}};
 
         case types.LOGIN_FAILED:
             return { ...state, isLoggedIn: false, ...action.payload || {}};
@@ -80,7 +83,7 @@ const login = (state = initialState, action) => {
             return { ...state, inReqs: [], outReqs: [], inReqs_total: 0, outReqs_total: 0, totalPending: 0 };
 
         case types.RESET_MESSAGES:
-            return { ...state, errorMsg: null, successMsg: null, sendTxnSuccess: null };
+            return { ...state, errorMsg: null, successMsg: null, infoMsg: null, sendTxnSuccess: null };
 
         case types.UPDATE_TRANSACTION_REPORT_DATE:
             return { ...state, ...action.payload, allTxns_loading: true,

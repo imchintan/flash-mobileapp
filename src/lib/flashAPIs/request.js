@@ -1,9 +1,6 @@
 import { API_URL, RESOURCE, APP_VERSION } from '@src/config';
 import moment from 'moment-timezone';
 
-//add-money-request
-//get-requests
-
 /**
  * Add Money Request
  * @param {Number} auth_version      [description]

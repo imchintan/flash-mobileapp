@@ -4,6 +4,7 @@ import * as transactions from './transactions';
 import * as send from './send';
 import * as request from './request';
 import * as coinmarketcap from './coinmarketcap';
+import * as messages from './messages';
 
 module.exports = {
     ...login,
@@ -12,4 +13,5 @@ module.exports = {
     ...request,
     ...transactions,
     ...coinmarketcap,
+    ...messages,
 }

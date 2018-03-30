@@ -6,6 +6,7 @@ import {
 
 const { height, width } = Dimensions.get('window');
 const appStyles = require('./app');
+const reqStyles = require('./request');
 
 const styles = StyleSheet.create({
     balanceBox:{
@@ -31,10 +32,11 @@ const styles = StyleSheet.create({
     },
     balanceText:{
         marginVertical: 8,
+        textAlign: 'center',
         color: '#E0AE27',
         fontSize: 40,
         fontWeight: 'bold',
-        paddingLeft: 10,
+        paddingHorizontal: 10,
     },
     otherBalanceText:{
         color: '#FFFFFF',
@@ -91,5 +93,6 @@ const styles = StyleSheet.create({
 
 module.exports = {
     ...appStyles,
+    ...reqStyles,
     ...styles
 }
