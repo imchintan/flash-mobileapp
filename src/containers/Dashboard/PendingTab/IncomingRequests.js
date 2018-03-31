@@ -16,11 +16,13 @@ import {
     Button,
     Text,
     RequestTab,
+    Toast,
     Icon
 } from '@components';
 import moment from 'moment-timezone';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
+import { flashToSatoshi } from '@lib/utils';
 import { ActionCreators } from '@actions';
 import { PROFILE_URL } from '@src/config';
 const styles = require("@styles/pending");
@@ -39,7 +41,7 @@ class IncomingRequests extends Component<{}> {
     }
 
     componentDidMount(){
-        this.props.getIncomingRequests();
+        this.props.getIncomingRequests(0,true);
     }
 
     componentWillReceiveProps(nextProps){
@@ -69,6 +71,8 @@ class IncomingRequests extends Component<{}> {
     resetState(){
         this.setState({
             isVerify: false,
+            req: null,
+            note: '',
             publicAddress: null,
             search_wallet: null,
         });
@@ -82,8 +86,13 @@ class IncomingRequests extends Component<{}> {
     sendMoney(force=false){
         if(!force && !this.props.decryptedWallets) return this.setState({visible:false, visibleGetPassword: true});
         if(!this.state.isConfirm) return ;
+
         this.setState({visible:false, visibleGetPassword:false, isConfirm: false},
             ()=>{
+                if(flashToSatoshi(parseFloat(this.state.req.amount)+0.001) > this.props.balance){
+                    this.resetState();
+                    return Toast.errorTop("You do not have enough fee to make this payment");
+                }
                 let receiver_bare_uid =
                     this.state.search_wallet?
                     this.state.search_wallet.email:null;
@@ -279,6 +288,7 @@ function mapStateToProps({params}) {
       total_reqs: params.inReqs_total || 0,
       inReqs_loading: params.inReqs_loading || false,
       loading: params.loading || false,
+      balance: params.balance || 0,
       search_wallet: params.search_wallet || null,
       sendTxnSuccess: params.sendTxnSuccess || null,
       decryptedWallets: params.decryptedWallets || null,

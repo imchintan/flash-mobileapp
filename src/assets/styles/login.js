@@ -8,22 +8,21 @@ const appStyles = require('./app');
 
 const styles = StyleSheet.create({
     loginBox: {
-        flex: 1,
-        width: '100%',
+        width,
         paddingHorizontal: 40,
-        alignItems: 'center',
-        justifyContent: 'center',
+        alignItems:'center',
+        justifyContent:'center',
     },
     appLogo: {
-        width: '60%',
-        maxHeight: 250,
-        alignSelf: 'center',
-        resizeMode: 'contain',
+        marginTop: -30,
+        marginBottom: 20,
+        width: width*0.5,
+        maxHeight: width*0.5,
     },
     loginInputRow: {
         justifyContent: 'center',
-        marginTop: 25,
-        width: '100%',
+        marginTop: 30,
+        width: width-80,
         paddingHorizontal: 15,
         height: 60,
         borderWidth: 1.5,

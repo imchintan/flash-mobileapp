@@ -2,6 +2,7 @@ import {
     AsyncStorage
 } from 'react-native';
 import moment from 'moment-timezone';
+import PushNotification from 'react-native-push-notification';
 import * as types from '@actions/types';
 import * as Constants from '@src/constants';
 import apis from '@flashAPIs';
@@ -56,30 +57,36 @@ export const onBeRequested = (dispatch, message) => {
     let currencyType = message.currency ? parseInt(message.currency) : CURRENCY_TYPE.FLASH;
     let currency_name = CURRENCY_TYPE_UNIT_UPCASE[currencyType];
     let infoMsg = `${message.email_sender} sent you a request for ${message.amount} ${currency_name}`;
-    dispatch({
-      type: types.GET_MESSAGES,
-      payload: {
-          infoMsg
-      }
-    });
+    PushNotification.localNotification({
+        message: infoMsg,
+    })
+    // dispatch({
+    //   type: types.GET_MESSAGES,
+    //   payload: {
+    //       infoMsg
+    //   }
+    // });
 }
 
 export const onTxAdded = (dispatch, message, email) => {
-    dispatch(Account.getBalance());
+    dispatch(Account.getBalance(true));
     dispatch(Transactions.getRecentTransactions());
     dispatch(Transactions.getAllTransactions(0, true));
     dispatch(Transactions.getSentTransactions(0, true));
     dispatch(Transactions.getReceivedTransactions(0, true));
-    if(message.email_sender != email){
+    if(message.sender_email != email){
         let currencyType = message.currency ? parseInt(message.currency) : CURRENCY_TYPE.FLASH;
         let currency_name = CURRENCY_TYPE_UNIT_UPCASE[currencyType];
         let infoMsg = `${message.sender_email} sent you ${message.amount} ${currency_name}`;
-        dispatch({
-          type: types.GET_MESSAGES,
-          payload: {
-              infoMsg
-          }
-        });
+        PushNotification.localNotification({
+            message: infoMsg,
+        })
+        // dispatch({
+        //   type: types.GET_MESSAGES,
+        //   payload: {
+        //       infoMsg
+        //   }
+        // });
     }
 }
 
@@ -101,10 +108,13 @@ export const onRequestStateChanged = (dispatch, message) => {
             break;
     }
     if(infoMsg)
-        dispatch({
-          type: types.GET_MESSAGES,
-          payload: {
-              infoMsg
-          }
-        });
+        PushNotification.localNotification({
+            message: infoMsg,
+        })
+        // dispatch({
+        //   type: types.GET_MESSAGES,
+        //   payload: {
+        //       infoMsg
+        //   }
+        // });
 }

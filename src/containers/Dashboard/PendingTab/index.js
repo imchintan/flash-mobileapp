@@ -131,7 +131,7 @@ class PendingTab extends React.Component {
                             <Text>
                                 {moment(this.props.date_from).format('MMM DD, YYYY')} - {moment(this.props.date_to).format('MMM DD, YYYY')+'  '}
                             </Text>
-                            <Icon onPress={this.openCalendar} style={{fontSize: 20}} name='calendar'/>
+                            <Icon style={{fontSize: 20}} name='calendar'/>
                         </Text>
                     </TouchableOpacity>
                     <HeaderRight>

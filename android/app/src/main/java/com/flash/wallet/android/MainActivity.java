@@ -1,4 +1,4 @@
-package com.flash;
+package com.flash.wallet.android;
 
 import com.facebook.react.ReactActivity;
 

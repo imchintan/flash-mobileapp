@@ -71,8 +71,8 @@ export const getAllTransactions = (start=0, reset=false) => {
                 }
             });
         let params = getState().params;
-        let date_from = params.date_from.format('YYYY-MM-DDTHH:mm:00.000\\Z');
-        let date_to = params.date_to.format('YYYY-MM-DDTHH:mm:00.000\\Z');
+        let date_from = params.date_from.format('YYYY-MM-DDT00:00:00.000\\Z');
+        let date_to = params.date_to.format('YYYY-MM-DDT23:59:59.000\\Z');
         apis.getTransactions(params.profile.auth_version, params.profile.sessionToken,
             params.currency_type, date_from, date_to, 0, start).then((d)=>{
             if(d.rc !== 1){
@@ -113,8 +113,8 @@ export const getSentTransactions = (start=0,reset=false) => {
                 }
             });
         let params = getState().params;
-        let date_from = params.date_from.format('YYYY-MM-DDTHH:mm:00.000\\Z');
-        let date_to = params.date_to.format('YYYY-MM-DDTHH:mm:00.000\\Z');
+        let date_from = params.date_from.format('YYYY-MM-DDT00:00:00.000\\Z');
+        let date_to = params.date_to.format('YYYY-MM-DDT23:59:59.000\\Z');
         apis.getTransactions(params.profile.auth_version, params.profile.sessionToken,
             params.currency_type, date_from, date_to, 1, start).then((d)=>{
             if(d.rc !== 1){
@@ -155,8 +155,8 @@ export const getReceivedTransactions = (start=0, reset=false) => {
                 }
             });
         let params = getState().params;
-        let date_from = params.date_from.format('YYYY-MM-DDTHH:mm:00.000\\Z');
-        let date_to = params.date_to.format('YYYY-MM-DDTHH:mm:00.000\\Z');
+        let date_from = params.date_from.format('YYYY-MM-DDT00:00:00.000\\Z');
+        let date_to = params.date_to.format('YYYY-MM-DDT23:59:59.000\\Z');
         apis.getTransactions(params.profile.auth_version, params.profile.sessionToken,
             params.currency_type, date_from, date_to, 2, start).then((d)=>{
             if(d.rc !== 1){

@@ -194,10 +194,12 @@ export const markSentMoneyRequests = (auth_version, sessionToken='',
  * @return {Promise}                  [description]
  */
 export const getRequests = (auth_version, sessionToken='', currency_type = 1,
-    date_from=moment().add(-1, 'months').add(-1, 'days').format('YYYY-MM-DDTHH:mm:00.000\\Z') ,
-    date_to=moment().format('YYYY-MM-DDTHH:mm:00.000\\Z'),
+    _date_from=moment().add(-1, 'months').add(-1, 'days').format('YYYY-MM-DDT00:00:00.000\\Z') ,
+    _date_to=moment().format('YYYY-MM-DDT23:59:59.000\\Z'),
     type= 0, start=0, order='desc', size=10) => {
     return new Promise((resolve,reject) => {
+        let date_from = moment(_date_from).utc().format('YYYY-MM-DDTHH:mm:00.000\\Z');
+        let date_to = moment(_date_to).utc().format('YYYY-MM-DDTHH:mm:00.000\\Z');
         fetch(API_URL+'/get-requests',{
             method: 'POST',
             body: JSON.stringify({

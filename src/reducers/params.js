@@ -36,6 +36,14 @@ const login = (state = initialState, action) => {
         case types.SIGNUP_SUCCESS:
             return { ...state, isLoggedIn: true };
 
+        case types.GET_PROFILE:
+            let created_ts = new Date(action.payload.profile.created_ts).getTime();
+            let date_from = state.date_from;
+            if(date_from.unix()*1000 < created_ts)
+                date_from = moment(created_ts);
+
+            return { ...state, ...action.payload || {}, date_from, pending_date_from: date_from};
+
         case types.GET_RECENT_TRANSACTIONS:
             let recentTxns = action.payload.txns;
             return { ...state, recentTxns, recentTxns_loading: false};

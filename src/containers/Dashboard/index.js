@@ -133,10 +133,12 @@ const EnhancedComponent = class extends React.Component {
     }
     componentDidMount(){
         this.props.getBalance();
-        this.props.getProfile();
         setTimeout(()=>this.setState({loader:false}),2000);
-        this.coinmarketcapValue = setInterval(this.props.getCoinMarketCapDetail, 60000);
-        this.getMessages = setInterval(this.props.getMessages, 10000);
+        if(!this.coinmarketcapValue)
+            this.coinmarketcapValue = setInterval(this.props.getCoinMarketCapDetail, 60000);
+
+        if(!this.getMessages)
+            this.getMessages = setInterval(this.props.getMessages, 10000);
     }
 
     componentWillUnmount(){

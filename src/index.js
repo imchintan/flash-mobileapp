@@ -30,7 +30,7 @@ import reducer from '@reducers'
 console.disableYellowBox = true;
 
 // middleware that logs actions
-const loggerMiddleware = createLogger({ predicate: () => __DEV__ });
+const loggerMiddleware = createLogger({ predicate: () => false });
 
 // Note: createReactNavigationReduxMiddleware must be run before createReduxBoundAddListener
 const middleware = createReactNavigationReduxMiddleware(

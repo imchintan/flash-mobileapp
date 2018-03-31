@@ -6,7 +6,7 @@ import * as types from '@actions/types'
 import apis from '@flashAPIs'
 import Wallet from '@lib/wallet'
 import * as utils from '@lib/utils'
-import { getCoinMarketCapDetail } from '@actions/account';
+import { getCoinMarketCapDetail, getProfile } from '@actions/account';
 
 export const init = () => {
     return async (dispatch,getState) => {
@@ -19,7 +19,6 @@ export const init = () => {
         if(user){
             let payload = {
                 profile:JSON.parse(user),
-                loading:false
             };
 
             let balance = await AsyncStorage.getItem('balance');
@@ -34,6 +33,7 @@ export const init = () => {
                 type: types.LOGIN_SUCCESS,
                 payload
             });
+            dispatch(getProfile());
             dispatch(getMyWallets(payload.profile));
         }else{
             dispatch({ type: types.LOADING_END });
@@ -86,10 +86,13 @@ export const login = (email,password) => {
                     payload: {
                         profile:d.profile,
                         password:(!d.profile.totp_enabled)?null:password,
-                        loading:false
+                        loading:(!d.profile.totp_enabled),
                     }
                 });
-                if(!d.profile.totp_enabled)dispatch(getMyWallets(d.profile,password));
+                if(!d.profile.totp_enabled){
+                    dispatch(getProfile());
+                    dispatch(getMyWallets(d.profile,password));
+                }
             }else{
                 let errorMsg = d.reason;
                 if(d.status !== 'ACCOUNT_LOCKED'){
@@ -140,9 +143,9 @@ export const check2FA = (code) =>{
                     payload: {
                         profile,
                         password:null,
-                        loading:false
                     }
                 });
+                dispatch(getProfile());
                 dispatch(getMyWallets(profile,password));
             }else{
                 dispatch({

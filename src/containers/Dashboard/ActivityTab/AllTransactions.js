@@ -32,7 +32,7 @@ class AllTransactions extends Component<{}> {
     }
 
     componentDidMount(){
-        this.props.getAllTransactions();
+        this.props.getAllTransactions(0,true);
     }
 
     render() {

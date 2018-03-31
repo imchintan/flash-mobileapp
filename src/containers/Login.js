@@ -8,13 +8,14 @@ import {
     Text as RNText,
     Image,
     TextInput,
+    ScrollView,
+    Dimensions,
     TouchableOpacity
 } from 'react-native';
 import {
     Container,
     Header,
     HeaderTitle,
-    Content,
     Button,
     Text,
     Loader,
@@ -24,7 +25,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ActionCreators } from '@actions';
 import * as Validation from '@lib/validation';
-
+const { height, width } = Dimensions.get('window');
 const styles = require("@styles/login");
 
 class Login extends Component<{}> {
@@ -70,7 +71,7 @@ class Login extends Component<{}> {
     render() {
         return (
             <Container style={{backgroundColor:'#191714'}}>
-                <View style={styles.loginBox}>
+                <ScrollView contentContainerStyle={styles.loginBox}>
                     <Image style={styles.appLogo}  source={require('@images/app-text-icon-white-vertical.png')}/>
                     <View style={styles.loginInputRow}>
                         <TextInput
@@ -102,19 +103,18 @@ class Login extends Component<{}> {
                         value={'LOGIN'}
                         onPress={this.login}
                     />
-
                     <TouchableOpacity style={{marginTop: 50}}
                         onPress={()=>this.props.navigation.navigate('ForgotPassword')}>
                         <Text style={styles.loginFormOtherText}>Forgot password?</Text>
                     </TouchableOpacity>
-                    <View style={{flexDirection: 'row',marginTop: 10}}>
+                    <View style={{flexDirection: 'row',marginTop: 10, marginBottom: -50}}>
                         <Text style={styles.loginFormOtherText}>{"Don't have an account? "}</Text>
                         <TouchableOpacity
                         onPress={()=>this.props.navigation.navigate('SignUP')}>
                             <Text style={[styles.loginFormOtherText,{color: '#E0AE27'}]}>Create one</Text>
                         </TouchableOpacity>
                     </View>
-                </View>
+                </ScrollView>
                 <Loader show={this.props.loading} />
             </Container>
         );
