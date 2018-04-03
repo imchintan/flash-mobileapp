@@ -56,20 +56,27 @@ const Dashboard = TabNavigator({
                         return (
                             <View>
                                 <Image style={{width:25,height:25, marginTop: 5}} source={source}/>
-                                <Text style={{
+                                <View style={{
                                     minWidth:26,
+                                    height:26,
                                     borderRadius:13,
                                     backgroundColor: focused?'#FFF':'#E0AE27',
                                     position: 'absolute',
                                     right: -15,
                                     top: -4,
-                                    textAlign: 'center',
-                                    color:'#000',
-                                    fontSize: 16,
-                                    fontWeight: '500',
-                                    paddingVertical: 3,
-                                    paddingHorizontal: 5,
-                                }}>{screenProps.totalPending < 100? screenProps.totalPending: '99+'}</Text>
+                                    paddingHorizontal: 3,
+                                    alignItems: 'center',
+                                    justifyContent: 'center'
+                                }}>
+                                    <Text tyle={{
+                                        textAlign: 'center',
+                                        color:'#000',
+                                        fontSize: 16,
+                                        fontWeight: '500',
+                                    }}>
+                                        {screenProps.totalPending < 100? screenProps.totalPending: '99+'}
+                                    </Text>
+                                </View>
                             </View>
                         )
                     }

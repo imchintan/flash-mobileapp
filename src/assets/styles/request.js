@@ -26,7 +26,7 @@ const styles = StyleSheet.create({
         color: '#9B9B9B'
     },
     requestRowInputBox:{
-        // justifyContent: 'center',
+        justifyContent: 'center',
         marginTop: 5,
         width: '100%',
         paddingHorizontal: 15,
@@ -40,15 +40,20 @@ const styles = StyleSheet.create({
         color: '#333',
         width: '100%',
     },
-    requestRowAmtLabel:{
-        paddingHorizontal: 15,
-        paddingVertical: 14,
+    requestRowAmtLabelBox:{
         borderTopLeftRadius:25,
         borderBottomLeftRadius:25,
         backgroundColor: '#191714',
+    },
+    requestRowAmtLabel:{
+        marginLeft: 20,
+        height: '100%',
+        paddingVertical: 14,
+        paddingRight: 15,
         fontSize: 14,
         fontWeight: '500',
         color: '#E0AE27',
+        backgroundColor: '#191714'
     },
     requestRowClearBtn:{
         marginLeft: 10,

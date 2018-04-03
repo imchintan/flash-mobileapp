@@ -141,9 +141,12 @@ class RequestTab extends Component<{}> {
                             <Text style={styles.requestRowLabel}>Amount</Text>
                             <View style={[styles.requestRowInputBox,{
                                 flexDirection: 'row',
+                                justifyContent: 'flex-start',
                                 paddingLeft: 0
                             }]}>
-                                <Text style={styles.requestRowAmtLabel}>FLASH</Text>
+                                <View style={styles.requestRowAmtLabelBox}>
+                                    <Text style={styles.requestRowAmtLabel}>FLASH</Text>
+                                </View>
                                 <TextInput
                                     ref={'_input_amount'}
                                     underlineColorAndroid='transparent'

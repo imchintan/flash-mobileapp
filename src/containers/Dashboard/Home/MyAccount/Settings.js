@@ -171,10 +171,6 @@ class Settings extends Component<{}> {
                                 alignItems: 'center',
                                 borderRadius: 25,
                             }}
-                            textstyle={{
-                                fontSize: 20,
-                                fontWeight: '600'
-                            }}
                             value={'Submit'}
                             onPress={()=>{
                                 if(!this.state.verification_code || this.state.verification_code.length < 6){

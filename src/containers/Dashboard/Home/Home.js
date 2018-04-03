@@ -62,7 +62,7 @@ class Home extends Component<{}> {
                         </TouchableOpacity>
                     </HeaderLeft>
                     <HeaderTitle>
-                        <Image style={{resizeMode: 'contain'}}
+                        <Image style={styles.headerTextLogo}
                             source={require('@images/app-text-icon-white.png')}/>
                     </HeaderTitle>
                     <HeaderRight>
@@ -71,12 +71,12 @@ class Home extends Component<{}> {
                         </TouchableOpacity>
                     </HeaderRight>
                 </Header>
-                <Content bounces={false}
+                <Content
                     refreshControl={
                         <RefreshControl
                             colors={['#191714']}
                             tintColor='#191714'
-                            refreshing={!!this.props.refreshing}
+                            refreshing={false}
                             onRefresh={()=>this.props.refreshingHome()}/>
                     }>
                     <View style={styles.balanceBox}>
@@ -158,6 +158,7 @@ class Home extends Component<{}> {
                         </View>
                     </View>
                 </Modal>
+                <Loader show={!!this.props.refreshing}/>
             </Container>
         );
     }

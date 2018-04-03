@@ -20,6 +20,18 @@ module.exports = StyleSheet.create({
             },
         }),
     },
+    headerTextLogo:{
+        resizeMode: 'contain',
+        ...Platform.select({
+            ios: {
+                marginTop: 7,
+                height: 40,
+                width: 273*40/100,
+            },
+            android: {
+            },
+        }),
+    },
     appIcon25:{
         width: 25,
         height: 25,

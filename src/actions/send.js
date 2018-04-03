@@ -104,7 +104,7 @@ export const transactionById = (id, index, amount, ip, memo, receiver_bare_uid,
                     dispatch(getBalance(true));
                     dispatch(getRecentTransactions());
                     dispatch(updateTransactionReportDate(params.date_from, params.date_to));
-                    dispatch(updateRequestReportDate(params.pending_date_from, params.pending_date_from));
+                    dispatch(updateRequestReportDate(params.pending_date_from, params.pending_date_to));
                 }else if(index === 4){
                     dispatch({
                         type: types.TRANSACTION_BY_ID,
@@ -124,7 +124,7 @@ export const transactionById = (id, index, amount, ip, memo, receiver_bare_uid,
                     dispatch(getBalance(true));
                     dispatch(getRecentTransactions());
                     dispatch(updateTransactionReportDate(params.date_from, params.date_to));
-                    dispatch(updateRequestReportDate(params.pending_date_to, params.pending_date_from));
+                    dispatch(updateRequestReportDate(params.pending_date_from, params.pending_date_to));
                 }else{
                     dispatch(transactionById(id,(index+1),amount, ip, memo, receiver_bare_uid, receiver_id,
                         receiver_public_address, transaction_hex, transaction_id));
