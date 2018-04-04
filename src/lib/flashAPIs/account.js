@@ -108,6 +108,40 @@ export const getMyWallets = (auth_version, sessionToken='') => {
 }
 
 /**
+ * Get user wallet secret
+ * @param  {String} authorization     [description]
+ * @return {Promise}                 [description]
+ */
+export const walletSecret = (authorization='') => {
+    return new Promise((resolve,reject) => {
+        let params = 'appversion='+APP_VERSION
+            +'&res='+RESOURCE;
+        fetch(API_URL+'/wallet-secret?'+params,{
+            method: 'GET',
+            body: null,
+            headers: {
+               'Content-Type': 'application/json; charset=utf-8',
+               'authorization': authorization,
+               'fl_auth_version': 3
+            },
+        })
+        .then(async res =>{
+            let _res = await res.text();
+            if(_res.toLowerCase().indexOf("session") == -1){
+                return JSON.parse(_res);
+            }else{
+                return {rc:3,reason:_res};
+            }
+        })
+        .then(json => resolve(json))
+        .catch(e =>{
+            console.log(e);
+            reject('Something went wrong!')
+        });
+    });
+}
+
+/**
  * Get user wallet address
  * @param  {Number} auth_version     [description]
  * @param  {String} sessionToken     [description]

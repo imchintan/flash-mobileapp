@@ -6,6 +6,8 @@ import * as types from '@actions/types'
 import apis from '@flashAPIs'
 import Wallet from '@lib/wallet'
 import * as utils from '@lib/utils'
+import Premium from 'Premium';
+
 import { getCoinMarketCapDetail, getProfile } from '@actions/account';
 
 export const init = () => {
@@ -214,23 +216,39 @@ export const decryptWallets = (password) => {
             };
             decryptedWallets = null;
             if (auth_version === 3) {
-                decryptedWallets = decryptPassphraseV1(wallets, userKey);
+                decryptPassphraseV1(profile.email, wallets, userKey).then(decryptedWallets => {
+                    dispatch({
+                        type: types.STORE_FOUNTAIN_SECRET,
+                        payload: {
+                            decryptedWallets,
+                            loading: false,
+                        }
+                    });
+                }).catch(e=>{
+                    dispatch({
+                        type: types.STORE_FOUNTAIN_SECRET,
+                        payload: {
+                            errorMsg: e.message,
+                            loading: false,
+                        }
+                    });
+                });
             } else {
                 if (password) {
-                    decryptedWallets = decryptPassphraseV2(profile.email, wallets, password, userKey);
+                    decryptedWallets = decryptPassphraseV2(profile.email, wallets, userKey, password);
                 } else {
                     // Store CAS version 2 account wallet
                     // Only decrypt wallet if user send money
                     decryptedWallets = wallets;
                 }
+                dispatch({
+                    type: types.STORE_FOUNTAIN_SECRET,
+                    payload: {
+                        decryptedWallets,
+                        loading: false,
+                    }
+                });
             }
-            dispatch({
-                type: types.STORE_FOUNTAIN_SECRET,
-                payload: {
-                    decryptedWallets,
-                    loading: false,
-                }
-            });
         } catch (e) {
             dispatch({
                 type: types.STORE_FOUNTAIN_SECRET,
@@ -268,32 +286,22 @@ export const resetMessages = () => ({
  * 1. Get the secrete key from server
  * 2. Using secrete key to decrypt wallet passphrase
  */
-export const decryptPassphraseV1 = (wallets, userKey) => {
-    return wallets;
-    // api.getWalletSecret(userKey.idToken).then((resp) => {
-    //     if (resp.rc === 1) {
-    //         let decryptedWallets = wallets.map(w => {
-    //             let str = utils.b64DecodeUnicode(w.passphrase);
-    //             w.pure_passphrase = Premium.xaesDecrypt(resp.wallet.secret, str);
-    //             w.email = profile.email;
-    //             return new Wallet().openWallet(w);
-    //         });
-    //         dispatch({
-    //             type: types.STORE_FOUNTAIN_SECRET,
-    //             payload: {
-    //                 decryptedWallets
-    //             }
-    //         });
-    //     }
-    // }).catch(e=>{
-    //     console.log(e);
-    //     // dispatch({
-    //     //     type: types.STORE_FOUNTAIN_SECRET,
-    //     //     payload: {
-    //     //         decryptWallets: wallets
-    //     //     }
-    //     // });
-    // })
+export const decryptPassphraseV1 = (email, wallets, userKey) => {
+    return new Promise((resolve,reject) => {
+        apis.walletSecret(userKey.idToken).then((resp) => {
+            if (resp.rc === 1) {
+                let decryptedWallets = wallets.map(w => {
+                    let str = utils.b64DecodeUnicode(w.passphrase);
+                    w.pure_passphrase = Premium.xaesDecrypt(resp.wallet.secret, str);
+                    w.email = email;
+                    return new Wallet().openWallet(w);
+                });
+                resolve(decryptedWallets);
+            }else{
+                reject(resp.reason);
+            }
+        }).catch(e=>reject(e))
+    });
 }
 
 /**
@@ -301,7 +309,7 @@ export const decryptPassphraseV1 = (wallets, userKey) => {
  *
  * Using password to decrypt wallet passphrase
  */
-export const decryptPassphraseV2 = (email, wallets, password, userKey) => {
+export const decryptPassphraseV2 = (email, wallets, userKey, password) => {
     return utils.decryptPassphraseV2(
         email,
         wallets,
