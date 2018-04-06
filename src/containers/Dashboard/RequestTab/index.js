@@ -152,10 +152,10 @@ class RequestTab extends Component<{}> {
                                     underlineColorAndroid='transparent'
                                     style={[styles.requestRowInput,{paddingLeft:10}]}
                                     keyboardType='numeric'
-                                    returnKeyType='next'
+                                    returnKeyType='done'
                                     placeholder='Enter amount'
                                     onBlur={this.verifyAmount.bind(this)}
-                                    onSubmitEditing={()=>this.refs._input_amount.focus()}
+                                    onSubmitEditing={()=>this.refs._input_note.focus()}
                                     value={this.state.amount || ''}
                                     onChangeText={(amount) => this.setState({amount})}
                                 />

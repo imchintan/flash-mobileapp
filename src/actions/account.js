@@ -74,6 +74,15 @@ export const getProfile = () => {
                     }
                 });
                 setTimeout(()=>dispatch(getWalletsByEmail()),500);
+            }else if(d.rc == 3){
+                dispatch({
+                    type: types.CUSTOM_ACTION,
+                    payload: {
+                        loading:false,
+                        errorMsg:d.reason,
+                    }
+                });
+                setTimeout(()=>_logout(dispatch),500);
             }else{
                 dispatch({
                     type: types.GET_PROFILE,

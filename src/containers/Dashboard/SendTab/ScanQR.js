@@ -48,12 +48,21 @@ class ScanQR extends Component<{}> {
             return false;
         }
         let _data = data.split(':');
-        if(_data.length == 1 || _data[0] !== 'flashcoin'){
+        let containsColumn = data.indexOf(':');
+        if (containsColumn >= 0) {
+            data = data.substring(containsColumn + 1, data.length);
+        }
+        //check for qt wallet
+        let containsQueMark = data.indexOf('?');
+        if (containsQueMark >= 0) {
+            data = data.substring(0, containsQueMark);
+        }
+        if(data.length < 25 || data.length > 34){
             Toast.errorTop('Invalid qr code!');
             setTimeout(()=>this.setState({scan:true}),2000);
             return false;
         }
-        let publicAddress = _data[1];
+        let publicAddress = data;
         this.props.navigation.navigate('Send',{publicAddress});
         // setTimeout(()=>this.setState({scan:true}),2000);
     }

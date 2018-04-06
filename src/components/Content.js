@@ -5,6 +5,7 @@ import {
     ScrollView
 } from 'react-native';
 import PropTypes from "prop-types";
+import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 export default class Content extends Component {
 
@@ -25,11 +26,19 @@ export default class Content extends Component {
         if(!this.props.hasHeader){ _style.push({marginTop: 0})}
 
         return (
-            <ScrollView
-                automaticallyAdjustContentInsets={false}
-                ref={c => (this._root = c)}
+            <KeyboardAwareScrollView
+				automaticallyAdjustContentInsets={false}
+				resetScrollToCoords={this.props.disableKBDismissScroll ? null : { x: 0, y: 0 }}
+				keyboardShouldPersistTaps={this.props.keyboardShouldPersistTaps ? this.props.keyboardShouldPersistTaps : 'handled'}
+				ref={c => {
+					this._scrollview = c;
+					this._root = c;
+				}}
 				{...this.props}
-                style={[_style,this.props.style]} />
+                style={[_style,this.props.style]}
+			>
+				{this.props.children}
+			</KeyboardAwareScrollView>
         )
     }
 }
@@ -39,6 +48,10 @@ Content.propTypes = {
 	style: PropTypes.oneOfType([PropTypes.object, PropTypes.number, PropTypes.array]),
 	hasHeader: PropTypes.bool,
 	hasFooter: PropTypes.bool,
+    padder: PropTypes.bool,
+	disableKBDismissScroll: PropTypes.bool,
+	enableResetScrollToCoords: PropTypes.bool,
+	keyboardShouldPersistTaps: PropTypes.string
 };
 
 

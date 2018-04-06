@@ -51,7 +51,7 @@ class AllTransactions extends Component<{}> {
                     data={this.props.txns}
                     keyExtractor={(txn, index) => (index+'_'+txn.transaction_id)}
                     onEndReachedThreshold={2}
-                    onEndReached={()=>(this.props.txns.length < this.props.total_txns) &&
+                    onEndReached={()=>(this.props.txns.length < this.props.total_txns) && !this.props.retrieve &&
                         this.props.getAllTransactions(this.props.txns.length)}
                     renderItem={({item, index})=>{
                         return(
@@ -83,6 +83,7 @@ function mapStateToProps({params}) {
       txns: params.allTxns || [],
       total_txns: params.allTxns_total || 0,
       loading: params.allTxns_loading || false,
+      retrieve: params.allTxns_retrieve || false,
       minDate: moment(params.profile.created_ts),
       maxDate: moment()
   };

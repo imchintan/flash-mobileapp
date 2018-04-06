@@ -51,7 +51,7 @@ class PaymentSent extends Component<{}> {
                     data={this.props.txns}
                     keyExtractor={(txn, index) => (index+'_'+txn.transaction_id)}
                     onEndReachedThreshold={2}
-                    onEndReached={()=>(this.props.txns.length < this.props.total_txns) &&
+                    onEndReached={()=>(this.props.txns.length < this.props.total_txns) && !this.props.retrieve &&
                             this.props.getSentTransactions(this.props.txns.length)}
                     renderItem={({item, index})=>{
                         return(
@@ -82,6 +82,7 @@ function mapStateToProps({params}) {
         txns: params.sentTxns || [],
         total_txns: params.sentTxns_total || 0,
         loading: params.sentTxns_loading || false,
+        retrieve: params.sentTxns_retrieve || false,
         minDate: moment(params.profile.created_ts),
         maxDate: moment()
     };

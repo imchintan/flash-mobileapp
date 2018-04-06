@@ -51,7 +51,7 @@ class PaymentReceived extends Component<{}> {
                     data={this.props.txns}
                     keyExtractor={(txn, index) => (index+'_'+txn.transaction_id)}
                     onEndReachedThreshold={2}
-                    onEndReached={()=>(this.props.txns.length < this.props.total_txns) &&
+                    onEndReached={()=>(this.props.txns.length < this.props.total_txns) && !this.props.retrieve &&
                         this.props.getReceivedTransactions(this.props.txns.length)}
                     renderItem={({item, index})=>{
                         return(
@@ -83,6 +83,7 @@ function mapStateToProps({params}) {
       txns: params.receivedTxns || [],
       total_txns: params.receivedTxns_total || 0,
       loading: params.receivedTxns_loading || false,
+      retrieve: params.receivedTxns_retrieve || false,
       minDate: moment(params.profile.created_ts),
       maxDate: moment()
   };

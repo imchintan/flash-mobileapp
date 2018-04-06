@@ -9,7 +9,8 @@ import {
   TextInput,
   TouchableOpacity,
   Image,
-  Modal
+  Modal,
+  Dimensions
 } from 'react-native';
 import {
     Container,
@@ -22,7 +23,7 @@ import {
     Button,
     Toast
 } from '@components';
-
+const { height, width } = Dimensions.get('window');
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ActionCreators } from '@actions';
@@ -235,7 +236,7 @@ class Send extends Component<{}> {
                                     underlineColorAndroid='transparent'
                                     style={[styles.requestRowInput,{paddingLeft:10}]}
                                     keyboardType='numeric'
-                                    returnKeyType='next'
+                                    returnKeyType='done'
                                     onSubmitEditing={()=>this.refs._input_note.focus()}
                                     placeholder='Enter amount'
                                     value={this.state.amount || ''}
@@ -305,7 +306,7 @@ class Send extends Component<{}> {
                                                 {this.state.search_wallet?this.state.search_wallet.display_name:''}
                                             </Text>:null
                                         }
-                                        <Text style={styles.reqDetailText}>
+                                        <Text style={[styles.reqDetailText,{maxWidth: width - 150}]}>
                                             {this.state.term}
                                         </Text>
                                     </View>
