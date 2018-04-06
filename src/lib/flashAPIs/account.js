@@ -73,6 +73,44 @@ export const getProfile = (auth_version, sessionToken='') => {
 }
 
 /**
+ * Update user profile
+ * @param  {Number} auth_version     [description]
+ * @param  {String} sessionToken     [description]
+ * @param  {Object} sessionToken     [description]
+ * @return {Promise}                 [description]
+ */
+export const updateProfile = (auth_version, sessionToken='', data={}) => {
+    return new Promise((resolve,reject) => {
+        fetch(API_URL+'/update-profile',{
+            method: 'POST',
+            body: JSON.stringify({
+                ...data,
+                appversion:APP_VERSION,
+                res:RESOURCE,
+            }),
+            headers: {
+               'Content-Type': 'application/json; charset=utf-8',
+               'authorization': sessionToken,
+               'fl_auth_version': auth_version
+            },
+        })
+        .then(async res =>{
+            let _res = await res.text();
+            if(_res.toLowerCase().indexOf("session") == -1){
+                return JSON.parse(_res);
+            }else{
+                return {rc:3,reason:_res};
+            }
+        })
+        .then(json => resolve(json))
+        .catch(e =>{
+            console.log(e);
+            reject('Something went wrong!')
+        });
+    });
+}
+
+/**
  * Get user wallet
  * @param  {Number} auth_version     [description]
  * @param  {String} sessionToken     [description]

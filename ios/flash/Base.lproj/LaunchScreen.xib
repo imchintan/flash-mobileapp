@@ -16,17 +16,18 @@
                 <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                 <subviews>
-                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" image="splash.png" id="oLf-ig-P4K">
-                        <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
-                        <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" image="app-text-logo.png" id="rPR-35-us1">
+                        <rect key="frame" x="62" y="208" width="250" height="250"/>
+                        <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                     </imageView>
                 </subviews>
-                <color key="backgroundColor" white="1" alpha="1" colorSpace="calibratedWhite"/>
+                <color key="backgroundColor" red="0.087429739534854889" green="0.082243926823139191" blue="0.076777063310146332" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                <color key="tintColor" red="0.087429739529999995" green="0.082243926819999993" blue="0.076777063310000004" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             </view>
             <point key="canvasLocation" x="158.5" y="188.5"/>
         </viewController>
     </objects>
     <resources>
-        <image name="splash.png" width="1080" height="1920"/>
+        <image name="app-text-logo.png" width="1600" height="1600"/>
     </resources>
 </document>

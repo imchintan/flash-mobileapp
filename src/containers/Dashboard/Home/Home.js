@@ -10,7 +10,10 @@ import {
     TouchableOpacity,
     ActivityIndicator,
     RefreshControl,
-    Dimensions
+    Dimensions,
+    Clipboard,
+    Share,
+    Alert
 } from 'react-native';
 import {
     Container,
@@ -90,6 +93,10 @@ class Home extends Component<{}> {
                         </TouchableOpacity>
                         <Text style={styles.otherBalanceText}>≈ {this.props.balance_in_btc} BTC</Text>
                         <Text style={styles.otherBalanceText}>≈ {this.props.balance_in_usd} USD</Text>
+                        <View style={styles.sendReceiveBtnGrp}>
+                            <Button onPress={()=>this.props.navigation.navigate('Send')} style={styles.sendReceiveBtn} value='Send' />
+                            <Button onPress={this.props.showQR} style={styles.sendReceiveBtn} value='Receive' />
+                        </View>
                     </View>
                     <View style={styles.txnList}>
                         <Text style={styles.recentTxnLabel}>Recent Transactions</Text>
@@ -124,6 +131,21 @@ class Home extends Component<{}> {
                             <Text selectable={true} style={styles.qrCodeModalWalletAddressText}>
                                 {this.props.wallet_address}
                             </Text>
+                        </View>
+                        <View style={styles.qrCodeModalBtnGrp}>
+                            <TouchableOpacity onPress={()=>{
+                                    Clipboard.setString(this.props.wallet_address);
+                                    Alert.alert('Wallet address copied!');
+                                }} style={styles.qrCodeModalBtn}>
+                                <Icon style={styles.qrCodeModalBtnIcon} name='copy' />
+                                <Text style={styles.qrCodeModalBtnText}>Copy</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity onPress={()=>{
+                                Share.share({message:this.props.wallet_address,title: 'FLASH'});
+                            }} style={styles.qrCodeModalBtn}>
+                                <Icon style={styles.qrCodeModalBtnIcon} name='share-alt' />
+                                <Text style={styles.qrCodeModalBtnText}>Share</Text>
+                            </TouchableOpacity>
                         </View>
                         <View>
                             <Button onPress={this.props.hideQR} style={styles.qrCodeModalCloseBtn} value='Close' />

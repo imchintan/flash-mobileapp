@@ -75,6 +75,31 @@ const styles = StyleSheet.create({
         fontWeight: '500',
         textAlign:'center'
     },
+    qrCodeModalBtnGrp:{
+        marginTop: 20,
+        flexDirection: 'row',
+        width: 200,
+        justifyContent: 'space-between',
+    },
+    qrCodeModalBtn:{
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        width: 90,
+        borderColor:'#FFFFFF',
+        borderWidth: 2,
+        padding: 5,
+        borderRadius: 10,
+    },
+    qrCodeModalBtnIcon:{
+        fontSize: 20,
+        color: '#FFFFFF',
+        marginRight: 10,
+    },
+    qrCodeModalBtnText:{
+        fontSize: 16,
+        color: '#FFFFFF'
+    },
     qrCodeModalCloseBtn:{
         borderRadius:25,
         marginTop: 20
@@ -88,6 +113,16 @@ const styles = StyleSheet.create({
         fontSize: 18,
         padding: 20,
         textAlign: 'center'
+    },
+    sendReceiveBtnGrp:{
+        marginTop: 15,
+        flexDirection: 'row',
+        width: 280,
+        justifyContent: 'space-between',
+    },
+    sendReceiveBtn:{
+        width: 135,
+        alignItems: 'center',
     },
 });
 

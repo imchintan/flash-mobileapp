@@ -14,6 +14,7 @@ import {
 } from 'react-native';
 import {
     Container,
+    Content,
     Header,
     HeaderTitle,
     Button,
@@ -68,7 +69,7 @@ class Login extends Component<{}> {
     render() {
         return (
             <Container style={{backgroundColor:'#191714'}}>
-                <ScrollView contentContainerStyle={styles.loginBox}>
+                <Content hasHeader={false} style={{backgroundColor:'#191714'}} contentContainerStyle={styles.loginBox}>
                     <Image style={styles.appLogo}  source={require('@images/app-text-icon-white-vertical.png')}/>
                     <View style={styles.loginInputRow}>
                         <TextInput
@@ -111,7 +112,7 @@ class Login extends Component<{}> {
                             <Text style={[styles.loginFormOtherText,{color: '#E0AE27'}]}>Create one</Text>
                         </TouchableOpacity>
                     </View>
-                </ScrollView>
+                </Content>
                 <Loader show={this.props.loading} />
             </Container>
         );

@@ -67,7 +67,16 @@ export const getAllTransactions = (start=0, reset=false) => {
             dispatch({
                 type: types.CUSTOM_ACTION,
                 payload: {
-                    allTxns_loading: true
+                    allTxns_loading: true,
+                    allTxns_retrieve: true,
+                    allTxns_total: 0
+                }
+            });
+        else
+            dispatch({
+                type: types.CUSTOM_ACTION,
+                payload: {
+                    allTxns_retrieve: true,
                 }
             });
         let params = getState().params;
@@ -109,7 +118,16 @@ export const getSentTransactions = (start=0,reset=false) => {
             dispatch({
                 type: types.CUSTOM_ACTION,
                 payload: {
-                    sentTxns_loading: true
+                    sentTxns_loading: true,
+                    sentTxns_retrieve: true,
+                    sentTxns_total: 0
+                }
+            });
+        else
+            dispatch({
+                type: types.CUSTOM_ACTION,
+                payload: {
+                    sentTxns_retrieve: true,
                 }
             });
         let params = getState().params;
@@ -151,7 +169,16 @@ export const getReceivedTransactions = (start=0, reset=false) => {
             dispatch({
                 type: types.CUSTOM_ACTION,
                 payload: {
-                    receivedTxns_loading: true
+                    receivedTxns_loading: true,
+                    receivedTxns_retrieve: true,
+                    receivedTxns_total: 0
+                }
+            });
+        else
+            dispatch({
+                type: types.CUSTOM_ACTION,
+                payload: {
+                    receivedTxns_retrieve: true,
                 }
             });
         let params = getState().params;

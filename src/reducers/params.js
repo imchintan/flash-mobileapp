@@ -53,21 +53,21 @@ const login = (state = initialState, action) => {
                 _.concat(state.allTxns || [], action.payload.txns):action.payload.txns;
             _.sortedIndexBy(allTxns,{created_ts: null},'created_ts');
             let allTxns_total = action.payload.total_txns;
-            return { ...state, allTxns, allTxns_total, allTxns_loading: false};
+            return { ...state, allTxns, allTxns_total, allTxns_loading: false, allTxns_retrieve: false};
 
         case types.GET_SENT_TRANSACTIONS:
             let sentTxns = (!action.payload.reset)?
                 _.concat(state.sentTxns || [], action.payload.txns):action.payload.txns;
             _.sortedIndexBy(sentTxns,{created_ts: null},'created_ts');
             let sentTxns_total = action.payload.total_txns;
-            return { ...state, sentTxns, sentTxns_total, sentTxns_loading: false};
+            return { ...state, sentTxns, sentTxns_total, sentTxns_loading: false, sentTxns_retrieve: false};
 
         case types.GET_RECEIVED_TRANSACTIONS:
             let receivedTxns = (!action.payload.reset)?
                 _.concat(state.receivedTxns || [], action.payload.txns):action.payload.txns;
             _.sortedIndexBy(receivedTxns,{created_ts: null},'created_ts');
             let receivedTxns_total = action.payload.total_txns;
-            return { ...state, receivedTxns, receivedTxns_total, receivedTxns_loading: false};
+            return { ...state, receivedTxns, receivedTxns_total, receivedTxns_loading: false, receivedTxns_retrieve: false};
 
         case types.RESET_TRANSACTIONS:
             return { ...state, allTxns: [], sentTxns: [],  receivedTxns: [],
