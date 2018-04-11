@@ -35,7 +35,7 @@ class ForgotPassword extends Component<{}> {
         };
     }
 
-    componentWillMount(){
+    componentDidMount(){
         BackHandler.addEventListener('hardwareBackPress', this.backHandler);
     }
 

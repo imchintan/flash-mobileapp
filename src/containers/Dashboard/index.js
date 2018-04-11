@@ -135,12 +135,13 @@ const EnhancedComponent = class extends React.Component {
         super(props);
         this.state = {
             scan: false,
-            loader: true,
         };
     }
     componentDidMount(){
         this.props.getBalance();
-        setTimeout(()=>this.setState({loader:false}),2000);
+        this.props.getIncomingRequests(0,true);
+        this.props.getOutgoingRequests(0,true);
+
         if(!this.coinmarketcapValue)
             this.coinmarketcapValue = setInterval(this.props.getCoinMarketCapDetail, 60000);
 
@@ -178,7 +179,7 @@ const EnhancedComponent = class extends React.Component {
                         this.setState({scan: (currentState.routes[currentState.index].routeName == 'Send')});
                     }}
                     screenProps={{scan: this.state.scan, totalPending: this.props.totalPending}} />
-                <Loader show={this.props.loading || this.state.loader} />
+                <Loader show={this.props.loading} />
             </View>
         )
     }

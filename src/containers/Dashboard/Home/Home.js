@@ -123,7 +123,7 @@ class Home extends Component<{}> {
                         }}>
                             <QRCode
                                 value={'flashcoin:'+this.props.wallet_address}
-                                size={width-80}
+                                size={height < 750?width-80:500}
                                 bgColor='#191714'
                                 fgColor='#FFFFFF'/>
                         </View>

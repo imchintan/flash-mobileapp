@@ -5,7 +5,8 @@
 import React, { Component } from 'react';
 import {
   View,
-  Image
+  Image,
+  Linking,
 } from 'react-native';
 import {
     Container,
@@ -87,6 +88,19 @@ class ScanQR extends Component<{}> {
                                 this.camera = cam;
                             }}
                             onBarCodeRead={this.onBarCodeRead.bind(this)}
+                            notAuthorizedView={
+                                <View style={styles.notAuthorizedView}>
+                                    <Text  style={styles.notAuthorizedViewText}>
+                                        Need permission to access Camera,{"\n"}
+                                        Please go to <Text style={{fontWeight: 'bold'}}>Settings</Text> and allow{"\n"}
+                                        <Text style={{fontWeight: 'bold', color:'#E0AE27'}}>FLASH</Text> to access Camera
+                                    </Text>
+                                    <Button
+                                        style={{marginTop:15}}
+                                        onPress={()=>Linking.openURL('app-settings:')}
+                                        value="Go to Settings"/>
+                                </View>
+                            }
                             style={styles.preview}
                             aspect={Camera.constants.Aspect.fill}>
                             <Image style={styles.scanQRBoxImg} source={require('@images/scan-qr.png')} />

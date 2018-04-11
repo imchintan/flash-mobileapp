@@ -1383,8 +1383,9 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.zluck.flash.ios;
+				PRODUCT_BUNDLE_IDENTIFIER = com.flash.wallet.ios;
 				PRODUCT_NAME = flash;
+				TARGETED_DEVICE_FAMILY = 1;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Debug;
@@ -1407,8 +1408,9 @@
 					"-ObjC",
 					"-lc++",
 				);
-				PRODUCT_BUNDLE_IDENTIFIER = com.zluck.flash.ios;
+				PRODUCT_BUNDLE_IDENTIFIER = com.flash.wallet.ios;
 				PRODUCT_NAME = flash;
+				TARGETED_DEVICE_FAMILY = 1;
 				VERSIONING_SYSTEM = "apple-generic";
 			};
 			name = Release;

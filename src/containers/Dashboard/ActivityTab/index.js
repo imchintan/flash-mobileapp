@@ -72,15 +72,9 @@ class ActivityTab extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state ={
-            showTab: false // Android issue: Component not load
-        }
+        this.state ={}
         this.confirmDate = this.confirmDate.bind(this);
         this.openCalendar = this.openCalendar.bind(this);
-    }
-
-    componentDidMount(){
-        setTimeout(()=>this.setState({showTab:true}),500);
     }
 
     confirmDate({startDate, endDate, startMoment, endMoment}) {
@@ -139,8 +133,8 @@ class ActivityTab extends React.Component {
                         </TouchableOpacity>
                     </HeaderRight>
                 </Header>
-                {this.state.showTab?<TabNav />:null}
-                {this.state.showTab?<Calendar
+                <TabNav />
+                <Calendar
                     i18n="en"
                     ref={(calendar) => {this.calendar = calendar;}}
                     customI18n={customI18n}
@@ -151,7 +145,7 @@ class ActivityTab extends React.Component {
                     startDate={this.props.date_from}
                     endDate={this.props.date_to}
                     onConfirm={this.confirmDate}
-                />:null}
+                />
             </View>
         );
     }

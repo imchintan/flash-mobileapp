@@ -87,15 +87,17 @@ export default class RequestTab extends Component {
                                     <View style={styles.reqDetailRow}>
                                         <Text style={styles.reqDetailLabel}>Note</Text>
                                         <View>
-                                            <TextInput
-                                                style={styles.reqDetailTextWithBox}
-                                                multiline = {true}
-                                                numberOfLines = {4}
-                                                placeholder={'Enter note (optional)'}
-                                                underlineColorAndroid='transparent'
-                                                value={this.state.note || ''}
-                                                onChangeText={(note) => note.length <= 50 && this.setState({note})}
-                                            />
+                                            <View style={styles.reqDetailTextInputBox}>
+                                                <TextInput
+                                                    style={styles.reqDetailTextInput}
+                                                    multiline = {true}
+                                                    numberOfLines = {4}
+                                                    placeholder={'Enter note (optional)'}
+                                                    underlineColorAndroid='transparent'
+                                                    value={this.state.note || ''}
+                                                    onChangeText={(note) => note.length <= 50 && this.setState({note})}
+                                                />
+                                            </View>
                                             <Text style={styles.requestRowNote}>Max Characters 50</Text>
                                         </View>
                                     </View>
@@ -331,7 +333,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     reqDetailBox:{
-        width: '100%',
+        width: height < 750?'100%':600,
         paddingHorizontal: 20,
     },
     reqDetailCloseIcon:{
@@ -372,13 +374,29 @@ const styles = StyleSheet.create({
         borderRadius: 25
     },
     reqDetailText:{
-        width: width - 160,
         fontSize: 14,
         color: '#4A4A4A',
     },
+    reqDetailTextInputBox:{
+        justifyContent: 'center',
+        width: height < 750?width - 160:400,
+        height: 100,
+        paddingVertical: 5,
+        marginTop: 5,
+        paddingHorizontal: 15,
+        borderWidth: 1.5,
+        borderRadius:10,
+        borderColor: '#ddd'
+    },
+    reqDetailTextInput:{
+        width: height < 750?width - 160:400,
+        fontSize: 14,
+        color: '#4A4A4A',
+        paddingVertical: 5,
+        paddingHorizontal: 10,
+    },
     reqDetailTextWithBox:{
-        width: width - 160,
-        minHeight: 30,
+        width: height < 750?width - 160:400,
         fontSize: 14,
         color: '#4A4A4A',
         borderWidth: 1,

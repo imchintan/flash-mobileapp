@@ -35,7 +35,7 @@ class SignUP extends Component<{}> {
         };
     }
 
-    componentWillMount(){
+    componentDidMount(){
         BackHandler.addEventListener('hardwareBackPress', this.backHandler);
     }
 

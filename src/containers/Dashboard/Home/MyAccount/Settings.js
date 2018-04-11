@@ -143,10 +143,10 @@ class Settings extends Component<{}> {
                             Once you have scanned the barcode,
                             enter the 6-digit code below:
                         </Text>
-                        <View style={styles.profileSettingRow}>
+                        <View style={[styles.profileSettingRow,{justifyContent: 'center'}]}>
                             <QRCode
                                 value={this.state.recovery_obj_2fa.otpUri}
-                                size={width-70}
+                                size={height < 750?width-70: 500}
                                 bgColor='#000'
                                 fgColor='#fff'/>
                         </View>

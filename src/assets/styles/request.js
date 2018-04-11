@@ -70,7 +70,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     reqDetailBox:{
-        width: '100%',
+        width: height < 750?'100%':600,
         paddingHorizontal: 20,
     },
     reqDetailCloseIcon:{
@@ -93,8 +93,7 @@ const styles = StyleSheet.create({
     },
     reqDetailBody:{
         backgroundColor: '#FFFFFF',
-        padding: 15,
-        width: width - 40,
+        padding: 15,        
     },
     reqDetailRow:{
         flexDirection: 'row',

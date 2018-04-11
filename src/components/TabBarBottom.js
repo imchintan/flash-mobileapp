@@ -15,7 +15,7 @@ class TabBarComponent extends React.PureComponent {
     }
   }
 
-  componentWillMount() {
+  componentDidMount() {
     this.keyboardWillShowSub = Keyboard.addListener('keyboardDidShow', this.keyboardWillShow)
     this.keyboardWillHideSub = Keyboard.addListener('keyboardDidHide', this.keyboardWillHide)
   }
@@ -38,10 +38,7 @@ class TabBarComponent extends React.PureComponent {
   }
 
   render() {
-    return this.state.isVisible ?
-      <TabBarBottom {...this.props} />
-      :
-      null
+    return this.state.isVisible ?<TabBarBottom {...this.props} />:null
   }
 }
 

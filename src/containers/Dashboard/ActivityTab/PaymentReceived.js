@@ -32,7 +32,7 @@ class PaymentReceived extends Component<{}> {
     }
 
     componentDidMount(){
-        setTimeout(()=>this.props.getReceivedTransactions(0,true),1000);
+        this.props.getReceivedTransactions(0,true);
     }
 
     render() {

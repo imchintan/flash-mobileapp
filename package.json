@@ -24,7 +24,7 @@
     "react-native-randombytes": "^3.0.0",
     "react-native-root-toast": "^3.0.1",
     "react-native-switch": "^1.4.0",
-    "react-navigation": "^1.0.3",
+    "react-navigation": "github:imchintan/react-navigation",
     "react-navigation-redux-helpers": "^1.0.1",
     "react-redux": "^5.0.7",
     "readable-stream": "^1.0.33",

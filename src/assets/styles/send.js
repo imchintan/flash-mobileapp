@@ -19,6 +19,17 @@ const styles = StyleSheet.create({
         justifyContent: 'flex-end',
         alignItems: 'center'
     },
+    notAuthorizedView: {
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        padding: 20
+    },
+    notAuthorizedViewText: {
+        color:'#FFFFFF',
+        textAlign: 'center',
+        fontSize: 18
+    },
     sendFormBox:{
         width:'100%',
         ...Platform.select({

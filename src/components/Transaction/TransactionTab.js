@@ -197,7 +197,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     txnDetailBox:{
-        width: '100%',
+        width: height < 750?'100%':600,
         paddingHorizontal: 20,
     },
     txnDetailCloseIcon:{
@@ -238,12 +238,12 @@ const styles = StyleSheet.create({
         borderRadius: 25
     },
     txnDetailText:{
-        width: width - 160,
+        width: height < 750?width - 160:400,
         fontSize: 14,
         color: '#4A4A4A',
     },
     txnDetailTextWithBox:{
-        width: width - 160,
+        width: height < 750?width - 160:400,
         minHeight: 30,
         fontSize: 14,
         color: '#4A4A4A',

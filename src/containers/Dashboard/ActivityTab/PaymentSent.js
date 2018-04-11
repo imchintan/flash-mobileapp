@@ -32,7 +32,7 @@ class PaymentSent extends Component<{}> {
     }
 
     componentDidMount(){
-        setTimeout(()=>this.props.getSentTransactions(0,true),1000);
+        this.props.getSentTransactions(0,true);
     }
 
     render() {

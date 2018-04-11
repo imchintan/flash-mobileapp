@@ -76,7 +76,7 @@ class Send extends Component<{}> {
         };
     }
 
-    componentWillMount(){
+    componentDidMount(){
         BackHandler.addEventListener('hardwareBackPress', this.backHandler);
     }
 
@@ -390,23 +390,23 @@ class Send extends Component<{}> {
                                 <Text style={styles.reqDetailCloseIcon}
                                     onPress={()=>this.setState({visibleMsg:false})}>X</Text>
                             </View>
-                        </View>
-                        <View style={styles.reqDetailBody}>
-                            <Text style={{
-                                fontSize: 15,
-                                color: '#333',
-                                marginBottom: 25,
-                            }}>
-                                Processing time: {this.state.sendTxnSuccess?
-                                        Number(this.state.sendTxnSuccess.processing_duration)
-                                        .toFixed(3):'0.000'} second(s){"\n\n"}
-                                Your transaction will appear in your activity tab shortly.
-                            </Text>
-                            <Button
-                                onPress={()=>this.setState({visibleMsg:false,sendTxnSuccess:null, isConfirm: false})}
-                                style={styles.reqBtn}
-                                textstyle={styles.reqBtnLabel}
-                                value='Close' />
+                            <View style={styles.reqDetailBody}>
+                                <Text style={{
+                                    fontSize: 15,
+                                    color: '#333',
+                                    marginBottom: 25,
+                                }}>
+                                    Processing time: {this.state.sendTxnSuccess?
+                                            Number(this.state.sendTxnSuccess.processing_duration)
+                                            .toFixed(3):'0.000'} second(s){"\n\n"}
+                                    Your transaction will appear in your activity tab shortly.
+                                </Text>
+                                <Button
+                                    onPress={()=>this.setState({visibleMsg:false,sendTxnSuccess:null, isConfirm: false})}
+                                    style={styles.reqBtn}
+                                    textstyle={styles.reqBtnLabel}
+                                    value='Close' />
+                            </View>
                         </View>
                     </View>
                 </Modal>

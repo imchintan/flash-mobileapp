@@ -10,7 +10,8 @@ import {
     TextInput,
     ScrollView,
     Dimensions,
-    TouchableOpacity
+    TouchableOpacity,
+    Platform
 } from 'react-native';
 import {
     Container,
@@ -105,7 +106,7 @@ class Login extends Component<{}> {
                         onPress={()=>this.props.navigation.navigate('ForgotPassword')}>
                         <Text style={styles.loginFormOtherText}>Forgot password?</Text>
                     </TouchableOpacity>
-                    <View style={{flexDirection: 'row',marginTop: 10, marginBottom: -50}}>
+                    <View style={{flexDirection: 'row',marginTop: 10, marginBottom: Platform.OS == 'ios'?-50:0}}>
                         <Text style={styles.loginFormOtherText}>{"Don't have an account? "}</Text>
                         <TouchableOpacity
                         onPress={()=>this.props.navigation.navigate('SignUP')}>

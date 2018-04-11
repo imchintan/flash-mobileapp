@@ -40,10 +40,6 @@ class IncomingRequests extends Component<{}> {
         this.state = {};
     }
 
-    componentDidMount(){
-        this.props.getIncomingRequests(0,true);
-    }
-
     componentWillReceiveProps(nextProps){
         if(nextProps){
             if(nextProps.sendTxnSuccess){
@@ -256,23 +252,23 @@ class IncomingRequests extends Component<{}> {
                                 <Icon style={styles.reqDetailCloseIcon}
                                     onPress={()=>this.setState({visibleMsg:false})} name='close' />
                             </View>
-                        </View>
-                        <View style={styles.reqDetailBody}>
-                            <Text style={{
-                                fontSize: 15,
-                                color: '#333',
-                                marginBottom: 25,
-                            }}>
-                                Processing time: {this.state.sendTxnSuccess?
-                                        Number(this.state.sendTxnSuccess.processing_duration)
-                                        .toFixed(3):'0.000'} second(s){"\n\n"}
-                                Your transaction will appear in your activity tab shortly.
-                            </Text>
-                            <Button
-                                onPress={()=>this.setState({visibleMsg:false,sendTxnSuccess:null})}
-                                style={styles.reqBtn}
-                                textstyle={styles.reqBtnLabel}
-                                value='Close' />
+                            <View style={styles.reqDetailBody}>
+                                <Text style={{
+                                    fontSize: 15,
+                                    color: '#333',
+                                    marginBottom: 25,
+                                }}>
+                                    Processing time: {this.state.sendTxnSuccess?
+                                            Number(this.state.sendTxnSuccess.processing_duration)
+                                            .toFixed(3):'0.000'} second(s){"\n\n"}
+                                    Your transaction will appear in your activity tab shortly.
+                                </Text>
+                                <Button
+                                    onPress={()=>this.setState({visibleMsg:false,sendTxnSuccess:null})}
+                                    style={styles.reqBtn}
+                                    textstyle={styles.reqBtnLabel}
+                                    value='Close' />
+                            </View>
                         </View>
                     </View>
                 </Modal>

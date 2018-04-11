@@ -33,10 +33,6 @@ class OutgoingRequests extends Component<{}> {
         this.state = {};
     }
 
-    componentDidMount(){
-        this.props.getOutgoingRequests(0,true);
-    }
-
     markCancelledMoneyRequests(req){
         this.props.markCancelledMoneyRequests(req.id,req.receiver_email);
     }
