@@ -149,10 +149,19 @@ class Send extends Component<{}> {
         if(!this.state.isVerify && !this.state.isAddressVerify){
             return Toast.errorTop("Address is invalid!");
         }
-        if(!this.state.isAmtVerify || parseFloat(this.state.amount) < 1){
+        let amount = this.state.amount;
+        if(!this.state.isAmtVerify){
+            let res = Validation.amount(amount);
+            if(!res.success){
+                return Toast.errorTop(res.message);
+            }
+            amount = res.amount;
+            this.setState({isAmtVerify: true, amount});
+        }
+        if(parseFloat(amount) < 1){
             return Toast.errorTop("Amount must be at least 1");
         }
-        if(flashToSatoshi(parseFloat(this.state.amount)+0.001) > this.props.balance){
+        if(flashToSatoshi(parseFloat(amount)+0.001) > this.props.balance){
             return Toast.errorTop("You do not have enough fee to make this payment");
         }
 

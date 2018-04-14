@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#fff',
         justifyContent: 'center',
         marginTop: 20,
-        width: height < 750?width-60: 500,
+        width: width-60,
         height: 50,
         borderWidth: 1.5,
         borderRadius:25,

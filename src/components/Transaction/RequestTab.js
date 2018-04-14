@@ -333,7 +333,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     reqDetailBox:{
-        width: height < 750?'100%':600,
+        width: '100%',
         paddingHorizontal: 20,
     },
     reqDetailCloseIcon:{
@@ -379,7 +379,7 @@ const styles = StyleSheet.create({
     },
     reqDetailTextInputBox:{
         justifyContent: 'center',
-        width: height < 750?width - 160:400,
+        width: width - 160,
         height: 100,
         paddingVertical: 5,
         marginTop: 5,
@@ -389,14 +389,14 @@ const styles = StyleSheet.create({
         borderColor: '#ddd'
     },
     reqDetailTextInput:{
-        width: height < 750?width - 160:400,
+        width: width - 160,
         fontSize: 14,
         color: '#4A4A4A',
         paddingVertical: 5,
         paddingHorizontal: 10,
     },
     reqDetailTextWithBox:{
-        width: height < 750?width - 160:400,
+        width: width - 160,
         fontSize: 14,
         color: '#4A4A4A',
         borderWidth: 1,

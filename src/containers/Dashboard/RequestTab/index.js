@@ -99,7 +99,16 @@ class RequestTab extends Component<{}> {
         if(!this.state.isVerify){
             return Toast.errorTop("Address is invalid!");
         }
-        if(!this.state.isAmtVerify || parseFloat(this.state.amount) < 1){
+        let amount = this.state.amount;
+        if(!this.state.isAmtVerify){
+            let res = Validation.amount(amount);
+            if(!res.success){
+                return Toast.errorTop(res.message);
+            }
+            amount = res.amount;
+            this.setState({isAmtVerify: true, amount});
+        }
+        if(parseFloat(amount) < 1){
             return Toast.errorTop("Amount must be at least 1");
         }
         this.setState({visible:true});
