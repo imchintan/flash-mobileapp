@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<network-security-config>
+    <domain-config>
+        <domain includeSubdomains="true">mkeys.flashcoin.io</domain>
+        <pin-set expiration="2018-09-01">
+            <pin digest="SHA-256">Jv56xHUFet4EqGiW1nqiTmsEoXAs19rdyqRGEFoJ+aQ=</pin>
+            <!-- backup pin -->
+            <pin digest="SHA-256">EULHwYvGhknyznoBvyvgbidiBH3JX3eFHHlIO3YK8Ek=</pin>
+            <pin digest="SHA-256">AUKP8GqPdssYtdhe6cCtx3Yg8VnIK9eb4DLwnI/H9Mo=</pin>
+            <pin digest="SHA-256">x9SZw6TwIqfmvrLZ/kz1o0Ossjmn728BnBKpUFqGNVM=</pin>
+            <pin digest="SHA-256">G9xhUYGUOerG8smcvuRVYU9P9b/KpXcD/UGAz3cUvlg=</pin>
+            <pin digest="SHA-256">WJYlgHmxPpioJZJnPL897E8mscbc0FOR/X26Vz09rYI=</pin>
+        </pin-set>
+    </domain-config>
+</network-security-config>
