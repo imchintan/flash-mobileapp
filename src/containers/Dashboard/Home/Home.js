@@ -102,7 +102,7 @@ class Home extends Component<{}> {
                         <Text style={styles.recentTxnLabel}>Recent Transactions</Text>
                         {
                             this.props.txns.map((txn,index)=>
-                                <TransactionTab txn={txn} key={'_txn_'+txn.transaction_id+'_'+index} />
+                                <TransactionTab txn={txn} timezone={this.props.profile.timezone || moment.tz.guess()} key={'_txn_'+txn.transaction_id+'_'+index} />
                             )
                         }
                         {this.props.txns.length == 0?<Text style={styles.txnListEmpty}>

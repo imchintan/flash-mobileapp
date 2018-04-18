@@ -76,7 +76,7 @@ export const getProfile = (auth_version, sessionToken='') => {
  * Update user profile
  * @param  {Number} auth_version     [description]
  * @param  {String} sessionToken     [description]
- * @param  {Object} sessionToken     [description]
+ * @param  {Object} data             [description]
  * @return {Promise}                 [description]
  */
 export const updateProfile = (auth_version, sessionToken='', data={}) => {
@@ -92,6 +92,118 @@ export const updateProfile = (auth_version, sessionToken='', data={}) => {
                'Content-Type': 'application/json; charset=utf-8',
                'authorization': sessionToken,
                'fl_auth_version': auth_version
+            },
+        })
+        .then(async res =>{
+            let _res = await res.text();
+            if(_res.toLowerCase().indexOf("session") == -1){
+                return JSON.parse(_res);
+            }else{
+                return {rc:3,reason:_res};
+            }
+        })
+        .then(json => resolve(json))
+        .catch(e =>{
+            console.log(e);
+            reject('Something went wrong!')
+        });
+    });
+}
+
+/**
+ * Change Password
+ * @param  {Number} auth_version     [description]
+ * @param  {String} sessionToken     [description]
+ * @param  {Object} data             [description]
+ * @return {Promise}                 [description]
+ */
+export const changePassword = (auth_version, sessionToken='', data={}) => {
+    return new Promise((resolve,reject) => {
+        fetch(API_URL+'/change-password',{
+            method: 'POST',
+            body: JSON.stringify({
+                ...data,
+                appversion:APP_VERSION,
+                res:RESOURCE,
+            }),
+            headers: {
+               'Content-Type': 'application/json; charset=utf-8',
+               'authorization': sessionToken,
+               'fl_auth_version': auth_version,
+            },
+        })
+        .then(async res =>{
+            let _res = await res.text();
+            if(_res.toLowerCase().indexOf("session") == -1){
+                return JSON.parse(_res);
+            }else{
+                return {rc:3,reason:_res};
+            }
+        })
+        .then(json => resolve(json))
+        .catch(e =>{
+            console.log(e);
+            reject('Something went wrong!')
+        });
+    });
+}
+
+/**
+ * Send verification SMS
+ * @param  {Number} auth_version     [description]
+ * @param  {String} sessionToken     [description]
+ * @return {Promise}                 [description]
+ */
+export const sendVerificationSMS = (auth_version, sessionToken='') => {
+    return new Promise((resolve,reject) => {
+        fetch(API_URL+'/send-verification-sms',{
+            method: 'POST',
+            body: JSON.stringify({
+                appversion:APP_VERSION,
+                res:RESOURCE,
+            }),
+            headers: {
+               'Content-Type': 'application/json; charset=utf-8',
+               'authorization': sessionToken,
+               'fl_auth_version': auth_version,
+            },
+        })
+        .then(async res =>{
+            let _res = await res.text();
+            if(_res.toLowerCase().indexOf("session") == -1){
+                return JSON.parse(_res);
+            }else{
+                return {rc:3,reason:_res};
+            }
+        })
+        .then(json => resolve(json))
+        .catch(e =>{
+            console.log(e);
+            reject('Something went wrong!')
+        });
+    });
+}
+
+/**
+ * Verify Phone
+ * @param  {Number} auth_version     [description]
+ * @param  {String} sessionToken     [description]
+ * @param  {String} smsCode          [description]
+ * @return {Promise}                 [description]
+ */
+export const verifyPhone= (auth_version, sessionToken='', smsCode) => {
+    return new Promise((resolve,reject) => {
+        fetch(API_URL+'/verify-phone',{
+            method: 'POST',
+            body: JSON.stringify({
+                smsCode,
+                appversion:APP_VERSION,
+                res:RESOURCE,
+            }),
+            headers: {
+               'Content-Type': 'application/json; charset=utf-8',
+               'authorization': sessionToken,
+               'fl_auth_version': auth_version,
             },
         })
         .then(async res =>{

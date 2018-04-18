@@ -121,7 +121,10 @@ class IncomingRequests extends Component<{}> {
                     onEndReached={()=>(this.props.reqs.length < this.props.total_reqs) &&
                         this.props.getIncomingRequests(this.props.reqs.length)}
                     renderItem={({item, index})=>
-                        <RequestTab req={item} style={[!index && {marginTop:10}]}
+                        <RequestTab
+                            req={item}
+                            style={[!index && {marginTop:10}]}
+                            timezone={this.props.timezone}
                             reject={this.props.markRejectedMoneyRequests}
                             accept={this.accept.bind(this)}
                         />
@@ -288,6 +291,7 @@ function mapStateToProps({params}) {
       search_wallet: params.search_wallet || null,
       sendTxnSuccess: params.sendTxnSuccess || null,
       decryptedWallets: params.decryptedWallets || null,
+      timezone: params.profile.timezone || moment.tz.guess(),
       minDate: moment(params.profile.created_ts),
       maxDate: moment()
   };
