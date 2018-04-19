@@ -223,6 +223,44 @@ export const verifyPhone= (auth_version, sessionToken='', smsCode) => {
 }
 
 /**
+ * Set Recovery Keys
+ * @param  {Number} auth_version     [description]
+ * @param  {String} sessionToken     [description]
+ * @param  {Object} data             [description]
+ * @return {Promise}                 [description]
+ */
+export const setRecoveryKeys= (auth_version, sessionToken='', data={}) => {
+    return new Promise((resolve,reject) => {
+        fetch(API_URL+'/setRecoveryKeys',{
+            method: 'POST',
+            body: JSON.stringify({
+                ...data,
+                appversion:APP_VERSION,
+                res:RESOURCE,
+            }),
+            headers: {
+               'Content-Type': 'application/json; charset=utf-8',
+               'authorization': sessionToken,
+               'fl_auth_version': auth_version,
+            },
+        })
+        .then(async res =>{
+            let _res = await res.text();
+            if(_res.toLowerCase().indexOf("session") == -1){
+                return JSON.parse(_res);
+            }else{
+                return {rc:3,reason:_res};
+            }
+        })
+        .then(json => resolve(json))
+        .catch(e =>{
+            console.log(e);
+            reject('Something went wrong!')
+        });
+    });
+}
+
+/**
  * Get user wallet
  * @param  {Number} auth_version     [description]
  * @param  {String} sessionToken     [description]

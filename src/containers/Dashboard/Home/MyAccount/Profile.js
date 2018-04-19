@@ -46,7 +46,7 @@ class MyProfile extends Component<{}> {
 
     componentWillReceiveProps(nextProps){
         if(!nextProps) return;
-        // console.log(nextProps, this.state.verifying);
+
         if(!nextProps.errorMsg && !!this.state.sendVerificationSMS &&
             nextProps.loading === false && this.props.loading !== nextProps.loading){
             this.setState({visibleVerifyInfo:true})
@@ -385,6 +385,7 @@ class MyProfile extends Component<{}> {
                     </View>
                 </View>
                 <Modal
+                    animationType="slide"
                     transparent={true}
                     visible={!!this.state.visible}
                     onRequestClose={()=>this.setState({visible:false})}>
@@ -408,6 +409,7 @@ class MyProfile extends Component<{}> {
                     </View>
                 </Modal>
                 <Modal
+                    animationType="slide"
                     transparent={true}
                     visible={!!this.state.visibleVerifyInfo}
                     onRequestClose={()=>this.setState({visibleVerifyInfo:false, sendVerificationSMS: false})}>
@@ -432,6 +434,7 @@ class MyProfile extends Component<{}> {
                     </View>
                 </Modal>
                 <Modal
+                    animationType="slide"
                     transparent={true}
                     visible={!!this.state.visibleVerifyPhone}
                     onRequestClose={()=>this.setState({visibleVerifyPhone:false})}>

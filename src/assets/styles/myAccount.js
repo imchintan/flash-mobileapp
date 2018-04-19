@@ -96,6 +96,7 @@ const styles = StyleSheet.create({
         borderBottomLeftRadius:25,
     },
     overlayStyle: {
+        justifyContent: 'center',
         width: width,
         height: height,
         backgroundColor: 'rgba(0,0,0,0.7)'
@@ -106,11 +107,10 @@ const styles = StyleSheet.create({
         height:400,
         backgroundColor:'rgba(255,255,255,0.8)',
         left:15,
-        top:(height-400)/2
     },
     cancelContainer: {
         left:15,
-        top:(height-400)/2 + 10
+        top: 10
     },
     cancelStyle: {
         borderRadius: 5,
@@ -125,6 +125,10 @@ const styles = StyleSheet.create({
     },
     optionTextStyle: {
         fontSize: 16,
+        color: '#4A4A4A'
+    },
+    securityQueTextStyle: {
+        fontSize: 20,
         color: '#4A4A4A'
     },
     optionStyle: {

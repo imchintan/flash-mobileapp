@@ -294,6 +294,56 @@ export const verifyPhone = (smsCode) => {
     }
 }
 
+export const setRecoveryKeys = (data) => {
+    return (dispatch,getState) => {
+        dispatch({ type: types.LOADING_START });
+        let params = getState().params;
+        apis.setRecoveryKeys(params.profile.auth_version, params.profile.idToken, data).then((d)=>{
+            if(d.rc == 1){
+                dispatch({
+                    type: types.SET_RECOVERY_KEYS,
+                    payload: {
+                        loading:false,
+                        successMsg: 'Security questions have been updated successfully',
+                        securityQueSuccessMsg: 'Security questions have been updated successfully'
+                    }
+                });
+                setTimeout(()=>dispatch({
+                    type: types.CUSTOM_ACTION,
+                    payload:{
+                        securityQueSuccessMsg:null,
+                    }
+                }),500);
+            }else if(d.rc == 3){
+                dispatch({
+                    type: types.SET_RECOVERY_KEYS,
+                    payload: {
+                        loading:false,
+                        errorMsg:d.reason,
+                    }
+                });
+                setTimeout(()=>_logout(dispatch),500);
+            }else{
+                dispatch({
+                    type: types.SET_RECOVERY_KEYS,
+                    payload: {
+                        errorMsg:d.reason,
+                        loading:false
+                    }
+                });
+            }
+        }).catch(e=>{
+            dispatch({
+                type: types.SET_RECOVERY_KEYS,
+                payload: {
+                    errorMsg: e.message,
+                    loading:false
+                }
+            });
+        })
+    }
+}
+
 export const getWalletsByEmail = () => {
     return (dispatch,getState) => {
         let params = getState().params;
