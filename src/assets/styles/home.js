@@ -38,9 +38,28 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         paddingHorizontal: 10,
     },
+    otherBalanceRow:{
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        width: 320,
+    },
+    otherBalanceTab:{
+        alignItems: 'center',
+    },
+    otherBalanceView:{
+        borderBottomWidth: 1,
+        borderBottomColor: '#FFDD4D',
+        width: 85,
+        alignItems: 'center'
+    },
+    otherBalanceAmtText:{
+        color: '#FFFFFF',
+        fontSize: 13,
+    },
     otherBalanceText:{
         color: '#FFFFFF',
-        fontSize: 18,
+        fontSize: 15,
     },
     recentTxnLabel: {
         marginHorizontal: 20,
@@ -123,6 +142,90 @@ const styles = StyleSheet.create({
     sendReceiveBtn:{
         width: 135,
         alignItems: 'center',
+    },
+    userProfileImage:{
+        width:34,
+        height:34,
+        borderRadius: 17
+    },
+    currencyMenuTab:{
+        alignItems: 'center',
+        flexDirection: 'row',
+        padding: 7,
+        borderRadius: 5,
+        backgroundColor: 'rgba(155,155,155,0.5)'
+    },
+    currencyMenuTabIcon:{
+        width:24,
+        height:24,
+        borderRadius: 12
+    },
+    currencyMenuTabArrow:{
+        color: '#FFFFFF',
+        fontSize: 17,
+        paddingLeft: 5
+    },
+    currencyMenuPopup:{
+        position: 'absolute',
+        right: 5,
+        top: 38,
+        ...Platform.select({
+            ios: {
+                shadowColor: 'rgba(0,0,0, 0.5)',
+                shadowOffset: { height: 1, width: 0 },
+                shadowOpacity: 0.7,
+                top: 60,
+            },
+            android: {
+                elevation: 12,
+                top: 38,
+            },
+        }),
+        zIndex: 100000
+    },
+    currencyMenuPopupContainer:{
+        width,
+        height
+    },
+    currencyMenuPopupBox:{
+        position: 'absolute',
+        right: 0,
+        top: 10,
+        backgroundColor: '#989898',
+        width: 125,
+        borderRadius: 5,
+    },
+    currencyMenuPopupUpArrow:{
+        position: 'absolute',
+        right: 8,
+        top: -12,
+        color: '#989898',
+        fontSize: 32
+    },
+    currencyMenuPopupTab:{
+        padding: 5,
+        marginHorizontal: 5,
+        borderBottomWidth: 1,
+        borderBottomColor: '#777',
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center'
+    },
+    currencyMenuPopupTabIcon:{
+        width:25,
+        height:25,
+        borderRadius: 12.5
+    },
+    currencyMenuPopupTabIconF:{
+        width:26,
+        height:26,
+        borderRadius: 13
+    },
+    currencyMenuPopupTabLabel:{
+        paddingLeft: 6,
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: '#FFFFFF'
     },
 });
 

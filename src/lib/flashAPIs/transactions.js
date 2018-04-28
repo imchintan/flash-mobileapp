@@ -55,3 +55,132 @@ export const getTransactions = (auth_version, sessionToken='', currency_type = 1
         });
     });
 }
+
+/**
+ * Get transaction detail
+ * @param  {Number} auth_version      [description]
+ * @param  {String} [sessionToken=''] [description]
+ * @param  {String} [transaction_id]  [description]
+ * @param  {Number} [currency_type=1] [description]
+ * @return {Promise}                  [description]
+ */
+export const getTransactionDetail = (auth_version, sessionToken='',
+    transaction_id, currency_type = 1) => {
+    return new Promise((resolve,reject) => {
+
+        fetch(API_URL+'/transaction-detail?transaction_id='+transaction_id+
+            '&currency_type='+currency_type,{
+            method: 'GET',
+            headers: {
+               'Content-Type': 'application/json; charset=utf-8',
+               'authorization': sessionToken,
+               'fl_auth_version': auth_version
+            },
+        })
+        .then(async res =>{
+            let _res = await res.text();
+            if(_res.toLowerCase().indexOf("session") == -1){
+                return JSON.parse(_res);
+            }else{
+                return {rc:3,reason:_res};
+            }
+        })
+        .then(json => resolve(json))
+        .catch(e =>{
+            console.log(e);
+            reject('Something went wrong!')
+        });
+    });
+}
+
+/**
+ *  Get SatoshiPerByte
+ * @return {Promise}      [description]
+ */
+export const getSatoshiPerByte = (currency_type = 2) => {
+    return new Promise((resolve,reject) => {
+        fetch(currency_type == 2?'https://bitcoinfees.earn.com/api/v1/fees/recommended':'https://api.blockcypher.com/v1/ltc/main',{
+            method: 'GET',
+            headers: {
+               'Content-Type': 'application/json; charset=utf-8',
+            },
+        })
+        .then(res => res.json())
+        .then(json =>{
+            if(currency_type == 2)
+                resolve(json.fastestFee)
+            else
+                resolve(json.high_fee_per_kb)
+        })
+        .catch(e =>{
+            console.log(e);
+            reject('Something went wrong!')
+        });
+    });
+}
+
+/**
+ *  Get bc median transaction size
+ * @param  {Number} auth_version      [description]
+ * @param  {String} [sessionToken=''] [description]
+ * @param  {Number} [currency_type=2] [description]
+ * @return {Promise}                  [description]
+ */
+export const bcMedianTxSize = (auth_version, sessionToken='', currency_type = 2) => {
+    return new Promise((resolve,reject) => {
+        fetch(API_URL+'/bc-median-tx-size?currency_type='+currency_type,{
+            method: 'GET',
+            headers: {
+               'Content-Type': 'application/json; charset=utf-8',
+               'authorization': sessionToken,
+               'fl_auth_version': auth_version
+            },
+        })
+        .then(async res =>{
+            let _res = await res.text();
+            if(_res.toLowerCase().indexOf("session") == -1){
+                return JSON.parse(_res);
+            }else{
+                return {rc:3,reason:_res};
+            }
+        })
+        .then(json => resolve(json))
+        .catch(e =>{
+            console.log(e);
+            reject('Something went wrong!')
+        });
+    });
+}
+
+/**
+ *  Get threshold amount
+ * @param  {Number} auth_version      [description]
+ * @param  {String} [sessionToken=''] [description]
+ * @param  {Number} [currency_type=2] [description]
+ * @return {Promise}                  [description]
+ */
+export const thresholdAmount = (auth_version, sessionToken='', currency_type = 2) => {
+    return new Promise((resolve,reject) => {
+        fetch(API_URL+'/threshold-amount?currency_type='+currency_type,{
+            method: 'GET',
+            headers: {
+               'Content-Type': 'application/json; charset=utf-8',
+               'authorization': sessionToken,
+               'fl_auth_version': auth_version
+            },
+        })
+        .then(async res =>{
+            let _res = await res.text();
+            if(_res.toLowerCase().indexOf("session") == -1){
+                return JSON.parse(_res);
+            }else{
+                return {rc:3,reason:_res};
+            }
+        })
+        .then(json => resolve(json))
+        .catch(e =>{
+            console.log(e);
+            reject('Something went wrong!')
+        });
+    });
+}

@@ -1,8 +1,18 @@
-import { APP_MODE, CURRENCY_TYPE, Address, NETWORKS, MOMENT_FORMAT } from '@src/config';
+import { APP_MODE, API_URL } from '@src/config';
+import {
+    NETWORKS,
+    MOMENT_FORMAT,
+    CURRENCY_TYPE,
+    CURRENCY_ICON,
+    CURRENCY_LONG_ICON,
+    CURRENCY_TYPE_UNIT,
+    CURRENCY_TYPE_UNIT_UPCASE
+} from '@src/constants';
+import Big from 'big.js';
 import _tmp from 'moment-timezone';
 import bitcoin from 'bitcoinjs-lib'
 import moment from 'moment-timezone';
-import Wallet from './wallet';
+import Wallet, { Address } from './wallet';
 import Premium from 'Premium';
 import nacl from 'tweetnacl';
 
@@ -12,6 +22,11 @@ export const publicIP = async endpoint => {
   const response = await fetch(endpoint || 'https://api.ipify.org');
   const ip = response.text();
   return ip;
+};
+
+export const getLocation = async endpoint => {
+  const response = await fetch(endpoint || API_URL+'/check-location');
+  return response.json();
 };
 
 export const decryptPassphraseV2 = (email, wallets, password, userKey) => {
@@ -40,47 +55,54 @@ export const decryptPassphraseV2 = (email, wallets, password, userKey) => {
         w.email = email;
         return new Wallet().openWallet(w);
     });
+
     return decryptedWallets;
 }
 
-// export function utcDateToLocal(str) {
-//   return moment(str)
-//     .local()
-//     .format('MMM DD YYYY hh:mm A');
-// }
-
-export const flashToUSD = (flash,usd) => {
-    if (flash == undefined || flash === '') return;
-    if (usd == undefined || usd === '') return;
-    return (flash*usd/10000000000).toFixed(8);
-}
-
-export const flashToBTC = (flash,btc) => {
-    if (flash == undefined || flash === '') return;
-    if (btc == undefined || btc === '') return;
-    return (flash*btc/10000000000).toFixed(8);
+export const utcDateToLocal = (str) => {
+  return moment(str)
+    .local()
+    .format('MMM DD YYYY hh:mm A');
 }
 
 export const satoshiToFlash = (num) => {
     if (num == undefined || num === '') return;
-    return parseFloat(num/10000000000).toString();
+    return parseFloat(new Big(num).div(10000000000).toString());
 }
 
-export const flashToSatoshi = (num) => {
-    if (num == undefined || num === '') return;
-    return parseInt((Number(num) * 10000000000).toString(), 10);
+export const satoshiToBtc = (num) => {
+  if (num == undefined || num === '') return;
+  return parseFloat(new Big(num).div(100000000).toString());
 }
 
-// export function satoshiToBtc(num) {
-//   if (num == undefined || num === '') return;
-//   return parseFloat(new Big(num).div(100000000).toString());
-// }
-//
-// export function localizeFlash(num) {
-//   if (num == undefined || num === '') return;
-//   return parseFloat(num).toLocaleString('en',{maximumFractionDigits:8});
-// }
-//
+export const litoshiToLtc = (num) => {
+  if (num == undefined || num === '') return;
+  return parseFloat(new Big(num).div(100000000).toString());
+}
+
+export const localizeFlash = (num) => {
+  if (num == undefined || num === '') return;
+  return parseFloat(num).toLocaleString('en',{maximumFractionDigits:8});
+}
+
+export const flashToOtherCurrency = (flash,othCur) => {
+    if (flash == undefined || flash === '') return;
+    if (othCur == undefined || othCur === '') return;
+    return parseFloat(new Big(flash).times(othCur).div(10000000000).toString()).toFixed(8);
+}
+
+export const btcToOtherCurrency = (btc,othCur) => {
+    if (btc == undefined || btc === '') return;
+    if (othCur == undefined || othCur === '') return;
+    return parseFloat(new Big(btc).times(othCur).toString()).toFixed(8);
+}
+
+export const ltcToOtherCurrency = (ltc,othCur) => {
+    if (ltc == undefined || ltc === '') return;
+    if (othCur == undefined || othCur === '') return;
+    return parseFloat(new Big(ltc).times(othCur).toString()).toFixed(8);
+}
+
 export const flashNFormatter = (num, digits) => {
     if (num == undefined || num === '') return 0.00;
     num = parseFloat(num);
@@ -102,11 +124,21 @@ export const flashNFormatter = (num, digits) => {
     return (num / si[i].value).toFixed(digits).replace(rx, "$1") + si[i].symbol;
 }
 
+export const flashToSatoshi = (num) => {
+    if (num == undefined || num === '') return;
+    return parseInt(new Big(num).times(10000000000).toString(), 10);
+}
 
-export const calcFee = (amount, currency_type=CURRENCY_TYPE.FLASH) => {
+export const calcFee = (amount, currency_type=CURRENCY_TYPE.FLASH, bcMedianTxSize, fastestFee) => {
     switch (currency_type) {
         case CURRENCY_TYPE.BTC:
-            return 0.0005;
+            let satoshis = bcMedianTxSize * fastestFee;
+            return satoshiToBtc(satoshis);
+            break;
+        case CURRENCY_TYPE.LTC:
+            fastestFee = new Big(fastestFee).div(1024); //Converting fee rate in per byte
+            let litoshis = bcMedianTxSize * fastestFee;
+            return litoshiToLtc(litoshis.toFixed(0));
             break;
         case CURRENCY_TYPE.FLASH:
         default:
@@ -119,6 +151,9 @@ export const formatCurrency = (amount, currency_type=CURRENCY_TYPE.FLASH) => {
     switch (currency_type) {
         case CURRENCY_TYPE.BTC:
             return `${amount} BTC`;
+            break;
+        case CURRENCY_TYPE.LTC:
+            return `${amount} LTC`;
             break;
         case CURRENCY_TYPE.FLASH:
         default:
@@ -282,107 +317,162 @@ export const atob = (input = '') => {
 /**
  * Cut string s if s.length > n
  */
-// export const strimString = (s, n) => {
-//     if(s){
-//         if (s.length > n) {
-//             return s.substring(0, n) + '...';
-//         } else {
-//             return s;
-//         }
-//     } else {
-//         return s;
-//     }
-// }
+export const strimString = (s, n) => {
+    if(s){
+        if (s.length > n) {
+            return s.substring(0, n) + '...';
+        } else {
+            return s;
+        }
+    } else {
+        return s;
+    }
+}
 
-// export function isValidCryptoAddress(value) {
-//   try {
-//     let address = Address.fromBase58Check(value);
-//     var network;
-//     switch (parseInt(localStorage.getItem('currency_type'))) {
-//       case CURRENCY_TYPE.BTC:
-//         if (APP_MODE == 'PROD') {
-//           network = NETWORKS.BTC;
-//         }
-//         else
-//           network = NETWORKS.BTC_TESTNET;
-//         break;
-//       case CURRENCY_TYPE.FLASH:
-//       default:
-//         network = NETWORKS.FLASH;
-//         break;
-//     }
-//     if (
-//       address.version === network.pubKeyHash ||
-//       address.version === network.scriptHash
-//     ) {
-//       return true;
-//     } else {
-//       return false;
-//     }
-//   } catch (e) {
-//     return false;
-//   }
-// }
+export const isValidEmail = (email) => {
+  let emailRegex = /^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
+  let checkEmail = email.toLowerCase().match(emailRegex);
+  if (checkEmail === null) return false;
+  return true;
+}
 
-// export function filterNumberEdit(event) {
-//   let keyCode = event.key;
-//   let isValidAmountCharCode =
-//     (parseInt(keyCode) >= 0 && parseInt(keyCode) <= 9) ||
-//     keyCode == 'Backspace' ||
-//     keyCode == 'Tab' ||
-//     keyCode == 'Delete' ||
-//     keyCode == '.';
-//   if (!isValidAmountCharCode) {
-//     event.preventDefault ? event.preventDefault() : (event.returnValue = false);
-//   } else {
-//     event.returnValue = true;
-//   }
-// }
-//
-// export function decimalFormat(number, n?, x?) {
-//   if (typeof number == 'undefined' || number == 'undefined') return '';
-//   //Converback to number format without comma
-//   number = toOrginalNumber(number);
-//   n = n || 1;
-//
-//   let arr = number.toString().split('.');
-//   let max = 2;
-//   if (arr.length > 1 && arr[1].length > max) {
-//     max = arr[1].length;
-//
-//     if (max > 8) {
-//       max = 8;
-//     }
-//   }
-//
-//   var re = '\\d(?=(\\d{' + (x || 3) + '})+' + (n > 0 ? '\\.' : '$') + ')';
-//   return toFixedFloor(parseFloat(number), Math.max(max, ~~n)).replace(
-//     new RegExp(re, 'g'),
-//     '$&,'
-//   );
-// }
-//
-// function toFixedFloor(x, decimal) {
-//   var factor = Math.pow(10, decimal);
-//   var y = parseInt(new Big(x).times(factor));
-//   return (y / factor).toFixed(decimal);
-// }
-//
-// export function toOrginalNumber(Decimalnumber = '') {
-//   return Number(Decimalnumber.toString().replace(/,/g, ''));
-// }
-//
-// export function formatAmountInput(amount?) {
-//   if (isNaN(amount)) {
-//     amount = this.value;
-//     amount = toOrginalNumber(amount);
-//     if (!isNaN(amount) && amount > 0) {
-//       this.value = decimalFormat(amount, 1);
-//     }
-//   } else {
-//     amount = toOrginalNumber(amount);
-//     if (!isNaN(amount) && amount > 0) {
-//       return decimalFormat(amount, 1);
-//     }
-//   }
-// }
+export const isValidFlashAddress = (value) => {
+    try{
+        let address = Address.fromBase58Check(value);
+        if( address.version === NETWORKS.FLASH.pubKeyHash ||
+            address.version === NETWORKS.FLASH.scriptHash ){
+            return true;
+        }else{
+            return false;
+        }
+    }catch(e){
+        return false;
+    }
+}
+
+export const isValidCryptoAddress = (value, currency_type) => {
+    try {
+        let address = Address.fromBase58Check(value);
+        let network;
+        switch(currency_type){
+            case CURRENCY_TYPE.BTC:
+                if(APP_MODE == 'PROD') network = NETWORKS.BTC;
+                else network = NETWORKS.BTC_TESTNET;
+                break;
+            case CURRENCY_TYPE.LTC:
+                if(APP_MODE == 'PROD') network = NETWORKS.LTC;
+                else network = NETWORKS.LTC_TESTNET;
+                break;
+            case CURRENCY_TYPE.FLASH:
+            default:
+                network = NETWORKS.FLASH;
+                break;
+        }
+        if(address.version === network.pubKeyHash ||
+            address.version === network.scriptHash){
+            return true;
+        }else{
+            return false;
+        }
+    } catch (e) {
+        return false;
+    }
+}
+
+export const decimalFormat = (number, n?, x?) => {
+    if (typeof number == 'undefined' || number == 'undefined') return '';
+    //Converback to number format without comma
+    number = toOrginalNumber(number);
+    n = n || 1;
+
+    let arr = number.toString().split('.');
+    let max = 2;
+    if (arr.length > 1 && arr[1].length > max) {
+        max = arr[1].length;
+        if (max > 8) max = 8;
+    }
+
+    let re = '\\d(?=(\\d{' + (x || 3) + '})+' + (n > 0 ? '\\.' : '$') + ')';
+    return toFixedFloor(parseFloat(number), Math.max(max, ~~n)).replace(
+        new RegExp(re, 'g'),
+        '$&,'
+    );
+}
+
+const toFixedFloor = (x, decimal) => {
+    let factor = Math.pow(10, decimal);
+    let y = parseInt(new Big(x).times(factor));
+    return (y / factor).toFixed(decimal);
+}
+
+export const toOrginalNumber = (Decimalnumber = '') => {
+    return Number(Decimalnumber.toString().replace(/,/g, ''));
+}
+
+export const formatAmountInput = (amount?) => {
+    if (isNaN(amount)) {
+        amount = this.value;
+        amount = toOrginalNumber(amount);
+        if (!isNaN(amount) && amount > 0) {
+            this.value = decimalFormat(amount, 1);
+        }
+    } else {
+        amount = toOrginalNumber(amount);
+        if (!isNaN(amount) && amount > 0) {
+            return decimalFormat(amount, 1);
+        }
+    }
+}
+
+export const getSecurityQuestion = () => {
+    return {
+        A: [
+            "What is your dream job?",
+            "In which city did your parents meet?",
+            "What was the name of your elementary school?"
+        ],
+        B: [
+            "What is the first name of your favourite uncle?",
+            "Where did you meet your spouse?",
+            "What is your eldest cousin's name?"
+        ],
+        C: [
+            "Street name where you grew up?",
+            "What is your pet's name?",
+            "What was your first job?"
+        ],
+    };
+  // return {
+  //   A: [
+  //     getText('sc_question_a1'),
+  //     getText('sc_question_a2'),
+  //     getText('sc_question_a3'),
+  //   ],
+  //   B: [
+  //     getText('sc_question_b1'),
+  //     getText('sc_question_b2'),
+  //     getText('sc_question_b3'),
+  //   ],
+  //   C: [
+  //     getText('sc_question_c1'),
+  //     getText('sc_question_c2'),
+  //     getText('sc_question_c3'),
+  //   ],
+  // };
+}
+
+
+export const getCurrencyUnitUpcase = (currency_type) => {
+    return CURRENCY_TYPE_UNIT_UPCASE[currency_type];
+}
+
+export const getCurrencyIcon = (currency_type) => {
+    return CURRENCY_ICON[currency_type];
+}
+export const getCurrencyLongIcon = (currency_type) => {
+    return CURRENCY_LONG_ICON[currency_type];
+}
+
+export const getCurrencyUnit = (currency_type) => {
+    return CURRENCY_TYPE_UNIT[currency_type];
+}

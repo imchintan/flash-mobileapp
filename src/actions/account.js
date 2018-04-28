@@ -4,10 +4,12 @@ import {
 import moment from 'moment-timezone';
 import * as types from '@actions/types';
 import apis from '@flashAPIs';
-import { satoshiToFlash, flashToUSD, flashToBTC } from '@lib/utils';
+import * as utils from '@lib/utils';
+import * as constants from '@src/constants';
 import { _logout } from '@actions/navigation';
 import { getActiveWallet } from '@actions/send';
-import { getRecentTransactions } from '@actions/transactions';
+import * as txns from '@actions/transactions';
+import * as reqs from '@actions/request';
 
 export const getBalance = (refresh = false) => {
     return (dispatch,getState) => {
@@ -43,8 +45,12 @@ export const getBalance = (refresh = false) => {
                     type: types.GET_BALANCE,
                     payload: {
                         balance:d.balance,
+                        ubalance:d.ubalance,
                         balanceLoader: false,
-                        infoMsg: refresh?('Updated Balance: '+satoshiToFlash(d.balance)+ ' FLASH'):null
+                        infoMsg: refresh?('Updated Balance: '+
+                        (params.currency_type === constants.CURRENCY_TYPE.FLASH?
+                        utils.flashNFormatter(utils.satoshiToFlash(d.balance)):utils.flashNFormatter(d.balance))
+                        + ' '+ utils.getCurrencyUnitUpcase( params.currency_type)):null
                     }
                 });
                 dispatch(getCoinMarketCapDetail());
@@ -93,7 +99,7 @@ export const getProfile = () => {
                     }
                 });
             }
-            dispatch(getRecentTransactions());
+            dispatch(txns.getRecentTransactions());
         }).catch(e=>{
             dispatch({
                 type: types.GET_PROFILE,
@@ -412,11 +418,52 @@ export const searchWallet = (term, loading=false) => {
     }
 }
 
+export const changeCurrency = (currency_type) =>{
+    return (dispatch,getState) => {
+        dispatch({ type: types.LOADING_START });
+        dispatch({
+            type: types.CHANGE_CURRENCY,
+            payload:{
+                currency_type,
+                balance: 0,
+                balance_in_flash: 0,
+                balance_in_btc: 0,
+                balance_in_ltc: 0,
+                balance_in_usd: 0,
+                ubalance: 0,
+                bcMedianTxSize: 250,
+                satoshiPerByte: 20,
+                thresholdAmount: 0.00001,
+            }
+        });
+        setTimeout(()=>{
+            dispatch(getBalance());
+            dispatch(getWalletsByEmail());
+            dispatch(txns.getRecentTransactions());
+            dispatch(reqs.getIncomingRequests(0,true));
+            dispatch(reqs.getOutgoingRequests(0,true));
+
+            if(currency_type !== constants.CURRENCY_TYPE.FLASH){
+                dispatch(txns.setThresholdAmount());
+                dispatch(txns.setBcMedianTxSize());
+                dispatch(txns.setSatoshiPerByte());
+            }
+
+            dispatch(txns.getAllTransactions(0,true));
+            dispatch(txns.getSentTransactions(0,true));
+            dispatch(txns.getReceivedTransactions(0,true));
+        },100)
+        setTimeout(()=>{
+            dispatch({ type: types.LOADING_END });
+        },500);
+    }
+}
+
 export const refreshingHome = () =>{
     return (dispatch,getState) => {
         dispatch({ type: types.LOADING, payload:{refreshingHome:true} });
         dispatch(getBalance());
-        dispatch(getRecentTransactions());
+        dispatch(txns.getRecentTransactions());
     }
 }
 
@@ -425,28 +472,49 @@ export const getCoinMarketCapDetail = () =>{
         let params = getState().params;
         if(!params.balance)
             params.balance = 0;
-        AsyncStorage.getItem('coinmarketcapValue',(err,succ)=>{
-            if(err || !succ) return;
-            let d = JSON.parse(succ);
-            dispatch({
-                type: types.GET_COIN_MARKET_CAP_VALUE,
-                payload: {
-                    balance_in_btc:flashToBTC(params.balance, Number(d.price_btc)),
-                    balance_in_usd:flashToUSD(params.balance, Number(d.price_usd)),
-                }
-            });
-        });
-        apis.getCoinMarketCapDetail().then((d)=>{
-            if(!(d && d.constructor === Array && d.length > 0)) return;
-            AsyncStorage.setItem('coinmarketcapValue',JSON.stringify(d[0]));
-            dispatch({
-                type: types.GET_COIN_MARKET_CAP_VALUE,
-                payload: {
-                    balance_in_btc:flashToBTC(params.balance, Number(d[0].price_btc)),
-                    balance_in_usd:flashToUSD(params.balance, Number(d[0].price_usd)),
-                }
-            });
-        }).catch(e=>{});
+
+        if(params.currency_type === constants.CURRENCY_TYPE.BTC)
+            apis.getCoinMarketCapDetailBTC().then((d)=>{
+                if(!d) return;
+                AsyncStorage.setItem('coinmarketcapValue',JSON.stringify(d));
+                dispatch({
+                    type: types.GET_COIN_MARKET_CAP_VALUE,
+                    payload: {
+                        balance_in_flash:utils.btcToOtherCurrency(params.balance, Number(d.flash)),
+                        balance_in_btc:utils.btcToOtherCurrency(params.balance, Number(d.btc)),
+                        balance_in_ltc:utils.btcToOtherCurrency(params.balance, Number(d.ltc)),
+                        balance_in_usd:utils.btcToOtherCurrency(params.balance, Number(d.usd)),
+                    }
+                });
+            }).catch(e=>{});
+        else if(params.currency_type === constants.CURRENCY_TYPE.LTC)
+            apis.getCoinMarketCapDetailLTC().then((d)=>{
+                if(!d) return;
+                AsyncStorage.setItem('coinmarketcapValue',JSON.stringify(d));
+                dispatch({
+                    type: types.GET_COIN_MARKET_CAP_VALUE,
+                    payload: {
+                        balance_in_flash:utils.ltcToOtherCurrency(params.balance, Number(d.flash)),
+                        balance_in_btc:utils.ltcToOtherCurrency(params.balance, Number(d.btc)),
+                        balance_in_ltc:utils.ltcToOtherCurrency(params.balance, Number(d.ltc)),
+                        balance_in_usd:utils.ltcToOtherCurrency(params.balance, Number(d.usd)),
+                    }
+                });
+            }).catch(e=>{});
+        else
+            apis.getCoinMarketCapDetailFLASH().then((d)=>{
+                if(!d) return;
+                AsyncStorage.setItem('coinmarketcapValue',JSON.stringify(d));
+                dispatch({
+                    type: types.GET_COIN_MARKET_CAP_VALUE,
+                    payload: {
+                        balance_in_flash:utils.flashToOtherCurrency(params.balance, Number(d.flash)),
+                        balance_in_btc:utils.flashToOtherCurrency(params.balance, Number(d.btc)),
+                        balance_in_ltc:utils.flashToOtherCurrency(params.balance, Number(d.ltc)),
+                        balance_in_usd:utils.flashToOtherCurrency(params.balance, Number(d.usd)),
+                    }
+                });
+            }).catch(e=>{});
     }
 }
 

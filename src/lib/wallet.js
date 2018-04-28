@@ -1,7 +1,8 @@
 import bitcoin from 'bitcoinjs-lib'
 import bip39 from 'bip39';
 import base58check from 'bs58check';
-import { CURRENCY_TYPE, APP_MODE, NETWORKS, NETWORK_NAME } from '@src/config';
+import { APP_MODE } from '@src/config';
+import { CURRENCY_TYPE, NETWORKS, NETWORK_NAME } from '@src/constants';
 
 export default class Wallet {
     accounts = null;
@@ -56,9 +57,11 @@ export default class Wallet {
         let tx = bitcoin.Transaction.fromHex(rawTx);
         let txBuilder = bitcoin.TransactionBuilder.fromTransaction(tx, this.getCryptoNetwork(this.currency_type));
         let keyPair = this.accounts.externalAccount.derive(0).keyPair;
+
         for (var i = 0; i < tx.ins.length; i++) {
             txBuilder.sign(i, keyPair);
         }
+
         return txBuilder.build();
     }
 }
