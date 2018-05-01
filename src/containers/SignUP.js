@@ -50,23 +50,15 @@ class SignUP extends Component<{}> {
     getInjectScript(){
         return `
           (function ready() {
-            $("body").css('cssText','background-color:#191714 !important;background:#191714;');
-            showSignUp();
-            $(".col-xs-12.col-sm-5.logo").remove();
-            $(".download-flash-link").remove();
-            $(".back-login").remove();
-            $("#content-slide1").css({'padding-bottom':'150px','padding-top':'50px'});
-            $(".content-su.row").css('background','#191714');
-            $("#create-account-btn> a.btn.btn-primary").css({'background':'#E0AE27',
-                'border': 0,
-                'padding': '10px',
-                'border-radius': '25px',
-                'height': '50px',
-                'width': '200px',
-                'color': '#000000',
-                'font-weight': '400',
-                'font-size': '22px',
-            });
+              showSignUp();
+              $("#header").remove();
+              $('#social-forum').remove();
+              $('#wallet').remove();
+              $('#footer').remove();
+              $('.page-section.topmargin-sm').remove();
+              $(".col-lg-7.d-none.d-sm-block.textcenter-sm").remove();
+              $(".back-login").remove();
+              $('#gcaptcha > div').css({'margin': '0 auto'});
           })();
         `
     }

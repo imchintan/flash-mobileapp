@@ -159,7 +159,7 @@ export default class RequestTab extends Component {
                                     <View style={styles.reqDetailRow}>
                                         <Text style={styles.reqDetailLabel}>Note</Text>
                                         <Text selectable={true} style={styles.reqDetailTextWithBox}>
-                                            {this.props.req.note || ''}</Text>
+                                            {this.props.req.note || '-'}</Text>
                                     </View>
                                     <View style={styles.reqDetailRow}>
                                         <Text style={styles.reqDetailLabel}>Date/Time</Text>
@@ -393,11 +393,11 @@ const styles = StyleSheet.create({
         width: width - 160,
         fontSize: 14,
         color: '#4A4A4A',
-        borderWidth: 1,
-        borderColor: '#999999',
+        // borderWidth: 1,
+        // borderColor: '#999999',
         paddingVertical: 5,
-        paddingHorizontal: 10,
-        borderRadius: 10,
+        // paddingHorizontal: 10,
+        // borderRadius: 10,
     },
     reqBtn:{
         backgroundColor: '#191714',

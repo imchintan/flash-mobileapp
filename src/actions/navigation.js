@@ -318,7 +318,7 @@ export const getMyWallets = (profile,password=null) => {
     }
 }
 
-export const decryptWallets = (password) => {
+export const decryptWallets = (password,sendMoney=false) => {
     return (dispatch,getState) => {
         try {
             dispatch({ type: types.LOADING_START });
@@ -338,7 +338,7 @@ export const decryptWallets = (password) => {
                         type: types.STORE_FOUNTAIN_SECRET,
                         payload: {
                             decryptedWallets,
-                            loading: false,
+                            loading: sendMoney,
                         }
                     });
                 }).catch(e=>{
@@ -362,7 +362,7 @@ export const decryptWallets = (password) => {
                     type: types.STORE_FOUNTAIN_SECRET,
                     payload: {
                         decryptedWallets,
-                        loading: false,
+                        loading: sendMoney,
                     }
                 });
             }
@@ -377,6 +377,11 @@ export const decryptWallets = (password) => {
         }
     }
 }
+
+export const customAction = (payload) => ({
+    type: types.CUSTOM_ACTION,
+    payload
+});
 
 export const logout = () => {
     return (dispatch,getState) => _logout(dispatch);

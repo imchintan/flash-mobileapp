@@ -123,6 +123,22 @@ class IncomingRequests extends Component<{}> {
         })
     }
 
+    decryptWallets(){
+        if(!this.state.password){
+            return this.setState({errorMsg:'Password is invalid!'});
+        }
+
+        try{
+            Premium.xaesDecrypt(this.state.password, this.props.profile.privateKey);
+        }catch(e){
+            return this.setState({errorMsg:'Password is invalid!'});
+        }
+        
+        this.props.customAction({loading:true});
+        this.setState({visibleGetPassword:false, errorMsg:''},()=>
+            setTimeout(()=>this.props.decryptWallets(this.state.password,true),0));
+    }
+
     render() {
         return (
             <View style={{flex:1}}>
@@ -241,6 +257,7 @@ class IncomingRequests extends Component<{}> {
                                         secureTextEntry={true}
                                         value={this.state.password || ''}
                                         onChangeText={(password) => this.setState({password})}
+                                        onSubmitEditing={this.decryptWallets.bind(this)}
                                     />
                                 </View>
                                 {!!this.state.errorMsg?<Text style={{
@@ -257,18 +274,7 @@ class IncomingRequests extends Component<{}> {
                                     textstyle={[styles.reqBtnLabel,{color:'#333'}]}
                                     value='Cancel' />
                                 <Button
-                                    onPress={()=>{
-                                        if(!this.state.password){
-                                            return this.setState({errorMsg:'Password is invalid!'});
-                                        }
-                                        try{
-                                            Premium.xaesDecrypt(this.state.password, this.props.profile.privateKey);
-                                        }catch(e){
-                                            return this.setState({errorMsg:'Password is invalid!'});
-                                        }
-                                        this.setState({visibleGetPassword:false, errorMsg:''},
-                                            ()=>this.props.decryptWallets(this.state.password));
-                                    }}
+                                    onPress={this.decryptWallets.bind(this)}
                                     style={styles.reqBtn}
                                     textstyle={styles.reqBtnLabel}
                                     value='Send' />

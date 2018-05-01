@@ -48,13 +48,9 @@ export const addTransaction = (amount, ip, memo, receiver_bare_uid, receiver_id,
         receiver_public_address, transaction_hex, transaction_id, request_id) => {
     return (dispatch,getState) => {
         let params = getState().params;
-        console.log(params.profile.auth_version, params.profile.sessionToken,
-            params.currency_type, amount, ip, memo, receiver_bare_uid, receiver_id,
-            receiver_public_address, transaction_hex, transaction_id);
         apis.addTransaction(params.profile.auth_version, params.profile.sessionToken,
             params.currency_type, amount, ip, memo, receiver_bare_uid, receiver_id,
             receiver_public_address, transaction_hex, transaction_id).then((d)=>{
-                console.log(d);
             if(d.rc == 1){
                 dispatch({type: types.ADD_TRANSACTION});
                 if(receiver_bare_uid) dispatch(addRoster(receiver_bare_uid));
