@@ -1,6 +1,7 @@
 import {
     AsyncStorage
 } from 'react-native';
+import moment from 'moment-timezone';
 import * as types from '@actions/types';
 import apis from '@flashAPIs';
 import { satoshiToFlash, flashToUSD, flashToBTC } from '@lib/utils';
@@ -96,6 +97,244 @@ export const getProfile = () => {
         }).catch(e=>{
             dispatch({
                 type: types.GET_PROFILE,
+                payload: {
+                    errorMsg: e.message,
+                    loading:false
+                }
+            });
+        })
+    }
+}
+
+export const updateProfile = (data) => {
+    return (dispatch,getState) => {
+        dispatch({ type: types.LOADING_START });
+        let params = getState().params;
+        apis.updateProfile(params.profile.auth_version, params.profile.sessionToken, data).then((d)=>{
+            if(d.rc == 1){
+                let profile = {...params.profile,...d.profile};
+                AsyncStorage.mergeItem('user',JSON.stringify(profile));
+                dispatch({
+                    type: types.UPDATE_PROFILE,
+                    payload: {
+                        loading:false,
+                        profile
+                    }
+                });
+            }else if(d.rc == 3){
+                dispatch({
+                    type: types.UPDATE_PROFILE,
+                    payload: {
+                        loading:false,
+                        errorMsg:d.reason,
+                    }
+                });
+                setTimeout(()=>_logout(dispatch),500);
+            }else{
+                dispatch({
+                    type: types.UPDATE_PROFILE,
+                    payload: {
+                        errorMsg:d.reason,
+                        loading:false
+                    }
+                });
+            }
+        }).catch(e=>{
+            dispatch({
+                type: types.UPDATE_PROFILE,
+                payload: {
+                    errorMsg: e.message,
+                    loading:false
+                }
+            });
+        })
+    }
+}
+
+export const changePassword = (data) => {
+    return (dispatch,getState) => {
+        dispatch({ type: types.LOADING_START });
+        let params = getState().params;
+        apis.changePassword(params.profile.auth_version, params.profile.idToken, data).then((d)=>{
+            if(d.rc == 1){
+                let profile = {
+                    ...params.profile,
+                    privateKey: data.newPrivateKey
+                };
+                AsyncStorage.mergeItem('user',JSON.stringify(profile));
+                dispatch({
+                    type: types.CHANGE_PASSWORD,
+                    payload: {
+                        loading:false,
+                        profile,
+                        successMsg: 'Your password has been changed successfully!'
+                    }
+                });
+            }else if(d.rc == 3){
+                dispatch({
+                    type: types.CHANGE_PASSWORD,
+                    payload: {
+                        loading:false,
+                        errorMsg:d.reason,
+                    }
+                });
+                setTimeout(()=>_logout(dispatch),500);
+            }else{
+                dispatch({
+                    type: types.CHANGE_PASSWORD,
+                    payload: {
+                        errorMsg:d.reason,
+                        loading:false
+                    }
+                });
+            }
+        }).catch(e=>{
+            dispatch({
+                type: types.CHANGE_PASSWORD,
+                payload: {
+                    errorMsg: e.message,
+                    loading:false
+                }
+            });
+        })
+    }
+}
+
+export const sendVerificationSMS = () => {
+    return (dispatch,getState) => {
+        dispatch({ type: types.LOADING_START });
+        let params = getState().params;
+        apis.sendVerificationSMS(params.profile.auth_version, params.profile.sessionToken).then((d)=>{
+            if(d.rc == 1){
+                dispatch({
+                    type: types.SEND_VERIFICATION_SMS,
+                    payload: {
+                        loading:false,
+                    }
+                });
+            }else if(d.rc == 3){
+                dispatch({
+                    type: types.SEND_VERIFICATION_SMS,
+                    payload: {
+                        loading:false,
+                        errorMsg:d.reason,
+                    }
+                });
+                setTimeout(()=>_logout(dispatch),500);
+            }else{
+                dispatch({
+                    type: types.SEND_VERIFICATION_SMS,
+                    payload: {
+                        errorMsg:d.reason,
+                        loading:false
+                    }
+                });
+            }
+        }).catch(e=>{
+            dispatch({
+                type: types.SEND_VERIFICATION_SMS,
+                payload: {
+                    errorMsg: e.message,
+                    loading:false
+                }
+            });
+        })
+    }
+}
+
+export const verifyPhone = (smsCode) => {
+    return (dispatch,getState) => {
+        let params = getState().params;
+        apis.verifyPhone(params.profile.auth_version, params.profile.sessionToken, smsCode).then((d)=>{
+            if(d.rc == 1){
+                let profile = {
+                    ...params.profile,
+                    phone_verified: 1
+                };
+                AsyncStorage.mergeItem('user',JSON.stringify(profile));
+                dispatch({
+                    type: types.VERIFY_PHONE,
+                    payload: {
+                        profile,
+                        successMsg:'Your phone number has been verified!',
+                        verifyCodeSuccessMsg:'Your phone number has been verified!',
+                    }
+                });
+            }else if(d.rc == 3){
+                dispatch({
+                    type: types.VERIFY_PHONE,
+                    payload: {
+                        verifyCodeErrorMsg:d.reason,
+                    }
+                });
+                setTimeout(()=>_logout(dispatch),500);
+            }else{
+                dispatch({
+                    type: types.VERIFY_PHONE,
+                    payload: {
+                        verifyCodeErrorMsg:d.reason,
+                    }
+                });
+            }
+            setTimeout(()=>dispatch({
+                type: types.CUSTOM_ACTION,
+                payload:{
+                    verifyCodeErrorMsg:null,
+                    verifyCodeSuccessMsg:null
+                }
+            }),500);
+        }).catch(e=>{
+            dispatch({
+                type: types.VERIFY_PHONE,
+                payload: {
+                    verifyCodeErrorMsg: e.message,
+                }
+            });
+        })
+    }
+}
+
+export const setRecoveryKeys = (data) => {
+    return (dispatch,getState) => {
+        dispatch({ type: types.LOADING_START });
+        let params = getState().params;
+        apis.setRecoveryKeys(params.profile.auth_version, params.profile.idToken, data).then((d)=>{
+            if(d.rc == 1){
+                dispatch({
+                    type: types.SET_RECOVERY_KEYS,
+                    payload: {
+                        loading:false,
+                        successMsg: 'Security questions have been updated successfully',
+                        securityQueSuccessMsg: 'Security questions have been updated successfully'
+                    }
+                });
+                setTimeout(()=>dispatch({
+                    type: types.CUSTOM_ACTION,
+                    payload:{
+                        securityQueSuccessMsg:null,
+                    }
+                }),500);
+            }else if(d.rc == 3){
+                dispatch({
+                    type: types.SET_RECOVERY_KEYS,
+                    payload: {
+                        loading:false,
+                        errorMsg:d.reason,
+                    }
+                });
+                setTimeout(()=>_logout(dispatch),500);
+            }else{
+                dispatch({
+                    type: types.SET_RECOVERY_KEYS,
+                    payload: {
+                        errorMsg:d.reason,
+                        loading:false
+                    }
+                });
+            }
+        }).catch(e=>{
+            dispatch({
+                type: types.SET_RECOVERY_KEYS,
                 payload: {
                     errorMsg: e.message,
                     loading:false

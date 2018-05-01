@@ -37,8 +37,8 @@ const styles = require("@styles/myAccount");
 const TabNav = TabNavigator({
     Profile: { screen: Profile },
     // Fountain: { screen: Fountain },
-    // 'Security Question': { screen: SecurityQuestion },
     Settings: { screen: Settings },
+    Security: { screen: SecurityQuestion },
 },{
     navigationOptions: ({ navigation }) => ({
     }),

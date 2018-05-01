@@ -56,7 +56,7 @@ export default class RequestTab extends Component {
                         <Text style={styles.reqRecvFrom}> {this.props.req.type == 1?'to ':'from '}
                             {this.props.req.type == 1?this.props.req.receiver_display_name:
                             this.props.req.sender_display_name}</Text></Text>
-                        <Text style={styles.reqDateTime}> {moment(this.props.req.created_ts)
+                        <Text style={styles.reqDateTime}> {moment.tz(this.props.req.created_ts, this.props.timezone)
                             .format('MMM DD, YYYY hh:mm A')}</Text>
                     </View>
                     <Icon style={styles.reqDetailArrow} name='angle-right' />
@@ -170,7 +170,7 @@ export default class RequestTab extends Component {
                                     <View style={styles.reqDetailRow}>
                                         <Text style={styles.reqDetailLabel}>Date/Time</Text>
                                         <Text selectable={true} style={styles.reqDetailText}>
-                                            {moment(this.props.req.created_ts)
+                                            {moment.tz(this.props.req.created_ts, this.props.timezone)
                                             .format('MMM DD, YYYY hh:mm A')}</Text>
                                     </View>
                                 </View>}
@@ -257,6 +257,7 @@ RequestTab.propTypes = {
 	style: PropTypes.oneOfType([PropTypes.object, PropTypes.number, PropTypes.array]),
 	req: PropTypes.object,
 	outgoing: PropTypes.bool,
+    timezone: PropTypes.string,
 };
 
 const styles = StyleSheet.create({

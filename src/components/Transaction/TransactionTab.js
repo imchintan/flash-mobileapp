@@ -47,7 +47,7 @@ export default class TransactionTab extends Component {
                         <Text numberOfLines={1} style={styles.txnAmount}>{this.props.txn.type == 1?'-':'+'} {this.props.txn.amount}
                         <Text style={styles.txnRecvFrom}> {this.props.txn.type == 1?'to':'from'} {this.props.txn.type == 1?
                                 (this.props.txn.receiver_display_name || 'Anonymous'):(this.props.txn.sender_display_name || 'Anonymous')}</Text></Text>
-                        <Text style={styles.txnDateTime}> {moment(this.props.txn.created_ts).format('MMM DD, YYYY hh:mm A')}</Text>
+                        <Text style={styles.txnDateTime}> {moment.tz(this.props.txn.created_ts, this.props.timezone).format('MMM DD, YYYY hh:mm A')}</Text>
                     </View>
                     <View style={styles.txnStatus}>
                         <Text style={[styles.txnStatusLabel,
@@ -69,7 +69,7 @@ export default class TransactionTab extends Component {
                             <View style={styles.txnDetailBody}>
                                 <View style={styles.txnDetailRow}>
                                     <Text style={styles.txnDetailLabel}>Date/Time</Text>
-                                    <Text selectable={true} style={styles.txnDetailText}>{moment(this.props.txn.created_ts).format('MMM DD, YYYY hh:mm A')}</Text>
+                                    <Text selectable={true} style={styles.txnDetailText}>{moment.tz(this.props.txn.created_ts, this.props.timezone).format('MMM DD, YYYY hh:mm A')}</Text>
                                 </View>
                                 <View style={styles.txnDetailRow}>
                                     {this.props.txn.type == 2?
@@ -126,6 +126,7 @@ TransactionTab.propTypes = {
 	...ViewPropTypes,
 	style: PropTypes.oneOfType([PropTypes.object, PropTypes.number, PropTypes.array]),
 	txn: PropTypes.object,
+	timezone: PropTypes.string,
 };
 
 const styles = StyleSheet.create({

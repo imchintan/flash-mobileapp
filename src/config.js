@@ -2,7 +2,7 @@ import { Platform } from 'react-native';
 
 export const  RESOURCE = 'app';
 export const  APP_MODE = 'PROD'; // DEV , PROD
-export const  APP_VERSION = 2;
+export const  APP_VERSION = 3;
 
 let appUrl;
 

@@ -58,6 +58,7 @@ class OutgoingRequests extends Component<{}> {
                     renderItem={({item, index})=>
                         <RequestTab
                             outgoing={true}
+                            timezone={this.props.timezone}
                             req={item}
                             onCancel={this.markCancelledMoneyRequests.bind(this)}
                             style={[!index && {marginTop:10}]} />
@@ -84,6 +85,7 @@ function mapStateToProps({params}) {
       reqs: params.outReqs || [],
       total_reqs: params.outReqs_total || 0,
       loading: params.outReqs_loading || false,
+      timezone: params.profile.timezone || moment.tz.guess(),
       minDate: moment(params.profile.created_ts),
       maxDate: moment()
   };
