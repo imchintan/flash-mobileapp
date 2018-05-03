@@ -124,6 +124,11 @@ export const flashNFormatter = (num, digits) => {
     return (num / si[i].value).toFixed(digits).replace(rx, "$1") + si[i].symbol;
 }
 
+export const currencyFormatter = (num, digits=8) => {
+    if (num == undefined || num === '') return 0.00;
+    return parseFloat(num).toLocaleString('en',{maximumFractionDigits:digits});
+}
+
 export const flashToSatoshi = (num) => {
     if (num == undefined || num === '') return;
     return parseInt(new Big(num).times(10000000000).toString(), 10);

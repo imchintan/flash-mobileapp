@@ -125,8 +125,8 @@ class Home extends Component<{}> {
                         <Text style={styles.balanceLabel}>Your Balance</Text>
                         <TouchableOpacity  onPress={()=>this.setState({fullBalance:true})}>
                             {this.props.currency_type === constants.CURRENCY_TYPE.FLASH?
-                                <Text style={styles.balanceText}>{utils.flashNFormatter(utils.satoshiToFlash(this.props.balance),2)} {utils.getCurrencyUnitUpcase(this.props.currency_type)}</Text>:
-                                <Text style={styles.balanceText}>{utils.flashNFormatter(this.props.balance,2)} {utils.getCurrencyUnitUpcase(this.props.currency_type)}</Text>
+                                <Text style={styles.balanceText}>{utils.flashNFormatter(utils.satoshiToFlash(this.props.balance).toFixed(10),2)} {utils.getCurrencyUnitUpcase(this.props.currency_type)}</Text>:
+                                <Text style={styles.balanceText}>{utils.flashNFormatter(this.props.balance.toFixed(8),2)} {utils.getCurrencyUnitUpcase(this.props.currency_type)}</Text>
                             }
                         </TouchableOpacity>
                         <View style={styles.otherBalanceRow}>
@@ -249,7 +249,9 @@ class Home extends Component<{}> {
                                 textAlign: 'center',
                                 color: '#000000',
                                 marginBottom: 25,
-                            }}>{constants.CURRENCY_TYPE.FLASH ===this.props.currency_type?utils.satoshiToFlash(this.props.balance):this.props.balance}
+                            }}>{constants.CURRENCY_TYPE.FLASH ===this.props.currency_type?
+                                utils.currencyFormatter(utils.satoshiToFlash(this.props.balance),10):
+                                utils.currencyFormatter(this.props.balance,8)}
                             {' '+utils.getCurrencyUnitUpcase(this.props.currency_type)}{"\n"}
                                 {constants.CURRENCY_TYPE.FLASH !== this.props.currency_type?<Text style={{
                                         fontSize: 18,
