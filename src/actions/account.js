@@ -49,7 +49,7 @@ export const getBalance = (refresh = false) => {
                         balanceLoader: false,
                         infoMsg: refresh?('Updated Balance: '+
                         (params.currency_type === constants.CURRENCY_TYPE.FLASH?
-                        utils.flashNFormatter(utils.satoshiToFlash(d.balance)):utils.flashNFormatter(d.balance))
+                        utils.flashNFormatter(utils.satoshiToFlash(d.balance).toFixed(10)):utils.flashNFormatter(d.balance.toFixed(8)))
                         + ' '+ utils.getCurrencyUnitUpcase( params.currency_type)):null
                     }
                 });
