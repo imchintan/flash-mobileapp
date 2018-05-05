@@ -555,3 +555,96 @@ export const check2FA = (auth_version, idToken, code) => {
         });
     });
 }
+
+/**
+ * Create Flash Wallet
+ * @param  {Number} auth_version      [description]
+ * @param  {String} sessionToken      [description]
+ * @param  {Object} params            [description]
+ * @return {Promise}                  [description]
+ */
+export const createFlashWallet = (auth_version, sessionToken, params) => {
+    return new Promise((resolve,reject) => {
+        fetch(API_URL+'/createFlashWallet',{
+            method: 'POST',
+            body: JSON.stringify({
+                ...params,
+                appversion:APP_VERSION,
+                res:RESOURCE,
+            }),
+            headers: {
+               'Content-Type': 'application/json; charset=utf-8',
+               'authorization': sessionToken,
+               'fl_auth_version': auth_version
+            },
+        })
+        .then(res => res.json())
+        .then(json => resolve(json))
+        .catch(e =>{
+            console.log(e);
+            reject('Something went wrong!')
+        });
+    });
+}
+
+/**
+ * Create BTC Wallet
+ * @param  {Number} auth_version      [description]
+ * @param  {String} sessionToken      [description]
+ * @param  {Object} params            [description]
+ * @return {Promise}                  [description]
+ */
+export const createBtcWallet = (auth_version, sessionToken, params) => {
+    return new Promise((resolve,reject) => {
+        fetch(API_URL+'/createBtcWallet',{
+            method: 'POST',
+            body: JSON.stringify({
+                ...params,
+                appversion:APP_VERSION,
+                res:RESOURCE,
+            }),
+            headers: {
+               'Content-Type': 'application/json; charset=utf-8',
+               'authorization': sessionToken,
+               'fl_auth_version': auth_version
+            },
+        })
+        .then(res => res.json())
+        .then(json => resolve(json))
+        .catch(e =>{
+            console.log(e);
+            reject('Something went wrong!')
+        });
+    });
+}
+
+/**
+ * Create LTC Wallet
+ * @param  {Number} auth_version      [description]
+ * @param  {String} sessionToken      [description]
+ * @param  {Object} params            [description]
+ * @return {Promise}                  [description]
+ */
+export const createLTCWallet = (auth_version, sessionToken, params) => {
+    return new Promise((resolve,reject) => {
+        fetch(API_URL+'/createLtcWallet',{
+            method: 'POST',
+            body: JSON.stringify({
+                ...params,
+                appversion:APP_VERSION,
+                res:RESOURCE,
+            }),
+            headers: {
+               'Content-Type': 'application/json; charset=utf-8',
+               'authorization': sessionToken,
+               'fl_auth_version': auth_version
+            },
+        })
+        .then(res => res.json())
+        .then(json => resolve(json))
+        .catch(e =>{
+            console.log(e);
+            reject('Something went wrong!')
+        });
+    });
+}

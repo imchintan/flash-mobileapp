@@ -5,6 +5,9 @@ import * as types from '@actions/types';
 const initialState = {
     isLoggedIn: false,
     loading: false,
+    bcMedianTxSize: 250,
+    satoshiPerByte: 20,
+    thresholdAmount: 0.00001,
     currency_type: 1,
     date_from: moment().add(-1, 'months').add(-1, 'days'),
     date_to: moment(),

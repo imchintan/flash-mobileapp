@@ -22,9 +22,12 @@ import {
 import moment from 'moment-timezone';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
-import { flashToSatoshi } from '@lib/utils';
+import * as utils from '@lib/utils';
+import * as constants from '@src/constants';
 import { ActionCreators } from '@actions';
 import { PROFILE_URL } from '@src/config';
+import Premium from 'Premium';
+
 const styles = require("@styles/pending");
 
 class IncomingRequests extends Component<{}> {
@@ -37,7 +40,9 @@ class IncomingRequests extends Component<{}> {
 
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = {
+            fee: utils.calcFee(0,this.props.currency_type,this.props.bcMedianTxSize,this.props.satoshiPerByte),
+        };
     }
 
     componentWillReceiveProps(nextProps){
@@ -69,37 +74,69 @@ class IncomingRequests extends Component<{}> {
             isVerify: false,
             req: null,
             note: '',
+            fee: utils.calcFee(0,this.props.currency_type,this.props.bcMedianTxSize,this.props.satoshiPerByte),
             publicAddress: null,
             search_wallet: null,
+            errorMsg: null,
         });
     }
 
     accept(req, note){
+        if(this.props.currency_type !== constants.CURRENCY_TYPE.FLASH){
+            this.props.setThresholdAmount();
+            this.props.setBcMedianTxSize();
+            this.props.setSatoshiPerByte();
+        }
+
         this.setState({req,note},
             ()=>this.props.searchWallet(req.sender_email, true));
     }
 
     sendMoney(force=false){
-        if(!force && !this.props.decryptedWallets) return this.setState({visible:false, visibleGetPassword: true});
+        if(!force && !this.props.decryptedWallets) return this.setState({visible:false, visibleGetPassword: true, password: '', errorMsg: ''});
         if(!this.state.isConfirm) return ;
-
+        let amount = utils.toOrginalNumber(this.state.req.amount);
+        let fee = utils.calcFee(amount, this.props.currency_type,
+            this.props.bcMedianTxSize, this.props.satoshiPerByte);
         this.setState({visible:false, visibleGetPassword:false, isConfirm: false},
             ()=>{
-                if(flashToSatoshi(parseFloat(this.state.req.amount)+0.001) > this.props.balance){
-                    this.resetState();
-                    return Toast.errorTop("You do not have enough fee to make this payment");
+                if(this.props.currency_type === constants.CURRENCY_TYPE.FLASH){
+                    if(utils.flashToSatoshi(amount+fee) > this.props.balance){
+                        this.resetState();
+                        return Toast.errorTop("You do not have enough fee to make this payment");
+                    }
+                }else{
+                    if((amount+fee) > this.props.balance){
+                        this.resetState();
+                        return Toast.errorTop("You do not have enough fee to make this payment");
+                    }
                 }
+
                 let receiver_bare_uid =
                     this.state.search_wallet?
                     this.state.search_wallet.email:null;
                 let receiver_id =
                     this.state.search_wallet?
                     this.state.search_wallet.username:null;
-
-                this.props.rawTransaction(this.state.req.amount,
-                    this.state.publicAddress, this.state.note,
-                    receiver_bare_uid, receiver_id, this.state.req.id);
+                this.props.rawTransaction(amount, fee, this.state.publicAddress,
+                    this.state.note, receiver_bare_uid, receiver_id, this.state.req.id);
         })
+    }
+
+    decryptWallets(){
+        if(!this.state.password){
+            return this.setState({errorMsg:'Password is invalid!'});
+        }
+
+        try{
+            Premium.xaesDecrypt(this.state.password, this.props.profile.privateKey);
+        }catch(e){
+            return this.setState({errorMsg:'Password is invalid!'});
+        }
+        
+        this.props.customAction({loading:true});
+        this.setState({visibleGetPassword:false, errorMsg:''},()=>
+            setTimeout(()=>this.props.decryptWallets(this.state.password,true),0));
     }
 
     render() {
@@ -152,19 +189,19 @@ class IncomingRequests extends Component<{}> {
                                     onPress={()=>this.setState({visible:false})} name='close' />
                             </View>
                             <View style={styles.reqDetailBody}>
-                                <Text style={styles.reqAmtText}>{this.state.req?this.state.req.amount:0.00} FLASH</Text>
+                                <Text style={styles.reqAmtText}>{this.state.req?this.state.req.amount:0.00} {this.state.req?
+                                    utils.getCurrencyUnitUpcase(this.state.req.currency):
+                                    utils.getCurrencyUnitUpcase(constants.CURRENCY_TYPE.FLASH)}</Text>
                                 <Text style={styles.reqFeeText}>
-                                    + 0.001 FLASH transaction fee
+                                    + {this.state.fee} {this.state.req?utils.getCurrencyUnitUpcase(this.state.req.currency):
+                                        utils.getCurrencyUnitUpcase(constants.CURRENCY_TYPE.FLASH)} transaction fee
                                 </Text>
                                 <Icon style={styles.reqDownArrow} name='arrow-down'/>
                                 <View style={styles.reqDetailRow}>
                                     <Image style={styles.reqDetailIcon}
-                                        defaultSource={require("@images/app-icon.png")}
-                                        source={this.state.search_wallet?
-                                            (this.state.search_wallet.profile_pic_url?
+                                        source={this.state.search_wallet && this.state.search_wallet.profile_pic_url?
                                             {uri:PROFILE_URL+this.state.search_wallet.profile_pic_url}:
-                                            require('@images/app-icon.png'))
-                                            :require('@images/app-icon.png')} />
+                                            utils.getCurrencyIcon(this.props.currency_type)} />
                                     <View>
                                         {this.state.search_wallet?
                                             <Text style={styles.reqDetailText}>
@@ -220,8 +257,15 @@ class IncomingRequests extends Component<{}> {
                                         secureTextEntry={true}
                                         value={this.state.password || ''}
                                         onChangeText={(password) => this.setState({password})}
+                                        onSubmitEditing={this.decryptWallets.bind(this)}
                                     />
                                 </View>
+                                {!!this.state.errorMsg?<Text style={{
+                                    fontSize: 15,
+                                    color: 'red',
+                                    paddingHorizontal: 10,
+                                    marginTop: 5,
+                                }}>{this.state.errorMsg}</Text>:null}
                             </View>
                             <View style={{flexDirection:'row'}}>
                                 <Button
@@ -230,13 +274,7 @@ class IncomingRequests extends Component<{}> {
                                     textstyle={[styles.reqBtnLabel,{color:'#333'}]}
                                     value='Cancel' />
                                 <Button
-                                    onPress={()=>{
-                                        if(!this.state.password){
-                                            return Toast.errorTop("Password is invalid!");
-                                        }
-                                        this.setState({visibleGetPassword:false},
-                                            ()=>this.props.decryptWallets(this.state.password));
-                                    }}
+                                    onPress={this.decryptWallets.bind(this)}
                                     style={styles.reqBtn}
                                     textstyle={styles.reqBtnLabel}
                                     value='Send' />
@@ -261,9 +299,10 @@ class IncomingRequests extends Component<{}> {
                                     color: '#333',
                                     marginBottom: 25,
                                 }}>
-                                    Processing time: {this.state.sendTxnSuccess?
-                                            Number(this.state.sendTxnSuccess.processing_duration)
-                                            .toFixed(3):'0.000'} second(s){"\n\n"}
+                                {this.props.currency_type === constants.CURRENCY_TYPE.FLASH?
+                                ('Processing time: '+(this.state.sendTxnSuccess?
+                                        Number(this.state.sendTxnSuccess.processing_duration)
+                                        .toFixed(3):'0.000')+" second(s)\n\n"):''}
                                     Your transaction will appear in your activity tab shortly.
                                 </Text>
                                 <Button
@@ -288,6 +327,10 @@ function mapStateToProps({params}) {
       inReqs_loading: params.inReqs_loading || false,
       loading: params.loading || false,
       balance: params.balance || 0,
+      profile: params.profile || null,
+      currency_type: params.currency_type,
+      bcMedianTxSize: params.bcMedianTxSize,
+      satoshiPerByte: params.satoshiPerByte,
       search_wallet: params.search_wallet || null,
       sendTxnSuccess: params.sendTxnSuccess || null,
       decryptedWallets: params.decryptedWallets || null,

@@ -1,5 +1,6 @@
-import { NETWORKS } from '@src/config';
+import { NETWORKS, CURRENCY_TYPE } from '@src/constants';
 import { Address } from './wallet';
+import { isValidFlashAddress, isValidCryptoAddress } from './utils';
 
 export const name = (n) => {
     let regEX = /^[a-zA-Z .]*$/;
@@ -46,16 +47,18 @@ export const amount = (amt,dec=8) => {
     return {success:true, message:'', amount: amt};
 }
 
-export function flashAddress(value) {
-    try {
-        let address = Address.fromBase58Check(value);
-        if (address.version === NETWORKS.FLASH.pubKeyHash ||
-            address.version === NETWORKS.FLASH.scriptHash ) {
-            return {success:true,message:''};
-        } else {
-            return {success:false,message:'Invalid address!'};
-        }
-    } catch (e) {
+export const flashAddress = (value) => {
+    if(isValidFlashAddress(value)){
+        return {success:true,message:''};
+    }else{
+        return {success:false,message:'Invalid address!'};
+    }
+}
+
+export const cryptoAddress = (value, currency_type) => {
+    if(isValidCryptoAddress(value, currency_type)){
+        return {success:true,message:''};
+    }else{
         return {success:false,message:'Invalid address!'};
     }
 }

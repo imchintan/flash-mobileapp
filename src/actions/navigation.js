@@ -6,18 +6,29 @@ import * as types from '@actions/types'
 import apis from '@flashAPIs'
 import Wallet from '@lib/wallet'
 import * as utils from '@lib/utils'
+import * as constants from '@src/constants';
+import * as send from './send'
 import Premium from 'Premium';
 
 import { getCoinMarketCapDetail, getProfile } from '@actions/account';
 
 export const init = () => {
     return async (dispatch,getState) => {
-        utils.publicIP().then(ip => {
-            dispatch({ type: types.SET_PUBLIC_IP, ip });
-        });
-        initTimezone();
-        dispatch(getCoinMarketCapDetail());
         dispatch({ type: types.LOADING_START });
+
+        initTimezone();
+
+        utils.getLocation().then(res => {
+            if(res.rc == 1){
+                dispatch({ type: types.SET_LOCATION, location: res.info });
+                dispatch({ type: types.SET_PUBLIC_IP, ip: res.info.ip });
+            }else{
+                utils.publicIP().then(ip => {
+                    dispatch({ type: types.SET_PUBLIC_IP, ip });
+                });
+            }
+        });
+
         let user = await AsyncStorage.getItem('user');
         if(user){
             let payload = {
@@ -26,7 +37,23 @@ export const init = () => {
 
             let balance = await AsyncStorage.getItem('balance');
             if(balance){
-                payload.balance = JSON.parse(balance)
+                payload.balance = Number(JSON.parse(balance));
+                AsyncStorage.getItem('coinmarketcapValue',(err,succ)=>{
+                    if(err || !succ) return;
+                    let d = JSON.parse(succ);
+                    dispatch({
+                        type: types.GET_COIN_MARKET_CAP_VALUE,
+                        payload: {
+                            balance_in_flash:utils.flashToOtherCurrency(payload.balance, Number(d.flash)),
+                            balance_in_btc:utils.flashToOtherCurrency(payload.balance, Number(d.btc)),
+                            balance_in_ltc:utils.flashToOtherCurrency(payload.balance, Number(d.ltc)),
+                            balance_in_usd:utils.flashToOtherCurrency(payload.balance, Number(d.usd)),
+                        }
+                    });
+                    dispatch(getCoinMarketCapDetail());
+                });
+            }else{
+                dispatch(getCoinMarketCapDetail());
             }
             let last_message_datetime = await AsyncStorage.getItem('last_message_datetime');
             if(last_message_datetime){
@@ -189,6 +216,95 @@ export const getMyWallets = (profile,password=null) => {
                     }
                 });
                 if(password || profile.auth_version == 3) dispatch(decryptWallets(password));
+                if(d.my_wallets.length > 2 || (profile.auth_version < 4 && d.my_wallets.length == 1))
+                    return ;
+
+                let params = {
+                      sessionToken: profile.sessionToken,
+                      publicKey: profile.publicKey,
+                      appId: 'flashcoin',
+                };
+                //if no FLASH wallet
+                if (!send.getActiveWallet(d.my_wallets, constants.CURRENCY_TYPE.FLASH)) {
+                    apis.createFlashWallet(profile.auth_version, profile.sessionToken, params).then((d)=>{
+                        if(d.rc==1){
+                            apis.getMyWallets(profile.auth_version, profile.sessionToken).then((d)=>{
+                                if(d.rc == 1){
+                                    dispatch({
+                                        type: types.GET_MY_WALLETS,
+                                        payload: {
+                                            my_wallets:d.my_wallets
+                                        }
+                                    });
+                                    if(password || profile.auth_version == 3) dispatch(decryptWallets(password));
+                                }
+                            }).catch(e=>console.log(e))
+                        }
+                    }).catch(e=>{
+                        dispatch({
+                            type: types.GET_MY_WALLETS,
+                            payload: {
+                                errorMsg: e.message,
+                                stack: e.stack,
+                            }
+                        });
+                    })
+                }
+
+
+                //if no BTC wallet
+                if (!send.getActiveWallet(d.my_wallets, constants.CURRENCY_TYPE.BTC)) {
+                    apis.createBtcWallet(profile.auth_version, profile.sessionToken, params).then((d)=>{
+                        if(d.rc==1){
+                            apis.getMyWallets(profile.auth_version, profile.sessionToken).then((d)=>{
+                                if(d.rc == 1){
+                                    dispatch({
+                                        type: types.GET_MY_WALLETS,
+                                        payload: {
+                                            my_wallets:d.my_wallets
+                                        }
+                                    });
+                                    if(password || profile.auth_version == 3) dispatch(decryptWallets(password));
+                                }
+                            }).catch(e=>console.log(e))
+                        }
+                    }).catch(e=>{
+                        dispatch({
+                            type: types.GET_MY_WALLETS,
+                            payload: {
+                                errorMsg: e.message,
+                                stack: e.stack,
+                            }
+                        });
+                    })
+                }
+
+                //if no LTC wallet
+                if (!send.getActiveWallet(d.my_wallets, constants.CURRENCY_TYPE.LTC)) {
+                    apis.createLTCWallet(profile.auth_version, profile.sessionToken, params).then((d)=>{
+                        if(d.rc==1){
+                            apis.getMyWallets(profile.auth_version, profile.sessionToken).then((d)=>{
+                                if(d.rc == 1){
+                                    dispatch({
+                                        type: types.GET_MY_WALLETS,
+                                        payload: {
+                                            my_wallets:d.my_wallets
+                                        }
+                                    });
+                                    if(password || profile.auth_version == 3) dispatch(decryptWallets(password));
+                                }
+                            }).catch(e=>console.log(e))
+                        }
+                    }).catch(e=>{
+                        dispatch({
+                            type: types.GET_MY_WALLETS,
+                            payload: {
+                                errorMsg: e.message,
+                                stack: e.stack,
+                            }
+                        });
+                    })
+                }
             }
         }).catch(e=>{
             dispatch({
@@ -202,7 +318,7 @@ export const getMyWallets = (profile,password=null) => {
     }
 }
 
-export const decryptWallets = (password) => {
+export const decryptWallets = (password,sendMoney=false) => {
     return (dispatch,getState) => {
         try {
             dispatch({ type: types.LOADING_START });
@@ -222,7 +338,7 @@ export const decryptWallets = (password) => {
                         type: types.STORE_FOUNTAIN_SECRET,
                         payload: {
                             decryptedWallets,
-                            loading: false,
+                            loading: sendMoney,
                         }
                     });
                 }).catch(e=>{
@@ -246,7 +362,7 @@ export const decryptWallets = (password) => {
                     type: types.STORE_FOUNTAIN_SECRET,
                     payload: {
                         decryptedWallets,
-                        loading: false,
+                        loading: sendMoney,
                     }
                 });
             }
@@ -261,6 +377,11 @@ export const decryptWallets = (password) => {
         }
     }
 }
+
+export const customAction = (payload) => ({
+    type: types.CUSTOM_ACTION,
+    payload
+});
 
 export const logout = () => {
     return (dispatch,getState) => _logout(dispatch);

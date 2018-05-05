@@ -25,6 +25,9 @@ import { bindActionCreators } from 'redux';
 import { ActionCreators } from '@actions';
 import * as Validation from '@lib/validation';
 import { PROFILE_URL } from '@src/config';
+import * as utils from '@lib/utils';
+import * as constants from '@src/constants';
+
 const styles = require("@styles/request");
 
 class RequestTab extends Component<{}> {
@@ -57,6 +60,12 @@ class RequestTab extends Component<{}> {
         }
     }
 
+    componentDidMount(){
+        if(this.props.currency_type !== constants.CURRENCY_TYPE.FLASH){
+            this.props.setBcMedianTxSize();
+        }
+    }
+
     resetState(){
         this.setState({
             email:'',
@@ -72,12 +81,13 @@ class RequestTab extends Component<{}> {
         this.setState({isAmtVerify: false});
         if(!this.state.amount) return false;
 
-        let res = Validation.amount(this.state.amount);
+        let amount = utils.toOrginalNumber(this.state.amount);
+        let res = Validation.amount(amount);
         if(!res.success){
             return Toast.errorTop(res.message);
         }
 
-        this.setState({isAmtVerify: true, amount:res.amount});
+        this.setState({isAmtVerify: true, amount:utils.formatAmountInput(res.amount)});
     }
 
     verifyAddress(){
@@ -99,17 +109,23 @@ class RequestTab extends Component<{}> {
         if(!this.state.isVerify){
             return Toast.errorTop("Address is invalid!");
         }
-        let amount = this.state.amount;
+        let amount = utils.toOrginalNumber(this.state.amount);
         if(!this.state.isAmtVerify){
             let res = Validation.amount(amount);
             if(!res.success){
                 return Toast.errorTop(res.message);
             }
-            amount = res.amount;
+            amount = utils.toOrginalNumber(res.amount);
             this.setState({isAmtVerify: true, amount});
         }
-        if(parseFloat(amount) < 1){
-            return Toast.errorTop("Amount must be at least 1");
+        if(this.props.currency_type === constants.CURRENCY_TYPE.FLASH){
+            if(amount < 1){
+                return Toast.errorTop("Amount must be at least 1");
+            }
+        }else{
+            if(amount < this.props.thresholdAmount){
+                return Toast.errorTop("Amount is less than threshold value");
+            }
         }
         this.setState({visible:true});
     }
@@ -154,7 +170,7 @@ class RequestTab extends Component<{}> {
                                 paddingLeft: 0
                             }]}>
                                 <View style={styles.requestRowAmtLabelBox}>
-                                    <Text style={styles.requestRowAmtLabel}>FLASH</Text>
+                                    <Text style={styles.requestRowAmtLabel}>{utils.getCurrencyUnitUpcase(this.props.currency_type)}</Text>
                                 </View>
                                 <TextInput
                                     ref={'_input_amount'}
@@ -164,7 +180,7 @@ class RequestTab extends Component<{}> {
                                     returnKeyType='done'
                                     placeholder='Enter amount'
                                     onBlur={this.verifyAmount.bind(this)}
-                                    onSubmitEditing={()=>this.refs._input_note.focus()}
+                                    // onSubmitEditing={()=>this.refs._input_note.focus()}
                                     value={this.state.amount || ''}
                                     onChangeText={(amount) => this.setState({amount})}
                                 />
@@ -209,14 +225,13 @@ class RequestTab extends Component<{}> {
                                 <Text style={styles.reqDetailCloseIcon} onPress={()=>this.setState({visible:false})} >X</Text>
                             </View>
                             <View style={styles.reqDetailBody}>
-                                <Text style={styles.reqAmtText}>{this.state.amount} FLASH</Text>
+                                <Text style={styles.reqAmtText}>{this.state.amount} {utils.getCurrencyUnitUpcase(this.props.currency_type)}</Text>
                                 <Icon style={styles.reqDownArrow} name='arrow-down'/>
                                 <View style={styles.reqDetailRow}>
                                     <Image style={styles.reqDetailIcon}
-                                        defaultSource={require("@images/app-icon.png")}
-                                        source={this.state.search_wallet?(this.state.search_wallet.profile_pic_url?
+                                        source={this.state.search_wallet && this.state.search_wallet.profile_pic_url?
                                             {uri:PROFILE_URL+this.state.search_wallet.profile_pic_url}:
-                                            require('@images/app-icon.png')):require('@images/app-icon.png')} />
+                                            utils.getCurrencyIcon(this.props.currency_type)} />
                                     <View>
                                         <Text style={styles.reqDetailText}>{this.state.search_wallet?this.state.search_wallet.display_name:''}</Text>
                                         <Text style={styles.reqDetailText}>{this.state.search_wallet?this.state.search_wallet.email:''}</Text>
@@ -231,7 +246,7 @@ class RequestTab extends Component<{}> {
                                     value='Cancel' />
                                 <Button
                                     onPress={()=>this.setState({visible:false},
-                                        ()=>this.props.addMoneyRequest(this.state.amount,
+                                        ()=>this.props.addMoneyRequest(utils.toOrginalNumber(this.state.amount),
                                             this.state.search_wallet.email,
                                             this.state.search_wallet.username,
                                             this.state.note
@@ -252,6 +267,8 @@ function mapStateToProps({params}) {
     return {
         loading: params.loading,
         search_wallet: params.search_wallet || null,
+        currency_type: params.currency_type,
+        thresholdAmount: params.thresholdAmount,
     };
 }
 

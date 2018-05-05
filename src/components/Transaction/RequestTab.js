@@ -15,6 +15,7 @@ import Icon from 'react-native-fa-icons';
 import Button from '@components/Button';
 import moment from 'moment-timezone';
 import PropTypes from "prop-types";
+import * as utils from '@lib/utils';
 
 import { PROFILE_URL } from '@src/config';
 
@@ -40,24 +41,21 @@ export default class RequestTab extends Component {
                     style={[styles.reqTab,this.props.style]}>
                     {this.props.req.type == 1?
                         <Image style={styles.reqIcon}
-                            defaultSource={require("@images/app-icon.png")}
                             source={this.props.req.receiver_profile_pic_url?
                                 {uri:PROFILE_URL+this.props.req.receiver_profile_pic_url}:
-                                require("@images/app-icon.png")} />:
+                                utils.getCurrencyIcon(this.props.req.currency)} />:
                         <Image style={styles.reqIcon}
-                            defaultSource={require("@images/app-icon.png")}
                             source={this.props.req.sender_profile_pic_url?
                                 {uri:PROFILE_URL+this.props.req.sender_profile_pic_url}:
-                                require("@images/app-icon.png")} />
+                                utils.getCurrencyIcon(this.props.req.currency)} />
                     }
                     <View style={styles.reqDetail}>
                         <Text numberOfLines={1} style={styles.reqAmount}>
-                            {this.props.req.type == 1?'+':'-'} {this.props.req.amount}
+                            {this.props.req.type == 1?'+':'-'} {utils.localizeFlash(this.props.req.amount.toString())}
                         <Text style={styles.reqRecvFrom}> {this.props.req.type == 1?'to ':'from '}
                             {this.props.req.type == 1?this.props.req.receiver_display_name:
                             this.props.req.sender_display_name}</Text></Text>
-                        <Text style={styles.reqDateTime}> {moment.tz(this.props.req.created_ts, this.props.timezone)
-                            .format('MMM DD, YYYY hh:mm A')}</Text>
+                        <Text style={styles.reqDateTime}> {utils.getDisplayDateTime(this.props.req.created_ts, this.props.timezone)}</Text>
                     </View>
                     <Icon style={styles.reqDetailArrow} name='angle-right' />
                 </TouchableOpacity>
@@ -81,7 +79,7 @@ export default class RequestTab extends Component {
                                 {this.state.accept?<View style={styles.reqDetailRow}>
                                     <Text style={styles.reqDetailLabel}>Amount</Text>
                                     <Text selectable={true} style={styles.reqDetailText}>
-                                        {this.props.req.amount.toFixed(2)} FLASH</Text>
+                                        {utils.localizeFlash(this.props.req.amount.toString())} {utils.getCurrencyUnitUpcase(this.props.req.currency)}</Text>
                                 </View>:null}
                                 {(this.state.reject || this.state.accept)?<View>
                                     <View style={styles.reqDetailRow}>
@@ -105,15 +103,13 @@ export default class RequestTab extends Component {
                                     <View style={styles.reqDetailRow}>
                                         {this.props.req.type == 2?
                                             <Image style={styles.reqDetailIcon}
-                                                defaultSource={require("@images/app-icon.png")}
                                                 source={this.props.req.sender_profile_pic_url?
                                                     {uri:PROFILE_URL+this.props.req.sender_profile_pic_url}:
-                                                    require('@images/app-icon.png')} />:
+                                                    utils.getCurrencyIcon(this.props.req.currency)} />:
                                             <Image style={styles.reqDetailIcon}
-                                                defaultSource={require("@images/app-icon.png")}
                                                 source={this.props.req.receiver_profile_pic_url?
                                                     {uri:this.props.req.receiver_profile_pic_url}:
-                                                    require('@images/app-icon.png')} />
+                                                    utils.getCurrencyIcon(this.props.req.currency)} />
                                         }
                                         <View>
                                             <Text style={styles.reqDetailText}>
@@ -129,15 +125,13 @@ export default class RequestTab extends Component {
                                     <View style={styles.reqDetailRow}>
                                         {this.props.req.type == 2?
                                             <Image style={styles.reqDetailIcon}
-                                                defaultSource={require("@images/app-icon.png")}
                                                 source={this.props.req.sender_profile_pic_url?
                                                     {uri:PROFILE_URL+this.props.req.sender_profile_pic_url}:
-                                                    require('@images/app-icon.png')} />:
+                                                    utils.getCurrencyIcon(this.props.req.currency)} />:
                                             <Image style={styles.reqDetailIcon}
-                                                defaultSource={require("@images/app-icon.png")}
                                                 source={this.props.req.receiver_profile_pic_url?
                                                     {uri:PROFILE_URL+this.props.req.receiver_profile_pic_url}:
-                                                    require('@images/app-icon.png')} />
+                                                    utils.getCurrencyIcon(this.props.req.currency)} />
                                         }
                                         <View>
                                             <Text style={styles.reqDetailText}>
@@ -152,7 +146,7 @@ export default class RequestTab extends Component {
                                     <View style={styles.reqDetailRow}>
                                         <Text style={styles.reqDetailLabel}>Amount</Text>
                                         <Text selectable={true} style={styles.reqDetailText}>
-                                            {this.props.req.amount.toFixed(2)} FLASH</Text>
+                                            {utils.localizeFlash(this.props.req.amount.toString())} {utils.getCurrencyUnitUpcase(this.props.req.currency)}</Text>
                                     </View>
                                     <View style={styles.reqDetailRow}>
                                         <Text style={styles.reqDetailLabel}>Status</Text>
@@ -165,13 +159,12 @@ export default class RequestTab extends Component {
                                     <View style={styles.reqDetailRow}>
                                         <Text style={styles.reqDetailLabel}>Note</Text>
                                         <Text selectable={true} style={styles.reqDetailTextWithBox}>
-                                            {this.props.req.note || ''}</Text>
+                                            {this.props.req.note || '-'}</Text>
                                     </View>
                                     <View style={styles.reqDetailRow}>
                                         <Text style={styles.reqDetailLabel}>Date/Time</Text>
                                         <Text selectable={true} style={styles.reqDetailText}>
-                                            {moment.tz(this.props.req.created_ts, this.props.timezone)
-                                            .format('MMM DD, YYYY hh:mm A')}</Text>
+                                            {utils.getDisplayDateTime(this.props.req.created_ts, this.props.timezone)}</Text>
                                     </View>
                                 </View>}
 
@@ -400,11 +393,11 @@ const styles = StyleSheet.create({
         width: width - 160,
         fontSize: 14,
         color: '#4A4A4A',
-        borderWidth: 1,
-        borderColor: '#999999',
+        // borderWidth: 1,
+        // borderColor: '#999999',
         paddingVertical: 5,
-        paddingHorizontal: 10,
-        borderRadius: 10,
+        // paddingHorizontal: 10,
+        // borderRadius: 10,
     },
     reqBtn:{
         backgroundColor: '#191714',

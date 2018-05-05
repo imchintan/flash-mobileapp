@@ -6,7 +6,6 @@ import PushNotification from 'react-native-push-notification';
 import * as types from '@actions/types';
 import * as Constants from '@src/constants';
 import apis from '@flashAPIs';
-import { CURRENCY_TYPE, CURRENCY_TYPE_UNIT_UPCASE } from '@src/config';
 import * as Request from '@actions/request';
 import * as Transactions from '@actions/transactions';
 import * as Account from '@actions/account';
@@ -54,18 +53,12 @@ export const getMessages = () => {
 export const onBeRequested = (dispatch, message) => {
     dispatch(Request.getIncomingRequests(0,true));
     dispatch(Request.getOutgoingRequests(0,true));
-    let currencyType = message.currency ? parseInt(message.currency) : CURRENCY_TYPE.FLASH;
-    let currency_name = CURRENCY_TYPE_UNIT_UPCASE[currencyType];
+    let currencyType = message.currency ? parseInt(message.currency) : Constants.CURRENCY_TYPE.FLASH;
+    let currency_name = Constants.CURRENCY_TYPE_UNIT_UPCASE[currencyType];
     let infoMsg = `${message.email_sender} sent you a request for ${message.amount} ${currency_name}`;
     PushNotification.localNotification({
         message: infoMsg,
     })
-    // dispatch({
-    //   type: types.GET_MESSAGES,
-    //   payload: {
-    //       infoMsg
-    //   }
-    // });
 }
 
 export const onTxAdded = (dispatch, message, email) => {
@@ -75,18 +68,12 @@ export const onTxAdded = (dispatch, message, email) => {
     dispatch(Transactions.getSentTransactions(0, true));
     dispatch(Transactions.getReceivedTransactions(0, true));
     if(message.sender_email != email){
-        let currencyType = message.currency ? parseInt(message.currency) : CURRENCY_TYPE.FLASH;
-        let currency_name = CURRENCY_TYPE_UNIT_UPCASE[currencyType];
+        let currencyType = message.currency_type ? parseInt(message.currency_type) : Constants.CURRENCY_TYPE.FLASH;
+        let currency_name = Constants.CURRENCY_TYPE_UNIT_UPCASE[currencyType];
         let infoMsg = `${message.sender_email} sent you ${message.amount} ${currency_name}`;
         PushNotification.localNotification({
             message: infoMsg,
         })
-        // dispatch({
-        //   type: types.GET_MESSAGES,
-        //   payload: {
-        //       infoMsg
-        //   }
-        // });
     }
 }
 
@@ -111,10 +98,4 @@ export const onRequestStateChanged = (dispatch, message) => {
         PushNotification.localNotification({
             message: infoMsg,
         })
-        // dispatch({
-        //   type: types.GET_MESSAGES,
-        //   payload: {
-        //       infoMsg
-        //   }
-        // });
 }

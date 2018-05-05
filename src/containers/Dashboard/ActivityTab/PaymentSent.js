@@ -55,7 +55,13 @@ class PaymentSent extends Component<{}> {
                             this.props.getSentTransactions(this.props.txns.length)}
                     renderItem={({item, index})=>{
                         return(
-                            <TransactionTab txn={item} timezone={this.props.timezone} style={[!index && {marginTop:10}]} />
+                            <TransactionTab txn={item}
+                                currency_type={this.props.currency_type}
+                                timezone={this.props.timezone}
+                                txnLoader={this.props.txnLoader}
+                                txnDetail={this.props.txnDetail}
+                                onPress={()=>this.props.getTransactionDetail(item.transaction_id)}
+                                style={[!index && {marginTop:10}]} />
                         );
                     }}
                     ListEmptyComponent={()=>{
@@ -81,8 +87,11 @@ function mapStateToProps({params}) {
     return {
         txns: params.sentTxns || [],
         total_txns: params.sentTxns_total || 0,
+        txnLoader: params.txnLoader || false,
+        txnDetail: params.txnDetail || {},
         loading: params.sentTxns_loading || false,
         retrieve: params.sentTxns_retrieve || false,
+        currency_type: params.currency_type,
         timezone: params.profile.timezone || moment.tz.guess(),
         minDate: moment(params.profile.created_ts),
         maxDate: moment()

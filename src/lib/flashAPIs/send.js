@@ -7,18 +7,20 @@ import moment from 'moment-timezone';
  * @param  {String} [sessionToken='']   [description]
  * @param  {Number} [currency_type=1]   [description]
  * @param  {Number} [amount=0]          [description]
+ * @param  {Number} [custom_fee=0]      [description]
  * @param  {String} [publicAddress='']  [description]
  * @param  {String} [message='']        [description]
  * @return {Promise}                    [description]
  */
 export const rawTransaction = (auth_version, sessionToken='',
-    currency_type = 1, amount=0, publicAddress='', message='') => {
+    currency_type = 1, amount=0, custom_fee=0, publicAddress='', message='') => {
     return new Promise((resolve,reject) => {
         fetch(API_URL+'/raw-transaction',{
             method: 'POST',
             body: JSON.stringify({
                 currency_type,
                 amount,
+                custom_fee,
                 message,
                 publicAddress,
                 appversion:APP_VERSION,
