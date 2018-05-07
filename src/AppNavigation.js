@@ -7,10 +7,14 @@ import Login from '@containers/Login';
 import ForgotPassword from '@containers/ForgotPassword';
 import SignUP from '@containers/SignUP';
 import Verify2FA from '@containers/Verify2FA';
+import Lock from '@containers/Lock';
 
 const routes = {
     Login: {
         screen: Login,
+    },
+    Lock: {
+        screen: Lock,
     },
     Dashboard: {
         screen: Dashboard,
