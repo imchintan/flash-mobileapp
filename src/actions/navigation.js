@@ -216,7 +216,7 @@ export const getMyWallets = (profile,password=null) => {
                     }
                 });
                 if(password || profile.auth_version == 3) dispatch(decryptWallets(password));
-                if(d.my_wallets.length > 2 || (profile.auth_version < 4 && d.my_wallets.length == 1))
+                if(d.my_wallets.length > 3 || (profile.auth_version < 4 && d.my_wallets.length == 1))
                     return ;
 
                 let params = {
@@ -282,6 +282,33 @@ export const getMyWallets = (profile,password=null) => {
                 //if no LTC wallet
                 if (!send.getActiveWallet(d.my_wallets, constants.CURRENCY_TYPE.LTC)) {
                     apis.createLTCWallet(profile.auth_version, profile.sessionToken, params).then((d)=>{
+                        if(d.rc==1){
+                            apis.getMyWallets(profile.auth_version, profile.sessionToken).then((d)=>{
+                                if(d.rc == 1){
+                                    dispatch({
+                                        type: types.GET_MY_WALLETS,
+                                        payload: {
+                                            my_wallets:d.my_wallets
+                                        }
+                                    });
+                                    if(password || profile.auth_version == 3) dispatch(decryptWallets(password));
+                                }
+                            }).catch(e=>console.log(e))
+                        }
+                    }).catch(e=>{
+                        dispatch({
+                            type: types.GET_MY_WALLETS,
+                            payload: {
+                                errorMsg: e.message,
+                                stack: e.stack,
+                            }
+                        });
+                    })
+                }
+
+                //if no DASH wallet
+                if (!send.getActiveWallet(d.my_wallets, constants.CURRENCY_TYPE.DASH)) {
+                    apis.createDASHWallet(profile.auth_version, profile.sessionToken, params).then((d)=>{
                         if(d.rc==1){
                             apis.getMyWallets(profile.auth_version, profile.sessionToken).then((d)=>{
                                 if(d.rc == 1){
@@ -416,7 +443,7 @@ export const decryptPassphraseV1 = (email, wallets, userKey) => {
                     let str = utils.b64DecodeUnicode(w.passphrase);
                     w.pure_passphrase = Premium.xaesDecrypt(resp.wallet.secret, str);
                     w.email = email;
-                    return new Wallet().openWallet(w);
+                    return new Wallet().openWallet(w, true);
                 });
                 resolve(decryptedWallets);
             }else{

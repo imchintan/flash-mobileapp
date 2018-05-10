@@ -349,3 +349,25 @@ export const setSatoshiPerByte = () => {
         })
     }
 }
+
+export const setFixedTxnFee = () => {
+    return (dispatch,getState) => {
+        let params = getState().params;
+        apis.fixedTxnFee(params.profile.auth_version, params.profile.sessionToken,
+            params.currency_type).then((d)=>{
+            if(d.rc == 1) dispatch({
+                type: types.SET_FIXED_TXN_FEE,
+                payload: {
+                    fixedTxnFee: d.fixed_txn_fee,
+                }
+            });
+        }).catch(e=>{
+            dispatch({
+                type: types.SET_FIXED_TXN_FEE,
+                payload: {
+                    errorMsg: e.message,
+                }
+            });
+        })
+    }
+}

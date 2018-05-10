@@ -434,6 +434,7 @@ export const changeCurrency = (currency_type) =>{
                 bcMedianTxSize: 250,
                 satoshiPerByte: 20,
                 thresholdAmount: 0.00001,
+                fixedTxnFee: 0.00002,
             }
         });
         setTimeout(()=>{
@@ -443,11 +444,15 @@ export const changeCurrency = (currency_type) =>{
             dispatch(reqs.getIncomingRequests(0,true));
             dispatch(reqs.getOutgoingRequests(0,true));
 
-            if(currency_type !== constants.CURRENCY_TYPE.FLASH){
-                dispatch(txns.setThresholdAmount());
+            if(currency_type !== constants.CURRENCY_TYPE.FLASH && currency_type !== constants.CURRENCY_TYPE.DASH){
                 dispatch(txns.setBcMedianTxSize());
                 dispatch(txns.setSatoshiPerByte());
             }
+            if(currency_type !== constants.CURRENCY_TYPE.FLASH)
+                dispatch(txns.setThresholdAmount());
+
+            if(currency_type === constants.CURRENCY_TYPE.DASH)
+                dispatch(txns.setFixedTxnFee());
 
             dispatch(txns.getAllTransactions(0,true));
             dispatch(txns.getSentTransactions(0,true));
@@ -498,6 +503,20 @@ export const getCoinMarketCapDetail = () =>{
                         balance_in_btc:utils.ltcToOtherCurrency(params.balance, Number(d.btc)),
                         balance_in_ltc:utils.ltcToOtherCurrency(params.balance, Number(d.ltc)),
                         balance_in_usd:utils.ltcToOtherCurrency(params.balance, Number(d.usd)),
+                    }
+                });
+            }).catch(e=>{});
+        else if(params.currency_type === constants.CURRENCY_TYPE.DASH)
+            apis.getCoinMarketCapDetaiDASH().then((d)=>{
+                if(!d) return;
+                AsyncStorage.setItem('coinmarketcapValue',JSON.stringify(d));
+                dispatch({
+                    type: types.GET_COIN_MARKET_CAP_VALUE,
+                    payload: {
+                        balance_in_flash:utils.dashToOtherCurrency(params.balance, Number(d.flash)),
+                        balance_in_btc:utils.dashToOtherCurrency(params.balance, Number(d.btc)),
+                        balance_in_ltc:utils.dashToOtherCurrency(params.balance, Number(d.ltc)),
+                        balance_in_usd:utils.dashToOtherCurrency(params.balance, Number(d.usd)),
                     }
                 });
             }).catch(e=>{});

@@ -39,6 +39,25 @@ export const getCoinMarketCapDetailLTC = () => {
     });
 }
 
+export const getCoinMarketCapDetaiDASH = () => {
+    return new Promise((resolve,reject) => {
+        fetch('https://api.coinmarketcap.com/v1/ticker/dash/?convert=FLASH')
+        .then(res => res.json())
+        .then(json =>{
+            let price = {};
+            price['flash'] = Number(json[0].price_flash);
+            price['btc']   = Number(json[0].price_btc);
+            price['usd']   = Number(json[0].price_usd);
+            price['ltc']   = 1;
+            resolve(price);
+        })
+        .catch(e =>{
+            console.log(e);
+            reject('Something went wrong!')
+        });
+    });
+}
+
 export const getCoinMarketCapDetailBTC = () => {
     return new Promise((resolve,reject) => {
         fetch('https://api.coinmarketcap.com/v1/ticker/bitcoin/?convert=FLASH')
