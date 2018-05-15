@@ -42,7 +42,7 @@ const styles = StyleSheet.create({
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        width: 320,
+        width: 300,
     },
     otherBalanceTab:{
         alignItems: 'center',
@@ -50,16 +50,19 @@ const styles = StyleSheet.create({
     otherBalanceView:{
         borderBottomWidth: 1,
         borderBottomColor: '#FFDD4D',
-        width: 85,
+        // width: 85,
+        width: 125,
         alignItems: 'center'
     },
     otherBalanceAmtText:{
         color: '#FFFFFF',
-        fontSize: 13,
+        // fontSize: 13,
+        fontSize: 15,
     },
     otherBalanceText:{
         color: '#FFFFFF',
-        fontSize: 15,
+        // fontSize: 15,
+        fontSize: 17,
     },
     recentTxnLabel: {
         marginHorizontal: 20,

@@ -71,7 +71,8 @@ class Send extends Component<{}> {
         this.state = {
             term: publicAddress || null,
             publicAddress: publicAddress || null,
-            fee: utils.calcFee(0,this.props.currency_type,this.props.bcMedianTxSize,this.props.satoshiPerByte),
+            fee: utils.calcFee(0,this.props.currency_type, this.props.bcMedianTxSize,
+                this.props.satoshiPerByte, this.props.fixedTxnFee),
             isVerify: false,
             isAmtVerify: false,
             isAddressVerify: false,
@@ -83,11 +84,15 @@ class Send extends Component<{}> {
     componentDidMount(){
         BackHandler.addEventListener('hardwareBackPress', this.backHandler);
 
-        if(this.props.currency_type !== constants.CURRENCY_TYPE.FLASH){
-            this.props.setThresholdAmount();
+        if(this.props.currency_type !== constants.CURRENCY_TYPE.FLASH && this.props.currency_type !== constants.CURRENCY_TYPE.DASH){
             this.props.setBcMedianTxSize();
             this.props.setSatoshiPerByte();
         }
+        if(this.props.currency_type !== constants.CURRENCY_TYPE.FLASH)
+            this.props.setThresholdAmount();
+
+        if(this.props.currency_type === constants.CURRENCY_TYPE.DASH)
+            this.props.setFixedTxnFee();
 
         if(this.state.term){
             this.verifyAddress();
@@ -110,7 +115,8 @@ class Send extends Component<{}> {
             term:'',
             amount:'',
             note:'',
-            fee: utils.calcFee(0,this.props.currency_type,this.props.bcMedianTxSize,this.props.satoshiPerByte),
+            fee: utils.calcFee(0,this.props.currency_type, this.props.bcMedianTxSize,
+                this.props.satoshiPerByte, this.props.fixedTxnFee),
             isVerify: false,
             isAddressVerify: false,
             isAmtVerify: false,
@@ -132,7 +138,7 @@ class Send extends Component<{}> {
             isAmtVerify: true,
             amount:utils.formatAmountInput(res.amount),
             fee: utils.calcFee(res.amount, this.props.currency_type,
-                this.props.bcMedianTxSize, this.props.satoshiPerByte)
+                this.props.bcMedianTxSize, this.props.satoshiPerByte, this.props.fixedTxnFee)
         });
     }
 
@@ -177,7 +183,7 @@ class Send extends Component<{}> {
             return Toast.errorTop("Amount must be a number");
         }
         let fee = utils.calcFee(amount, this.props.currency_type,
-            this.props.bcMedianTxSize, this.props.satoshiPerByte);
+            this.props.bcMedianTxSize, this.props.satoshiPerByte, this.props.fixedTxnFee);
 
         if(this.props.currency_type === constants.CURRENCY_TYPE.FLASH){
             if(amount < 1){
@@ -498,6 +504,7 @@ function mapStateToProps({params}) {
         bcMedianTxSize: params.bcMedianTxSize,
         satoshiPerByte: params.satoshiPerByte,
         thresholdAmount: params.thresholdAmount,
+        fixedTxnFee: params.fixedTxnFee,
         wallet_address: params.wallet_address || null,
         sendTxnSuccess: params.sendTxnSuccess || null,
         decryptedWallets: params.decryptedWallets || null,

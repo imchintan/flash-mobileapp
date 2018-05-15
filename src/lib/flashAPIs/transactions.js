@@ -1,4 +1,5 @@
 import { API_URL, RESOURCE, APP_VERSION } from '@src/config';
+import { CURRENCY_TYPE } from '@src/constants';
 import moment from 'moment-timezone';
 
 /**
@@ -14,7 +15,7 @@ import moment from 'moment-timezone';
  * @param  {Number} [size=10]         [description]
  * @return {Promise}                  [description]
  */
-export const getTransactions = (auth_version, sessionToken='', currency_type = 1,
+export const getTransactions = (auth_version, sessionToken='', currency_type = CURRENCY_TYPE.FLASH,
     _date_from=moment().add(-1, 'months').add(-1, 'days').format('YYYY-MM-DDT00:00:00.000\\Z') ,
     _date_to=moment().format('YYYY-MM-DDT23:59:59.000\\Z'),
     type= 0, start=0, order='desc', size=10) => {
@@ -65,7 +66,7 @@ export const getTransactions = (auth_version, sessionToken='', currency_type = 1
  * @return {Promise}                  [description]
  */
 export const getTransactionDetail = (auth_version, sessionToken='',
-    transaction_id, currency_type = 1) => {
+    transaction_id, currency_type = CURRENCY_TYPE.FLASH) => {
     return new Promise((resolve,reject) => {
 
         fetch(API_URL+'/transaction-detail?transaction_id='+transaction_id+
@@ -97,9 +98,22 @@ export const getTransactionDetail = (auth_version, sessionToken='',
  *  Get SatoshiPerByte
  * @return {Promise}      [description]
  */
-export const getSatoshiPerByte = (currency_type = 2) => {
+export const getSatoshiPerByte = (currency_type = CURRENCY_TYPE.BTC) => {
     return new Promise((resolve,reject) => {
-        fetch(currency_type == 2?'https://bitcoinfees.earn.com/api/v1/fees/recommended':'https://api.blockcypher.com/v1/ltc/main',{
+        let url;
+        switch (currency_type) {
+            case CURRENCY_TYPE.LTC:
+                url= 'https://api.blockcypher.com/v1/ltc/main';
+                break;
+            case CURRENCY_TYPE.DASH:
+                url= 'https://api.blockcypher.com/v1/dash/main';
+                break;
+            case CURRENCY_TYPE.BTC:
+            default:
+                url= 'https://bitcoinfees.earn.com/api/v1/fees/recommended';
+                break;
+        }
+        fetch(url,{
             method: 'GET',
             headers: {
                'Content-Type': 'application/json; charset=utf-8',
@@ -107,7 +121,7 @@ export const getSatoshiPerByte = (currency_type = 2) => {
         })
         .then(res => res.json())
         .then(json =>{
-            if(currency_type == 2)
+            if(currency_type == CURRENCY_TYPE.BTC)
                 resolve(json.fastestFee)
             else
                 resolve(json.high_fee_per_kb)
@@ -126,7 +140,7 @@ export const getSatoshiPerByte = (currency_type = 2) => {
  * @param  {Number} [currency_type=2] [description]
  * @return {Promise}                  [description]
  */
-export const bcMedianTxSize = (auth_version, sessionToken='', currency_type = 2) => {
+export const bcMedianTxSize = (auth_version, sessionToken='', currency_type = CURRENCY_TYPE.BTC) => {
     return new Promise((resolve,reject) => {
         fetch(API_URL+'/bc-median-tx-size?currency_type='+currency_type,{
             method: 'GET',
@@ -159,9 +173,42 @@ export const bcMedianTxSize = (auth_version, sessionToken='', currency_type = 2)
  * @param  {Number} [currency_type=2] [description]
  * @return {Promise}                  [description]
  */
-export const thresholdAmount = (auth_version, sessionToken='', currency_type = 2) => {
+export const thresholdAmount = (auth_version, sessionToken='', currency_type = CURRENCY_TYPE.BTC) => {
     return new Promise((resolve,reject) => {
         fetch(API_URL+'/threshold-amount?currency_type='+currency_type,{
+            method: 'GET',
+            headers: {
+               'Content-Type': 'application/json; charset=utf-8',
+               'authorization': sessionToken,
+               'fl_auth_version': auth_version
+            },
+        })
+        .then(async res =>{
+            let _res = await res.text();
+            if(_res.toLowerCase().indexOf("session") == -1){
+                return JSON.parse(_res);
+            }else{
+                return {rc:3,reason:_res};
+            }
+        })
+        .then(json => resolve(json))
+        .catch(e =>{
+            console.log(e);
+            reject('Something went wrong!')
+        });
+    });
+}
+
+/**
+ *  Get fixed transaction fees
+ * @param  {Number} auth_version      [description]
+ * @param  {String} [sessionToken=''] [description]
+ * @param  {Number} [currency_type=2] [description]
+ * @return {Promise}                  [description]
+ */
+export const fixedTxnFee = (auth_version, sessionToken='', currency_type = CURRENCY_TYPE.DASH) => {
+    return new Promise((resolve,reject) => {
+        fetch(API_URL+'/fixed-txn-fee?currency_type='+currency_type,{
             method: 'GET',
             headers: {
                'Content-Type': 'application/json; charset=utf-8',

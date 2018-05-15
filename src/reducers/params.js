@@ -8,6 +8,7 @@ const initialState = {
     bcMedianTxSize: 250,
     satoshiPerByte: 20,
     thresholdAmount: 0.00001,
+    fixedTxnFee: 0.00002,  //This we will get from API call for DASH
     currency_type: 1,
     date_from: moment().add(-1, 'months').add(-1, 'days'),
     date_to: moment(),

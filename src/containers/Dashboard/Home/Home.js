@@ -96,7 +96,7 @@ class Home extends Component<{}> {
                             source={require('@images/app-text-icon-white.png')}/>
                     </HeaderTitle>
                     <HeaderRight>
-                        {this.props.profile.auth_version >= 4 && this.props.my_wallets.length >=3?
+                        {this.props.profile.auth_version > 3 && this.props.my_wallets.length > 3?
                             <TouchableOpacity
                                 style={styles.currencyMenuTab}
                                 onPress={()=>this.setState({showCurrencyMenu:!this.state.showCurrencyMenu})}>
@@ -144,6 +144,7 @@ class Home extends Component<{}> {
                                     <Text style={styles.otherBalanceText}>{utils.getCurrencyUnitUpcase(constants.CURRENCY_TYPE.BTC)}</Text>
                                 }
                             </View>
+                            {/*
                             <Text style={styles.otherBalanceText}>≈</Text>
                             <View style={styles.otherBalanceTab}>
                                 <View style={styles.otherBalanceView}>
@@ -157,6 +158,7 @@ class Home extends Component<{}> {
                                     <Text style={styles.otherBalanceText}>{utils.getCurrencyUnitUpcase(constants.CURRENCY_TYPE.LTC)}</Text>
                                 }
                             </View>
+                            */}
                             <Text style={styles.otherBalanceText}>≈</Text>
                             <View style={styles.otherBalanceTab}>
                                 <View style={styles.otherBalanceView}>
@@ -250,8 +252,8 @@ class Home extends Component<{}> {
                                 color: '#000000',
                                 marginBottom: 25,
                             }}>{constants.CURRENCY_TYPE.FLASH ===this.props.currency_type?
-                                utils.currencyFormatter(utils.satoshiToFlash(this.props.balance),10):
-                                utils.currencyFormatter(this.props.balance,8)}
+                                utils.localizeFlash(utils.satoshiToFlash(this.props.balance),10):
+                                utils.localizeFlash(this.props.balance,8)}
                             {' '+utils.getCurrencyUnitUpcase(this.props.currency_type)}{"\n"}
                                 {constants.CURRENCY_TYPE.FLASH !== this.props.currency_type?<Text style={{
                                         fontSize: 18,
@@ -302,16 +304,27 @@ class Home extends Component<{}> {
                                 </TouchableOpacity>
                                 <TouchableOpacity
                                     onPress={()=>this.changeCurrency(constants.CURRENCY_TYPE.LTC)}
-                                    style={[styles.currencyMenuPopupTab,{
-                                        borderBottomWidth: 0,
-                                        borderBottomColor: 'transparent',
-                                    }]}>
+                                    style={styles.currencyMenuPopupTab}>
                                     <View style={{flexDirection: 'row',alignItems: 'center'}}>
                                         <Image style={styles.currencyMenuPopupTabIcon}
                                         source={utils.getCurrencyIcon(constants.CURRENCY_TYPE.LTC)}/>
                                         <Text style={styles.currencyMenuPopupTabLabel}>{utils.getCurrencyUnitUpcase(constants.CURRENCY_TYPE.LTC)}</Text>
                                     </View>
                                     {this.props.currency_type === constants.CURRENCY_TYPE.LTC?
+                                    <Icon style={{color:'green'}} name='check' />:null}
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    onPress={()=>this.changeCurrency(constants.CURRENCY_TYPE.DASH)}
+                                    style={[styles.currencyMenuPopupTab,{
+                                        borderBottomWidth: 0,
+                                        borderBottomColor: 'transparent',
+                                    }]}>
+                                    <View style={{flexDirection: 'row',alignItems: 'center'}}>
+                                        <Image style={styles.currencyMenuPopupTabIcon}
+                                        source={utils.getCurrencyIcon(constants.CURRENCY_TYPE.DASH)}/>
+                                        <Text style={styles.currencyMenuPopupTabLabel}>{utils.getCurrencyUnitUpcase(constants.CURRENCY_TYPE.DASH)}</Text>
+                                    </View>
+                                    {this.props.currency_type === constants.CURRENCY_TYPE.DASH?
                                     <Icon style={{color:'green'}} name='check' />:null}
                                 </TouchableOpacity>
                             </View>
@@ -345,6 +358,7 @@ function mapStateToProps({params}) {
         balance_in_btc: params.balance_in_btc || '0.00000000',
         balance_in_usd: params.balance_in_usd || '0.00000000',
         balance_in_ltc: params.balance_in_ltc || '0.00000000',
+        balance_in_dash: params.balance_in_dash || '0.00000000',
     };
 }
 

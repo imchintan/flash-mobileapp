@@ -67,34 +67,57 @@ export const NETWORKS = {
     wif: 0xef,
     dustThreshold: 546,
   },
+  DASH: {
+    messagePrefix: '\x18Dash Coin Signed Message:\n',
+    bip32: {
+        public: 0x0488b21e,
+        private: 0x0488ade4
+    },
+    pubKeyHash: 0x4c,
+    scriptHash: 0x10,
+    wif: 0xcc,
+    dustThreshold: 546,
+  },
+  DASH_TESTNET: {
+    messagePrefix: '\x18Dash Coin Signed Message:\n',
+    bip32: {
+        public: 0x043587cf,
+        private: 0x04358394
+    },
+    pubKeyHash: 0x8c,
+    scriptHash: 0x13,
+    wif: 0xef,
+    dustThreshold: 546
+  },
 };
 
+/**
+ * add new currency here
+ */
 export const CURRENCY_TYPE = {
     FLASH: 1,
     BTC: 2,
     LTC: 3,
+    DASH: 4,
 };
 
 export const CURRENCY_TYPE_UNIT = {
     1: 'Flash',
     2: 'BTC',
     3: 'LTC',
+    4: 'DASH',
 };
 
 export const CURRENCY_TYPE_UNIT_UPCASE = {
     1: 'FLASH',
     2: 'BTC',
     3: 'LTC',
+    4: 'DASH',
 };
 
 export const CURRENCY_ICON = {
     1: require('@images/app-icon.png'),
     2: require('@images/btc-icon.png'),
     3: require('@images/ltc-icon.png'),
-};
-
-export const CURRENCY_LONG_ICON = {
-    1: require('@images/flash-text-logo-white.png'),
-    2: require('@images/ltc-text-logo-white.png'),
-    3: require('@images/btc-text-logo-white.png'),
+    4: require('@images/dash-icon.png'),
 };

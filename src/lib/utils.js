@@ -4,7 +4,6 @@ import {
     MOMENT_FORMAT,
     CURRENCY_TYPE,
     CURRENCY_ICON,
-    CURRENCY_LONG_ICON,
     CURRENCY_TYPE_UNIT,
     CURRENCY_TYPE_UNIT_UPCASE
 } from '@src/constants';
@@ -60,9 +59,9 @@ export const decryptPassphraseV2 = (email, wallets, password, userKey) => {
 }
 
 export const utcDateToLocal = (str) => {
-  return moment(str)
-    .local()
-    .format('MMM DD YYYY hh:mm A');
+    return moment(str)
+        .local()
+        .format('MMM DD YYYY hh:mm A');
 }
 
 export const satoshiToFlash = (num) => {
@@ -71,43 +70,58 @@ export const satoshiToFlash = (num) => {
 }
 
 export const satoshiToBtc = (num) => {
-  if (num == undefined || num === '') return;
-  return parseFloat(new Big(num).div(100000000).toString());
+    if (num == undefined || num === '') return;
+    return parseFloat(new Big(num).div(100000000).toString());
 }
 
 export const litoshiToLtc = (num) => {
-  if (num == undefined || num === '') return;
-  return parseFloat(new Big(num).div(100000000).toString());
+    if (num == undefined || num === '') return;
+    return parseFloat(new Big(num).div(100000000).toString());
 }
 
-export const localizeFlash = (num) => {
-  if (num == undefined || num === '') return;
-  return parseFloat(num).toLocaleString('en',{maximumFractionDigits:8});
+export const duffToDash = (num) => {
+    if (num == undefined || num === '') return;
+    return parseFloat(new Big(num).div(100000000).toString());
+}
+
+export const localizeFlash = (num, digits=8) => {
+    if (num == undefined || num === '') return;
+    return parseFloat(num).toLocaleString('en',{maximumFractionDigits:digits});
 }
 
 export const flashToOtherCurrency = (flash,othCur) => {
     if (flash == undefined || flash === '') return;
     if (othCur == undefined || othCur === '') return;
-    return parseFloat(new Big(flash).times(othCur).div(10000000000).toString()).toFixed(8);
+    return parseFloat(new Big(flash).times(othCur).div(10000000000).toString())
+        .toLocaleString('en',{maximumFractionDigits:8});
 }
 
 export const btcToOtherCurrency = (btc,othCur) => {
     if (btc == undefined || btc === '') return;
     if (othCur == undefined || othCur === '') return;
-    return parseFloat(new Big(btc).times(othCur).toString()).toFixed(8);
+    return parseFloat(new Big(btc).times(othCur).toString())
+        .toLocaleString('en',{maximumFractionDigits:8});
 }
 
 export const ltcToOtherCurrency = (ltc,othCur) => {
     if (ltc == undefined || ltc === '') return;
     if (othCur == undefined || othCur === '') return;
-    return parseFloat(new Big(ltc).times(othCur).toString()).toFixed(8);
+    return parseFloat(new Big(ltc).times(othCur).toString())
+        .toLocaleString('en',{maximumFractionDigits:8});
+}
+
+export const dashToOtherCurrency = (dash,othCur) => {
+    if (dash == undefined || dash === '') return;
+    if (othCur == undefined || othCur === '') return;
+    return parseFloat(new Big(dash).times(othCur).toString())
+        .toLocaleString('en',{maximumFractionDigits:8});
 }
 
 export const flashNFormatter = (num, digits) => {
     if (num == undefined || num === '') return 0.00;
     num = parseFloat(num);
     if(num <= 10000)
-        return num.toLocaleString('en',{maximumFractionDigits:8});
+        return localizeFlash(num.toFixed(8),8);
     let si = [
         { value: 1, symbol: "" },
         { value: 1E3, symbol: "K" },
@@ -124,17 +138,12 @@ export const flashNFormatter = (num, digits) => {
     return (num / si[i].value).toFixed(digits).replace(rx, "$1") + si[i].symbol;
 }
 
-export const currencyFormatter = (num, digits=8) => {
-    if (num == undefined || num === '') return 0.00;
-    return parseFloat(num).toLocaleString('en',{maximumFractionDigits:digits});
-}
-
 export const flashToSatoshi = (num) => {
     if (num == undefined || num === '') return;
     return parseInt(new Big(num).times(10000000000).toString(), 10);
 }
 
-export const calcFee = (amount, currency_type=CURRENCY_TYPE.FLASH, bcMedianTxSize, fastestFee) => {
+export const calcFee = (amount, currency_type=CURRENCY_TYPE.FLASH, bcMedianTxSize, fastestFee, fixedTxnFee) => {
     switch (currency_type) {
         case CURRENCY_TYPE.BTC:
             let satoshis = bcMedianTxSize * fastestFee;
@@ -145,10 +154,19 @@ export const calcFee = (amount, currency_type=CURRENCY_TYPE.FLASH, bcMedianTxSiz
             let litoshis = bcMedianTxSize * fastestFee;
             return litoshiToLtc(litoshis.toFixed(0));
             break;
+        case CURRENCY_TYPE.DASH:
+            return fixedTxnFee ;
+            break;
         case CURRENCY_TYPE.FLASH:
         default:
             return 0.001; // default fee for web-wallet transaction
             break;
+        // Below Code will be used for calculating fee dynamically
+        /*fastestFee = new Big(fastestFee).div(1024);
+        console.log(bcMedianTxSize, fastestFee);
+        let duff = bcMedianTxSize * fastestFee;
+        console.log(duff);
+        return duffToDash(duff.toFixed(0));  */
     }
 }
 
@@ -160,6 +178,9 @@ export const formatCurrency = (amount, currency_type=CURRENCY_TYPE.FLASH) => {
         case CURRENCY_TYPE.LTC:
             return `${amount} LTC`;
             break;
+        case CURRENCY_TYPE.DASH:
+            return `${amount} DASH`;
+            break;
         case CURRENCY_TYPE.FLASH:
         default:
             return `${amount} Flash`;
@@ -168,23 +189,23 @@ export const formatCurrency = (amount, currency_type=CURRENCY_TYPE.FLASH) => {
 }
 
 export const getDisplayDate = (date, toTimeZone) => {
-  if (toTimeZone && _tmp.tz.zone(toTimeZone) != null)
+    if (toTimeZone && _tmp.tz.zone(toTimeZone) != null)
+        return _tmp(date)
+            .tz(toTimeZone)
+            .format(MOMENT_FORMAT.DATE);
     return _tmp(date)
-      .tz(toTimeZone)
-      .format(MOMENT_FORMAT.DATE);
-  return _tmp(date)
-    .local()
-    .format(MOMENT_FORMAT.DATE);
+        .local()
+        .format(MOMENT_FORMAT.DATE);
 }
 
 export const getDisplayDateTime = (date, toTimeZone) => {
-  if (toTimeZone && _tmp.tz.zone(toTimeZone) != null)
+    if (toTimeZone && _tmp.tz.zone(toTimeZone) != null)
+        return _tmp(date)
+            .tz(toTimeZone)
+            .format(MOMENT_FORMAT.DATE_TIME_2);
     return _tmp(date)
-      .tz(toTimeZone)
-      .format(MOMENT_FORMAT.DATE_TIME_2);
-  return _tmp(date)
-    .local()
-    .format(MOMENT_FORMAT.DATE_TIME_2);
+        .local()
+        .format(MOMENT_FORMAT.DATE_TIME_2);
 }
 
 export const calcPasswordStreng = (password) => {
@@ -335,10 +356,10 @@ export const strimString = (s, n) => {
 }
 
 export const isValidEmail = (email) => {
-  let emailRegex = /^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
-  let checkEmail = email.toLowerCase().match(emailRegex);
-  if (checkEmail === null) return false;
-  return true;
+    let emailRegex = /^[a-z0-9!#$%&'*+/=?^_`{|}~-]+(?:\.[a-z0-9!#$%&'*+/=?^_`{|}~-]+)*@(?:[a-z0-9](?:[a-z0-9-]*[a-z0-9])?\.)+[a-z0-9](?:[a-z0-9-]*[a-z0-9])?/;
+    let checkEmail = email.toLowerCase().match(emailRegex);
+    if (checkEmail === null) return false;
+    return true;
 }
 
 export const isValidFlashAddress = (value) => {
@@ -358,6 +379,7 @@ export const isValidFlashAddress = (value) => {
 export const isValidCryptoAddress = (value, currency_type) => {
     try {
         let address = Address.fromBase58Check(value);
+        console.log(address);
         let network;
         switch(currency_type){
             case CURRENCY_TYPE.BTC:
@@ -367,6 +389,10 @@ export const isValidCryptoAddress = (value, currency_type) => {
             case CURRENCY_TYPE.LTC:
                 if(APP_MODE == 'PROD') network = NETWORKS.LTC;
                 else network = NETWORKS.LTC_TESTNET;
+                break;
+            case CURRENCY_TYPE.DASH:
+                if (APP_MODE == 'PROD') network = NETWORKS.DASH;
+                else network = NETWORKS.DASH_TESTNET;
                 break;
             case CURRENCY_TYPE.FLASH:
             default:
@@ -473,9 +499,6 @@ export const getCurrencyUnitUpcase = (currency_type) => {
 
 export const getCurrencyIcon = (currency_type) => {
     return CURRENCY_ICON[currency_type];
-}
-export const getCurrencyLongIcon = (currency_type) => {
-    return CURRENCY_LONG_ICON[currency_type];
 }
 
 export const getCurrencyUnit = (currency_type) => {
