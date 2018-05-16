@@ -41,7 +41,8 @@ class IncomingRequests extends Component<{}> {
     constructor(props) {
         super(props);
         this.state = {
-            fee: utils.calcFee(0,this.props.currency_type,this.props.bcMedianTxSize,this.props.satoshiPerByte),
+            fee: utils.calcFee(0,this.props.currency_type, this.props.bcMedianTxSize,
+                this.props.satoshiPerByte, this.props.fixedTxnFee),
         };
     }
 
@@ -74,7 +75,8 @@ class IncomingRequests extends Component<{}> {
             isVerify: false,
             req: null,
             note: '',
-            fee: utils.calcFee(0,this.props.currency_type,this.props.bcMedianTxSize,this.props.satoshiPerByte),
+            fee: utils.calcFee(0,this.props.currency_type, this.props.bcMedianTxSize,
+                this.props.satoshiPerByte, this.props.fixedTxnFee),
             publicAddress: null,
             search_wallet: null,
             errorMsg: null,
@@ -82,11 +84,15 @@ class IncomingRequests extends Component<{}> {
     }
 
     accept(req, note){
-        if(this.props.currency_type !== constants.CURRENCY_TYPE.FLASH){
-            this.props.setThresholdAmount();
+        if(this.props.currency_type !== constants.CURRENCY_TYPE.FLASH && this.props.currency_type !== constants.CURRENCY_TYPE.DASH){
             this.props.setBcMedianTxSize();
             this.props.setSatoshiPerByte();
         }
+        if(this.props.currency_type !== constants.CURRENCY_TYPE.FLASH)
+            this.props.setThresholdAmount();
+
+        if(this.props.currency_type === constants.CURRENCY_TYPE.DASH)
+            this.props.setFixedTxnFee();
 
         this.setState({req,note},
             ()=>this.props.searchWallet(req.sender_email, true));
@@ -96,8 +102,8 @@ class IncomingRequests extends Component<{}> {
         if(!force && !this.props.decryptedWallets) return this.setState({visible:false, visibleGetPassword: true, password: '', errorMsg: ''});
         if(!this.state.isConfirm) return ;
         let amount = utils.toOrginalNumber(this.state.req.amount);
-        let fee = utils.calcFee(amount, this.props.currency_type,
-            this.props.bcMedianTxSize, this.props.satoshiPerByte);
+        let fee = utils.calcFee(amount, this.props.currency_type, this.props.bcMedianTxSize,
+                this.props.satoshiPerByte, this.props.fixedTxnFee);
         this.setState({visible:false, visibleGetPassword:false, isConfirm: false},
             ()=>{
                 if(this.props.currency_type === constants.CURRENCY_TYPE.FLASH){
@@ -133,7 +139,7 @@ class IncomingRequests extends Component<{}> {
         }catch(e){
             return this.setState({errorMsg:'Password is invalid!'});
         }
-        
+
         this.props.customAction({loading:true});
         this.setState({visibleGetPassword:false, errorMsg:''},()=>
             setTimeout(()=>this.props.decryptWallets(this.state.password,true),0));
@@ -331,6 +337,7 @@ function mapStateToProps({params}) {
       currency_type: params.currency_type,
       bcMedianTxSize: params.bcMedianTxSize,
       satoshiPerByte: params.satoshiPerByte,
+      fixedTxnFee: params.fixedTxnFee,
       search_wallet: params.search_wallet || null,
       sendTxnSuccess: params.sendTxnSuccess || null,
       decryptedWallets: params.decryptedWallets || null,

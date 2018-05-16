@@ -8,6 +8,7 @@ import ForgotPassword from '@containers/ForgotPassword';
 import SignUP from '@containers/SignUP';
 import Verify2FA from '@containers/Verify2FA';
 import Lock from '@containers/Lock';
+import MigrateAccount from '@containers/MigrateAccount';
 
 const routes = {
     Login: {
@@ -27,6 +28,9 @@ const routes = {
     },
     Verify2FA: {
         screen: Verify2FA,
+    },
+    MigrateAccount: {
+        screen: MigrateAccount,
     }
 };
 

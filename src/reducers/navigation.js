@@ -45,6 +45,17 @@ const navigation = (state = initialState, action) => {
                 state
             );
 
+        case types.MIGRATE_ACCOUNT:
+            return AppNavigator.router.getStateForAction(
+                NavigationActions.reset({
+                    index: 0,
+                    actions: [
+                        NavigationActions.navigate({ routeName: 'MigrateAccount' }),
+                    ],
+                }),
+                state
+            );
+
         // case types.VERIFY_2FA_SUCCESS:
         // case types.LOGIN_SUCCESS:
         case types.GET_PROFILE:

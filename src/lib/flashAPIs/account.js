@@ -648,3 +648,34 @@ export const createLTCWallet = (auth_version, sessionToken, params) => {
         });
     });
 }
+
+/**
+ * Create DASH Wallet
+ * @param  {Number} auth_version      [description]
+ * @param  {String} sessionToken      [description]
+ * @param  {Object} params            [description]
+ * @return {Promise}                  [description]
+ */
+export const createDASHWallet = (auth_version, sessionToken, params) => {
+    return new Promise((resolve,reject) => {
+        fetch(API_URL+'/createDashWallet',{
+            method: 'POST',
+            body: JSON.stringify({
+                ...params,
+                appversion:APP_VERSION,
+                res:RESOURCE,
+            }),
+            headers: {
+               'Content-Type': 'application/json; charset=utf-8',
+               'authorization': sessionToken,
+               'fl_auth_version': auth_version
+            },
+        })
+        .then(res => res.json())
+        .then(json => resolve(json))
+        .catch(e =>{
+            console.log(e);
+            reject('Something went wrong!')
+        });
+    });
+}
