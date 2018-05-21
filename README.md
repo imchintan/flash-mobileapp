@@ -1,4 +1,4 @@
-[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/flash-coin/webwallet/blob/master/LICENSE)
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/flash-coin/webwallet/blob/master/LICENSE)[![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fmaxeverest%2Fflash-mobileapp.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fmaxeverest%2Fflash-mobileapp?ref=badge_shield)
 
 
 # FLASH - Mobile App
