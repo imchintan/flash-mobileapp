@@ -1,4 +1,7 @@
-# FLASH - Mobile Wallet
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/flash-coin/webwallet/blob/master/LICENSE)
+
+
+# FLASH - Mobile App
 This is the JavaScript and [React Native](http://facebook.github.io/react-native/) source code for [FLASH](https://www.flashcoin.io) mobile wallet.
 
 
