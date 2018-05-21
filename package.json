@@ -18,6 +18,7 @@
     "react-native": "0.53.0",
     "react-native-calendar-select": "^0.1.2",
     "react-native-camera": "^1.0.1",
+    "react-native-crypto": "^2.1.2",
     "react-native-fa-icons": "^3.0.1",
     "react-native-keyboard-aware-scroll-view": "^0.5.0",
     "react-native-phone-input": "github:imchintan/react-native-phone-input",
@@ -33,6 +34,7 @@
     "redux": "^3.7.2",
     "redux-logger": "^3.0.6",
     "redux-thunk": "^2.2.0",
+    "rn-nodeify": "^10.0.0",
     "secrets.js-grempe": "^1.1.0",
     "stream-browserify": "^1.0.0",
     "tweetnacl": "^1.0.0"
