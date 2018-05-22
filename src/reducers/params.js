@@ -46,7 +46,7 @@ const login = (state = initialState, action) => {
             if(date_from.unix()*1000 < created_ts)
                 date_from = moment(created_ts);
 
-            return { ...state, ...action.payload || {}, date_from, pending_date_from: date_from};
+            return { ...state, ...action.payload, date_from, pending_date_from: date_from};
 
         case types.GET_RECENT_TRANSACTIONS:
             let recentTxns = action.payload.txns;

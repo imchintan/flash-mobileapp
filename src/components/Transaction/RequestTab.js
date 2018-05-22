@@ -13,7 +13,6 @@ import {
 import Text from './../Text';
 import Icon from 'react-native-fa-icons';
 import Button from '@components/Button';
-import moment from 'moment-timezone';
 import PropTypes from "prop-types";
 import * as utils from '@lib/utils';
 

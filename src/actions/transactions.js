@@ -1,9 +1,5 @@
-import {
-    AsyncStorage
-} from 'react-native';
 import * as types from '@actions/types'
 import apis from '@flashAPIs'
-import moment from 'moment-timezone';
 import { _logout } from '@actions/navigation';
 
 export const updateTransactionReportDate = (date_from,date_to) => {

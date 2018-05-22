@@ -4,19 +4,13 @@
 
 import React, { Component } from 'react';
 import {
-    StyleSheet,
     View,
     Image,
-    TextInput,
-    TouchableOpacity
+    TextInput
 } from 'react-native';
 import {
     Container,
-    Header,
-    HeaderTitle,
-    Content,
     Button,
-    Icon,
     Text,
     Loader,
     Toast
@@ -24,7 +18,6 @@ import {
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ActionCreators } from '@actions';
-import * as Validation from '@lib/validation';
 
 class Verify2FA extends Component<{}> {
 
@@ -137,10 +130,6 @@ class Verify2FA extends Component<{}> {
         );
     }
 }
-
-const styles = StyleSheet.create({
-
-});
 
 function mapStateToProps(state) {
     return {

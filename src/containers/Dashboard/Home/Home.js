@@ -28,7 +28,6 @@ import {
     Button,
     Loader,
     Text,
-    Toast,
     QRCode
 } from '@components';
 import moment from 'moment-timezone';

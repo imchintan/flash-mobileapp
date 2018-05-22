@@ -1,5 +1,3 @@
-import { NETWORKS, CURRENCY_TYPE } from '@src/constants';
-import { Address } from './wallet';
 import { isValidFlashAddress, isValidCryptoAddress } from './utils';
 
 export const name = (n) => {
@@ -7,7 +5,7 @@ export const name = (n) => {
     if(!n){
         return {success:false,message:'Name is required!'};
     }
-    if(n && !regEX.test(n)){
+    if(!regEX.test(n)){
         return {success:false,message:'Name contains only character!'};
     }
     return {success:true, message:''};

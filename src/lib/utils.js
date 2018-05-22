@@ -9,7 +9,6 @@ import {
 } from '@src/constants';
 import Big from 'big.js';
 import _tmp from 'moment-timezone';
-import bitcoin from 'bitcoinjs-lib'
 import moment from 'moment-timezone';
 import Wallet, { Address } from './wallet';
 import Premium from 'Premium';
@@ -273,7 +272,7 @@ export const hexToBase64 = (str) => {
 export const base64ToHex = (str) => {
     let bin = atob(str.replace(/[ \r\n]+$/, ''));
     let hex = [];
-    for (i = 0;i < bin.length;++i) {
+    for (let i = 0;i < bin.length;++i) {
         let tmp = bin.charCodeAt(i).toString(16);
         if (tmp.length === 1) tmp = '0' + tmp;
         hex[hex.length] = tmp;
@@ -286,25 +285,15 @@ export const strFromUtf8Ab = (ab) => {
 }
 
 export const decodeBase64 = (s) => {
-    if (typeof atob === 'undefined') {
-        return new Uint8Array(
-            Array.prototype.slice.call(new Buffer(s, 'base64'), 0)
-        );
-    } else {
-        let i, d = atob(s), b = new Uint8Array(d.length);
-        for (i = 0; i < d.length; i++) b[i] = d.charCodeAt(i);
-        return b;
-    }
+    let i, d = atob(s), b = new Uint8Array(d.length);
+    for (i = 0; i < d.length; i++) b[i] = d.charCodeAt(i);
+    return b;
 }
 
 export const encodeBase64 = (arr) => {
-    if (typeof btoa === 'undefined') {
-        return new Buffer(arr).toString('base64');
-    } else {
-        var i, s = [], len = arr.length;
-        for (i = 0; i < len; i++) s.push(String.fromCharCode(arr[i]));
-        return btoa(s.join(''));
-    }
+    var i, s = [], len = arr.length;
+    for (i = 0; i < len; i++) s.push(String.fromCharCode(arr[i]));
+    return btoa(s.join(''));
 }
 
 const chars = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz0123456789+/=';

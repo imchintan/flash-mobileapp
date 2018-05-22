@@ -9,8 +9,6 @@ export const MOMENT_FORMAT = {
     DATE_TIME_2: 'MMM DD, YYYY hh:mm:ss A',
 };
 
-const NETWORK_NAME = 'flashcoin';
-
 export const NETWORKS = {
   FLASH: {
     messagePrefix: '\x18Flashcoin Signed Message:\n',

@@ -380,7 +380,7 @@ class Send extends Component<{}> {
                                     <View>
                                         {this.state.search_wallet?
                                             <Text style={styles.reqDetailText}>
-                                                {this.state.search_wallet?this.state.search_wallet.display_name:''}
+                                                {this.state.search_wallet.display_name}
                                             </Text>:null
                                         }
                                         <Text style={[styles.reqDetailText,{maxWidth: width - 150}]}>

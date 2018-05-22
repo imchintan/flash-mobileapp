@@ -11,8 +11,6 @@ import {
 } from 'react-native';
 import Text from './../Text';
 import Loader from './../Loader';
-import Icon from 'react-native-fa-icons';
-import moment from 'moment-timezone';
 import PropTypes from "prop-types";
 import { PROFILE_URL } from '@src/config';
 import * as utils from '@lib/utils';

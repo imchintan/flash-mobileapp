@@ -1,7 +1,6 @@
 import {
     AsyncStorage
 } from 'react-native';
-import moment from 'moment-timezone';
 import * as types from '@actions/types';
 import apis from '@flashAPIs';
 import * as utils from '@lib/utils';
