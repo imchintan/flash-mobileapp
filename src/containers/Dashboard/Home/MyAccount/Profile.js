@@ -59,7 +59,7 @@ class MyProfile extends Component<{}> {
 
     updateDisplayName(){
         let display_name = this.state.display_name;
-        if(display_name && display_name !== null){
+        if(display_name){
             display_name = display_name.trim();
         }
         this.setState({editName:false,display_name:''});

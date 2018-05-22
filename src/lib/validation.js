@@ -36,8 +36,8 @@ export const amount = (amt,dec=8) => {
          return {success:false,message:'Invalid amount!'};
     }
 
-    let [d1,d2] = amt.toString().split('.');
-    if(!!d2 && d2.length > dec)
+    let dig = amt.toString().split('.');
+    if(dig.length == 2 && dig[1].length > dec)
         amt = (Math.floor(Number(amt*Math.pow(10,dec)))/Math.pow(10,dec)).toString();
     else
         amt = Number(amt).toString();

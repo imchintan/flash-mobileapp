@@ -32,7 +32,7 @@ import * as constants from '@src/constants';
 import { PROFILE_URL } from '@src/config';
 import Premium from 'Premium';
 
-const { height, width } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 const styles = require("@styles/send");
 
 class Send extends Component<{}> {

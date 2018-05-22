@@ -12,7 +12,6 @@ import {
 import {
     Container,
     Content,
-    Header,
     Button,
     Text,
     Loader,

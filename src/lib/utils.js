@@ -14,8 +14,6 @@ import Wallet, { Address } from './wallet';
 import Premium from 'Premium';
 import nacl from 'tweetnacl';
 
-var Buffer = require('buffer').Buffer;
-
 export const publicIP = async endpoint => {
   const response = await fetch(endpoint || 'https://api.ipify.org');
   const ip = response.text();

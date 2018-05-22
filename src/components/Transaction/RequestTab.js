@@ -18,7 +18,7 @@ import * as utils from '@lib/utils';
 
 import { PROFILE_URL } from '@src/config';
 
-const { height, width } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
 export default class RequestTab extends Component {
     constructor(props) {
