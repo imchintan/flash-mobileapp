@@ -28,7 +28,6 @@ import {
     Button,
     Loader,
     Text,
-    Toast,
     QRCode
 } from '@components';
 import moment from 'moment-timezone';
@@ -38,7 +37,8 @@ import { ActionCreators } from '@actions';
 import * as utils from '@lib/utils';
 import * as constants from '@src/constants';
 import { PROFILE_URL } from '@src/config';
-const { height, width } = Dimensions.get('window');
+
+const { width } = Dimensions.get('window');
 const styles = require("@styles/home");
 
 class Home extends Component<{}> {

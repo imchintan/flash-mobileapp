@@ -13,13 +13,12 @@ import {
 import Text from './../Text';
 import Icon from 'react-native-fa-icons';
 import Button from '@components/Button';
-import moment from 'moment-timezone';
 import PropTypes from "prop-types";
 import * as utils from '@lib/utils';
 
 import { PROFILE_URL } from '@src/config';
 
-const { height, width } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
 export default class RequestTab extends Component {
     constructor(props) {

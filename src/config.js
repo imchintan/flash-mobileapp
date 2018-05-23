@@ -1,4 +1,6 @@
-import { Platform } from 'react-native';
+/**
+ *  Application configuration  
+ */
 
 export const  RESOURCE = 'app';
 export const  APP_MODE = 'PROD'; // DEV , PROD

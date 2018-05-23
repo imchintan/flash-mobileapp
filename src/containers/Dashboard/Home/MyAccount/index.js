@@ -5,18 +5,14 @@
 import React from 'react';
 import {
     View,
-    Text,
     Platform,
     TouchableOpacity
 } from 'react-native';
 import {
     TabNavigator,
-    TabBarTop,
-    NavigationActions
+    TabBarTop
 } from 'react-navigation';
 import {
-    Container,
-    Content,
     Header,
     HeaderLeft,
     HeaderTitle,
@@ -28,7 +24,6 @@ import { bindActionCreators } from 'redux';
 import { ActionCreators } from '@actions';
 
 import Profile from './Profile';
-import Fountain from './Fountain';
 import SecurityQuestion from './SecurityQuestion';
 import Settings from './Settings';
 
@@ -36,7 +31,6 @@ const styles = require("@styles/myAccount");
 
 const TabNav = TabNavigator({
     Profile: { screen: Profile },
-    // Fountain: { screen: Fountain },
     Settings: { screen: Settings },
     Security: { screen: SecurityQuestion },
 },{

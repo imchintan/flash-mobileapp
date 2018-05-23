@@ -7,9 +7,6 @@ class TabBarComponent extends React.PureComponent {
   constructor(props) {
     super(props)
 
-    this.keyboardWillShow = this.keyboardWillShow.bind(this)
-    this.keyboardWillHide = this.keyboardWillHide.bind(this)
-
     this.state = {
       isVisible: true
     }

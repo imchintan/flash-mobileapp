@@ -10,13 +10,11 @@ import {
 } from 'react-native';
 import {
     TabNavigator,
-    TabBarTop,
-    NavigationActions
+    TabBarTop
 } from 'react-navigation';
 import {
     Header,
     HeaderRight,
-    Content,
     Icon,
     Text,
     Calendar

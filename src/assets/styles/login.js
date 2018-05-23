@@ -3,7 +3,7 @@ import {
     Dimensions
 } from 'react-native';
 
-const { height, width } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 const appStyles = require('./app');
 
 const styles = StyleSheet.create({

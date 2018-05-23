@@ -1,10 +1,6 @@
-import {
-    AsyncStorage
-} from 'react-native';
 import * as types from '@actions/types'
 import * as constants from '@src/constants';
 import apis from '@flashAPIs'
-import moment from 'moment-timezone';
 import { getBalance } from '@actions/account'
 import { updateTransactionReportDate, getRecentTransactions } from '@actions/transactions'
 import { updateRequestReportDate, markSentMoneyRequests } from '@actions/request'
