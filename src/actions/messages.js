@@ -1,7 +1,6 @@
 import {
     AsyncStorage
 } from 'react-native';
-import moment from 'moment-timezone';
 import PushNotification from 'react-native-push-notification';
 import * as types from '@actions/types';
 import * as Constants from '@src/constants';

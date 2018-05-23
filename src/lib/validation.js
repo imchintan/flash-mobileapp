@@ -1,5 +1,3 @@
-import { NETWORKS, CURRENCY_TYPE } from '@src/constants';
-import { Address } from './wallet';
 import { isValidFlashAddress, isValidCryptoAddress } from './utils';
 
 export const name = (n) => {
@@ -7,7 +5,7 @@ export const name = (n) => {
     if(!n){
         return {success:false,message:'Name is required!'};
     }
-    if(n && !regEX.test(n)){
+    if(!regEX.test(n)){
         return {success:false,message:'Name contains only character!'};
     }
     return {success:true, message:''};
@@ -38,8 +36,8 @@ export const amount = (amt,dec=8) => {
          return {success:false,message:'Invalid amount!'};
     }
 
-    let [d1,d2] = amt.toString().split('.');
-    if(!!d2 && d2.length > dec)
+    let dig = amt.toString().split('.');
+    if(dig.length == 2 && dig[1].length > dec)
         amt = (Math.floor(Number(amt*Math.pow(10,dec)))/Math.pow(10,dec)).toString();
     else
         amt = Number(amt).toString();

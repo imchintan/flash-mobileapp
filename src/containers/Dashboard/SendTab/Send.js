@@ -32,7 +32,7 @@ import * as constants from '@src/constants';
 import { PROFILE_URL } from '@src/config';
 import Premium from 'Premium';
 
-const { height, width } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 const styles = require("@styles/send");
 
 class Send extends Component<{}> {
@@ -380,7 +380,7 @@ class Send extends Component<{}> {
                                     <View>
                                         {this.state.search_wallet?
                                             <Text style={styles.reqDetailText}>
-                                                {this.state.search_wallet?this.state.search_wallet.display_name:''}
+                                                {this.state.search_wallet.display_name}
                                             </Text>:null
                                         }
                                         <Text style={[styles.reqDetailText,{maxWidth: width - 150}]}>

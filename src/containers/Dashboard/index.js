@@ -12,12 +12,10 @@ import {
     Loader,
     Toast,
     Text,
-    TabBarBottom,
-    BadgeTabIcon
+    TabBarBottom
 } from '@components'
 import {
-    TabNavigator,
-    NavigationActions
+    TabNavigator
 } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';

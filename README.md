@@ -10,36 +10,6 @@ cd FLASHWallet
 npm install
 ```
 
-
-## Post Installation
-
-### Add reserved rules to uglifyjs.
-
-- Modify node_modules/metro/src/JSTransformer/worker/minify.js file and add __reserved__ keywords as mentioned below.
-
- ``` javascript
-...................................................
-function minify(inputCode, inputMap) {
-  const result = uglify.minify(inputCode, {
-    mangle: { toplevel: true, reserved: [ //<= Add here reserved keyword
-        'Buffer',
-        'BigInteger',
-        'Point',
-        'ECPubKey',
-        'ECKey',
-        'sha512_asm',
-        'asm',
-        'ECPair',
-        'HDNode'
-      ] },
-    output: {
-      ascii_only: true,
-      quote_style: 3,
-      wrap_iife: true },
-...................................................
-```
-
-
 ## Run Application locally
 
 Node comes with npm, which lets you install the React Native command line interface.

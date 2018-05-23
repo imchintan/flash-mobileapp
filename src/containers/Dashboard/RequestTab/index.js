@@ -19,7 +19,6 @@ import {
     Button,
     Toast,
 } from '@components';
-import moment from 'moment-timezone';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ActionCreators } from '@actions';

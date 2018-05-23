@@ -141,7 +141,7 @@ export const login = (email,password) => {
                         if(d.failed_count == 3)
                             attmpt_count = '3rd';
 
-                        errorMsg = 'Email or password is not correct. This is your '+d.failed_count+
+                        errorMsg = 'Email or password is not correct. This is your '+attmpt_count+
                         ' failed attempt. After 5 failed attempts, your account will be locked.';
 
                     }else{
