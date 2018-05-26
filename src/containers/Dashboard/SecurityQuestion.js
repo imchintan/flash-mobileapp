@@ -4,12 +4,12 @@
 
 import React, { Component } from 'react';
 import {
-  View,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  Modal,
-  ScrollView
+    View,
+    Text,
+    TextInput,
+    TouchableOpacity,
+    Modal,
+    ScrollView
 } from 'react-native';
 import {
     Container,
@@ -19,6 +19,7 @@ import {
     HeaderTitle,
     Icon,
     Button,
+    Loader,
     Toast
 } from '@components';
 import { getSecurityQuestion } from '@lib/utils';
@@ -279,6 +280,7 @@ class SecurityQuestion extends Component<{}> {
                         </View>
                     </Modal>
                 </Content>
+                <Loader show={this.props.loading} />
             </Container>
         );
     }

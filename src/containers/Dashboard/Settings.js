@@ -4,10 +4,10 @@
 
 import React, { Component } from 'react';
 import {
-  View,
-  TouchableOpacity,
-  TextInput,
-  Dimensions
+    View,
+    TouchableOpacity,
+    TextInput,
+    Dimensions
 } from 'react-native';
 import {
     Container,
@@ -20,6 +20,7 @@ import {
     Button,
     Icon,
     Text,
+    Loader,
     Toast
 } from '@components';
 
@@ -183,6 +184,7 @@ class Settings extends Component<{}> {
                         </View>:null}
                     </View>
                 </Content>
+                <Loader show={this.props.loading} />
             </Container>
         );
     }
@@ -190,6 +192,7 @@ class Settings extends Component<{}> {
 
 function mapStateToProps({params}) {
     return {
+        loading: params.loading,
         profile: params.profile,
         wallet_address: params.wallet_address || null,
         recovery_obj_2fa: params.recovery_obj_2fa || null,

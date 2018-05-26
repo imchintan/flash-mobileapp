@@ -490,6 +490,24 @@ export const searchWallet = (term, loading=false) => {
     }
 }
 
+export const changeFiatCurrency = (fiat_currency) =>{
+    return (dispatch,getState) => {
+        dispatch({ type: types.LOADING_START });
+        dispatch({
+            type: types.CHANGE_CURRENCY,
+            payload:{
+                fiat_currency,
+            }
+        });
+        setTimeout(()=>{
+            dispatch(getCoinMarketCapDetail());
+        },100)
+        setTimeout(()=>{
+            dispatch({ type: types.LOADING_END });
+        },500);
+    }
+}
+
 export const changeCurrency = (currency_type) =>{
     return (dispatch,getState) => {
         dispatch({ type: types.LOADING_START });
@@ -508,7 +526,7 @@ export const changeCurrency = (currency_type) =>{
                 thresholdAmount: 0.00001,
                 fixedTxnFee: 0.00002,
                 recentTxns: [],
-                totalPending: 0,                
+                totalPending: 0,
             }
         });
         setTimeout(()=>{

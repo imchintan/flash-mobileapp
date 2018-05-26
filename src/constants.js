@@ -180,32 +180,32 @@ export const FIAT_CURRENCY = {
 
 export const FIAT_CURRENCY_UNIT = {
     0: 'USD',
-    1: 'AUD',
-    2: 'BRL',
-    3: 'CAD',
-    4: 'CHF',
-    5: 'CLP',
+    1: 'EUR',
+    2: 'GBP',
+    3: 'JPY',
+    4: 'CAD',
+    5: 'AUD',
     6: 'CNY',
-    7: 'CZK',
-    8: 'DKK',
-    9: 'EUR',
-    10: 'GBP',
-    11: 'HKD',
-    12: 'HUF',
-    13: 'IDR',
-    14: 'ILS',
-    15: 'INR',
-    16: 'JPY',
-    17: 'KRW',
-    18: 'MXN',
-    19: 'MYR',
-    20: 'NOK',
-    21: 'NZD',
-    22: 'PHP',
-    23: 'PKR',
-    24: 'PLN',
-    25: 'RUB',
-    26: 'SEK',
+    7: 'CHF',
+    8: 'SEK',
+    9: 'NZD',
+    10: 'KRW',
+    11: 'INR',
+    12: 'BRL',
+    13: 'CLP',
+    14: 'CZK',
+    15: 'DKK',
+    16: 'HKD',
+    17: 'HUF',
+    18: 'IDR',
+    19: 'ILS',
+    20: 'MXN',
+    21: 'MYR',
+    22: 'NOK',
+    23: 'PHP',
+    24: 'PKR',
+    25: 'PLN',
+    26: 'RUB',
     27: 'SGD',
     28: 'THB',
     29: 'TRY',
@@ -215,32 +215,32 @@ export const FIAT_CURRENCY_UNIT = {
 
 export const FIAT_CURRENCY_NAME = {
     0: 'US Dollar',
-    1: 'Australian Dollar',
-    2: 'Brazilian Real',
-    3: 'Canadian Dollar',
-    4: 'Swiss Franc',
-    5: 'Chilean Peso',
+    1: 'Euro',
+    2: 'British Pound',
+    3: 'Japanese Yen',
+    4: 'Canadian Dollar',
+    5: 'Australian Dollar',
     6: 'Chinese Yuan',
-    7: 'Czech Koruna',
-    8: 'Danish Krone',
-    9: 'Euro',
-    10: 'British Pound',
-    11: 'Hong Kong Dollar',
-    12: 'Hungarian Forint',
-    13: 'Indonesian Rupiah',
-    14: 'Israeli New Shekel',
-    15: 'Indian Rupee',
-    16: 'Japanese Yen',
-    17: 'South Korean Won',
-    18: 'Mexican Peso',
-    19: 'Malaysian Ringgit',
-    20: 'Norwegian Krone',
-    21: 'New Zealand Dollar',
-    22: 'Philippine Piso',
-    23: 'Pakistani Rupee',
-    24: 'Polish Zloty',
-    25: 'Russian Ruble',
-    26: 'Swedish Krona',
+    7: 'Swiss Franc',
+    8: 'Swedish Krona',
+    9: 'New Zealand Dollar',
+    10: 'South Korean Won',
+    11: 'Indian Rupee',
+    12: 'Brazilian Real',
+    13: 'Chilean Peso',
+    14: 'Czech Koruna',
+    15: 'Danish Krone',
+    16: 'Hong Kong Dollar',
+    17: 'Hungarian Forint',
+    18: 'Indonesian Rupiah',
+    19: 'Israeli New Shekel',
+    20: 'Mexican Peso',
+    21: 'Malaysian Ringgit',
+    22: 'Norwegian Krone',
+    23: 'Philippine Piso',
+    24: 'Pakistani Rupee',
+    25: 'Polish Zloty',
+    26: 'Russian Ruble',
     27: 'Singapore Dollar',
     28: 'Thai Baht',
     29: 'Turkish Lira',
@@ -249,36 +249,36 @@ export const FIAT_CURRENCY_NAME = {
 };
 
 export const FIAT_CURRENCY_SYMBOL = {
-    0: '$',
-    1: '$',
-    2: 'R$',
-    3: '$',
-    4: 'CHF',
-    5: '$',
-    6: '¥',
-    7: 'Kč',
-    8: 'kr',
-    9: '€',
-    10: '£',
-    11: '$',
-    12: 'Ft',
-    13: 'Rp',
-    14: '₪',
-    15: '₹',
-    16: '¥',
-    17: '₩',
-    18: '$',
-    19: 'RM',
-    20: 'kr',
-    21: '$',
-    22: '₱',
-    23: '₨',
-    24: 'zł',
-    25: '₽',
-    26: 'kr',
-    27: '$',
-    28: '฿',
-    29: '₺',
-    30: 'NT$',
-    31: 'R'
+    0: 'US$',   // US Dollar, USD
+    1: '€',     // Euro, EUR
+    2: '£',     // British Pound, GBP
+    3: '¥',     // Japanese Yen, JPY
+    4: 'CA$',   // Canadian Dollar, CAD
+    5: 'AU$',   // Australian Dollar, AUD
+    6: 'CN¥',   // Chinese Yuan, CNY
+    7: 'CHF',   // Swiss Franc, CHF
+    8: 'SEK',   // Swedish Krona, SEK
+    9: 'NZ$',   // New Zealand Dollar, NZD
+    10: 'KR₩',  // South Korean Won, KRW
+    11: '₹',    // Indian Rupee, INR
+    12: 'R$',   // Brazilian Real, BRL
+    13: 'CL$',  // Chilean Peso, CLP
+    14: 'Kč',   // Czech Koruna, CZK
+    15: 'DKK',  // Danish Krone, DKK
+    16: 'HK$',  // Hong Kong Dollar, HKD
+    17: 'Ft',   // Hungarian Forint, HUF
+    18: 'Rp',   // Indonesian Rupiah, IDR
+    19: '₪',    // Israeli New Shekel, ILS
+    20: 'MX$',  // Mexican Peso, MXN
+    21: 'RM',   // Malaysian Ringgit, MYR
+    22: 'NOK',  // Norwegian Krone, NOK
+    23: '₱',    // Philippine Piso, PHP
+    24: '₨',    // Pakistani Rupee, PKR
+    25: 'zł',   // Polish Zloty, PLN
+    26: '₽',    // Russian Ruble, RUB
+    27: 'SG$',  // Singapore Dollar, SGD
+    28: '฿',    // Thai Baht, THB
+    29: '₺',    // Turkish Lira, TRY
+    30: 'NT$',  // New Taiwan Dollar, TWD
+    31: 'R'     // South African Rand, ZAR
 };

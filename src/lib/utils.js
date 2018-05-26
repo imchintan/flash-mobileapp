@@ -83,7 +83,7 @@ export const cryptoToOtherCurrency = (value,othCur, p=0) => {
     if (value == undefined || value === '') return;
     if (othCur == undefined || othCur === '') return;
     return parseFloat(new Big(value).times(othCur).div(Math.pow(10,p)).toString())
-        .toLocaleString('en',{maximumFractionDigits:3});
+        .toFixed(3).toLocaleString('en',{maximumFractionDigits:3});
 }
 
 export const otherCurrencyToCrypto = (value,othCur) => {

@@ -20,6 +20,7 @@ import {
     Text,
     Button,
     Icon,
+    Loader,
     Toast
 } from '@components';
 import moment from 'moment-timezone';
@@ -505,6 +506,7 @@ class MyProfile extends Component<{}> {
                         </View>
                     </Modal>
                 </Content>
+                <Loader show={this.props.loading} />
             </Container>
         );
     }

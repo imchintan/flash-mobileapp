@@ -240,6 +240,7 @@ class Send extends Component<{}> {
     onBarCodeRead(e){
         this.setState({scanQR:false});
         let data = e.data;
+        let amount = null;
         if(!data){
             Toast.errorTop('Invalid qr code!');
             return false;
@@ -262,6 +263,27 @@ class Send extends Component<{}> {
         }
 
         this.setState({term:data},this.verifyAddress);
+
+        //check for amount
+        let containsAmtMark = e.data.indexOf('amount=');
+        if(containsAmtMark > 0){
+            amount = e.data.substring(containsAmtMark+7);
+            let containsAndMark = amount.indexOf('&');
+            if(containsAndMark > -1){
+                amount = amount.substring(0,containsAndMark);
+            }
+        }
+        if(amount !== null){
+            amount = utils.toOrginalNumber(amount);
+            let fiat_amount = utils.toOrginalNumber(
+                utils.cryptoToOtherCurrency(amount, this.props.fiat_per_value, 0)
+            );
+            this.setState({
+                fiat_amount: fiat_amount>0?utils.formatAmountInput(fiat_amount):'',
+                amount: amount>0?utils.formatAmountInput(amount):''
+            });
+        }
+
     }
 
     render() {
