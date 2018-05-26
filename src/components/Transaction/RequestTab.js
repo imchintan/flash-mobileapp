@@ -15,6 +15,7 @@ import Icon from 'react-native-fa-icons';
 import Button from '@components/Button';
 import PropTypes from "prop-types";
 import * as utils from '@lib/utils';
+import * as constants from '@lib/utils';
 
 import { PROFILE_URL } from '@src/config';
 
@@ -77,8 +78,11 @@ export default class RequestTab extends Component {
                             <View style={styles.reqDetailBody}>
                                 {this.state.accept?<View style={styles.reqDetailRow}>
                                     <Text style={styles.reqDetailLabel}>Amount</Text>
-                                    <Text selectable={true} style={styles.reqDetailText}>
-                                        {utils.localizeFlash(this.props.req.amount.toString())} {utils.getCurrencyUnitUpcase(this.props.req.currency)}</Text>
+                                    <View>
+                                        <Text selectable={true} style={styles.reqDetailText}>
+                                            {utils.localizeFlash(this.props.req.amount.toString())} {utils.getCurrencyUnitUpcase(this.props.req.currency)}</Text>
+                                        <Text style={styles.reqFiatAmtText}>≈ {utils.getCurrencySymbol(this.props.fiat_currency)} {utils.cryptoToOtherCurrency(this.props.req.amount, this.props.fiat_per_value, 0)}</Text>
+                                    </View>
                                 </View>:null}
                                 {(this.state.reject || this.state.accept)?<View>
                                     <View style={styles.reqDetailRow}>
@@ -144,8 +148,11 @@ export default class RequestTab extends Component {
                                     </View>
                                     <View style={styles.reqDetailRow}>
                                         <Text style={styles.reqDetailLabel}>Amount</Text>
-                                        <Text selectable={true} style={styles.reqDetailText}>
-                                            {utils.localizeFlash(this.props.req.amount.toString())} {utils.getCurrencyUnitUpcase(this.props.req.currency)}</Text>
+                                        <View>
+                                            <Text selectable={true} style={styles.reqDetailText}>
+                                                {utils.localizeFlash(this.props.req.amount.toString())} {utils.getCurrencyUnitUpcase(this.props.req.currency)}</Text>
+                                            <Text style={styles.reqFiatAmtText}>≈ {utils.getCurrencySymbol(this.props.fiat_currency)} {utils.cryptoToOtherCurrency(this.props.req.amount, this.props.fiat_per_value, 0)}</Text>
+                                        </View>
                                     </View>
                                     <View style={styles.reqDetailRow}>
                                         <Text style={styles.reqDetailLabel}>Status</Text>
@@ -276,9 +283,9 @@ const styles = StyleSheet.create({
         }),
     },
     reqIcon: {
-        width: 36,
-        height: 36,
-        borderRadius: 18,
+        width: 40,
+        height: 40,
+        borderRadius: 20,
         resizeMode: 'contain',
     },
     reqDetail:{
@@ -286,12 +293,12 @@ const styles = StyleSheet.create({
     },
     reqAmount:{
         color: '#333333',
-        fontSize: 15,
+        fontSize: 18,
         fontWeight: '600',
     },
     reqRecvFrom:{
         color: '#666666',
-        fontSize: 12,
+        fontSize: 14,
         fontStyle: 'italic',
         fontWeight: '400',
     },
@@ -368,6 +375,10 @@ const styles = StyleSheet.create({
     },
     reqDetailText:{
         fontSize: 14,
+        color: '#4A4A4A',
+    },
+    reqFiatAmtText:{
+        fontSize: 12,
         color: '#4A4A4A',
     },
     reqDetailTextInputBox:{

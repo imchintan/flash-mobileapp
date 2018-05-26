@@ -5,34 +5,34 @@ import {
 
 const { width } = Dimensions.get('window');
 const appStyles = require('./app');
+const walletStyles = require('./wallet');
 
 const styles = StyleSheet.create({
     requestBox:{
-        margin: 20,
-    },
-    requestRow:{
-        marginBottom: 20,
+        marginHorizontal: 20,
+        marginBottom: 70,
     },
     requestRowLabel:{
-        fontSize: 16,
-        paddingHorizontal: 15,
-        fontWeight: "500",
-        color: '#4A4A4A'
+        fontSize: 17,
+        fontWeight: '500',
+        color: '#191714',
+        marginTop: 8,
     },
     requestRowNote:{
-        fontSize: 13,
-        paddingHorizontal: 15,
+        alignSelf: 'flex-end',
+        fontSize: 12,
+        paddingTop: 2,
+        paddingHorizontal: 5,
         color: '#9B9B9B'
     },
     requestRowInputBox:{
         justifyContent: 'center',
-        marginTop: 5,
         width: '100%',
         paddingHorizontal: 15,
-        height: 50,
+        height: 44,
         borderWidth: 1.5,
-        borderRadius:25,
-        borderColor: '#ddd'
+        borderRadius:10,
+        borderColor: '#191714'
     },
     requestRowInput:{
         fontSize: 16,
@@ -40,17 +40,19 @@ const styles = StyleSheet.create({
         width: '100%',
     },
     requestRowAmtLabelBox:{
-        borderTopLeftRadius:25,
-        borderBottomLeftRadius:25,
+        top:-2,
+        width: 80,
+        height: 44,
+        marginLeft: 49,
+        borderTopLeftRadius:10,
+        borderBottomLeftRadius:10,
+        alignItems: 'center',
+        justifyContent: 'center',
         backgroundColor: '#191714',
     },
     requestRowAmtLabel:{
-        marginLeft: 20,
-        height: '100%',
-        paddingVertical: 14,
-        paddingRight: 15,
-        fontSize: 14,
-        fontWeight: '500',
+        fontSize: 16,
+        fontFamily: 'futura-medium',
         color: '#E0AE27',
         backgroundColor: '#191714'
     },
@@ -114,6 +116,12 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         paddingVertical: 5,
     },
+    reqFiatAmtText:{
+        fontSize: 25,
+        color: '#191714',
+        alignSelf: 'center',
+        paddingBottom: 5,
+    },
     reqDownArrow:{
         fontSize: 20,
         color: '#d55',
@@ -138,9 +146,76 @@ const styles = StyleSheet.create({
         alignSelf: 'center',
         color: '#008fd0'
     },
+    requestRowActionLinkTab:{
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginTop: 6,
+        marginBottom: -3,
+    },
+    requestRowActionLink:{
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderBottomWidth: 1,
+        borderBottomColor: '#191714',
+    },
+    requestRowActionLinkIcon:{
+        fontSize: 12,
+        marginRight: 5,
+        color:'#191714'
+    },
+    requestRowActionLinkLabel:{
+        fontSize: 14,
+        color:'#191714'
+    },
+    requestRowActionLinkDiv:{
+        top: 2,
+        marginHorizontal: 5,
+        fontSize: 18,
+        color:'#191714'
+    },
+    hr:{
+        width: '100%',
+        borderBottomWidth: 1,
+        borderColor: '#9F9F9F',
+        marginBottom: 10,
+    },
+    qrCodeBox:{
+        width:width-170,
+        height:width-170,
+        alignSelf: 'center',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    qrCodeBorder:{
+        position: 'absolute',
+        top:0,
+        width:width-170,
+        height:width-170,
+        borderWidth: 7,
+        borderColor: '#191714',
+    },
+    walletAddress:{
+        justifyContent: 'center',
+        width: '100%',
+        paddingHorizontal: 15,
+        marginTop: 10,
+        height: 40,
+        borderWidth: 1.5,
+        borderRadius:10,
+        borderColor: '#191714',
+        backgroundColor: '#DFDFDF'
+    },
+    walletAddressText:{
+        fontSize:15,
+        fontWeight: '500',
+        textAlign:'center'
+    },
 });
 
 module.exports = {
     ...appStyles,
+    ...walletStyles,
     ...styles
 }

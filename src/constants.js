@@ -99,6 +99,13 @@ export const CURRENCY_TYPE = {
     DASH: 4,
 };
 
+export const CURRENCY_TYPE_NAME = {
+    FLASH: 'FLASH',
+    BTC: 'Bitcoin',
+    LTC: 'Litecoin',
+    DASH: 'DASH',
+};
+
 export const CURRENCY_TYPE_UNIT = {
     1: 'Flash',
     2: 'BTC',
@@ -113,9 +120,165 @@ export const CURRENCY_TYPE_UNIT_UPCASE = {
     4: 'DASH',
 };
 
+export const CURRENCY_TYPE_QR_PREFIX = {
+    1: 'flashcoin',
+    2: 'bitcoin',
+    3: 'litecoin',
+    4: 'dash',
+};
+
 export const CURRENCY_ICON = {
     1: require('@images/app-icon.png'),
     2: require('@images/btc-icon.png'),
     3: require('@images/ltc-icon.png'),
     4: require('@images/dash-icon.png'),
+};
+
+//Coinmarketcap currency ID
+export const COIN_MARKET_CAP_CURRENCY_ID = {
+    FLASH: 1755,
+    BTC: 1,
+    LTC: 2,
+    DASH: 131,
+};
+
+//Fiat currency
+export const FIAT_CURRENCY = {
+    USD: 0,
+    AUD: 1,
+    BRL: 2,
+    CAD: 3,
+    CHF: 4,
+    CLP: 5,
+    CNY: 6,
+    CZK: 7,
+    DKK: 8,
+    EUR: 9,
+    GBP: 10,
+    HKD: 11,
+    HUF: 12,
+    IDR: 13,
+    ILS: 14,
+    INR: 15,
+    JPY: 16,
+    KRW: 17,
+    MXN: 18,
+    MYR: 19,
+    NOK: 20,
+    NZD: 21,
+    PHP: 22,
+    PKR: 23,
+    PLN: 24,
+    RUB: 25,
+    SEK: 26,
+    SGD: 27,
+    THB: 28,
+    TRY: 29,
+    TWD: 30,
+    ZAR: 31
+};
+
+export const FIAT_CURRENCY_UNIT = {
+    0: 'USD',
+    1: 'AUD',
+    2: 'BRL',
+    3: 'CAD',
+    4: 'CHF',
+    5: 'CLP',
+    6: 'CNY',
+    7: 'CZK',
+    8: 'DKK',
+    9: 'EUR',
+    10: 'GBP',
+    11: 'HKD',
+    12: 'HUF',
+    13: 'IDR',
+    14: 'ILS',
+    15: 'INR',
+    16: 'JPY',
+    17: 'KRW',
+    18: 'MXN',
+    19: 'MYR',
+    20: 'NOK',
+    21: 'NZD',
+    22: 'PHP',
+    23: 'PKR',
+    24: 'PLN',
+    25: 'RUB',
+    26: 'SEK',
+    27: 'SGD',
+    28: 'THB',
+    29: 'TRY',
+    30: 'TWD',
+    31: 'ZAR'
+};
+
+export const FIAT_CURRENCY_NAME = {
+    0: 'US Dollar',
+    1: 'Australian Dollar',
+    2: 'Brazilian Real',
+    3: 'Canadian Dollar',
+    4: 'Swiss Franc',
+    5: 'Chilean Peso',
+    6: 'Chinese Yuan',
+    7: 'Czech Koruna',
+    8: 'Danish Krone',
+    9: 'Euro',
+    10: 'British Pound',
+    11: 'Hong Kong Dollar',
+    12: 'Hungarian Forint',
+    13: 'Indonesian Rupiah',
+    14: 'Israeli New Shekel',
+    15: 'Indian Rupee',
+    16: 'Japanese Yen',
+    17: 'South Korean Won',
+    18: 'Mexican Peso',
+    19: 'Malaysian Ringgit',
+    20: 'Norwegian Krone',
+    21: 'New Zealand Dollar',
+    22: 'Philippine Piso',
+    23: 'Pakistani Rupee',
+    24: 'Polish Zloty',
+    25: 'Russian Ruble',
+    26: 'Swedish Krona',
+    27: 'Singapore Dollar',
+    28: 'Thai Baht',
+    29: 'Turkish Lira',
+    30: 'New Taiwan Dollar',
+    31: 'South African Rand'
+};
+
+export const FIAT_CURRENCY_SYMBOL = {
+    0: '$',
+    1: '$',
+    2: 'R$',
+    3: '$',
+    4: 'CHF',
+    5: '$',
+    6: '¥',
+    7: 'Kč',
+    8: 'kr',
+    9: '€',
+    10: '£',
+    11: '$',
+    12: 'Ft',
+    13: 'Rp',
+    14: '₪',
+    15: '₹',
+    16: '¥',
+    17: '₩',
+    18: '$',
+    19: 'RM',
+    20: 'kr',
+    21: '$',
+    22: '₱',
+    23: '₨',
+    24: 'zł',
+    25: '₽',
+    26: 'kr',
+    27: '$',
+    28: '฿',
+    29: '₺',
+    30: 'NT$',
+    31: 'R'
 };

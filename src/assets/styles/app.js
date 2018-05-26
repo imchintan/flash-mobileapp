@@ -54,5 +54,16 @@ module.exports = StyleSheet.create({
     webViewCreateWallet:{
         marginTop: 10,
         width,
-    }
+    },
+    label:{
+        fontSize: 18,
+        color: '#4A4A4A',
+        marginTop: 15,
+    },
+    hr:{
+        width: '100%',
+        borderBottomWidth: 1,
+        borderColor: '#9F9F9F',
+        marginBottom: 15,
+    },
 });

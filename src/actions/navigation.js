@@ -17,7 +17,6 @@ import { getCoinMarketCapDetail, getProfile } from '@actions/account';
 export const init = () => {
     return async (dispatch,getState) => {
         dispatch({ type: types.LOADING_START });
-
         initTimezone();
         dispatch(getCoinMarketCapDetail());
 
@@ -41,25 +40,25 @@ export const init = () => {
                 _logout(dispatch);
                 return;
             }
-            let balance = await AsyncStorage.getItem('balance');
-            if(balance){
-                payload.balance = Number(JSON.parse(balance));
-                AsyncStorage.getItem('coinmarketcapValue',(err,succ)=>{
-                    if(err || !succ) return;
-                    let d = JSON.parse(succ);
-                    if(!d || !d.flash || !d.btc || !d.ltc || !d.usd) return;
-                    dispatch({
-                        type: types.GET_COIN_MARKET_CAP_VALUE,
-                        payload: {
-                            balance_in_flash:utils.flashToOtherCurrency(payload.balance, Number(d.flash)),
-                            balance_in_btc:utils.flashToOtherCurrency(payload.balance, Number(d.btc)),
-                            balance_in_ltc:utils.flashToOtherCurrency(payload.balance, Number(d.ltc)),
-                            balance_in_usd:utils.flashToOtherCurrency(payload.balance, Number(d.usd)),
-                        }
-                    });
-
-                });
-            }
+            // let balance = await AsyncStorage.getItem('balance');
+            // if(balance){
+            //     payload.balance = Number(JSON.parse(balance));
+            //     AsyncStorage.getItem('coinmarketcapValue',(err,succ)=>{
+            //         if(err || !succ) return;
+            //         let d = JSON.parse(succ);
+            //         if(!d || !d.flash || !d.btc || !d.ltc || !d.usd) return;
+            //         dispatch({
+            //             type: types.GET_COIN_MARKET_CAP_VALUE,
+            //             payload: {
+            //                 balance_in_flash:utils.flashToOtherCurrency(payload.balance, Number(d.flash)),
+            //                 balance_in_btc:utils.flashToOtherCurrency(payload.balance, Number(d.btc)),
+            //                 balance_in_ltc:utils.flashToOtherCurrency(payload.balance, Number(d.ltc)),
+            //                 balance_in_usd:utils.flashToOtherCurrency(payload.balance, Number(d.usd)),
+            //             }
+            //         });
+            //
+            //     });
+            // }
 
             let last_message_datetime = await AsyncStorage.getItem('last_message_datetime');
             if(last_message_datetime){

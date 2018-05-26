@@ -9,6 +9,8 @@ import Loader from './Loader';
 import Transaction from './Transaction';
 import Toast from './Toast';
 import TabBarBottom from './TabBarBottom';
+import WalletMenu from './WalletMenu';
+import WalletFooter from './WalletFooter';
 import Icon from 'react-native-fa-icons';
 import Calendar from 'react-native-calendar-select';
 import QRCode from 'react-native-qrcode';
@@ -25,6 +27,8 @@ module.exports = {
     Loader,
     ...Transaction,
     Toast,
+    WalletMenu,
+    WalletFooter,
     TabBarBottom,
     Icon,
     Calendar,
