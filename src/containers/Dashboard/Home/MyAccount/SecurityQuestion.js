@@ -16,6 +16,7 @@ import {
     Button,
     Toast
 } from '@components';
+import { getSecurityQuestion } from '@lib/utils';
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -24,24 +25,6 @@ import Premium from 'Premium';
 import secrets from 'secrets.js-grempe';
 
 const styles = require("@styles/myAccount");
-
-const questions = {
-    'A':[
-        "What is your dream job?",
-        "In which city did your parents meet?",
-        "What was the name of your elementary school?"
-    ],
-    'B':[
-        "What is the first name of your favourite uncle?",
-        "Where did you meet your spouse?",
-        "What is your eldest cousin's name?"
-    ],
-    'C':[
-        "Street name where you grew up?",
-        "What is your pet's name?",
-        "What was your first job?"
-    ],
-};
 
 class SecurityQuestion extends Component<{}> {
 
@@ -207,7 +190,7 @@ class SecurityQuestion extends Component<{}> {
                         <View style={[styles.optionContainer,{height:null}]}>
                             <ScrollView keyboardShouldPersistTaps="always">
                                 <View style={{ paddingHorizontal: 10 }}>
-                                    {questions[this.state.ques].map((que,index) =>
+                                    {getSecurityQuestion()[this.state.ques].map((que,index) =>
                                         <TouchableOpacity
                                             key={'_que_'+this.state.ques+'_'+index}
                                             onPress={()=>{

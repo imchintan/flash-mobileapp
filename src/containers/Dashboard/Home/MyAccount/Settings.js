@@ -20,7 +20,7 @@ import {
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ActionCreators } from '@actions';
-const { height, width } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 const styles = require("@styles/myAccount");
 
 class Settings extends Component<{}> {

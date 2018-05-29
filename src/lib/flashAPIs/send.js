@@ -1,5 +1,4 @@
 import { API_URL, RESOURCE, APP_VERSION } from '@src/config';
-import moment from 'moment-timezone';
 
 /**
  * Create raw transaction
@@ -7,18 +6,20 @@ import moment from 'moment-timezone';
  * @param  {String} [sessionToken='']   [description]
  * @param  {Number} [currency_type=1]   [description]
  * @param  {Number} [amount=0]          [description]
+ * @param  {Number} [custom_fee=0]      [description]
  * @param  {String} [publicAddress='']  [description]
  * @param  {String} [message='']        [description]
  * @return {Promise}                    [description]
  */
 export const rawTransaction = (auth_version, sessionToken='',
-    currency_type = 1, amount=0, publicAddress='', message='') => {
+    currency_type = 1, amount=0, custom_fee=0, publicAddress='', message='') => {
     return new Promise((resolve,reject) => {
         fetch(API_URL+'/raw-transaction',{
             method: 'POST',
             body: JSON.stringify({
                 currency_type,
                 amount,
+                custom_fee,
                 message,
                 publicAddress,
                 appversion:APP_VERSION,
@@ -45,8 +46,6 @@ export const rawTransaction = (auth_version, sessionToken='',
         });
     });
 }
-// {"rc":1,"transaction":{"txid":"2d9e7b5488202a27c122f3f7ec9b6516f162cbfa0de09f771232ad45d27b4fc4",
-// "rawtx":"010000000197741ecdfe1a32c2b7519122ac6bed417d87683ea09079fd20747d53f8c5b1b80100000000ffffffff0200e40b54020000001976a914546fa44e90344312fab95f8109425e73ae8ddf5788ac0054b781270000001976a9147b862fda105e1495b93a375552d47f4d2780395a88ac00000000"}}
 
 /**
  * Add transaction
@@ -102,7 +101,6 @@ export const addTransaction = (auth_version, sessionToken='', currency_type = 1,
         });
     });
 }
-// {"rc":1,"id":25609}
 
 /**
  * Add roster
@@ -140,7 +138,6 @@ export const addRoster = (auth_version, sessionToken='', bare_uid = '') => {
         });
     });
 }
-//{"rc":1,"is_new":0}
 
 /**
  * Get Roster
@@ -190,13 +187,6 @@ export const getRoster = (auth_version, sessionToken='', recv_size = 0,
         });
     });
 }
-// {"criteria":{"subs_start":0,"subs_size":10,"sent_start":-1,"sent_size":5,
-// "recv_start":-1,"recv_size":0,"blkd_start":0,"blkd_size":5},"rc":1,
-// "roster":{"total_subs":3,"subs":[{"bare_uid":"ashwini_chourasia_vns_gmail_com",
-// "pres":{"res":"web","state":null}},{"bare_uid":"maulikvora59_1_gmail_com",
-// "pres":{"res":"web","state":null}},{"bare_uid":"maulikvora59_2_gmail_com",
-// "pres":{"res":"web","state":null}}],"total_sent":0,"sent":[],"total_recv":1,
-// "recv":[],"total_blkd":0,"blkd":[]}}
 
 /**
  * get transaction by id
@@ -253,6 +243,3 @@ export const transactionById = (auth_version, sessionToken='', currency_type = 1
         });
     });
 }
-// {"rc":1,"txn":{"id":25609,"sender_id":"maulikvora59_3_gmail_com",
-// "receiver_id":"maulikvora59_2_gmail_com","amount":1,"currency_type":1,
-// "status":0,"processing_duration":0}}

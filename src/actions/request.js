@@ -1,9 +1,5 @@
-import {
-    AsyncStorage
-} from 'react-native';
 import * as types from '@actions/types'
 import apis from '@flashAPIs'
-import moment from 'moment-timezone';
 
 export const addMoneyRequest = (amount=0, bare_uid='', to='', note='') => {
     return (dispatch,getState) => {

@@ -1,20 +1,17 @@
-import {
-    AsyncStorage
-} from 'react-native';
 import * as types from '@actions/types'
+import * as constants from '@src/constants';
 import apis from '@flashAPIs'
-import moment from 'moment-timezone';
 import { getBalance } from '@actions/account'
 import { updateTransactionReportDate, getRecentTransactions } from '@actions/transactions'
 import { updateRequestReportDate, markSentMoneyRequests } from '@actions/request'
 
-export const rawTransaction = (amount=0, receiver_public_address='', memo='',
+export const rawTransaction = (amount=0, custom_fee=0, receiver_public_address='', memo='',
     receiver_bare_uid=null, receiver_id=null, request_id=0) => {
     return (dispatch,getState) => {
         dispatch({ type: types.LOADING_START });
         let params = getState().params;
         apis.rawTransaction(params.profile.auth_version, params.profile.sessionToken,
-            params.currency_type, amount, receiver_public_address, memo).then((d)=>{
+            params.currency_type, amount, custom_fee, receiver_public_address, memo).then((d)=>{
             if(d.rc == 1){
                 dispatch({type: types.RAW_TRANSACTION});
                 let wallet = getActiveWallet(params.decryptedWallets, params.currency_type);
@@ -93,7 +90,7 @@ export const transactionById = (id, index, amount, ip, memo, receiver_bare_uid,
                     }
                 });
             }else{
-                if(d.txn.status > 0){
+                if(d.txn.status > 0 || params.currency_type !== constants.CURRENCY_TYPE.FLASH){
                     dispatch({
                         type: types.TRANSACTION_BY_ID,
                         payload: {

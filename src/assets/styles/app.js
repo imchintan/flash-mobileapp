@@ -4,7 +4,7 @@ import {
     Platform
 } from 'react-native';
 
-const { height, width } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
 module.exports = StyleSheet.create({
     appHeaderIcon:{

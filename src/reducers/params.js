@@ -5,6 +5,10 @@ import * as types from '@actions/types';
 const initialState = {
     isLoggedIn: false,
     loading: false,
+    bcMedianTxSize: 250,
+    satoshiPerByte: 20,
+    thresholdAmount: 0.00001,
+    fixedTxnFee: 0.00002,  //This we will get from API call for DASH
     currency_type: 1,
     date_from: moment().add(-1, 'months').add(-1, 'days'),
     date_to: moment(),
@@ -42,7 +46,7 @@ const login = (state = initialState, action) => {
             if(date_from.unix()*1000 < created_ts)
                 date_from = moment(created_ts);
 
-            return { ...state, ...action.payload || {}, date_from, pending_date_from: date_from};
+            return { ...state, ...action.payload, date_from, pending_date_from: date_from};
 
         case types.GET_RECENT_TRANSACTIONS:
             let recentTxns = action.payload.txns;

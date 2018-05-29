@@ -12,7 +12,6 @@ import {
     Container,
     Header,
     HeaderTitle,
-    Content,
     Icon,
     Toast,
     Text,
@@ -40,7 +39,7 @@ class ScanQR extends Component<{}> {
         this.setState({scan:props.screenProps.scan});
     }
 
-    onBarCodeRead = (e) => {
+    onBarCodeRead(e){
         this.setState({scan:false});
         let data = e.data;
         if(!data){
@@ -48,21 +47,24 @@ class ScanQR extends Component<{}> {
             setTimeout(()=>this.setState({scan:true}),2000);
             return false;
         }
-        let _data = data.split(':');
+
         let containsColumn = data.indexOf(':');
         if (containsColumn >= 0) {
             data = data.substring(containsColumn + 1, data.length);
         }
+
         //check for qt wallet
         let containsQueMark = data.indexOf('?');
         if (containsQueMark >= 0) {
             data = data.substring(0, containsQueMark);
         }
+
         if(data.length < 25 || data.length > 34){
             Toast.errorTop('Invalid qr code!');
             setTimeout(()=>this.setState({scan:true}),2000);
             return false;
         }
+
         let publicAddress = data;
         this.props.navigation.navigate('Send',{publicAddress});
         // setTimeout(()=>this.setState({scan:true}),2000);

@@ -23,14 +23,17 @@ import {
     Button,
     Toast
 } from '@components';
-const { height, width } = Dimensions.get('window');
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ActionCreators } from '@actions';
 import * as Validation from '@lib/validation';
-const styles = require("@styles/send");
-import { flashToSatoshi } from '@lib/utils';
+import * as utils from '@lib/utils';
+import * as constants from '@src/constants';
 import { PROFILE_URL } from '@src/config';
+import Premium from 'Premium';
+
+const { width } = Dimensions.get('window');
+const styles = require("@styles/send");
 
 class Send extends Component<{}> {
 
@@ -68,6 +71,8 @@ class Send extends Component<{}> {
         this.state = {
             term: publicAddress || null,
             publicAddress: publicAddress || null,
+            fee: utils.calcFee(0,this.props.currency_type, this.props.bcMedianTxSize,
+                this.props.satoshiPerByte, this.props.fixedTxnFee),
             isVerify: false,
             isAmtVerify: false,
             isAddressVerify: false,
@@ -78,9 +83,17 @@ class Send extends Component<{}> {
 
     componentDidMount(){
         BackHandler.addEventListener('hardwareBackPress', this.backHandler);
-    }
 
-    componentDidMount(){
+        if(this.props.currency_type !== constants.CURRENCY_TYPE.FLASH && this.props.currency_type !== constants.CURRENCY_TYPE.DASH){
+            this.props.setBcMedianTxSize();
+            this.props.setSatoshiPerByte();
+        }
+        if(this.props.currency_type !== constants.CURRENCY_TYPE.FLASH)
+            this.props.setThresholdAmount();
+
+        if(this.props.currency_type === constants.CURRENCY_TYPE.DASH)
+            this.props.setFixedTxnFee();
+
         if(this.state.term){
             this.verifyAddress();
             this.refs._input_amount.focus();
@@ -102,23 +115,31 @@ class Send extends Component<{}> {
             term:'',
             amount:'',
             note:'',
+            fee: utils.calcFee(0,this.props.currency_type, this.props.bcMedianTxSize,
+                this.props.satoshiPerByte, this.props.fixedTxnFee),
             isVerify: false,
             isAddressVerify: false,
             isAmtVerify: false,
             search_wallet: null,
             publicAddress: null,
+            errorMsg: null,
         });
     }
 
     verifyAmount(){
         this.setState({isAmtVerify: false});
         if(!this.state.amount) return false;
-
-        let res = Validation.amount(this.state.amount);
+        let amount = utils.toOrginalNumber(this.state.amount);
+        let res = Validation.amount(amount);
         if(!res.success){
             return Toast.errorTop(res.message);
         }
-        this.setState({isAmtVerify: true, amount:res.amount});
+        this.setState({
+            isAmtVerify: true,
+            amount:utils.formatAmountInput(res.amount),
+            fee: utils.calcFee(res.amount, this.props.currency_type,
+                this.props.bcMedianTxSize, this.props.satoshiPerByte, this.props.fixedTxnFee)
+        });
     }
 
     verifyAddress(){
@@ -137,7 +158,7 @@ class Send extends Component<{}> {
             return this.props.searchWallet(this.state.term);
         }
 
-        res =Validation.flashAddress(this.state.term);
+        res =Validation.cryptoAddress(this.state.term, this.props.currency_type);
         if(!res.success){
             return Toast.errorTop("Address is invalid!");
         }else{
@@ -149,42 +170,71 @@ class Send extends Component<{}> {
         if(!this.state.isVerify && !this.state.isAddressVerify){
             return Toast.errorTop("Address is invalid!");
         }
-        let amount = this.state.amount;
+        let amount = utils.toOrginalNumber(this.state.amount);
         if(!this.state.isAmtVerify){
             let res = Validation.amount(amount);
             if(!res.success){
                 return Toast.errorTop(res.message);
             }
-            amount = res.amount;
+            amount = utils.toOrginalNumber(res.amount);
             this.setState({isAmtVerify: true, amount});
         }
-        if(parseFloat(amount) < 1){
-            return Toast.errorTop("Amount must be at least 1");
+        if(!amount.toString().match(/^(\d+\.?\d*|\.\d+)$/)){
+            return Toast.errorTop("Amount must be a number");
         }
-        if(flashToSatoshi(parseFloat(amount)+0.001) > this.props.balance){
-            return Toast.errorTop("You do not have enough fee to make this payment");
+        let fee = utils.calcFee(amount, this.props.currency_type,
+            this.props.bcMedianTxSize, this.props.satoshiPerByte, this.props.fixedTxnFee);
+
+        if(this.props.currency_type === constants.CURRENCY_TYPE.FLASH){
+            if(amount < 1){
+                return Toast.errorTop("Amount must be at least 1");
+            }
+            if(utils.flashToSatoshi(amount+fee) > this.props.balance){
+                return Toast.errorTop("You do not have enough fee to make this payment");
+            }
+        }else{
+            if(amount < this.props.thresholdAmount){
+                return Toast.errorTop("Amount is less than threshold value");
+            }
+            if((amount+fee) > this.props.balance){
+                return Toast.errorTop("You do not have enough fee to make this payment");
+            }
         }
 
-        this.setState({visible:true});
+        this.setState({visible:true, fee});
     }
 
     sendMoney(force=false){
-        if(!force && !this.props.decryptedWallets) return this.setState({visible:false, visibleGetPassword: true});
+        if(!force && !this.props.decryptedWallets)
+            return this.setState({visible:false, visibleGetPassword: true, password: '', errorMsg: ''});
         if(!this.state.isConfirm) return ;
-        this.setState({visible:false, visibleGetPassword:false, isConfirm: false},
-            ()=>{
-                let receiver_bare_uid =
-                    this.state.search_wallet?
-                    this.state.search_wallet.email:null;
-                let receiver_id =
-                    this.state.search_wallet?
-                    this.state.search_wallet.username:null;
-
-                this.props.rawTransaction(this.state.amount,
-                    this.state.publicAddress, this.state.note,
-                    receiver_bare_uid, receiver_id);
-
+        this.setState({visible:false, visibleGetPassword:false, isConfirm: false}, ()=>{
+            let receiver_bare_uid =
+                this.state.search_wallet?
+                this.state.search_wallet.email:null;
+            let receiver_id =
+                this.state.search_wallet?
+                this.state.search_wallet.username:null;
+            let amount = utils.toOrginalNumber(this.state.amount);
+            let fee = utils.toOrginalNumber(this.state.fee);
+            this.props.rawTransaction(amount, fee, this.state.publicAddress,
+                this.state.note, receiver_bare_uid, receiver_id);
         })
+    }
+
+    decryptWallets(){
+        if(!this.state.password){
+            return this.setState({errorMsg:'Password is invalid!'});
+        }
+
+        try{
+            Premium.xaesDecrypt(this.state.password, this.props.profile.privateKey);
+        }catch(e){
+            return this.setState({errorMsg:'Password is invalid!'});
+        }
+        this.props.customAction({loading:true});
+        this.setState({visibleGetPassword:false, errorMsg:''},()=>
+            setTimeout(()=>this.props.decryptWallets(this.state.password,true),0));
     }
 
     render() {
@@ -238,7 +288,7 @@ class Send extends Component<{}> {
                                 paddingLeft: 0
                             }]}>
                                 <View style={styles.requestRowAmtLabelBox}>
-                                    <Text style={styles.requestRowAmtLabel}>FLASH</Text>
+                                    <Text style={styles.requestRowAmtLabel}>{utils.getCurrencyUnitUpcase(this.props.currency_type)}</Text>
                                 </View>
                                 <TextInput
                                     ref={'_input_amount'}
@@ -246,11 +296,31 @@ class Send extends Component<{}> {
                                     style={[styles.requestRowInput,{paddingLeft:10}]}
                                     keyboardType='numeric'
                                     returnKeyType='done'
-                                    onSubmitEditing={()=>this.refs._input_note.focus()}
+                                    // onSubmitEditing={()=>this.refs._input_note.focus()}
                                     placeholder='Enter amount'
                                     value={this.state.amount || ''}
                                     onBlur={this.verifyAmount.bind(this)}
                                     onChangeText={(amount) => this.setState({amount})}
+                                />
+                            </View>
+                        </View>
+                        <View style={styles.requestRow}>
+                            <Text style={styles.requestRowLabel}>Fee</Text>
+                            <View style={[styles.requestRowInputBox,{
+                                flexDirection: 'row',
+                                justifyContent: 'flex-start',
+                                paddingLeft: 0,
+                                backgroundColor: '#EDEDED'
+                            }]}>
+                                <View style={styles.requestRowAmtLabelBox}>
+                                    <Text style={styles.requestRowAmtLabel}>{utils.getCurrencyUnitUpcase(this.props.currency_type)}</Text>
+                                </View>
+                                <TextInput
+                                    editable={false}
+                                    underlineColorAndroid='transparent'
+                                    style={[styles.requestRowInput,{paddingLeft:10}]}
+                                    placeholder='Transaction Fee'
+                                    value={this.state.fee.toString()}
                                 />
                             </View>
                         </View>
@@ -261,6 +331,7 @@ class Send extends Component<{}> {
                                     ref={'_input_note'}
                                     multiline = {true}
                                     numberOfLines = {4}
+                                    returnKeyType='done'
                                     underlineColorAndroid='transparent'
                                     style={styles.requestRowInput}
                                     placeholder={'Enter note (optional)'}
@@ -296,23 +367,20 @@ class Send extends Component<{}> {
                                     onPress={()=>this.setState({visible:false})} >X</Text>
                             </View>
                             <View style={styles.reqDetailBody}>
-                                <Text style={styles.reqAmtText}>{this.state.amount} FLASH</Text>
+                                <Text style={styles.reqAmtText}>{this.state.amount} {utils.getCurrencyUnitUpcase(this.props.currency_type)}</Text>
                                 <Text style={styles.reqFeeText}>
-                                    + 0.001 FLASH transaction fee
+                                    + {this.state.fee} {utils.getCurrencyUnitUpcase(this.props.currency_type)} transaction fee
                                 </Text>
                                 <Icon style={styles.reqDownArrow} name='arrow-down'/>
                                 <View style={styles.reqDetailRow}>
                                     <Image style={styles.reqDetailIcon}
-                                        defaultSource={require("@images/app-icon.png")}
-                                        source={this.state.search_wallet?
-                                            (this.state.search_wallet.profile_pic_url?
+                                        source={this.state.search_wallet && this.state.search_wallet.profile_pic_url?
                                             {uri:PROFILE_URL+this.state.search_wallet.profile_pic_url}:
-                                            require('@images/app-icon.png'))
-                                            :require('@images/app-icon.png')} />
+                                            utils.getCurrencyIcon(this.props.currency_type)} />
                                     <View>
                                         {this.state.search_wallet?
                                             <Text style={styles.reqDetailText}>
-                                                {this.state.search_wallet?this.state.search_wallet.display_name:''}
+                                                {this.state.search_wallet.display_name}
                                             </Text>:null
                                         }
                                         <Text style={[styles.reqDetailText,{maxWidth: width - 150}]}>
@@ -364,8 +432,15 @@ class Send extends Component<{}> {
                                         placeholder={'Enter your password'}
                                         value={this.state.password || ''}
                                         onChangeText={(password) => this.setState({password})}
+                                        onSubmitEditing={this.decryptWallets.bind(this)}
                                     />
                                 </View>
+                                {!!this.state.errorMsg?<Text style={{
+                                    fontSize: 15,
+                                    color: 'red',
+                                    paddingHorizontal: 10,
+                                    marginTop: 5,
+                                }}>{this.state.errorMsg}</Text>:null}
                             </View>
                             <View style={{flexDirection:'row'}}>
                                 <Button
@@ -374,13 +449,7 @@ class Send extends Component<{}> {
                                     textstyle={[styles.reqBtnLabel,{color:'#333'}]}
                                     value='Cancel' />
                                 <Button
-                                    onPress={()=>{
-                                        if(!this.state.password){
-                                            return Toast.errorTop("Password is invalid!");
-                                        }
-                                        this.setState({visibleGetPassword:false},
-                                            ()=>this.props.decryptWallets(this.state.password));
-                                    }}
+                                    onPress={this.decryptWallets.bind(this)}
                                     style={styles.reqBtn}
                                     textstyle={styles.reqBtnLabel}
                                     value='Send' />
@@ -405,9 +474,10 @@ class Send extends Component<{}> {
                                     color: '#333',
                                     marginBottom: 25,
                                 }}>
-                                    Processing time: {this.state.sendTxnSuccess?
+                                    {this.props.currency_type === constants.CURRENCY_TYPE.FLASH?
+                                    ('Processing time: '+(this.state.sendTxnSuccess?
                                             Number(this.state.sendTxnSuccess.processing_duration)
-                                            .toFixed(3):'0.000'} second(s){"\n\n"}
+                                            .toFixed(3):'0.000')+" second(s)\n\n"):''}
                                     Your transaction will appear in your activity tab shortly.
                                 </Text>
                                 <Button
@@ -430,6 +500,11 @@ function mapStateToProps({params}) {
         search_wallet: params.search_wallet || null,
         profile: params.profile || null,
         balance: params.balance || 0,
+        currency_type: params.currency_type,
+        bcMedianTxSize: params.bcMedianTxSize,
+        satoshiPerByte: params.satoshiPerByte,
+        thresholdAmount: params.thresholdAmount,
+        fixedTxnFee: params.fixedTxnFee,
         wallet_address: params.wallet_address || null,
         sendTxnSuccess: params.sendTxnSuccess || null,
         decryptedWallets: params.decryptedWallets || null,

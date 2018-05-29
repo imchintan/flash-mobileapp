@@ -1,12 +1,11 @@
-import { NETWORKS } from '@src/config';
-import { Address } from './wallet';
+import { isValidFlashAddress, isValidCryptoAddress } from './utils';
 
 export const name = (n) => {
     let regEX = /^[a-zA-Z .]*$/;
     if(!n){
         return {success:false,message:'Name is required!'};
     }
-    if(n && !regEX.test(n)){
+    if(!regEX.test(n)){
         return {success:false,message:'Name contains only character!'};
     }
     return {success:true, message:''};
@@ -37,8 +36,8 @@ export const amount = (amt,dec=8) => {
          return {success:false,message:'Invalid amount!'};
     }
 
-    let [d1,d2] = amt.toString().split('.');
-    if(!!d2 && d2.length > dec)
+    let dig = amt.toString().split('.');
+    if(dig.length == 2 && dig[1].length > dec)
         amt = (Math.floor(Number(amt*Math.pow(10,dec)))/Math.pow(10,dec)).toString();
     else
         amt = Number(amt).toString();
@@ -46,16 +45,18 @@ export const amount = (amt,dec=8) => {
     return {success:true, message:'', amount: amt};
 }
 
-export function flashAddress(value) {
-    try {
-        let address = Address.fromBase58Check(value);
-        if (address.version === NETWORKS.FLASH.pubKeyHash ||
-            address.version === NETWORKS.FLASH.scriptHash ) {
-            return {success:true,message:''};
-        } else {
-            return {success:false,message:'Invalid address!'};
-        }
-    } catch (e) {
+export const flashAddress = (value) => {
+    if(isValidFlashAddress(value)){
+        return {success:true,message:''};
+    }else{
+        return {success:false,message:'Invalid address!'};
+    }
+}
+
+export const cryptoAddress = (value, currency_type) => {
+    if(isValidCryptoAddress(value, currency_type)){
+        return {success:true,message:''};
+    }else{
         return {success:false,message:'Invalid address!'};
     }
 }

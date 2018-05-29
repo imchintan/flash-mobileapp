@@ -5,18 +5,13 @@
 import React, { Component } from 'react';
 import {
     View,
-    Text as RNText,
     Image,
     TextInput,
-    ScrollView,
-    Dimensions,
     TouchableOpacity
 } from 'react-native';
 import {
     Container,
     Content,
-    Header,
-    HeaderTitle,
     Button,
     Text,
     Loader,
@@ -26,7 +21,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ActionCreators } from '@actions';
 import * as Validation from '@lib/validation';
-const { height, width } = Dimensions.get('window');
+
 const styles = require("@styles/login");
 
 class Login extends Component<{}> {
