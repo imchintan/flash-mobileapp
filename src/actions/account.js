@@ -29,6 +29,7 @@ export const getBalance = (refresh = false) => {
                         balanceLoader: false,
                     }
                 });
+                constants.SOUND.ERROR.play();
                 setTimeout(()=>_logout(dispatch),500);
             }else if(d.rc !== 1){
                 dispatch({
@@ -84,6 +85,7 @@ export const getBalanceV2 = (currency_type=constants.CURRENCY_TYPE.FLASH ,refres
                         balanceLoader: false,
                     }
                 });
+                constants.SOUND.ERROR.play();
                 setTimeout(()=>_logout(dispatch),500);
             }else if(d.rc !== 1){
                 dispatch({
@@ -162,6 +164,7 @@ export const getProfile = () => {
                         errorMsg:d.reason,
                     }
                 });
+                constants.SOUND.ERROR.play();
                 setTimeout(()=>_logout(dispatch),500);
             }else{
                 dispatch({
@@ -171,6 +174,7 @@ export const getProfile = () => {
                         loading:false
                     }
                 });
+                constants.SOUND.ERROR.play();
             }
         }).catch(e=>{
             dispatch({
@@ -180,6 +184,7 @@ export const getProfile = () => {
                     loading:false
                 }
             });
+            constants.SOUND.ERROR.play();
         })
     }
 }
@@ -207,6 +212,7 @@ export const updateProfile = (data) => {
                         errorMsg:d.reason,
                     }
                 });
+                constants.SOUND.ERROR.play();
                 setTimeout(()=>_logout(dispatch),500);
             }else{
                 dispatch({
@@ -216,6 +222,7 @@ export const updateProfile = (data) => {
                         loading:false
                     }
                 });
+                constants.SOUND.ERROR.play();
             }
         }).catch(e=>{
             dispatch({
@@ -225,6 +232,7 @@ export const updateProfile = (data) => {
                     loading:false
                 }
             });
+            constants.SOUND.ERROR.play();
         })
     }
 }
@@ -256,6 +264,7 @@ export const changePassword = (data) => {
                         errorMsg:d.reason,
                     }
                 });
+                constants.SOUND.ERROR.play();
                 setTimeout(()=>_logout(dispatch),500);
             }else{
                 dispatch({
@@ -265,6 +274,7 @@ export const changePassword = (data) => {
                         loading:false
                     }
                 });
+                constants.SOUND.ERROR.play();
             }
         }).catch(e=>{
             dispatch({
@@ -274,6 +284,7 @@ export const changePassword = (data) => {
                     loading:false
                 }
             });
+            constants.SOUND.ERROR.play();
         })
     }
 }
@@ -298,6 +309,7 @@ export const sendVerificationSMS = () => {
                         errorMsg:d.reason,
                     }
                 });
+                constants.SOUND.ERROR.play();
                 setTimeout(()=>_logout(dispatch),500);
             }else{
                 dispatch({
@@ -316,6 +328,7 @@ export const sendVerificationSMS = () => {
                     loading:false
                 }
             });
+            constants.SOUND.ERROR.play();
         })
     }
 }
@@ -345,6 +358,7 @@ export const verifyPhone = (smsCode) => {
                         verifyCodeErrorMsg:d.reason,
                     }
                 });
+                constants.SOUND.ERROR.play();
                 setTimeout(()=>_logout(dispatch),500);
             }else{
                 dispatch({
@@ -353,6 +367,7 @@ export const verifyPhone = (smsCode) => {
                         verifyCodeErrorMsg:d.reason,
                     }
                 });
+                constants.SOUND.ERROR.play();
             }
             setTimeout(()=>dispatch({
                 type: types.CUSTOM_ACTION,
@@ -368,6 +383,7 @@ export const verifyPhone = (smsCode) => {
                     verifyCodeErrorMsg: e.message,
                 }
             });
+            constants.SOUND.ERROR.play();
         })
     }
 }
@@ -400,6 +416,7 @@ export const setRecoveryKeys = (data) => {
                         errorMsg:d.reason,
                     }
                 });
+                constants.SOUND.ERROR.play();
                 setTimeout(()=>_logout(dispatch),500);
             }else{
                 dispatch({
@@ -409,6 +426,7 @@ export const setRecoveryKeys = (data) => {
                         loading:false
                     }
                 });
+                constants.SOUND.ERROR.play();
             }
         }).catch(e=>{
             dispatch({
@@ -499,6 +517,7 @@ export const changeFiatCurrency = (fiat_currency) =>{
                 fiat_currency,
             }
         });
+        AsyncStorage.setItem('fiat_currency',fiat_currency.toString());
         setTimeout(()=>{
             dispatch(getCoinMarketCapDetail());
         },100)
@@ -631,6 +650,7 @@ export const start2FA = () =>{
                         loading:false,
                     }
                 });
+                constants.SOUND.ERROR.play();
             }
         }).catch(e=>{
             dispatch({
@@ -640,6 +660,7 @@ export const start2FA = () =>{
                     loading:false,
                 }
             });
+            constants.SOUND.ERROR.play();
         })
     }
 }
@@ -660,6 +681,7 @@ export const turnOff2FA = () =>{
                         loading:false,
                     }
                 });
+                constants.SOUND.ERROR.play();
             }
         }).catch(e=>{
             dispatch({
@@ -669,6 +691,7 @@ export const turnOff2FA = () =>{
                     loading:false,
                 }
             });
+            constants.SOUND.ERROR.play();
         })
     }
 }
@@ -689,6 +712,7 @@ export const confirm2FA = (code) =>{
                         loading:false,
                     }
                 });
+                constants.SOUND.ERROR.play();
             }
         }).catch(e=>{
             dispatch({
@@ -698,6 +722,7 @@ export const confirm2FA = (code) =>{
                     loading:false,
                 }
             });
+            constants.SOUND.ERROR.play();
         })
     }
 }

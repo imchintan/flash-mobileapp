@@ -510,3 +510,8 @@ export const getCurrencySymbol = (fiat_currency) => {
 export const getFiatCurrencyUnit = (fiat_currency) => {
     return constants.FIAT_CURRENCY_UNIT[fiat_currency];
 }
+export const getFiatCurrencyByCountry = (country_code) => {
+    let fiat_currency_unit = constants.FIAT_CURRENCY_UNIT_BY_COUNTRY[country_code];
+    if(fiat_currency_unit) return constants.FIAT_CURRENCY[fiat_currency_unit];
+    else return constants.FIAT_CURRENCY.USD;
+}

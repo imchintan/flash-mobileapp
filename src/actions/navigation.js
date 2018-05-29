@@ -18,11 +18,11 @@ export const init = () => {
     return async (dispatch,getState) => {
         dispatch({ type: types.LOADING_START });
         initTimezone();
-        dispatch(getCoinMarketCapDetail());
-
-        utils.getLocation().then(res => {
+        let location = null;
+        await utils.getLocation().then(res => {
             if(res.rc == 1){
-                dispatch({ type: types.SET_LOCATION, location: res.info });
+                location = res.info;
+                dispatch({ type: types.SET_LOCATION, location });
                 dispatch({ type: types.SET_PUBLIC_IP, ip: res.info.ip });
             }else{
                 utils.publicIP().then(ip => {
@@ -40,25 +40,12 @@ export const init = () => {
                 _logout(dispatch);
                 return;
             }
-            // let balance = await AsyncStorage.getItem('balance');
-            // if(balance){
-            //     payload.balance = Number(JSON.parse(balance));
-            //     AsyncStorage.getItem('coinmarketcapValue',(err,succ)=>{
-            //         if(err || !succ) return;
-            //         let d = JSON.parse(succ);
-            //         if(!d || !d.flash || !d.btc || !d.ltc || !d.usd) return;
-            //         dispatch({
-            //             type: types.GET_COIN_MARKET_CAP_VALUE,
-            //             payload: {
-            //                 balance_in_flash:utils.flashToOtherCurrency(payload.balance, Number(d.flash)),
-            //                 balance_in_btc:utils.flashToOtherCurrency(payload.balance, Number(d.btc)),
-            //                 balance_in_ltc:utils.flashToOtherCurrency(payload.balance, Number(d.ltc)),
-            //                 balance_in_usd:utils.flashToOtherCurrency(payload.balance, Number(d.usd)),
-            //             }
-            //         });
-            //
-            //     });
-            // }
+            let fiat_currency = await AsyncStorage.getItem('fiat_currency');
+            if(fiat_currency){
+                payload.fiat_currency = parseInt(fiat_currency);
+            }else if(location && location.country_code){
+                payload.fiat_currency = utils.getFiatCurrencyByCountry(location.country_code);
+            }
 
             let last_message_datetime = await AsyncStorage.getItem('last_message_datetime');
             if(last_message_datetime){
@@ -68,6 +55,8 @@ export const init = () => {
                 type: types.LOGIN_SUCCESS,
                 payload
             });
+            dispatch(getCoinMarketCapDetail());
+            constants.SOUND.SUCCESS.play();
             dispatch(getProfile());
             dispatch(getMyWallets(payload.profile));
         }else{
@@ -127,6 +116,7 @@ export const login = (email,password) => {
                 });
                 if(!d.profile.totp_enabled && d.profile.auth_version > 3){
                     dispatch(getProfile());
+                    constants.SOUND.SUCCESS.play();
                 }
                 if(!d.profile.totp_enabled){
                     dispatch(getMyWallets(d.profile,password));
@@ -154,6 +144,7 @@ export const login = (email,password) => {
                         loading:false
                     }
                 });
+                constants.SOUND.ERROR.play();
             }
         }).catch(e=>{
             dispatch({
@@ -163,6 +154,7 @@ export const login = (email,password) => {
                     loading:false
                 }
             });
+            constants.SOUND.SUCCESS.play();
         })
     }
 }
@@ -184,6 +176,7 @@ export const check2FA = (code) =>{
                         password:null,
                     }
                 });
+                constants.SOUND.SUCCESS.play();
                 dispatch(getProfile());
                 dispatch(getMyWallets(profile,password));
             }else{
