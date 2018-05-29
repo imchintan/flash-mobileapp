@@ -16,7 +16,6 @@ import {
     Container,
     Header,
     HeaderLeft,
-    HeaderTitle,
     HeaderRight,
     Content,
     Icon,

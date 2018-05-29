@@ -17,9 +17,6 @@ import {
     connect
 } from 'react-redux';
 import {
-    addNavigationHelpers,
-} from 'react-navigation';
-import {
     createReduxBoundAddListener,
     createReactNavigationReduxMiddleware,
 } from 'react-navigation-redux-helpers';

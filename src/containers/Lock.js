@@ -13,9 +13,6 @@ import {
 } from 'react-native';
 import {
     Container,
-    Header,
-    HeaderLeft,
-    HeaderTitle,
     Content,
     Icon,
     Text,
@@ -25,9 +22,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ActionCreators } from '@actions';
 
-const { height, width } = Dimensions.get('window');
-
-const url = 'https://wallet.flashcoin.io/index.html';
+const { width } = Dimensions.get('window');
 
 class Lock extends Component<{}> {
 

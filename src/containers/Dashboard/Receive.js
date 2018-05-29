@@ -7,22 +7,18 @@ import {
     View,
     TextInput,
     TouchableOpacity,
-    Image,
     Clipboard,
     Share,
-    Modal,
     Dimensions
 } from 'react-native';
 import {
     Container,
     Header,
     HeaderLeft,
-    HeaderTitle,
     HeaderRight,
     Content,
     Icon,
     Text,
-    Button,
     WalletMenu,
     WalletFooter,
     Toast,

@@ -10,7 +10,6 @@ import {
     ScrollView,
     TouchableOpacity,
     RefreshControl,
-    StyleSheet
 } from 'react-native';
 import {
     Container,
@@ -19,7 +18,6 @@ import {
     HeaderLeft,
     HeaderRight,
     Icon,
-    Loader,
     Text,
 } from '@components';
 import { connect } from 'react-redux';

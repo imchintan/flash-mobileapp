@@ -14,7 +14,6 @@ import {
     Content,
     Header,
     HeaderLeft,
-    HeaderTitle,
     HeaderRight,
     TransactionTab,
     WalletMenu,

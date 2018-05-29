@@ -15,7 +15,6 @@ import Icon from 'react-native-fa-icons';
 import Button from '@components/Button';
 import PropTypes from "prop-types";
 import * as utils from '@lib/utils';
-import * as constants from '@lib/utils';
 
 import { PROFILE_URL } from '@src/config';
 

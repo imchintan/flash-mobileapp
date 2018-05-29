@@ -9,14 +9,12 @@ import {
     TouchableOpacity,
     Image,
     Clipboard,
-    Modal,
-    Dimensions
+    Modal
 } from 'react-native';
 import {
     Container,
     Header,
     HeaderLeft,
-    HeaderTitle,
     HeaderRight,
     Content,
     Icon,

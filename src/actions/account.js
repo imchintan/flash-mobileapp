@@ -590,7 +590,7 @@ export const getCoinMarketCapDetail = () =>{
             apis.getCoinMarketCapDetail(bal.currency_type, params.fiat_currency).then((d)=>{
                 if(!d) return;
                 let per_value = 0;
-                if(d && d.quotes &&
+                if(d.quotes &&
                     d.quotes[constants.FIAT_CURRENCY_UNIT[params.fiat_currency]] &&
                     d.quotes[constants.FIAT_CURRENCY_UNIT[params.fiat_currency]].price){
                     per_value = Number(d.quotes[constants.FIAT_CURRENCY_UNIT[params.fiat_currency]].price);

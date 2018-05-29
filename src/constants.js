@@ -247,7 +247,6 @@ export const FIAT_CURRENCY_UNIT_BY_COUNTRY = {
     LU: 'EUR',
     MQ: 'EUR',
     YT: 'EUR',
-    LU: 'EUR',
     MC: 'EUR',
     NL: 'EUR',
     PT: 'EUR',
