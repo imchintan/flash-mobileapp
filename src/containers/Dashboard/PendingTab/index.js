@@ -10,8 +10,7 @@ import {
 } from 'react-native';
 import {
     TabNavigator,
-    TabBarTop,
-    NavigationActions
+    TabBarTop
 } from 'react-navigation';
 import {
     Header,
@@ -21,6 +20,8 @@ import {
     Calendar
 } from '@components';
 import moment from 'moment-timezone';
+import { getDisplayDate } from '@lib/utils';
+import { MOMENT_FORMAT } from '@src/constants';
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -93,7 +94,7 @@ class PendingTab extends React.Component {
            'text': {
              'save': 'Confirm',
            },
-           'date': 'MMM DD, YYYY'  // date format
+           'date': MOMENT_FORMAT.DATE  // date format
          };
         let color = {
             mainColor: '#191714',
@@ -123,7 +124,7 @@ class PendingTab extends React.Component {
                             color: '#FFF',
                         }}>
                             <Text>
-                                {moment(this.props.date_from).format('MMM DD, YYYY')} - {moment(this.props.date_to).format('MMM DD, YYYY')+'  '}
+                                {getDisplayDate(this.props.date_from)} - {getDisplayDate(this.props.date_to)+'  '}
                             </Text>
                             <Icon style={{fontSize: 20}} name='calendar'/>
                         </Text>

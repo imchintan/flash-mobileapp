@@ -1,12 +1,13 @@
 {
   "name": "flash",
-  "version": "0.0.1",
+  "version": "1.7.0",
   "private": true,
   "scripts": {
     "postinstall": "rn-nodeify --install stream,buffer,events,assert,crypto --hack"
   },
   "dependencies": {
     "assert": "^1.4.1",
+    "big.js": "^5.0.3",
     "bip39": "^2.5.0",
     "bitcoinjs-lib": "^2.3.0",
     "bs58check": "^2.1.1",

@@ -31,7 +31,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         backgroundColor: '#00AFFD',
-        bottom: 0,
+        bottom: 25,
         ...Platform.select({
             ios: {
                 shadowColor: 'rgba(0,0,0, 0.7)',
@@ -42,7 +42,6 @@ const styles = StyleSheet.create({
                 elevation: 20,
             },
         }),
-        bottom: 25,
     },
     btnText:{
         fontSize: 14,

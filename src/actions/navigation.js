@@ -6,28 +6,61 @@ import * as types from '@actions/types'
 import apis from '@flashAPIs'
 import Wallet from '@lib/wallet'
 import * as utils from '@lib/utils'
+import * as constants from '@src/constants';
+import * as send from './send'
 import Premium from 'Premium';
+import secrets from 'secrets.js-grempe';
+import nacl from 'tweetnacl';
 
 import { getCoinMarketCapDetail, getProfile } from '@actions/account';
 
 export const init = () => {
     return async (dispatch,getState) => {
-        utils.publicIP().then(ip => {
-            dispatch({ type: types.SET_PUBLIC_IP, ip });
-        });
+        dispatch({ type: types.LOADING_START });
+
         initTimezone();
         dispatch(getCoinMarketCapDetail());
-        dispatch({ type: types.LOADING_START });
+
+        utils.getLocation().then(res => {
+            if(res.rc == 1){
+                dispatch({ type: types.SET_LOCATION, location: res.info });
+                dispatch({ type: types.SET_PUBLIC_IP, ip: res.info.ip });
+            }else{
+                utils.publicIP().then(ip => {
+                    dispatch({ type: types.SET_PUBLIC_IP, ip });
+                });
+            }
+        });
+
         let user = await AsyncStorage.getItem('user');
         if(user){
             let payload = {
                 profile:JSON.parse(user),
             };
-
+            if(payload.profile.auth_version < 4){
+                _logout(dispatch);
+                return;
+            }
             let balance = await AsyncStorage.getItem('balance');
             if(balance){
-                payload.balance = JSON.parse(balance)
+                payload.balance = Number(JSON.parse(balance));
+                AsyncStorage.getItem('coinmarketcapValue',(err,succ)=>{
+                    if(err || !succ) return;
+                    let d = JSON.parse(succ);
+                    if(!d || !d.flash || !d.btc || !d.ltc || !d.usd) return;
+                    dispatch({
+                        type: types.GET_COIN_MARKET_CAP_VALUE,
+                        payload: {
+                            balance_in_flash:utils.flashToOtherCurrency(payload.balance, Number(d.flash)),
+                            balance_in_btc:utils.flashToOtherCurrency(payload.balance, Number(d.btc)),
+                            balance_in_ltc:utils.flashToOtherCurrency(payload.balance, Number(d.ltc)),
+                            balance_in_usd:utils.flashToOtherCurrency(payload.balance, Number(d.usd)),
+                        }
+                    });
+
+                });
             }
+
             let last_message_datetime = await AsyncStorage.getItem('last_message_datetime');
             if(last_message_datetime){
                 payload.last_message_datetime = Number(last_message_datetime);
@@ -83,19 +116,23 @@ export const login = (email,password) => {
         dispatch({ type: types.LOADING_START });
         apis.login(email,password).then((d)=>{
             if(d.rc == 1){
-                if(!d.profile.totp_enabled)AsyncStorage.setItem('user',JSON.stringify(d.profile));
+                if(!d.profile.totp_enabled && d.profile.auth_version > 3)
+                    AsyncStorage.setItem('user',JSON.stringify(d.profile));
                 dispatch({
-                    type: (!d.profile.totp_enabled)?types.LOGIN_SUCCESS:types.VERIFY_2FA,
+                    type: d.profile.auth_version < 4?types.MIGRATE_ACCOUNT:((!d.profile.totp_enabled)?types.LOGIN_SUCCESS:types.VERIFY_2FA),
                     payload: {
                         profile:d.profile,
-                        password:(!d.profile.totp_enabled)?null:password,
-                        loading:(!d.profile.totp_enabled),
+                        password:(!d.profile.totp_enabled && d.profile.auth_version > 3)?null:password,
+                        loading:(!d.profile.totp_enabled && d.profile.auth_version > 3),
                     }
                 });
-                if(!d.profile.totp_enabled){
+                if(!d.profile.totp_enabled && d.profile.auth_version > 3){
                     dispatch(getProfile());
+                }
+                if(!d.profile.totp_enabled){
                     dispatch(getMyWallets(d.profile,password));
                 }
+
             }else{
                 let errorMsg = d.reason;
                 if(d.status !== 'ACCOUNT_LOCKED'){
@@ -104,7 +141,7 @@ export const login = (email,password) => {
                         if(d.failed_count == 3)
                             attmpt_count = '3rd';
 
-                        errorMsg = 'Email or password is not correct. This is your '+d.failed_count+
+                        errorMsg = 'Email or password is not correct. This is your '+attmpt_count+
                         ' failed attempt. After 5 failed attempts, your account will be locked.';
 
                     }else{
@@ -171,6 +208,165 @@ export const check2FA = (code) =>{
     }
 }
 
+export const migrateAccount = (questionA, answerA, questionB, answerB,
+    questionC, answerC) => {
+    return (dispatch,getState) => {
+        dispatch({ type: types.LOADING_START });
+        let params = getState().params;
+        let password = params.password;
+        let keypair = nacl.box.keyPair();
+        let pubKey = keypair.publicKey;
+        let privKey = keypair.secretKey;
+        let pubKeyBase64 = utils.encodeBase64(pubKey);
+        let privKeyBase64 = utils.encodeBase64(privKey);
+
+        let privKeyHex = utils.base64ToHex(privKeyBase64);
+        let keyByteSize = 256;
+        let encryptedPrivKey = JSON.stringify(
+            Premium.xaesEncrypt(keyByteSize, password, privKeyHex)
+        );
+
+        let _params = {
+            password: password,
+            privateKey: encryptedPrivKey,
+            publicKey: pubKeyBase64,
+        };
+
+        let sc = secrets.share(privKeyHex, 3, 2);
+        let answers = [answerA, answerB, answerC];
+
+        // May hash one more time
+        let checksum = answers.join('*');
+        let encryptedSc1 = JSON.stringify(
+            Premium.xaesEncrypt(keyByteSize, checksum, sc[0])
+        );
+        apis.migrateAccount(params.profile.auth_version, params.profile.sessionToken,
+            _params).then((d)=>{
+            if(d.rc == 1){
+                params.profile = {
+                    ...params.profile,
+                    ...d.profile
+                }
+                let __params = {
+                    idToken: params.profile.idToken,
+                    sc1: encryptedSc1,
+                    sc2: sc[1],
+                    sc3: sc[2],
+                    security_question_1: questionA,
+                    security_question_2: questionB,
+                    security_question_3: questionC,
+                };
+
+                let userKey = {
+                    idToken: params.profile.idToken,
+                    encryptedPrivKey: encryptedPrivKey,
+                    publicKey: pubKeyBase64,
+                };
+
+                let wallets = params.decryptedWallets;
+                let currency_wallets = wallets.filter((wallet) => {
+                    if(parseInt(wallet.currency_type) == 1) return true;
+                    else return false;
+                });
+
+                let wallet = currency_wallets[0];
+                let createWalletParams = {
+                    sessionToken: params.profile.sessionToken,
+                    publicKey: userKey.publicKey,
+                    appId: 'flashcoin',
+                    passphrase: wallet.pure_passphrase
+                };
+
+                apis.setRecoveryKeys(params.profile.auth_version, params.profile.idToken, __params).then((d)=>{
+                    if(d.rc == 1){
+                        apis.migrateFlashWallet(params.profile.auth_version, params.profile.sessionToken,
+                            createWalletParams).then((_d)=>{
+                            if(_d.rc === 1){
+                                dispatch({
+                                    type: types.MIGRATE_ACCOUNT_SUCCESS,
+                                    payload: {
+                                        profile: params.profile,
+                                        successMsg: 'Account upgraded Successfully, Please login again.',
+                                        loading: false
+                                    }
+                                });
+                                // setTimeout(()=>_logout(dispatch),500);
+                            }else{
+                                let message = 'Migration failed, please try again or contact us at support@flashcoin.io';
+                                if (_d.status == 'CAS_FAILED') {
+                                    message = 'Failed to set password. Authentication Service returned an error. Please try again';
+                                } else if (_d.status == 'INVALID_TOKEN') {
+                                    message = 'Email address verification token invalid or expired. Please sign up again from scratch';
+                                }
+                                dispatch({
+                                    type: types.MIGRATE_ACCOUNT_FAILED,
+                                    payload: {
+                                        errorMsg: message,
+                                        loading: false
+                                    }
+                                });
+                            }
+
+                        }).catch(e=>{
+                            console.log(e);
+                            dispatch({
+                                type: types.MIGRATE_ACCOUNT_FAILED,
+                                payload: {
+                                    errorMsg: e.message,
+                                    loading: false
+                                }
+                            });
+                        })
+                    }else if(d.rc == 3){
+                        dispatch({
+                            type: types.SET_RECOVERY_KEYS,
+                            payload: {
+                                loading:false,
+                                errorMsg:d.reason,
+                            }
+                        });
+                        setTimeout(()=>_logout(dispatch),500);
+                    }else{
+                        dispatch({
+                            type: types.SET_RECOVERY_KEYS,
+                            payload: {
+                                errorMsg:d.reason,
+                                loading:false
+                            }
+                        });
+                    }
+                }).catch(e=>{
+                    dispatch({
+                        type: types.SET_RECOVERY_KEYS,
+                        payload: {
+                            errorMsg: e.message,
+                            loading:false
+                        }
+                    });
+                })
+
+            } else {
+                dispatch({
+                    type: types.MIGRATE_ACCOUNT_FAILED,
+                    payload: {
+                        errorMsg:d.reason,
+                        loading: false
+                    }
+                });
+            }
+        }).catch(e=>{
+            console.log(e);
+            dispatch({
+                type: types.MIGRATE_ACCOUNT_FAILED,
+                payload: {
+                    errorMsg: e.message,
+                    loading: false
+                }
+            });
+        })
+    }
+}
+
 export const getMyWallets = (profile,password=null) => {
     return (dispatch,getState) => {
         apis.getMyWallets(profile.auth_version, profile.sessionToken).then((d)=>{
@@ -188,7 +384,123 @@ export const getMyWallets = (profile,password=null) => {
                         my_wallets:d.my_wallets
                     }
                 });
-                if(password || profile.auth_version == 3) dispatch(decryptWallets(password));
+                if(password) dispatch(decryptWallets(password));
+                if(d.my_wallets.length > 3 || (profile.auth_version < 4 && d.my_wallets.length == 1))
+                    return ;
+
+                let params = {
+                      sessionToken: profile.sessionToken,
+                      publicKey: profile.publicKey,
+                      appId: 'flashcoin',
+                };
+                //if no FLASH wallet
+                if (!send.getActiveWallet(d.my_wallets, constants.CURRENCY_TYPE.FLASH)) {
+                    apis.createFlashWallet(profile.auth_version, profile.sessionToken, params).then((d)=>{
+                        if(d.rc==1){
+                            apis.getMyWallets(profile.auth_version, profile.sessionToken).then((d)=>{
+                                if(d.rc == 1){
+                                    dispatch({
+                                        type: types.GET_MY_WALLETS,
+                                        payload: {
+                                            my_wallets:d.my_wallets
+                                        }
+                                    });
+                                    if(password || profile.auth_version == 3) dispatch(decryptWallets(password));
+                                }
+                            }).catch(e=>console.log(e))
+                        }
+                    }).catch(e=>{
+                        dispatch({
+                            type: types.GET_MY_WALLETS,
+                            payload: {
+                                errorMsg: e.message,
+                                stack: e.stack,
+                            }
+                        });
+                    })
+                }
+
+
+                //if no BTC wallet
+                if (!send.getActiveWallet(d.my_wallets, constants.CURRENCY_TYPE.BTC)) {
+                    apis.createBtcWallet(profile.auth_version, profile.sessionToken, params).then((d)=>{
+                        if(d.rc==1){
+                            apis.getMyWallets(profile.auth_version, profile.sessionToken).then((d)=>{
+                                if(d.rc == 1){
+                                    dispatch({
+                                        type: types.GET_MY_WALLETS,
+                                        payload: {
+                                            my_wallets:d.my_wallets
+                                        }
+                                    });
+                                    if(password || profile.auth_version == 3) dispatch(decryptWallets(password));
+                                }
+                            }).catch(e=>console.log(e))
+                        }
+                    }).catch(e=>{
+                        dispatch({
+                            type: types.GET_MY_WALLETS,
+                            payload: {
+                                errorMsg: e.message,
+                                stack: e.stack,
+                            }
+                        });
+                    })
+                }
+
+                //if no LTC wallet
+                if (!send.getActiveWallet(d.my_wallets, constants.CURRENCY_TYPE.LTC)) {
+                    apis.createLTCWallet(profile.auth_version, profile.sessionToken, params).then((d)=>{
+                        if(d.rc==1){
+                            apis.getMyWallets(profile.auth_version, profile.sessionToken).then((d)=>{
+                                if(d.rc == 1){
+                                    dispatch({
+                                        type: types.GET_MY_WALLETS,
+                                        payload: {
+                                            my_wallets:d.my_wallets
+                                        }
+                                    });
+                                    if(password || profile.auth_version == 3) dispatch(decryptWallets(password));
+                                }
+                            }).catch(e=>console.log(e))
+                        }
+                    }).catch(e=>{
+                        dispatch({
+                            type: types.GET_MY_WALLETS,
+                            payload: {
+                                errorMsg: e.message,
+                                stack: e.stack,
+                            }
+                        });
+                    })
+                }
+
+                //if no DASH wallet
+                if (!send.getActiveWallet(d.my_wallets, constants.CURRENCY_TYPE.DASH)) {
+                    apis.createDASHWallet(profile.auth_version, profile.sessionToken, params).then((d)=>{
+                        if(d.rc==1){
+                            apis.getMyWallets(profile.auth_version, profile.sessionToken).then((d)=>{
+                                if(d.rc == 1){
+                                    dispatch({
+                                        type: types.GET_MY_WALLETS,
+                                        payload: {
+                                            my_wallets:d.my_wallets
+                                        }
+                                    });
+                                    if(password || profile.auth_version == 3) dispatch(decryptWallets(password));
+                                }
+                            }).catch(e=>console.log(e))
+                        }
+                    }).catch(e=>{
+                        dispatch({
+                            type: types.GET_MY_WALLETS,
+                            payload: {
+                                errorMsg: e.message,
+                                stack: e.stack,
+                            }
+                        });
+                    })
+                }
             }
         }).catch(e=>{
             dispatch({
@@ -202,7 +514,7 @@ export const getMyWallets = (profile,password=null) => {
     }
 }
 
-export const decryptWallets = (password) => {
+export const decryptWallets = (password,sendMoney=false) => {
     return (dispatch,getState) => {
         try {
             dispatch({ type: types.LOADING_START });
@@ -222,7 +534,7 @@ export const decryptWallets = (password) => {
                         type: types.STORE_FOUNTAIN_SECRET,
                         payload: {
                             decryptedWallets,
-                            loading: false,
+                            loading: sendMoney,
                         }
                     });
                 }).catch(e=>{
@@ -246,7 +558,7 @@ export const decryptWallets = (password) => {
                     type: types.STORE_FOUNTAIN_SECRET,
                     payload: {
                         decryptedWallets,
-                        loading: false,
+                        loading: sendMoney,
                     }
                 });
             }
@@ -261,6 +573,11 @@ export const decryptWallets = (password) => {
         }
     }
 }
+
+export const customAction = (payload) => ({
+    type: types.CUSTOM_ACTION,
+    payload
+});
 
 export const logout = () => {
     return (dispatch,getState) => _logout(dispatch);
@@ -295,7 +612,7 @@ export const decryptPassphraseV1 = (email, wallets, userKey) => {
                     let str = utils.b64DecodeUnicode(w.passphrase);
                     w.pure_passphrase = Premium.xaesDecrypt(resp.wallet.secret, str);
                     w.email = email;
-                    return new Wallet().openWallet(w);
+                    return new Wallet().openWallet(w, true);
                 });
                 resolve(decryptedWallets);
             }else{

@@ -10,12 +10,13 @@ import {
     Dimensions
 } from 'react-native';
 import Text from './../Text';
-import Icon from 'react-native-fa-icons';
-import moment from 'moment-timezone';
+import Loader from './../Loader';
 import PropTypes from "prop-types";
 import { PROFILE_URL } from '@src/config';
+import * as utils from '@lib/utils';
+import * as constants from '@src/constants';
 
-const { height, width } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 
 export default class TransactionTab extends Component {
     constructor(props) {
@@ -44,10 +45,10 @@ export default class TransactionTab extends Component {
                                 {uri:PROFILE_URL+this.props.txn.sender_profile_pic_url}:require('@images/receive-icon.png')} />
                     }
                     <View style={styles.txnDetail}>
-                        <Text numberOfLines={1} style={styles.txnAmount}>{this.props.txn.type == 1?'-':'+'} {this.props.txn.amount}
+                        <Text numberOfLines={1} style={styles.txnAmount}>{this.props.txn.type == 1?'-':'+'} {utils.localizeFlash(this.props.txn.amount.toString())}
                         <Text style={styles.txnRecvFrom}> {this.props.txn.type == 1?'to':'from'} {this.props.txn.type == 1?
                                 (this.props.txn.receiver_display_name || 'Anonymous'):(this.props.txn.sender_display_name || 'Anonymous')}</Text></Text>
-                        <Text style={styles.txnDateTime}> {moment.tz(this.props.txn.created_ts, this.props.timezone).format('MMM DD, YYYY hh:mm A')}</Text>
+                        <Text style={styles.txnDateTime}> {utils.getDisplayDateTime(this.props.txn.created_ts, this.props.timezone)}</Text>
                     </View>
                     <View style={styles.txnStatus}>
                         <Text style={[styles.txnStatusLabel,
@@ -60,8 +61,14 @@ export default class TransactionTab extends Component {
                     transparent={true}
                     visible={!!this.state.visible}
                     onRequestClose={()=>this.setState({visible:false})}>
-                    <View style={styles.txnDetailModal}>
-                        <View style={styles.txnDetailBox}>
+                    <TouchableOpacity
+                        activeOpacity={1}
+                        onPress={()=>this.setState({visible:false})}
+                        style={styles.txnDetailModal}>
+                        {!this.props.txnLoader?<TouchableOpacity
+                            activeOpacity={1}
+                            onPress={null}
+                            style={styles.txnDetailBox}>
                             <View style={styles.txnDetailHeader}>
                                 <Text style={styles.txnDetailTitle}>Transaction Details</Text>
                                 <Text style={styles.txnDetailCloseIcon} onPress={()=>this.setState({visible:false})} >X</Text>
@@ -69,18 +76,16 @@ export default class TransactionTab extends Component {
                             <View style={styles.txnDetailBody}>
                                 <View style={styles.txnDetailRow}>
                                     <Text style={styles.txnDetailLabel}>Date/Time</Text>
-                                    <Text selectable={true} style={styles.txnDetailText}>{moment.tz(this.props.txn.created_ts, this.props.timezone).format('MMM DD, YYYY hh:mm A')}</Text>
+                                    <Text selectable={true} style={styles.txnDetailText}>{utils.getDisplayDateTime(this.props.txn.created_ts, this.props.timezone)}</Text>
                                 </View>
                                 <View style={styles.txnDetailRow}>
                                     {this.props.txn.type == 2?
                                         <Image style={styles.txnDetailIcon}
-                                            defaultSource={require("@images/app-icon.png")}
                                             source={this.props.txn.sender_profile_pic_url?
-                                                {uri:PROFILE_URL+this.props.txn.sender_profile_pic_url}:require('@images/app-icon.png')} />:
+                                                {uri:PROFILE_URL+this.props.txn.sender_profile_pic_url}:utils.getCurrencyIcon(this.props.currency_type)} />:
                                         <Image style={styles.txnDetailIcon}
-                                            defaultSource={require("@images/app-icon.png")}
                                             source={this.props.txn.receiver_profile_pic_url?
-                                                {uri:PROFILE_URL+this.props.txn.receiver_profile_pic_url}:require('@images/app-icon.png')} />
+                                                {uri:PROFILE_URL+this.props.txn.receiver_profile_pic_url}:utils.getCurrencyIcon(this.props.currency_type)} />
                                     }
                                     <View>
                                         <Text style={styles.txnDetailText}>{this.props.txn.type == 1?'Recipient':'Name'}
@@ -94,12 +99,12 @@ export default class TransactionTab extends Component {
                                 </View>
                                 <View style={styles.txnDetailRow}>
                                     <Text style={styles.txnDetailLabel}>Amount</Text>
-                                    <Text selectable={true} style={[styles.txnDetailText,{fontWeight: '600'}]}>{this.props.txn.type == 1?'-':'+'} {this.props.txn.amount} FLASH</Text>
+                                    <Text selectable={true} style={[styles.txnDetailText,{fontWeight: '600'}]}>{this.props.txn.type == 1?'-':'+'} {utils.localizeFlash(this.props.txn.amount).toString()} {utils.getCurrencyUnitUpcase(this.props.currency_type)}</Text>
                                 </View>
                                 {this.props.txn.type == 1?
                                 <View style={styles.txnDetailRow}>
                                     <Text style={styles.txnDetailLabel}>Fee</Text>
-                                    <Text selectable={true} style={styles.txnDetailText}>0.001 FLASH</Text>
+                                    <Text selectable={true} style={styles.txnDetailText}>{this.props.currency_type === constants.CURRENCY_TYPE.FLASH?'0.001':this.props.txnDetail.fees} {utils.getCurrencyUnitUpcase(this.props.currency_type)}</Text>
                                 </View>:null}
                                 <View style={styles.txnDetailRow}>
                                     <Text style={styles.txnDetailLabel}>Note</Text>
@@ -113,9 +118,19 @@ export default class TransactionTab extends Component {
                                     <Text style={styles.txnDetailLabel}>Status</Text>
                                     <Text selectable={true} style={styles.txnDetailText}>{this.props.txn.status}</Text>
                                 </View>
+                                {this.props.txn.status === 'pending' &&
+                                    constants.CURRENCY_TYPE.FLASH !== this.props.currency_type &&
+                                    this.props.txn.type !== 1?
+                                    <View style={{alignItems: 'center'}}>
+                                            <Text style={{fontSize: 14, fontWeight:'bold', color: '#000000', textAlign: 'center'}}>Note:
+                                                <Text style={{ fontWeight:'normal'}}> The above Amount will be available for spending after 1 confirmation.</Text>
+                                            </Text>
+                                    </View>:null
+                                }
                             </View>
-                        </View>
-                    </View>
+                        </TouchableOpacity>:null}
+                    </TouchableOpacity>
+                    <Loader show={this.props.txnLoader}/>
                 </Modal>
             </View>
         )
@@ -126,6 +141,8 @@ TransactionTab.propTypes = {
 	...ViewPropTypes,
 	style: PropTypes.oneOfType([PropTypes.object, PropTypes.number, PropTypes.array]),
 	txn: PropTypes.object,
+	txnLoader: PropTypes.bool,
+	txnDetail: PropTypes.object,
 	timezone: PropTypes.string,
 };
 
