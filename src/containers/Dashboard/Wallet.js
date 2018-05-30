@@ -24,6 +24,7 @@ import {
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ActionCreators } from '@actions';
+import moment from 'moment-timezone';
 import * as utils from '@lib/utils';
 import * as constants from '@src/constants';
 
