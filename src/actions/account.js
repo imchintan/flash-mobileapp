@@ -593,7 +593,7 @@ export const getCoinMarketCapDetail = () =>{
                 if(d.quotes &&
                     d.quotes[constants.FIAT_CURRENCY_UNIT[params.fiat_currency]] &&
                     d.quotes[constants.FIAT_CURRENCY_UNIT[params.fiat_currency]].price){
-                    per_value = Number(d.quotes[constants.FIAT_CURRENCY_UNIT[params.fiat_currency]].price);
+                    per_value = Number(d.quotes[constants.FIAT_CURRENCY_UNIT[params.fiat_currency]].price.toFixed(3));
                 }
                 let balances = getState().params.balances;
                 let idx  =  balances.findIndex(b => b.currency_type === bal.currency_type);

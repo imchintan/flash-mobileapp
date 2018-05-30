@@ -74,7 +74,7 @@ const styles = StyleSheet.create({
     },
     walletConversionRate:{
         color:'rgba(255,255,255,0.8)',
-        fontSize: 14,
+        fontSize: 13,
     },
     walletBalanceDetail:{
         alignItems: 'flex-end',
@@ -86,7 +86,7 @@ const styles = StyleSheet.create({
     },
     walletBalance:{
         color:'#FFFFFF',
-        fontSize: 14,
+        fontSize: 13,
     },
     adminTab:{
         flexDirection: 'row',
