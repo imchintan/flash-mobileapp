@@ -148,6 +148,7 @@ export const getProfile = () => {
         let params = getState().params;
         apis.getProfile(params.profile.auth_version, params.profile.sessionToken).then((d)=>{
             if(d.rc == 1){
+                constants.SOUND.SUCCESS.play();
                 AsyncStorage.mergeItem('user',JSON.stringify(d.profile));
                 dispatch({
                     type: types.GET_PROFILE,

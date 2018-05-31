@@ -56,10 +56,10 @@ export const init = () => {
                 payload
             });
             dispatch(getCoinMarketCapDetail());
-            constants.SOUND.SUCCESS.play();
             dispatch(getProfile());
             dispatch(getMyWallets(payload.profile));
         }else{
+            dispatch(getCoinMarketCapDetail());
             dispatch({ type: types.LOADING_END });
         }
     }
@@ -116,7 +116,6 @@ export const login = (email,password) => {
                 });
                 if(!d.profile.totp_enabled && d.profile.auth_version > 3){
                     dispatch(getProfile());
-                    constants.SOUND.SUCCESS.play();
                 }
                 if(!d.profile.totp_enabled){
                     dispatch(getMyWallets(d.profile,password));
@@ -176,7 +175,6 @@ export const check2FA = (code) =>{
                         password:null,
                     }
                 });
-                constants.SOUND.SUCCESS.play();
                 dispatch(getProfile());
                 dispatch(getMyWallets(profile,password));
             }else{

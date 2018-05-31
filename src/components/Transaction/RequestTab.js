@@ -197,7 +197,7 @@ export default class RequestTab extends Component {
                                                 this.setState({reject: false,
                                                     accept: false, visible:false});
                                             }}
-                                            value='Send' />
+                                            value='Continue' />
                                     </View>:<View style={{flexDirection:'row'}}>
                                         <Button style={styles.reqBtn}
                                             textstyle={styles.reqBtnLabel}

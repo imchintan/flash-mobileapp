@@ -88,12 +88,17 @@ class Request extends Component<{}> {
         if(!this.state.amount) return false;
 
         let amount = utils.toOrginalNumber(this.state.amount);
+        let fiat_amount = utils.toOrginalNumber(this.state.fiat_amount);
         let res = Validation.amount(amount);
         if(!res.success){
             return Toast.errorTop(res.message);
         }
 
-        this.setState({isAmtVerify: true, amount:utils.formatAmountInput(res.amount)});
+        this.setState({
+            isAmtVerify: true,
+            fiat_amount: fiat_amount>0?utils.formatAmountInput(fiat_amount):'',
+            amount:utils.formatAmountInput(res.amount)
+        });
     }
 
     verifyAddress(){
@@ -201,6 +206,7 @@ class Request extends Component<{}> {
                                 onBlur={this.verifyAmount.bind(this)}
                                 onChangeText={(fiat_amount) => this.setState({fiat_amount},()=>{
                                     fiat_amount = utils.toOrginalNumber(fiat_amount);
+                                    if(isNaN(fiat_amount)) fiat_amount=0;
                                     let amount = utils.toOrginalNumber(
                                         utils.otherCurrencyToCrypto(fiat_amount, this.props.fiat_per_value)
                                     );
@@ -226,6 +232,7 @@ class Request extends Component<{}> {
                                 onBlur={this.verifyAmount.bind(this)}
                                 onChangeText={(amount) => this.setState({amount},()=>{
                                     amount = utils.toOrginalNumber(amount);
+                                    if(isNaN(amount)) amount=0;
                                     let fiat_amount = utils.toOrginalNumber(
                                         utils.cryptoToOtherCurrency(amount, this.props.fiat_per_value, 0)
                                     );

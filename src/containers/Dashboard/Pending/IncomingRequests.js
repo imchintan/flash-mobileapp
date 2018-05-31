@@ -286,7 +286,7 @@ class IncomingRequests extends Component<{}> {
                                     onPress={this.decryptWallets.bind(this)}
                                     style={styles.reqBtn}
                                     textstyle={styles.reqBtnLabel}
-                                    value='Send' />
+                                    value='Confirm' />
                             </View>
                         </View>
                     </View>
