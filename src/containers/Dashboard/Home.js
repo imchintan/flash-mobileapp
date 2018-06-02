@@ -44,9 +44,11 @@ class Home extends Component<{}> {
     componentDidMount(){
         if(!this.props.pin){
             this.props.navigation.navigate('SetOrUpdatePIN',{update_pin:false});
+            return;
         }else if(!this.props.isNewSession){
             this.props.navigation.navigate('Lock');
         }else{
+            this.props.customAction({isNewSession:false});
             constants.SOUND.SUCCESS.play();
         }
         this.refreshingHome();

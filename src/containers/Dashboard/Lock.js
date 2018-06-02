@@ -91,14 +91,14 @@ class Lock extends Component<{}> {
                         </View>
                         <TouchableOpacity style={styles.pinResetBox} onPress={()=>{
                             Alert.alert(
-                                'Reset PIN',
-                                'Your FLASH account will be logged out, you will need to login again to set new PIN.',
+                                'Forgot PIN',
+                                'Do you want to reset your PIN? Once reset, Your FLASH account will be logged out, you will need to login again to set new PIN.',
                                 [
                                     {text: 'Cancel', onPress: () => {}, style: 'cancel'},
-                                    {text: 'OK', onPress: () => this.props.logout(true)}
+                                    {text: 'Reset', onPress: () => this.props.logout(true)}
                                 ]);
                         }}>
-                            <Text style={styles.pinResetBoxText}>Reset PIN</Text>
+                            <Text style={styles.pinResetBoxText}>Forgot PIN?</Text>
                         </TouchableOpacity>
                     </View>
                 </Content>

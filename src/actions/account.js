@@ -155,13 +155,7 @@ export const getProfile = () => {
                         loading:false,
                         profile:{...params.profile,...d.profile}
                     }
-                });
-                setTimeout(()=>{dispatch({
-                    type: types.CUSTOM_ACTION,
-                    payload: {
-                        isNewSession: false,
-                    }
-                }),500})
+                });                
             }else if(d.rc == 3){
                 dispatch({
                     type: types.CUSTOM_ACTION,

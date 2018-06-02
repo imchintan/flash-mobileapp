@@ -195,7 +195,6 @@ class SetOrUpdatePIN extends Component<{}> {
                         </View>
                     </View>
                 </View>
-                <Loader transparent show={this.state.loading} />
             </Container>
         );
     }
