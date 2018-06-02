@@ -105,8 +105,6 @@ export const login = (email,password) => {
         dispatch({ type: types.LOADING_START });
         apis.login(email,password).then((d)=>{
             if(d.rc == 1){
-                if(!d.profile.totp_enabled && d.profile.auth_version > 3)
-                    AsyncStorage.setItem('user',JSON.stringify(d.profile));
                 dispatch({
                     type: d.profile.auth_version < 4?types.MIGRATE_ACCOUNT:((!d.profile.totp_enabled)?types.LOGIN_SUCCESS:types.VERIFY_2FA),
                     payload: {
@@ -116,13 +114,12 @@ export const login = (email,password) => {
                         loading:(!d.profile.totp_enabled && d.profile.auth_version > 3),
                     }
                 });
-                if(!d.profile.totp_enabled && d.profile.auth_version > 3){
-                    dispatch(getProfile());
-                }
                 if(!d.profile.totp_enabled){
                     dispatch(getMyWallets(d.profile,password));
                 }
-
+                if(!d.profile.totp_enabled && d.profile.auth_version > 3){
+                    setTimeout(()=>dispatch(getProfile()),1000);
+                }
             }else{
                 let errorMsg = d.reason;
                 if(d.status !== 'ACCOUNT_LOCKED'){
@@ -177,8 +174,8 @@ export const check2FA = (code) =>{
                         password:null,
                     }
                 });
-                dispatch(getProfile());
                 dispatch(getMyWallets(profile,password));
+                setTimeout(()=>dispatch(getProfile()),1000);
             }else{
                 dispatch({
                     type: types.VERIFY_2FA_FAILED,

@@ -44,6 +44,7 @@ class Home extends Component<{}> {
     componentDidMount(){
         if(!this.props.pin){
             this.props.navigation.navigate('SetOrUpdatePIN',{update_pin:false});
+            this.props.customAction({isNewSession:true});
             return;
         }else if(!this.props.isNewSession){
             this.props.navigation.navigate('Lock');
@@ -99,7 +100,7 @@ class Home extends Component<{}> {
                         <RefreshControl
                             colors={['#191714']}
                             tintColor='#191714'
-                            refreshing={!!this.props.pin && this.props.loading}
+                            refreshing={this.props.loading}
                             onRefresh={this.refreshingHome.bind(this)}/>
                     }>
                     <Text style={styles.label}>Wallets</Text>

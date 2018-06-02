@@ -146,16 +146,17 @@ export const getBalanceV2 = (currency_type=constants.CURRENCY_TYPE.FLASH ,refres
 export const getProfile = () => {
     return (dispatch,getState) => {
         let params = getState().params;
-        apis.getProfile(params.profile.auth_version, params.profile.sessionToken).then((d)=>{
+        apis.getProfile(params.profile.auth_version, params.profile.sessionToken).then(async(d)=>{
             if(d.rc == 1){
-                AsyncStorage.mergeItem('user',JSON.stringify(d.profile));
+                let profile = {...params.profile,...d.profile};
+                await AsyncStorage.setItem('user',JSON.stringify(profile));
                 dispatch({
                     type: types.GET_PROFILE,
                     payload: {
                         loading:false,
-                        profile:{...params.profile,...d.profile}
+                        profile
                     }
-                });                
+                });
             }else if(d.rc == 3){
                 dispatch({
                     type: types.CUSTOM_ACTION,
