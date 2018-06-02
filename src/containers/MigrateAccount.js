@@ -239,7 +239,7 @@ class MigrateAccount extends Component<{}> {
                                         Account upgraded Successfully, Please login again.
                                     </Text>
                                     <Button
-                                        onPress={this.props.logout}
+                                        onPress={()=>this.props.logout(false)}
                                         style={[styles.reqBtn,{marginTop:10}]}
                                         textstyle={styles.reqBtnLabel}
                                         value='OK' />

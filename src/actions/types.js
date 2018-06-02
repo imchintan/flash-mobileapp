@@ -19,6 +19,11 @@ export const SET_PUBLIC_IP = 'SET_PUBLIC_IP';
 export const SET_LOCATION = 'SET_LOCATION';
 export const CHANGE_CURRENCY = 'CHANGE_CURRENCY';
 
+//Pin
+export const CREATE_PIN = 'CREATE_PIN';
+export const UPDATE_PIN = 'UPDATE_PIN';
+export const ENETER_PIN = 'ENETER_PIN';
+export const UNLOCK_DEVICE = 'UNLOCK_DEVICE';
 
 //2FA
 export const START_2FA = 'START_2FA';

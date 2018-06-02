@@ -214,7 +214,7 @@ class MyProfile extends Component<{}> {
                     <HeaderTitle>My Profile</HeaderTitle>
                     <HeaderRight>
                         <TouchableOpacity>
-                            <Icon style={styles.headerFAIcon} onPress={this.props.logout} name='power-off' />
+                            <Icon style={styles.headerFAIcon} onPress={()=>this.props.logout(false)} name='power-off' />
                         </TouchableOpacity>
                     </HeaderRight>
                 </Header>

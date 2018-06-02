@@ -33,10 +33,10 @@ const initialState = {
 const login = (state = initialState, action) => {
     switch (action.type) {
         case types.LOADING_START:
-            return { ...state, loading: true};
+            return { ...state, loading: true, ...action.payload || {}};
 
         case types.LOADING_END:
-            return { ...state, loading: false};
+            return { ...state, loading: false, ...action.payload || {}};
 
         case types.LOGIN_SUCCESS:
         case types.VERIFY_2FA_SUCCESS:
@@ -48,7 +48,7 @@ const login = (state = initialState, action) => {
             return { ...state, isLoggedIn: false, ...action.payload || {}};
 
         case types.LOGOUT:
-            return initialState;
+            return { ...initialState, ...action.payload || {}};
 
         case types.SIGNUP_SUCCESS:
             return { ...state, isLoggedIn: true };

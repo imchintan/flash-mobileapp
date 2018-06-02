@@ -16,6 +16,9 @@ import Wallet from './Wallet';
 import Profile from './Profile';
 import Settings from './Settings';
 import SecurityQuestion from './SecurityQuestion';
+import SecurityCenter from './SecurityCenter';
+import SetOrUpdatePIN from './SetOrUpdatePIN';
+import Lock from './Lock';
 import Send from './Send';
 import Receive from './Receive';
 import Request from './Request';
@@ -38,6 +41,9 @@ const routes = {
     SecurityQuestion: {
         screen: SecurityQuestion,
     },
+    SecurityCenter: {
+        screen: SecurityCenter,
+    },
     Send: {
         screen: Send,
     },
@@ -52,6 +58,12 @@ const routes = {
     },
     Pending: {
         screen: Pending,
+    },
+    Lock: {
+        screen: Lock,
+    },
+    SetOrUpdatePIN: {
+        screen: SetOrUpdatePIN,
     },
 
 };

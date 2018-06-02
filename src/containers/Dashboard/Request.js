@@ -267,8 +267,8 @@ class Request extends Component<{}> {
                         <View style={styles.requestRowActionLinkTab}>
                             <TouchableOpacity style={styles.requestRowActionLink}
                                 onPress={async()=>{
-                                    let term = await Clipboard.getString();
-                                    if(term)this.setState({term});
+                                    let email = await Clipboard.getString();
+                                    if(email)this.setState({email});
                                 }}>
                                 <Icon style={styles.requestRowActionLinkIcon} name='paste'/>
                                 <Text  style={styles.requestRowActionLinkLabel}>Paste from Clipboard</Text>

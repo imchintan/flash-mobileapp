@@ -148,7 +148,6 @@ export const getProfile = () => {
         let params = getState().params;
         apis.getProfile(params.profile.auth_version, params.profile.sessionToken).then((d)=>{
             if(d.rc == 1){
-                constants.SOUND.SUCCESS.play();
                 AsyncStorage.mergeItem('user',JSON.stringify(d.profile));
                 dispatch({
                     type: types.GET_PROFILE,
@@ -157,6 +156,12 @@ export const getProfile = () => {
                         profile:{...params.profile,...d.profile}
                     }
                 });
+                setTimeout(()=>{dispatch({
+                    type: types.CUSTOM_ACTION,
+                    payload: {
+                        isNewSession: false,
+                    }
+                }),500})
             }else if(d.rc == 3){
                 dispatch({
                     type: types.CUSTOM_ACTION,
@@ -573,6 +578,18 @@ export const changeCurrency = (currency_type) =>{
         setTimeout(()=>{
             dispatch({ type: types.LOADING_END });
         },500);
+    }
+}
+
+export const setDevicePIN = (pin, isSet=false) =>{
+    return async(dispatch,getState) => {
+        await AsyncStorage.setItem('pin',pin.toString());
+        if(!isSet){
+            dispatch({ type: types.CREATE_PIN, payload:{pin}});
+        }else{
+            dispatch({ type: types.UPDATE_PIN, payload:{pin}});
+        }
+
     }
 }
 

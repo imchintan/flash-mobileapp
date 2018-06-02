@@ -8,6 +8,7 @@ import {
     Image,
     Modal,
     ScrollView,
+    AppState,
     TouchableOpacity,
     RefreshControl,
 } from 'react-native';
@@ -36,11 +37,30 @@ class Home extends Component<{}> {
     constructor(props) {
         super(props);
         this.state = {
+            appState: 'active',
         };
     }
 
     componentDidMount(){
+        if(!this.props.pin){
+            this.props.navigation.navigate('SetOrUpdatePIN',{update_pin:false});
+        }else if(!this.props.isNewSession){
+            this.props.navigation.navigate('Lock');
+        }else{
+            constants.SOUND.SUCCESS.play();
+        }
         this.refreshingHome();
+        AppState.addEventListener('change', this._handleAppStateChange.bind(this));
+    }
+    componentWillUnmount(){
+        AppState.removeEventListener('change', this._handleAppStateChange.bind(this));
+    }
+
+    _handleAppStateChange(nextAppState){
+        if (!(this.state.appState.match(/inactive|background/) && nextAppState === 'active')){
+            this.props.navigation.navigate('Lock',{goBack:true})
+        }
+        this.setState({appState: nextAppState});
     }
 
     refreshingHome(){
@@ -77,7 +97,7 @@ class Home extends Component<{}> {
                         <RefreshControl
                             colors={['#191714']}
                             tintColor='#191714'
-                            refreshing={this.props.loading}
+                            refreshing={!!this.props.pin && this.props.loading}
                             onRefresh={this.refreshingHome.bind(this)}/>
                     }>
                     <Text style={styles.label}>Wallets</Text>
@@ -146,10 +166,10 @@ class Home extends Component<{}> {
                         <Icon style={styles.adminTabRightIcon} name='angle-right'/>
                     </TouchableOpacity>
                     <TouchableOpacity style={styles.adminTab}
-                        onPress={()=>this.props.navigation.navigate('SecurityQuestion')}>
+                        onPress={()=>this.props.navigation.navigate('SecurityCenter')}>
                         <View style={styles.adminTabTitle}>
                             <Icon style={styles.adminTabTitleIcon} name='shield'/>
-                            <Text style={styles.adminTabTitleLabel}>Security Questions</Text>
+                            <Text style={styles.adminTabTitleLabel}>Security Center</Text>
                         </View>
                         <Icon style={styles.adminTabRightIcon} name='angle-right'/>
                     </TouchableOpacity>
@@ -211,6 +231,8 @@ function mapStateToProps({params}) {
         balances: params.balances,
         fiat_currency: params.fiat_currency,
         total_fiat_balance: params.total_fiat_balance,
+        isNewSession: params.isNewSession,
+        pin: params.pin,
     };
 }
 
