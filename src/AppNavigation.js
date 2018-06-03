@@ -1,17 +1,21 @@
 /**
  * Navigation Routes defind
  */
-import { StackNavigator } from 'react-navigation';
+import { createStackNavigator } from 'react-navigation';
 import Dashboard from '@containers/Dashboard';
 import Login from '@containers/Login';
 import ForgotPassword from '@containers/ForgotPassword';
 import SignUP from '@containers/SignUP';
 import Verify2FA from '@containers/Verify2FA';
+import Lock from '@containers/Lock';
 import MigrateAccount from '@containers/MigrateAccount';
 
 const routes = {
     Login: {
         screen: Login,
+    },
+    Lock: {
+        screen: Lock,
     },
     Dashboard: {
         screen: Dashboard,
@@ -38,6 +42,6 @@ const routeConfig = {
    }
 };
 
-const AppNavigation = StackNavigator(routes,routeConfig);
+const AppNavigation = createStackNavigator(routes,routeConfig);
 
 export default AppNavigation;

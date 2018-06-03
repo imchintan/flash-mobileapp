@@ -1,15 +1,28 @@
 import moment from 'moment-timezone';
 import _ from 'lodash';
 import * as types from '@actions/types';
+import * as constants from '@src/constants';
 
 const initialState = {
     isLoggedIn: false,
+    balance: 0,
+    ubalance: 0,
+    fiat_balance: 0,
+    fiat_per_value: 0,
+    total_fiat_balance: 0,
+    balances: [
+        {color: '#111111', amt:0, uamt:0, amt2:0, per_value:0, currency_type: constants.CURRENCY_TYPE.FLASH}, // Flash
+        {color: '#343434', amt:0, uamt:0, amt2:0, per_value:0, currency_type: constants.CURRENCY_TYPE.BTC}, // BTC
+        {color: '#565656', amt:0, uamt:0, amt2:0, per_value:0, currency_type: constants.CURRENCY_TYPE.LTC}, // LTC
+        {color: '#898989', amt:0, uamt:0, amt2:0, per_value:0, currency_type: constants.CURRENCY_TYPE.DASH}, // DASH
+    ],
     loading: false,
     bcMedianTxSize: 250,
     satoshiPerByte: 20,
     thresholdAmount: 0.00001,
     fixedTxnFee: 0.00002,  //This we will get from API call for DASH
-    currency_type: 1,
+    currency_type: constants.CURRENCY_TYPE.FLASH,
+    fiat_currency: constants.FIAT_CURRENCY.USD,
     date_from: moment().add(-1, 'months').add(-1, 'days'),
     date_to: moment(),
     pending_date_from: moment().add(-1, 'months').add(-1, 'days'),

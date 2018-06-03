@@ -60,6 +60,8 @@ class OutgoingRequests extends Component<{}> {
                             outgoing={true}
                             timezone={this.props.timezone}
                             req={item}
+                            fiat_currency={this.props.fiat_currency}
+                            fiat_per_value={this.props.fiat_per_value}
                             onCancel={this.markCancelledMoneyRequests.bind(this)}
                             style={[!index && {marginTop:10}]} />
                     }
@@ -83,8 +85,11 @@ class OutgoingRequests extends Component<{}> {
 function mapStateToProps({params}) {
   return {
       reqs: params.outReqs || [],
+      fiat_currency: params.fiat_currency,
+      fiat_balance: params.fiat_balance,
+      fiat_per_value: params.fiat_per_value,
       total_reqs: params.outReqs_total || 0,
-      loading: params.outReqs_loading || false,
+      loading: params.outReqs_loading || params.loading,
       timezone: params.profile.timezone || moment.tz.guess(),
       minDate: moment(params.profile.created_ts),
       maxDate: moment()

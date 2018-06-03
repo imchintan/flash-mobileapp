@@ -167,6 +167,8 @@ class IncomingRequests extends Component<{}> {
                         <RequestTab
                             req={item}
                             style={[!index && {marginTop:10}]}
+                            fiat_currency={this.props.fiat_currency}
+                            fiat_per_value={this.props.fiat_per_value}
                             timezone={this.props.timezone}
                             reject={this.props.markRejectedMoneyRequests}
                             accept={this.accept.bind(this)}
@@ -198,6 +200,7 @@ class IncomingRequests extends Component<{}> {
                                 <Text style={styles.reqAmtText}>{this.state.req?this.state.req.amount:0.00} {this.state.req?
                                     utils.getCurrencyUnitUpcase(this.state.req.currency):
                                     utils.getCurrencyUnitUpcase(constants.CURRENCY_TYPE.FLASH)}</Text>
+                                <Text style={styles.reqFiatAmtText}>≈ {utils.getCurrencySymbol(this.props.fiat_currency)} {utils.cryptoToOtherCurrency(this.state.req?this.state.req.amount:0.00, this.props.fiat_per_value, 0)}</Text>
                                 <Text style={styles.reqFeeText}>
                                     + {this.state.fee} {this.state.req?utils.getCurrencyUnitUpcase(this.state.req.currency):
                                         utils.getCurrencyUnitUpcase(constants.CURRENCY_TYPE.FLASH)} transaction fee
@@ -283,7 +286,7 @@ class IncomingRequests extends Component<{}> {
                                     onPress={this.decryptWallets.bind(this)}
                                     style={styles.reqBtn}
                                     textstyle={styles.reqBtnLabel}
-                                    value='Send' />
+                                    value='Confirm' />
                             </View>
                         </View>
                     </View>
@@ -320,7 +323,7 @@ class IncomingRequests extends Component<{}> {
                         </View>
                     </View>
                 </Modal>
-                <Loader show={this.props.inReqs_loading} />
+                <Loader show={this.props.inReqs_loading || this.props.loading} />
             </View>
         );
     }
@@ -332,9 +335,12 @@ function mapStateToProps({params}) {
       total_reqs: params.inReqs_total || 0,
       inReqs_loading: params.inReqs_loading || false,
       loading: params.loading || false,
-      balance: params.balance || 0,
       profile: params.profile || null,
+      balance: params.balance || 0,
       currency_type: params.currency_type,
+      fiat_currency: params.fiat_currency,
+      fiat_balance: params.fiat_balance,
+      fiat_per_value: params.fiat_per_value,
       bcMedianTxSize: params.bcMedianTxSize,
       satoshiPerByte: params.satoshiPerByte,
       fixedTxnFee: params.fixedTxnFee,

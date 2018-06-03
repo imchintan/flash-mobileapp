@@ -36,25 +36,17 @@ export default class TransactionTab extends Component {
                     style={[styles.txnTab,this.props.style]}>
                     {this.props.txn.type == 1?
                         <Image style={styles.txnIcon}
-                            defaultSource={require("@images/app-icon.png")}
                             source={this.props.txn.receiver_profile_pic_url?
-                                {uri:PROFILE_URL+this.props.txn.receiver_profile_pic_url}:require('@images/send-icon.png')} />:
+                                {uri:PROFILE_URL+this.props.txn.receiver_profile_pic_url}:utils.getCurrencyIcon(this.props.currency_type)} />:
                         <Image style={styles.txnIcon}
-                            defaultSource={require("@images/app-icon.png")}
                             source={this.props.txn.sender_profile_pic_url?
-                                {uri:PROFILE_URL+this.props.txn.sender_profile_pic_url}:require('@images/receive-icon.png')} />
+                                {uri:PROFILE_URL+this.props.txn.sender_profile_pic_url}:utils.getCurrencyIcon(this.props.currency_type)} />
                     }
                     <View style={styles.txnDetail}>
-                        <Text numberOfLines={1} style={styles.txnAmount}>{this.props.txn.type == 1?'-':'+'} {utils.localizeFlash(this.props.txn.amount.toString())}
+                        <Text numberOfLines={1} style={[styles.txnAmount,{color:this.props.txn.type == 1?'#D04100':'#007E33'}]}>{this.props.txn.type == 1?'-':'+'} {utils.localizeFlash(this.props.txn.amount.toString())}
                         <Text style={styles.txnRecvFrom}> {this.props.txn.type == 1?'to':'from'} {this.props.txn.type == 1?
                                 (this.props.txn.receiver_display_name || 'Anonymous'):(this.props.txn.sender_display_name || 'Anonymous')}</Text></Text>
                         <Text style={styles.txnDateTime}> {utils.getDisplayDateTime(this.props.txn.created_ts, this.props.timezone)}</Text>
-                    </View>
-                    <View style={styles.txnStatus}>
-                        <Text style={[styles.txnStatusLabel,
-                            this.props.txn.status == 'confirmed' && {color: '#007E33'},
-                            this.props.txn.status == 'pending' && {color: '#FFB400'}
-                        ]}>{this.props.txn.status.toUpperCase()}</Text>
                     </View>
                 </TouchableOpacity>
                 <Modal
@@ -152,12 +144,11 @@ const styles = StyleSheet.create({
         backgroundColor: '#FFFFFF',
         alignSelf: 'center',
         alignItems: 'center',
-        justifyContent: 'space-between',
         width: width - 40,
         height: 70,
         padding:10,
         marginBottom: 10,
-        borderRadius: 10,
+        borderRadius: 5,
         ...Platform.select({
             ios: {
                 shadowColor: 'rgba(0,0,0, 0.3)',
@@ -170,42 +161,29 @@ const styles = StyleSheet.create({
         }),
     },
     txnIcon: {
-        width: 36,
-        height: 36,
-        borderRadius: 18,
+        width: 40,
+        height: 40,
+        borderRadius: 20,
         resizeMode: 'contain',
     },
     txnDetail:{
-        width: width - 210,
+        width: width - 120,
+        marginLeft: 7
     },
     txnAmount:{
         color: '#333333',
-        fontSize: 15,
+        fontSize: 18,
         fontWeight: '600',
     },
     txnRecvFrom:{
         color: '#666666',
-        fontSize: 12,
+        fontSize: 14,
         fontStyle: 'italic',
         fontWeight: '400',
     },
     txnDateTime:{
-        paddingTop: 2,
         color: '#4A4A4A',
-        fontSize: 13,
-    },
-    txnStatus:{
-        width: 90,
-        height: 36,
-        borderRadius: 18,
-        // backgroundColor: '#D04100',
-        alignItems: 'center',
-        justifyContent: 'center'
-    },
-    txnStatusLabel:{
-        color: '#D04100',
         fontSize: 15,
-        fontWeight: '500',
     },
     txnDetailModal:{
         backgroundColor: '#0007',

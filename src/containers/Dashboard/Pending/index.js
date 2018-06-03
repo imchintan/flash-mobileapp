@@ -6,15 +6,16 @@ import React from 'react';
 import {
     View,
     Platform,
+    Dimensions,
     TouchableOpacity
 } from 'react-native';
 import {
-    TabNavigator,
-    TabBarTop
+    createMaterialTopTabNavigator,
 } from 'react-navigation';
 import {
     Header,
     HeaderRight,
+    HeaderLeft,
     Icon,
     Text,
     Calendar
@@ -27,16 +28,17 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ActionCreators } from '@actions';
 
-import AllTransactions from './AllTransactions';
-import PaymentReceived from './PaymentReceived';
-import PaymentSent from './PaymentSent';
+import IncomingRequests from './IncomingRequests';
+import OutgoingRequests from './OutgoingRequests';
 
-const TabNav = TabNavigator({
-    All: { screen: AllTransactions },
-    Received: { screen: PaymentReceived },
-    Sent: { screen: PaymentSent },
+const { width } = Dimensions.get('window');
+const styles = require("@styles/app");
+
+const TabNav = createMaterialTopTabNavigator({
+    Incoming: { screen: IncomingRequests },
+    Outgoing: { screen: OutgoingRequests },
 },{
-    navigationOptions: ({ navigation }) => ({
+    navigationOptions: ({ navigation, screenProps }) => ({
     }),
     tabBarOptions: {
         activeTintColor: '#E0AE27',
@@ -58,17 +60,20 @@ const TabNav = TabNavigator({
             }),
         },
         labelStyle: {
-            fontSize: 16
+            fontSize: 16,
+            fontFamily: 'Microsoft Tai Le',
         },
     },
     showIcon: false,
-    tabBarComponent: TabBarTop,
     tabBarPosition: 'top',
     animationEnabled: true,
     swipeEnabled: true,
 });
 
-class ActivityTab extends React.Component {
+class PendingTab extends React.Component {
+    static navigationOptions = {
+        header: null,
+    }
 
     constructor(props) {
         super(props);
@@ -78,14 +83,14 @@ class ActivityTab extends React.Component {
     }
 
     confirmDate({startDate, endDate, startMoment, endMoment}) {
-        this.props.updateTransactionReportDate(startMoment,endMoment)
+        this.props.updateRequestReportDate(startMoment,endMoment)
     }
 
     openCalendar() {
         this.calendar && this.calendar.open();
     }
 
-    refresh = () => this.props.updateTransactionReportDate(this.props.date_from,this.props.date_to)
+    refresh = () => this.props.updateRequestReportDate(this.props.date_from,this.props.date_to)
 
     render() {
         let customI18n = {
@@ -112,9 +117,20 @@ class ActivityTab extends React.Component {
                 }),
             }}>
                 <Header>
+                    <HeaderLeft>
+                        <TouchableOpacity>
+                            <Icon onPress={() => this.props.navigation.goBack()} style={styles.headerBackIcon} name='angle-left'/>
+                        </TouchableOpacity>
+                    </HeaderLeft>
                     <TouchableOpacity style={{
+                        paddingHorizontal: 10,
+                        justifyContent: 'center',
                         alignSelf: 'center',
-                        width: '100%',
+                        alignItems: 'center',
+                        width: 276,
+                        left: (width - 276)/2,
+                        height:'100%',
+                        position: 'absolute',
                     }} onPress={this.openCalendar}>
                         <Text style={{
                             textAlign: 'center',
@@ -133,7 +149,7 @@ class ActivityTab extends React.Component {
                         </TouchableOpacity>
                     </HeaderRight>
                 </Header>
-                <TabNav />
+                <TabNav screenProps={{inReqs_total: this.props.inReqs_total, outReqs_total: this.props.outReqs_total}} />
                 <Calendar
                     i18n="en"
                     ref={(calendar) => {this.calendar = calendar;}}
@@ -153,10 +169,12 @@ class ActivityTab extends React.Component {
 
 function mapStateToProps({params}) {
   return {
-      date_from: params.date_from,
-      date_to: params.date_to,
-      minDate: moment(params.profile.created_ts).format('YYYYMMDD000000'),
-      maxDate: moment().format('YYYYMMDD235959')
+      date_from: params.pending_date_from,
+      date_to: params.pending_date_to,
+      minDate: moment(params.profile.created_ts).format('YYYYMM01000000'),
+      maxDate: moment().format('YYYYMMDD235959'),
+      inReqs_total: params.inReqs_total || 0,
+      outReqs_total: params.outReqs_total || 0,
   };
 }
 
@@ -164,4 +182,4 @@ function mapDispatchToProps(dispatch) {
     return bindActionCreators(ActionCreators, dispatch);
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(ActivityTab);
+export default connect(mapStateToProps, mapDispatchToProps)(PendingTab);

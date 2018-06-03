@@ -29,6 +29,7 @@ export const getBalance = (refresh = false) => {
                         balanceLoader: false,
                     }
                 });
+                constants.SOUND.ERROR.play();
                 setTimeout(()=>_logout(dispatch),500);
             }else if(d.rc !== 1){
                 dispatch({
@@ -66,11 +67,88 @@ export const getBalance = (refresh = false) => {
     }
 }
 
+export const getBalanceV2 = (currency_type=constants.CURRENCY_TYPE.FLASH ,refresh = false) => {
+    return (dispatch,getState) => {
+        let params = getState().params;
+        dispatch({
+            type: types.LOADING,
+            payload: {
+                balanceLoader: true,
+            }
+        });
+        apis.getBalance(params.profile.auth_version, params.profile.sessionToken, currency_type).then((d)=>{
+            if(d.rc == 3){
+                dispatch({
+                    type: types.GET_BALANCE,
+                    payload: {
+                        errorMsg:d.reason,
+                        balanceLoader: false,
+                    }
+                });
+                constants.SOUND.ERROR.play();
+                setTimeout(()=>_logout(dispatch),500);
+            }else if(d.rc !== 1){
+                dispatch({
+                    type: types.GET_BALANCE,
+                    payload: {
+                        errorMsg:d.reason,
+                        balanceLoader: false,
+                    }
+                });
+            }else{
+                params = getState().params;
+                let balances = params.balances;
+                let idx  =  balances.findIndex(bal => bal.currency_type === currency_type);
+
+                balances[idx].amt = d.balance;
+                balances[idx].uamt = d.ubalance;
+                balances[idx].amt2 = utils.toOrginalNumber(
+                    utils.cryptoToOtherCurrency(d.balance, Number(balances[idx].per_value),
+                     (currency_type === constants.CURRENCY_TYPE.FLASH?10:0)));
+                AsyncStorage.setItem('balances',JSON.stringify(balances));
+
+                let total_fiat_balance = 0
+                balances.map(bal => (total_fiat_balance += bal.amt2));
+                let balance = (currency_type == params.currency_type)?balances[idx].amt:params.balance;
+                let ubalance = (currency_type == params.currency_type)?balances[idx].uamt:params.ubalance;
+                let fiat_balance = (currency_type == params.currency_type)?balances[idx].amt2:params.fiat_balance;
+                let fiat_per_value = (currency_type == params.currency_type)?balances[idx].per_value:params.fiat_per_value;
+                dispatch({
+                    type: types.GET_BALANCE,
+                    payload: {
+                        balance,
+                        ubalance,
+                        fiat_balance,
+                        fiat_per_value,
+                        balances,
+                        total_fiat_balance,
+                        balanceLoader: false,
+                        infoMsg: refresh?('Updated Balance: '+
+                        (currency_type === constants.CURRENCY_TYPE.FLASH?
+                            utils.flashNFormatter(utils.satoshiToFlash(d.balance).toFixed(10)):
+                            utils.flashNFormatter(d.balance.toFixed(8))) + ' ' +
+                            utils.getCurrencyUnitUpcase( params.currency_type)):null
+                    }
+                });
+            }
+        }).catch(e=>{
+            dispatch({
+                type: types.GET_BALANCE,
+                payload: {
+                    errorMsg: e.message,
+                    balanceLoader: false,
+                }
+            });
+        })
+    }
+}
+
 export const getProfile = () => {
     return (dispatch,getState) => {
         let params = getState().params;
         apis.getProfile(params.profile.auth_version, params.profile.sessionToken).then((d)=>{
             if(d.rc == 1){
+                constants.SOUND.SUCCESS.play();
                 AsyncStorage.mergeItem('user',JSON.stringify(d.profile));
                 dispatch({
                     type: types.GET_PROFILE,
@@ -79,7 +157,6 @@ export const getProfile = () => {
                         profile:{...params.profile,...d.profile}
                     }
                 });
-                setTimeout(()=>dispatch(getWalletsByEmail()),500);
             }else if(d.rc == 3){
                 dispatch({
                     type: types.CUSTOM_ACTION,
@@ -88,6 +165,7 @@ export const getProfile = () => {
                         errorMsg:d.reason,
                     }
                 });
+                constants.SOUND.ERROR.play();
                 setTimeout(()=>_logout(dispatch),500);
             }else{
                 dispatch({
@@ -97,8 +175,8 @@ export const getProfile = () => {
                         loading:false
                     }
                 });
+                constants.SOUND.ERROR.play();
             }
-            dispatch(txns.getRecentTransactions());
         }).catch(e=>{
             dispatch({
                 type: types.GET_PROFILE,
@@ -107,6 +185,7 @@ export const getProfile = () => {
                     loading:false
                 }
             });
+            constants.SOUND.ERROR.play();
         })
     }
 }
@@ -134,6 +213,7 @@ export const updateProfile = (data) => {
                         errorMsg:d.reason,
                     }
                 });
+                constants.SOUND.ERROR.play();
                 setTimeout(()=>_logout(dispatch),500);
             }else{
                 dispatch({
@@ -143,6 +223,7 @@ export const updateProfile = (data) => {
                         loading:false
                     }
                 });
+                constants.SOUND.ERROR.play();
             }
         }).catch(e=>{
             dispatch({
@@ -152,6 +233,7 @@ export const updateProfile = (data) => {
                     loading:false
                 }
             });
+            constants.SOUND.ERROR.play();
         })
     }
 }
@@ -183,6 +265,7 @@ export const changePassword = (data) => {
                         errorMsg:d.reason,
                     }
                 });
+                constants.SOUND.ERROR.play();
                 setTimeout(()=>_logout(dispatch),500);
             }else{
                 dispatch({
@@ -192,6 +275,7 @@ export const changePassword = (data) => {
                         loading:false
                     }
                 });
+                constants.SOUND.ERROR.play();
             }
         }).catch(e=>{
             dispatch({
@@ -201,6 +285,7 @@ export const changePassword = (data) => {
                     loading:false
                 }
             });
+            constants.SOUND.ERROR.play();
         })
     }
 }
@@ -225,6 +310,7 @@ export const sendVerificationSMS = () => {
                         errorMsg:d.reason,
                     }
                 });
+                constants.SOUND.ERROR.play();
                 setTimeout(()=>_logout(dispatch),500);
             }else{
                 dispatch({
@@ -243,6 +329,7 @@ export const sendVerificationSMS = () => {
                     loading:false
                 }
             });
+            constants.SOUND.ERROR.play();
         })
     }
 }
@@ -272,6 +359,7 @@ export const verifyPhone = (smsCode) => {
                         verifyCodeErrorMsg:d.reason,
                     }
                 });
+                constants.SOUND.ERROR.play();
                 setTimeout(()=>_logout(dispatch),500);
             }else{
                 dispatch({
@@ -280,6 +368,7 @@ export const verifyPhone = (smsCode) => {
                         verifyCodeErrorMsg:d.reason,
                     }
                 });
+                constants.SOUND.ERROR.play();
             }
             setTimeout(()=>dispatch({
                 type: types.CUSTOM_ACTION,
@@ -295,6 +384,7 @@ export const verifyPhone = (smsCode) => {
                     verifyCodeErrorMsg: e.message,
                 }
             });
+            constants.SOUND.ERROR.play();
         })
     }
 }
@@ -327,6 +417,7 @@ export const setRecoveryKeys = (data) => {
                         errorMsg:d.reason,
                     }
                 });
+                constants.SOUND.ERROR.play();
                 setTimeout(()=>_logout(dispatch),500);
             }else{
                 dispatch({
@@ -336,6 +427,7 @@ export const setRecoveryKeys = (data) => {
                         loading:false
                     }
                 });
+                constants.SOUND.ERROR.play();
             }
         }).catch(e=>{
             dispatch({
@@ -417,27 +509,48 @@ export const searchWallet = (term, loading=false) => {
     }
 }
 
-export const changeCurrency = (currency_type) =>{
+export const changeFiatCurrency = (fiat_currency) =>{
     return (dispatch,getState) => {
         dispatch({ type: types.LOADING_START });
         dispatch({
             type: types.CHANGE_CURRENCY,
             payload:{
+                fiat_currency,
+            }
+        });
+        AsyncStorage.setItem('fiat_currency',fiat_currency.toString());
+        setTimeout(()=>{
+            dispatch(getCoinMarketCapDetail());
+        },100)
+        setTimeout(()=>{
+            dispatch({ type: types.LOADING_END });
+        },500);
+    }
+}
+
+export const changeCurrency = (currency_type) =>{
+    return (dispatch,getState) => {
+        dispatch({ type: types.LOADING_START });
+        let balances = getState().params.balances;
+        let idx  =  balances.findIndex(bal => bal.currency_type === currency_type);
+        dispatch({
+            type: types.CHANGE_CURRENCY,
+            payload:{
                 currency_type,
-                balance: 0,
-                balance_in_flash: 0,
-                balance_in_btc: 0,
-                balance_in_ltc: 0,
-                balance_in_usd: 0,
-                ubalance: 0,
+                balance: balances[idx].amt,
+                ubalance: balances[idx].uamt,
+                fiat_balance: balances[idx].amt2,
+                fiat_per_value: balances[idx].per_value,
                 bcMedianTxSize: 250,
                 satoshiPerByte: 20,
                 thresholdAmount: 0.00001,
                 fixedTxnFee: 0.00002,
+                recentTxns: [],
+                totalPending: 0,
             }
         });
         setTimeout(()=>{
-            dispatch(getBalance());
+            dispatch(getBalanceV2(currency_type));
             dispatch(getWalletsByEmail());
             dispatch(txns.getRecentTransactions());
             dispatch(reqs.getIncomingRequests(0,true));
@@ -466,7 +579,7 @@ export const changeCurrency = (currency_type) =>{
 export const refreshingHome = () =>{
     return (dispatch,getState) => {
         dispatch({ type: types.LOADING, payload:{refreshingHome:true} });
-        dispatch(getBalance());
+        dispatch(getBalanceV2(getState().params.currency_type,true));
         dispatch(txns.getRecentTransactions());
     }
 }
@@ -474,65 +587,40 @@ export const refreshingHome = () =>{
 export const getCoinMarketCapDetail = () =>{
     return (dispatch,getState) => {
         let params = getState().params;
-        if(!params.balance)
-            params.balance = 0;
+        params.balances.forEach(bal => {
+            apis.getCoinMarketCapDetail(bal.currency_type, params.fiat_currency).then((d)=>{
+                if(!d) return;
+                let per_value = 0;
+                if(d.quotes &&
+                    d.quotes[constants.FIAT_CURRENCY_UNIT[params.fiat_currency]] &&
+                    d.quotes[constants.FIAT_CURRENCY_UNIT[params.fiat_currency]].price){
+                    per_value = Number(d.quotes[constants.FIAT_CURRENCY_UNIT[params.fiat_currency]].price.toFixed(3));
+                }
+                let balances = getState().params.balances;
+                let idx  =  balances.findIndex(b => b.currency_type === bal.currency_type);
+                let balance = (params.currency_type == bal.currency_type)?
+                    params.balance:balances[idx].amt;
 
-        if(params.currency_type === constants.CURRENCY_TYPE.BTC)
-            apis.getCoinMarketCapDetailBTC().then((d)=>{
-                if(!d) return;
-                AsyncStorage.setItem('coinmarketcapValue',JSON.stringify(d));
+                balances[idx].amt2 = utils.toOrginalNumber(
+                    utils.cryptoToOtherCurrency(balance, Number(per_value),
+                     (bal.currency_type === constants.CURRENCY_TYPE.FLASH?10:0)));
+                balances[idx].per_value = per_value;
+                let fiat_balance = (bal.currency_type == params.currency_type)?balances[idx].amt2:params.fiat_balance;
+                let fiat_per_value = (bal.currency_type == params.currency_type)?balances[idx].per_value:params.fiat_per_value;
+                let total_fiat_balance = 0
+                balances.map(bal => (total_fiat_balance += bal.amt2));
+                let payload = {
+                    balances,
+                    fiat_balance,
+                    fiat_per_value,
+                    total_fiat_balance
+                }
                 dispatch({
                     type: types.GET_COIN_MARKET_CAP_VALUE,
-                    payload: {
-                        balance_in_flash:utils.btcToOtherCurrency(params.balance, Number(d.flash)),
-                        balance_in_btc:utils.btcToOtherCurrency(params.balance, Number(d.btc)),
-                        balance_in_ltc:utils.btcToOtherCurrency(params.balance, Number(d.ltc)),
-                        balance_in_usd:utils.btcToOtherCurrency(params.balance, Number(d.usd)),
-                    }
+                    payload
                 });
-            }).catch(e=>{});
-        else if(params.currency_type === constants.CURRENCY_TYPE.LTC)
-            apis.getCoinMarketCapDetailLTC().then((d)=>{
-                if(!d) return;
-                AsyncStorage.setItem('coinmarketcapValue',JSON.stringify(d));
-                dispatch({
-                    type: types.GET_COIN_MARKET_CAP_VALUE,
-                    payload: {
-                        balance_in_flash:utils.ltcToOtherCurrency(params.balance, Number(d.flash)),
-                        balance_in_btc:utils.ltcToOtherCurrency(params.balance, Number(d.btc)),
-                        balance_in_ltc:utils.ltcToOtherCurrency(params.balance, Number(d.ltc)),
-                        balance_in_usd:utils.ltcToOtherCurrency(params.balance, Number(d.usd)),
-                    }
-                });
-            }).catch(e=>{});
-        else if(params.currency_type === constants.CURRENCY_TYPE.DASH)
-            apis.getCoinMarketCapDetaiDASH().then((d)=>{
-                if(!d) return;
-                AsyncStorage.setItem('coinmarketcapValue',JSON.stringify(d));
-                dispatch({
-                    type: types.GET_COIN_MARKET_CAP_VALUE,
-                    payload: {
-                        balance_in_flash:utils.dashToOtherCurrency(params.balance, Number(d.flash)),
-                        balance_in_btc:utils.dashToOtherCurrency(params.balance, Number(d.btc)),
-                        balance_in_ltc:utils.dashToOtherCurrency(params.balance, Number(d.ltc)),
-                        balance_in_usd:utils.dashToOtherCurrency(params.balance, Number(d.usd)),
-                    }
-                });
-            }).catch(e=>{});
-        else
-            apis.getCoinMarketCapDetailFLASH().then((d)=>{
-                if(!d) return;
-                AsyncStorage.setItem('coinmarketcapValue',JSON.stringify(d));
-                dispatch({
-                    type: types.GET_COIN_MARKET_CAP_VALUE,
-                    payload: {
-                        balance_in_flash:utils.flashToOtherCurrency(params.balance, Number(d.flash)),
-                        balance_in_btc:utils.flashToOtherCurrency(params.balance, Number(d.btc)),
-                        balance_in_ltc:utils.flashToOtherCurrency(params.balance, Number(d.ltc)),
-                        balance_in_usd:utils.flashToOtherCurrency(params.balance, Number(d.usd)),
-                    }
-                });
-            }).catch(e=>{});
+            }).catch(e=>{console.log(e)});
+        })
     }
 }
 
@@ -563,6 +651,7 @@ export const start2FA = () =>{
                         loading:false,
                     }
                 });
+                constants.SOUND.ERROR.play();
             }
         }).catch(e=>{
             dispatch({
@@ -572,6 +661,7 @@ export const start2FA = () =>{
                     loading:false,
                 }
             });
+            constants.SOUND.ERROR.play();
         })
     }
 }
@@ -592,6 +682,7 @@ export const turnOff2FA = () =>{
                         loading:false,
                     }
                 });
+                constants.SOUND.ERROR.play();
             }
         }).catch(e=>{
             dispatch({
@@ -601,6 +692,7 @@ export const turnOff2FA = () =>{
                     loading:false,
                 }
             });
+            constants.SOUND.ERROR.play();
         })
     }
 }
@@ -621,6 +713,7 @@ export const confirm2FA = (code) =>{
                         loading:false,
                     }
                 });
+                constants.SOUND.ERROR.play();
             }
         }).catch(e=>{
             dispatch({
@@ -630,6 +723,7 @@ export const confirm2FA = (code) =>{
                     loading:false,
                 }
             });
+            constants.SOUND.ERROR.play();
         })
     }
 }

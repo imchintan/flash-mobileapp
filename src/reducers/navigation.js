@@ -1,4 +1,4 @@
-import { NavigationActions } from 'react-navigation';
+import { StackActions, NavigationActions } from 'react-navigation';
 
 import AppNavigator from '@src/AppNavigation';
 import * as types from '@actions/types';
@@ -6,7 +6,7 @@ import * as types from '@actions/types';
 const initialState = AppNavigator.router.getStateForAction(AppNavigator.router.getActionForPathAndParams('Login'));
 
 function navigateAction({ routeName, id }) {
-  return NavigationActions.navigate({ routeName, params: { id } });
+    return NavigationActions.navigate({ routeName, params: { id } });
 }
 
 const navigation = (state = initialState, action) => {
@@ -25,7 +25,7 @@ const navigation = (state = initialState, action) => {
 
         case types.LOGOUT:
             return AppNavigator.router.getStateForAction(
-                NavigationActions.reset({
+                StackActions.reset({
                     index: 0,
                     actions: [
                         NavigationActions.navigate({ routeName: 'Login' }),
@@ -36,7 +36,7 @@ const navigation = (state = initialState, action) => {
 
         case types.VERIFY_2FA:
             return AppNavigator.router.getStateForAction(
-                NavigationActions.reset({
+                StackActions.reset({
                     index: 0,
                     actions: [
                         NavigationActions.navigate({ routeName: 'Verify2FA' }),
@@ -47,7 +47,7 @@ const navigation = (state = initialState, action) => {
 
         case types.MIGRATE_ACCOUNT:
             return AppNavigator.router.getStateForAction(
-                NavigationActions.reset({
+                StackActions.reset({
                     index: 0,
                     actions: [
                         NavigationActions.navigate({ routeName: 'MigrateAccount' }),
@@ -60,7 +60,7 @@ const navigation = (state = initialState, action) => {
         // case types.LOGIN_SUCCESS:
         case types.GET_PROFILE:
             return AppNavigator.router.getStateForAction(
-                NavigationActions.reset({
+                StackActions.reset({
                     index: 0,
                     actions: [
                         NavigationActions.navigate({ routeName: 'Dashboard' }),
