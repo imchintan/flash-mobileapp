@@ -11,6 +11,7 @@ import * as send from './send'
 import Premium from 'Premium';
 import secrets from 'secrets.js-grempe';
 import nacl from 'tweetnacl';
+import TouchID from 'react-native-touch-id'
 
 import { getCoinMarketCapDetail, getProfile } from '@actions/account';
 
@@ -19,6 +20,26 @@ export const init = () => {
         dispatch({ type: types.LOADING_START });
         initTimezone();
         let location = null;
+        TouchID.isSupported().then(async biometryType => {
+            // Success code
+            if (biometryType !== 'FaceID') {
+                let payload = { isSupportedTouchID: true };
+                let isEnableTouchID = await AsyncStorage.getItem('isEnableTouchID');
+                if(isEnableTouchID){
+                    payload.isEnableTouchID = (isEnableTouchID == 'true');
+                }else{
+                    payload.isEnableTouchID = false;
+                }
+                dispatch({
+                    type: types.CUSTOM_ACTION,
+                    payload
+                });
+            }
+        }).catch(error => {
+            // Failure code
+            console.log(error);
+        });
+
         await utils.getLocation().then(res => {
             if(res.rc == 1){
                 location = res.info;
@@ -580,6 +601,10 @@ export const _logout = async(dispatch, clearAll=false) => {
         if(pin){
             payload.pin = pin.toString();
         }
+        let isEnableTouchID = await AsyncStorage.getItem('isEnableTouchID');
+        if(isEnableTouchID){
+            payload.isEnableTouchID = (isEnableTouchID === 'true');
+        }
         let fiat_currency = await AsyncStorage.getItem('fiat_currency');
         if(fiat_currency){
             payload.fiat_currency = parseInt(fiat_currency);
@@ -589,6 +614,7 @@ export const _logout = async(dispatch, clearAll=false) => {
     if(!clearAll){
         if(payload.pin) AsyncStorage.setItem('pin', payload.pin);
         if(payload.fiat_currency !== null) AsyncStorage.setItem('fiat_currency', payload.fiat_currency);
+        if(payload.isEnableTouchID !== null) AsyncStorage.setItem('isEnableTouchID', payload.isEnableTouchID.toString());
     }
     dispatch({ type: types.LOGOUT, payload });
     dispatch(getCoinMarketCapDetail());

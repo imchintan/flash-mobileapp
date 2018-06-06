@@ -23,7 +23,7 @@ export const CHANGE_CURRENCY = 'CHANGE_CURRENCY';
 export const CREATE_PIN = 'CREATE_PIN';
 export const UPDATE_PIN = 'UPDATE_PIN';
 export const ENETER_PIN = 'ENETER_PIN';
-export const UNLOCK_DEVICE = 'UNLOCK_DEVICE';
+export const ENABLE_DISABLE_TOUCH_ID = 'ENABLE_DISABLE_TOUCH_ID';
 
 //2FA
 export const START_2FA = 'START_2FA';

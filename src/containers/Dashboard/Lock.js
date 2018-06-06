@@ -8,6 +8,7 @@ import {
     TouchableOpacity,
     Image,
     View,
+    Vibration,
     Alert
 } from 'react-native';
 import {
@@ -21,8 +22,16 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ActionCreators } from '@actions';
 import { StackActions, NavigationActions } from 'react-navigation';
+import TouchID from 'react-native-touch-id'
+import * as constants from '@src/constants';
 
 const styles = require("@styles/lock");
+
+const optionalConfigObject = {
+  title: "Authentication Required", // Android
+  color: "#E0AE27", // Android,
+  fallbackLabel: "Show Passcode" // iOS (if empty, then label is hidden)
+}
 
 class Lock extends Component<{}> {
 
@@ -37,9 +46,25 @@ class Lock extends Component<{}> {
         };
     }
 
-    componentDidMount(){
+    async componentDidMount(){
         this.isMount = true;
         BackHandler.addEventListener('hardwareBackPress', this.backHandler.bind(this));
+        let isEnableTouchID = this.props.isEnableTouchID;
+        await TouchID.isSupported().then(async biometryType => {
+            // Success code
+            if (biometryType !== 'FaceID') {
+                let payload = { isSupportedTouchID: true };
+                this.props.customAction(payload);
+            }
+        }).catch(error => {
+            // Failure code
+            if(error.details == 'Not supported.'){
+                let payload = { isSupportedTouchID: false, isEnableTouchID: false};
+                this.props.customAction(payload);
+                isEnableTouchID=false;
+            }
+        });
+        if(this.props.isEnableTouchID)this.touchID();
     }
 
     componentWillUnmount(){
@@ -51,6 +76,15 @@ class Lock extends Component<{}> {
         return this.isMount;
     }
 
+    touchID(){
+        TouchID.authenticate(null, optionalConfigObject).then(success => {
+            this.props.navigation.goBack();
+        }).catch(error => {
+            if(error.details == 'failed')
+                this.touchID();
+        });
+    }
+
     enterPIN(number){
         let pin = this.state.pin;
         if(pin.length > 5) return ;
@@ -59,7 +93,9 @@ class Lock extends Component<{}> {
         if(pin.length < 6) return ;
 
         if(this.props.pin !== pin){
+            constants.SOUND.ERROR.play();
             Toast.errorTop("Your PIN is incorrect.");
+            Vibration.vibrate(100);
             this.setState({pin:''});
             return;
         }
@@ -103,59 +139,65 @@ class Lock extends Component<{}> {
                     </View>
                 </Content>
                 <View style={styles.keypad}>
-                <View style={styles.keypadRow}>
-                    <TouchableOpacity style={styles.keypadBtn}
-                        onPress={()=>this.enterPIN(1)}>
-                        <Text style={styles.keypadBtnText}>1</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.keypadBtn}
-                        onPress={()=>this.enterPIN(2)}>
-                        <Text style={styles.keypadBtnText}>2</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.keypadBtn}
-                        onPress={()=>this.enterPIN(3)}>
-                        <Text style={styles.keypadBtnText}>3</Text>
-                    </TouchableOpacity>
-                </View>
-                <View style={styles.keypadRow}>
-                    <TouchableOpacity style={styles.keypadBtn}
-                        onPress={()=>this.enterPIN(4)}>
-                        <Text style={styles.keypadBtnText}>4</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.keypadBtn}
-                        onPress={()=>this.enterPIN(5)}>
-                        <Text style={styles.keypadBtnText}>5</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.keypadBtn}
-                        onPress={()=>this.enterPIN(6)}>
-                        <Text style={styles.keypadBtnText}>6</Text>
-                    </TouchableOpacity>
-                </View>
-                <View style={styles.keypadRow}>
-                    <TouchableOpacity style={styles.keypadBtn}
-                        onPress={()=>this.enterPIN(7)}>
-                        <Text style={styles.keypadBtnText}>7</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.keypadBtn}
-                        onPress={()=>this.enterPIN(8)}>
-                        <Text style={styles.keypadBtnText}>8</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.keypadBtn}
-                        onPress={()=>this.enterPIN(9)}>
-                        <Text style={styles.keypadBtnText}>9</Text>
-                    </TouchableOpacity>
-                </View>
-                <View style={styles.keypadRow}>
-                    <View style={styles.keypadBtnTran} />
-                    <TouchableOpacity style={styles.keypadBtn}
-                        onPress={()=>this.enterPIN(0)}>
-                        <Text style={styles.keypadBtnText}>0</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.keypadBtnTran}
-                        onPress={()=>this.removePIN()}>
-                        <Image style={styles.keypadBtnIcon} source={require('@images/delete-gold.png')} />
-                    </TouchableOpacity>
-                </View>
+                    {this.props.isEnableTouchID?
+                    <TouchableOpacity onPress={this.touchID.bind(this)}>
+                        <Image style={styles.fingerprint}  source={require('@images/fingerprint.png')}/>
+                    </TouchableOpacity>:null}
+                    <View style={styles.keypadDarkBox}>
+                        <View style={styles.keypadRow}>
+                            <TouchableOpacity style={styles.keypadBtn}
+                                onPress={()=>this.enterPIN(1)}>
+                                <Text style={styles.keypadBtnText}>1</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.keypadBtn}
+                                onPress={()=>this.enterPIN(2)}>
+                                <Text style={styles.keypadBtnText}>2</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.keypadBtn}
+                                onPress={()=>this.enterPIN(3)}>
+                                <Text style={styles.keypadBtnText}>3</Text>
+                            </TouchableOpacity>
+                        </View>
+                        <View style={styles.keypadRow}>
+                            <TouchableOpacity style={styles.keypadBtn}
+                                onPress={()=>this.enterPIN(4)}>
+                                <Text style={styles.keypadBtnText}>4</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.keypadBtn}
+                                onPress={()=>this.enterPIN(5)}>
+                                <Text style={styles.keypadBtnText}>5</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.keypadBtn}
+                                onPress={()=>this.enterPIN(6)}>
+                                <Text style={styles.keypadBtnText}>6</Text>
+                            </TouchableOpacity>
+                        </View>
+                        <View style={styles.keypadRow}>
+                            <TouchableOpacity style={styles.keypadBtn}
+                                onPress={()=>this.enterPIN(7)}>
+                                <Text style={styles.keypadBtnText}>7</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.keypadBtn}
+                                onPress={()=>this.enterPIN(8)}>
+                                <Text style={styles.keypadBtnText}>8</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.keypadBtn}
+                                onPress={()=>this.enterPIN(9)}>
+                                <Text style={styles.keypadBtnText}>9</Text>
+                            </TouchableOpacity>
+                        </View>
+                        <View style={styles.keypadRow}>
+                            <View style={styles.keypadBtnTran} />
+                            <TouchableOpacity style={styles.keypadBtn}
+                                onPress={()=>this.enterPIN(0)}>
+                                <Text style={styles.keypadBtnText}>0</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.keypadBtnTran}
+                                onPress={()=>this.removePIN()}>
+                                <Image style={styles.keypadBtnIcon} source={require('@images/delete-gold.png')} />
+                            </TouchableOpacity>
+                        </View>
+                    </View>
                 </View>
             </Container>
         );
@@ -167,6 +209,7 @@ function mapStateToProps({params}) {
         isLoggedIn: params.isLoggedIn,
         profile: params.profile,
         pin: params.pin,
+        isEnableTouchID: params.isEnableTouchID || false,
     };
 }
 

@@ -15,13 +15,9 @@ import {
     Header,
     HeaderLeft,
     HeaderTitle,
-    QRCode,
-    Switch,
-    Button,
     Icon,
     Text,
     Loader,
-    Toast
 } from '@components';
 
 import { connect } from 'react-redux';
@@ -90,9 +86,25 @@ class SecurityCenter extends Component<{}> {
                             </View>
                             <Icon style={styles.securityCenterTabRightIcon} name='angle-right'/>
                         </TouchableOpacity>
-                        {/*
-                        <TouchableOpacity style={styles.securityCenterTab}>
-                            <Icon style={styles.securityCenterTabLeftIcon}
+                        <TouchableOpacity style={styles.securityCenterTab}
+                            onPress={()=>this.props.navigation.navigate('TwoPhaseAuth')}>
+                            <Icon style={[styles.securityCenterTabLeftIcon,
+                                this.props.profile.totp_enabled && {color: 'green'}]}
+                                name='check-circle-o'/>
+                            <View style={styles.securityCenterTabContent}>
+                                <Text style={styles.securityCenterTabTitle}>
+                                    Two phase authentication
+                                </Text>
+                                <Text style={styles.securityCenterTabNote}>
+                                    Enable google authenticator to protect your FLASH account.
+                                </Text>
+                            </View>
+                            <Icon style={styles.securityCenterTabRightIcon} name='angle-right'/>
+                        </TouchableOpacity>
+                        {this.props.isSupportedTouchID?<TouchableOpacity style={styles.securityCenterTab}
+                            onPress={()=>this.props.navigation.navigate('FingerPrint')}>
+                            <Icon style={[styles.securityCenterTabLeftIcon,
+                                this.props.isEnableTouchID && {color: 'green'}]}
                                 name='check-circle-o'/>
                             <View style={styles.securityCenterTabContent}>
                                 <Text style={styles.securityCenterTabTitle}>
@@ -103,8 +115,7 @@ class SecurityCenter extends Component<{}> {
                                 </Text>
                             </View>
                             <Icon style={styles.securityCenterTabRightIcon} name='angle-right'/>
-                        </TouchableOpacity>
-                        */}
+                        </TouchableOpacity>:null}
                     </View>
                 </Content>
                 <Loader show={this.props.loading} />
@@ -117,6 +128,8 @@ function mapStateToProps({params}) {
     return {
         loading: params.loading,
         profile: params.profile,
+        isSupportedTouchID: params.isSupportedTouchID || false,
+        isEnableTouchID: params.isEnableTouchID || false,
     };
 }
 

@@ -42,6 +42,7 @@ class Home extends Component<{}> {
     }
 
     componentDidMount(){
+        AppState.addEventListener('change', this._handleAppStateChange.bind(this));
         if(!this.props.pin){
             this.props.navigation.navigate('SetOrUpdatePIN',{update_pin:false});
             this.props.customAction({isNewSession:true});
@@ -53,14 +54,13 @@ class Home extends Component<{}> {
             constants.SOUND.SUCCESS.play();
         }
         this.refreshingHome();
-        AppState.addEventListener('change', this._handleAppStateChange.bind(this));
     }
     componentWillUnmount(){
         AppState.removeEventListener('change', this._handleAppStateChange.bind(this));
     }
 
     _handleAppStateChange(nextAppState){
-        if (!(this.state.appState.match(/inactive|background/) && nextAppState === 'active')){
+        if ((this.state.appState.match(/inactive|background/) && nextAppState === 'active')){
             this.props.navigation.navigate('Lock',{goBack:true})
         }
         this.setState({appState: nextAppState});
@@ -160,6 +160,7 @@ class Home extends Component<{}> {
                         </View>
                         <Icon style={styles.adminTabRightIcon} name='angle-right'/>
                     </TouchableOpacity>
+                    {/*
                     <TouchableOpacity style={styles.adminTab}
                         onPress={()=>this.props.navigation.navigate('Settings')}>
                         <View style={styles.adminTabTitle}>
@@ -168,11 +169,20 @@ class Home extends Component<{}> {
                         </View>
                         <Icon style={styles.adminTabRightIcon} name='angle-right'/>
                     </TouchableOpacity>
+                    */}
                     <TouchableOpacity style={styles.adminTab}
                         onPress={()=>this.props.navigation.navigate('SecurityCenter')}>
                         <View style={styles.adminTabTitle}>
                             <Icon style={styles.adminTabTitleIcon} name='shield'/>
                             <Text style={styles.adminTabTitleLabel}>Security Center</Text>
+                        </View>
+                        <Icon style={styles.adminTabRightIcon} name='angle-right'/>
+                    </TouchableOpacity>
+                    <TouchableOpacity style={styles.adminTab}
+                        onPress={()=>this.props.navigation.navigate('SecurityCenter')}>
+                        <View style={styles.adminTabTitle}>
+                            <Icon style={styles.adminTabTitleIcon} name='moon-o'/>
+                            <Text style={styles.adminTabTitleLabel}>Night Mode</Text>
                         </View>
                         <Icon style={styles.adminTabRightIcon} name='angle-right'/>
                     </TouchableOpacity>

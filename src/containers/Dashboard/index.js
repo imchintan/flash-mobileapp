@@ -17,6 +17,8 @@ import Profile from './Profile';
 import Settings from './Settings';
 import SecurityQuestion from './SecurityQuestion';
 import SecurityCenter from './SecurityCenter';
+import FingerPrint from './FingerPrint';
+import TwoPhaseAuth from './TwoPhaseAuth';
 import SetOrUpdatePIN from './SetOrUpdatePIN';
 import Lock from './Lock';
 import Send from './Send';
@@ -43,6 +45,12 @@ const routes = {
     },
     SecurityCenter: {
         screen: SecurityCenter,
+    },
+    FingerPrint: {
+        screen: FingerPrint,
+    },
+    TwoPhaseAuth: {
+        screen: TwoPhaseAuth,
     },
     Send: {
         screen: Send,

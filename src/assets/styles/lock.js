@@ -70,7 +70,6 @@ const styles = StyleSheet.create({
     },
     keypad:{
         width,
-        backgroundColor: 'rgba(255, 255, 255, 0.15)',
         position: 'absolute',
         left: 0,
         bottom: 0,
@@ -79,6 +78,10 @@ const styles = StyleSheet.create({
     keypadBox:{
         paddingTop: 7,
         backgroundColor: 'rgba(0, 0, 0, 0.5)',
+    },
+    keypadDarkBox:{
+        paddingTop: 7,
+        backgroundColor: 'rgba(255, 255, 255, 0.15)',       
     },
     keypadRow:{
         marginHorizontal: 5,
@@ -108,6 +111,13 @@ const styles = StyleSheet.create({
     keypadBtnIcon:{
         width: ((width-40)/3)*9/25,
         height: ((width-40)/3)*9/25*92/128,
+    },
+    fingerprint:{
+        width: 40,
+        height: 40,
+        margin: 10,
+        resizeMode: 'contain',
+        alignSelf:'flex-end'
     },
 });
 

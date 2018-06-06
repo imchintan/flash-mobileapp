@@ -118,8 +118,11 @@ class Wallet extends Component<{}> {
                                     key={'_txn_'+txn.transaction_id+'_'+index} />
                             )
                         }
-                        {this.props.txns.length == 0?<Text style={styles.txnListEmpty}>
-                            There is no recent transactions.
+                        {this.props.txns.length == 0 && !this.props.refreshingHomeLoader?<Text style={styles.txnListEmpty}>
+                            There are no recent transactions.
+                        </Text>:null}
+                        {this.props.txns.length == 0 && this.props.refreshingHomeLoader?<Text style={styles.txnListEmpty}>
+                            loading transactions....please wait
                         </Text>:null}
                     </View>
                 </Content>
@@ -138,6 +141,7 @@ function mapStateToProps({params}) {
         isLoggedIn: params.isLoggedIn,
         profile: params.profile,
         loading: params.balanceLoader ||  params.loading,
+        refreshingHomeLoader: params.refreshingHome ||  false,
         errorMsg: params.errorMsg || null,
         successMsg: params.successMsg || null,
         balance: params.balance,
