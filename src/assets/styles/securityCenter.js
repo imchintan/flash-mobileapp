@@ -57,6 +57,9 @@ const styles = StyleSheet.create({
         fontSize: 40,
         color: '#9b9b9b'
     },
+    securityCenterTabEnable:{
+        color: 'green'
+    },
     fingerprint:{
         height: 100,
         width: 100,

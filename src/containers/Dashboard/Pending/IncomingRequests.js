@@ -28,8 +28,6 @@ import { ActionCreators } from '@actions';
 import { PROFILE_URL } from '@src/config';
 import Premium from 'Premium';
 
-const styles = require("@styles/pending");
-
 class IncomingRequests extends Component<{}> {
 
     static navigationOptions = ({ navigation, screenProps }) =>{
@@ -146,6 +144,7 @@ class IncomingRequests extends Component<{}> {
     }
 
     render() {
+        const styles = (this.props.nightMode?require('@styles/nightMode/pending'):require('@styles/pending'));
         return (
             <View style={{flex:1}}>
                 <FlatList
@@ -167,6 +166,7 @@ class IncomingRequests extends Component<{}> {
                         <RequestTab
                             req={item}
                             style={[!index && {marginTop:10}]}
+                            nightMode={this.props.nightMode}
                             fiat_currency={this.props.fiat_currency}
                             fiat_per_value={this.props.fiat_per_value}
                             timezone={this.props.timezone}
@@ -177,7 +177,7 @@ class IncomingRequests extends Component<{}> {
                     ListEmptyComponent={()=>
                         <View>
                             <Text style={styles.reqListEmpty}>
-                                There is no request in this date range.
+                                There are no request in this date range.
                             </Text>
                             <Button value='Show All Requests'
                                 onPress={()=>this.props.updateRequestReportDate(this.props.minDate,
@@ -226,8 +226,8 @@ class IncomingRequests extends Component<{}> {
                             <View style={{flexDirection:'row'}}>
                                 <Button
                                     onPress={()=>this.setState({visible:false},this.resetState.bind(this))}
-                                    style={[styles.reqBtn,{backgroundColor: '#EFEFEF'}]}
-                                    textstyle={[styles.reqBtnLabel,{color:'#333'}]}
+                                    style={[styles.reqBtn,{backgroundColor: this.props.nightMode?'#b98e1b':'#EFEFEF'}]}
+                                    textstyle={[styles.reqBtnLabel,{color: this.props.nightMode?'#191714':'#333'}]}
                                     value='Cancel' />
                                 <Button
                                     onPress={()=>this.setState({isConfirm: true},this.sendMoney.bind(this))}
@@ -252,7 +252,7 @@ class IncomingRequests extends Component<{}> {
                             <View style={styles.reqDetailBody}>
                                 <Text style={{
                                     fontSize: 15,
-                                    color: '#333',
+                                    color: this.props.nightMode?'#E9E9E9':'#333',
                                     textAlign: 'center',
                                     marginBottom: 15,
                                 }}>
@@ -279,8 +279,8 @@ class IncomingRequests extends Component<{}> {
                             <View style={{flexDirection:'row'}}>
                                 <Button
                                     onPress={()=>this.setState({visibleGetPassword:false})}
-                                    style={[styles.reqBtn,{backgroundColor: '#EFEFEF'}]}
-                                    textstyle={[styles.reqBtnLabel,{color:'#333'}]}
+                                    style={[styles.reqBtn,{backgroundColor: this.props.nightMode?'#b98e1b':'#EFEFEF'}]}
+                                    textstyle={[styles.reqBtnLabel,{color: this.props.nightMode?'#191714':'#333'}]}
                                     value='Cancel' />
                                 <Button
                                     onPress={this.decryptWallets.bind(this)}
@@ -305,7 +305,7 @@ class IncomingRequests extends Component<{}> {
                             <View style={styles.reqDetailBody}>
                                 <Text style={{
                                     fontSize: 15,
-                                    color: '#333',
+                                    color: this.props.nightMode?'#E9E9E9':'#333',
                                     marginBottom: 25,
                                 }}>
                                 {this.props.currency_type === constants.CURRENCY_TYPE.FLASH?
@@ -349,7 +349,8 @@ function mapStateToProps({params}) {
       decryptedWallets: params.decryptedWallets || null,
       timezone: params.profile.timezone || moment.tz.guess(),
       minDate: moment(params.profile.created_ts),
-      maxDate: moment()
+      maxDate: moment(),
+      nightMode: params.nightMode,
   };
 }
 

@@ -58,7 +58,8 @@ export default class WalletFooter extends React.PureComponent {
 
 
   render() {
-    return this.state.isVisible ?<Footer>
+    const styles = this.props.nightMode?stylesDark:stylesLight;
+    return this.state.isVisible ?<Footer style={styles.footer}>
         <View style={styles.footerBtnGrp}>
             <TouchableOpacity
                 activeOpacity={this.props.selected == 'Send'?1:0.5}
@@ -95,7 +96,7 @@ export default class WalletFooter extends React.PureComponent {
   }
 }
 
-const styles = StyleSheet.create({
+const stylesLight = StyleSheet.create({
     footerBtnGrp:{
         width: width-20,
         flexDirection: 'row',
@@ -126,3 +127,35 @@ const styles = StyleSheet.create({
         fontSize: 17,
     },
 });
+
+const stylesDark = {
+    ...stylesLight,
+    ...StyleSheet.create({
+        footer:{
+            backgroundColor:"#191714",
+        },
+        footerBtn:{
+            backgroundColor: '#b98e1b',
+            width: (width - 60)/3,
+            padding: 8,
+            alignItems: 'center',
+            borderRadius: 5,
+        },
+        footerBtnLabel:{
+            color:'#000000',
+            fontSize: 17,
+        },
+        footerBtnSelected:{
+            borderWidth: 1,
+            borderColor: '#b98e1b',
+            width: (width - 60)/3,
+            padding: 8,
+            alignItems: 'center',
+            borderRadius: 5,
+        },
+        footerBtnSelectedLabel:{
+            color:'#b98e1b',
+            fontSize: 17,
+        },
+    })
+}

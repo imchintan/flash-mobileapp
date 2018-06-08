@@ -24,7 +24,6 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ActionCreators } from '@actions';
 const { width } = Dimensions.get('window');
-const styles = require("@styles/securityCenter");
 
 class SecurityCenter extends Component<{}> {
 
@@ -39,6 +38,8 @@ class SecurityCenter extends Component<{}> {
     }
 
     render() {
+        const styles = (this.props.nightMode?require('@styles/nightMode/securityCenter'):
+                require('@styles/securityCenter'));
         return (
             <Container>
                 <Header>
@@ -50,7 +51,7 @@ class SecurityCenter extends Component<{}> {
                     </HeaderLeft>
                     <HeaderTitle>Security Center</HeaderTitle>
                 </Header>
-                <Content>
+                <Content style={styles.content}>
                     <View style={styles.securityCenterBox}>
                         <Icon style={styles.securityCenterBoxIcon} name='shield'/>
                         <Text style={styles.securityCenterBoxNote}>
@@ -60,7 +61,7 @@ class SecurityCenter extends Component<{}> {
                     <View>
                         <TouchableOpacity style={styles.securityCenterTab}
                             onPress={()=>this.props.navigation.navigate('SecurityQuestion')}>
-                            <Icon style={[styles.securityCenterTabLeftIcon,{color: 'green'}]}
+                            <Icon style={[styles.securityCenterTabLeftIcon,styles.securityCenterTabEnable]}
                                 name='check-circle-o'/>
                             <View style={styles.securityCenterTabContent}>
                                 <Text style={styles.securityCenterTabTitle}>
@@ -74,7 +75,7 @@ class SecurityCenter extends Component<{}> {
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.securityCenterTab}
                             onPress={()=>this.props.navigation.navigate('SetOrUpdatePIN',{update_pin: true})}>
-                            <Icon style={[styles.securityCenterTabLeftIcon,{color: 'green'}]}
+                            <Icon style={[styles.securityCenterTabLeftIcon, styles.securityCenterTabEnable]}
                                 name='check-circle-o'/>
                             <View style={styles.securityCenterTabContent}>
                                 <Text style={styles.securityCenterTabTitle}>
@@ -89,7 +90,7 @@ class SecurityCenter extends Component<{}> {
                         <TouchableOpacity style={styles.securityCenterTab}
                             onPress={()=>this.props.navigation.navigate('TwoPhaseAuth')}>
                             <Icon style={[styles.securityCenterTabLeftIcon,
-                                this.props.profile.totp_enabled && {color: 'green'}]}
+                                this.props.profile.totp_enabled && styles.securityCenterTabEnable]}
                                 name='check-circle-o'/>
                             <View style={styles.securityCenterTabContent}>
                                 <Text style={styles.securityCenterTabTitle}>
@@ -104,7 +105,7 @@ class SecurityCenter extends Component<{}> {
                         {this.props.isSupportedTouchID?<TouchableOpacity style={styles.securityCenterTab}
                             onPress={()=>this.props.navigation.navigate('FingerPrint')}>
                             <Icon style={[styles.securityCenterTabLeftIcon,
-                                this.props.isEnableTouchID && {color: 'green'}]}
+                                this.props.isEnableTouchID && styles.securityCenterTabEnable]}
                                 name='check-circle-o'/>
                             <View style={styles.securityCenterTabContent}>
                                 <Text style={styles.securityCenterTabTitle}>
@@ -130,6 +131,7 @@ function mapStateToProps({params}) {
         profile: params.profile,
         isSupportedTouchID: params.isSupportedTouchID || false,
         isEnableTouchID: params.isEnableTouchID || false,
+        nightMode: params.nightMode,
     };
 }
 

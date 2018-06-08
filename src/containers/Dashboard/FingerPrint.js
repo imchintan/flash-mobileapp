@@ -27,7 +27,6 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ActionCreators } from '@actions';
 const { width } = Dimensions.get('window');
-const styles = require("@styles/securityCenter");
 
 class FingerPrint extends Component<{}> {
 
@@ -42,6 +41,8 @@ class FingerPrint extends Component<{}> {
     }
 
     render() {
+        const styles = (this.props.nightMode?require('@styles/nightMode/securityCenter'):
+            require('@styles/securityCenter'));
         return (
             <Container>
                 <Header>
@@ -53,7 +54,7 @@ class FingerPrint extends Component<{}> {
                     </HeaderLeft>
                     <HeaderTitle style={{width:'80%',left:'10%'}}>Fingerprint Authentication</HeaderTitle>
                 </Header>
-                <Content>
+                <Content style={styles.content}>
                     <View style={styles.securityCenterBox}>
                         <Image style={styles.fingerprint} source={require('@images/fingerprint.png')}/>
                     </View>
@@ -90,6 +91,7 @@ function mapStateToProps({params}) {
         profile: params.profile,
         isSupportedTouchID: params.isSupportedTouchID || false,
         isEnableTouchID: params.isEnableTouchID || false,
+        nightMode: params.nightMode,
     };
 }
 

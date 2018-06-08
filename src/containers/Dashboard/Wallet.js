@@ -28,8 +28,6 @@ import moment from 'moment-timezone';
 import * as utils from '@lib/utils';
 import * as constants from '@src/constants';
 
-const styles = require("@styles/wallet");
-
 class Wallet extends Component<{}> {
 
     static navigationOptions = {
@@ -49,6 +47,7 @@ class Wallet extends Component<{}> {
     }
 
     render() {
+        const styles = (this.props.nightMode?require('@styles/nightMode/wallet'):require('@styles/wallet'));
         return (
             <Container>
                 <Header>
@@ -80,7 +79,7 @@ class Wallet extends Component<{}> {
                         </View>:null}
                     </HeaderRight>
                 </Header>
-                <Content
+                <Content style={styles.content}
                     hasFooter={true}
                     refreshControl={
                         <RefreshControl
@@ -110,6 +109,7 @@ class Wallet extends Component<{}> {
                         {
                             this.props.txns.map((txn,index)=>
                                 <TransactionTab txn={txn}
+                                    nightMode={this.props.nightMode}
                                     currency_type={this.props.currency_type}
                                     timezone={this.props.profile.timezone || moment.tz.guess()}
                                     txnLoader={this.props.txnLoader}
@@ -130,7 +130,9 @@ class Wallet extends Component<{}> {
                     visible={this.state.showMenu}
                     badgePending={this.props.totalPending}
                     navigation={this.props.navigation} />
-                <WalletFooter navigation={this.props.navigation} />
+                <WalletFooter
+                    nightMode={this.props.nightMode}
+                    navigation={this.props.navigation} />
             </Container>
         );
     }
@@ -152,7 +154,8 @@ function mapStateToProps({params}) {
         fiat_currency: params.fiat_currency,
         fiat_balance: params.fiat_balance,
         fiat_per_value: params.fiat_per_value,
-        totalPending: params.totalPending
+        totalPending: params.totalPending,
+        nightMode: params.nightMode,
     };
 }
 

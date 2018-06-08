@@ -18,6 +18,7 @@ export const RESET_MESSAGES = 'RESET_MESSAGES';
 export const SET_PUBLIC_IP = 'SET_PUBLIC_IP';
 export const SET_LOCATION = 'SET_LOCATION';
 export const CHANGE_CURRENCY = 'CHANGE_CURRENCY';
+export const CHANGE_NIGHT_MODE = 'CHANGE_NIGHT_MODE';
 
 //Pin
 export const CREATE_PIN = 'CREATE_PIN';

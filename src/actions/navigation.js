@@ -56,6 +56,10 @@ export const init = () => {
         if(pin){
             payload.pin = pin.toString();
         }
+        let nightMode = await AsyncStorage.getItem('nightMode');
+        if(nightMode !== null){
+            payload.nightMode = (nightMode == 'true');
+        }
         let fiat_currency = await AsyncStorage.getItem('fiat_currency');
         if(fiat_currency){
             payload.fiat_currency = parseInt(fiat_currency);
@@ -581,6 +585,16 @@ export const decryptWallets = (password,sendMoney=false) => {
                 }
             });
         }
+    }
+}
+
+export const changeNightMode = (nightMode=false) =>{
+    return (dispatch,getState) => {
+        dispatch({
+            type: types.CHANGE_NIGHT_MODE,
+            payload:{nightMode}
+        });
+        AsyncStorage.setItem('nightMode',nightMode.toString());
     }
 }
 

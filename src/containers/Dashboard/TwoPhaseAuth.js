@@ -29,7 +29,6 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ActionCreators } from '@actions';
 const { width } = Dimensions.get('window');
-const styles = require("@styles/securityCenter");
 
 class TwoPhaseAuth extends Component<{}> {
 
@@ -53,6 +52,9 @@ class TwoPhaseAuth extends Component<{}> {
     }
 
     render() {
+        const styles = (this.props.nightMode?require('@styles/nightMode/securityCenter'):
+            require('@styles/securityCenter'));
+
         return (
             <Container>
                 <Header>
@@ -64,7 +66,7 @@ class TwoPhaseAuth extends Component<{}> {
                     </HeaderLeft>
                     <HeaderTitle style={{width:'80%',left:'10%'}}>Two Phase Authentication</HeaderTitle>
                 </Header>
-                <Content>
+                <Content style={styles.content}>
                     <View style={styles.securityCenterBox}>
                         <Image style={styles.fingerprint} source={require('@images/g-auth-icon.png')}/>
                     </View>
@@ -126,7 +128,7 @@ class TwoPhaseAuth extends Component<{}> {
                             <View style={styles.twoPhaseAuthNote}>
                                 <Text style={styles.twoPhaseAuthNoteText}>5.</Text>
                                 <Text style={styles.twoPhaseAuthNoteText}>
-                                    <Text style={styles.twoPhaseAuthNoteBold}>IMPORTANT !!</Text>
+                                    <Text style={styles.twoPhaseAuthNoteBold}>IMPORTANT !! </Text>
                                     Please also note down or print recovery key given below.
                                     It will help you when you lost or change your phone.
                                 </Text>
@@ -148,15 +150,15 @@ class TwoPhaseAuth extends Component<{}> {
                                 <QRCode
                                     value={this.state.recovery_obj_2fa.otpUri}
                                     size={width-70}
-                                    bgColor='#000'
-                                    fgColor='#fff'/>
+                                    bgColor={this.props.nightMode?'#fff':'#000'}
+                                    fgColor={this.props.nightMode?'#000':'#fff'}/>
                             </View>
                             <Text style={[styles.twoPhaseAuthNoteText,{
                                     marginTop:20,
                                     paddingHorizontal: 10,
                                     fontSize: 16,
                                     fontFamily: 'futura-medium',
-                                    color: '#333'
+                                    color: this.props.nightMode?'#E9E9E9':'#333'
                                 }]}>
                                 Verification code
                             </Text>
@@ -200,6 +202,7 @@ function mapStateToProps({params}) {
         loading: params.loading,
         profile: params.profile,
         recovery_obj_2fa: params.recovery_obj_2fa || null,
+        nightMode: params.nightMode,
     };
 }
 

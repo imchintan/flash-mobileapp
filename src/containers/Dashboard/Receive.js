@@ -32,7 +32,6 @@ import * as utils from '@lib/utils';
 import * as constants from '@src/constants';
 
 const { width } = Dimensions.get('window');
-const styles = require("@styles/request");
 
 class Receive extends Component < {} > {
 
@@ -80,6 +79,7 @@ class Receive extends Component < {} > {
     }
 
     render() {
+        const styles = (this.props.nightMode?require('@styles/nightMode/request'):require('@styles/request'));
         return (
             <Container>
                 <Header>
@@ -104,7 +104,7 @@ class Receive extends Component < {} > {
                         </View>:null}
                     </HeaderRight>
                 </Header>
-                <Content bounces={false}>
+                <Content bounces={false} style={styles.content}>
                     <View style={styles.walletBalanceTab}>
                         <Text style={styles.walletBalanceLabel}>Balance</Text>
                         <TouchableOpacity style={styles.walletBalanceDetail}>
@@ -178,8 +178,8 @@ class Receive extends Component < {} > {
                                 value={constants.CURRENCY_TYPE_QR_PREFIX[this.props.currency_type]+':'+
                                     this.props.wallet_address+'?amount='+this.state.amount}
                                 size={width-190}
-                                bgColor='#191714'
-                                fgColor='#FFFFFF'/>
+                                bgColor={this.props.nightMode?'#FFFFFF':'#191714'}
+                                fgColor={this.props.nightMode?'#191714':'#FFFFFF'}/>
                             <View style={styles.qrCodeBorder}/>
                         </View>
                         <View style={styles.walletAddress}>
@@ -210,7 +210,9 @@ class Receive extends Component < {} > {
                     visible={this.state.showMenu}
                     badgePending={this.props.totalPending}
                     navigation={this.props.navigation} />
-                <WalletFooter selected='Receive' navigation={this.props.navigation}/>
+                <WalletFooter selected='Receive'
+                    nightMode={this.props.nightMode}
+                    navigation={this.props.navigation}/>
             </Container>
         );
     }
@@ -225,7 +227,8 @@ function mapStateToProps({params}) {
         fiat_balance: params.fiat_balance,
         fiat_per_value: params.fiat_per_value,
         thresholdAmount: params.thresholdAmount,
-        totalPending: params.totalPending
+        totalPending: params.totalPending,
+        nightMode: params.nightMode,
     };
 }
 

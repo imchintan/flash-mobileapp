@@ -37,7 +37,6 @@ import { PROFILE_URL } from '@src/config';
 import Premium from 'Premium';
 
 const { width } = Dimensions.get('window');
-const styles = require("@styles/send");
 
 class Send extends Component<{}> {
 
@@ -286,6 +285,7 @@ class Send extends Component<{}> {
     }
 
     render() {
+        const styles = (this.props.nightMode?require('@styles/nightMode/send'):require('@styles/send'));
         return (
             <Container>
                 <Header>
@@ -314,7 +314,7 @@ class Send extends Component<{}> {
                         </View>:null}
                     </HeaderRight>
                 </Header>
-                <Content bounces={false}>
+                <Content bounces={false} style={styles.content}>
                     <View style={styles.walletBalanceTab}>
                         <Text style={styles.walletBalanceLabel}>Balance</Text>
                         <TouchableOpacity style={styles.walletBalanceDetail}>
@@ -387,7 +387,8 @@ class Send extends Component<{}> {
                         </View>
                         <Text style={styles.requestRowLabel}>Fee</Text>
                         <View style={styles.hr}/>
-                        <View style={[styles.requestRowInputBox,{flexDirection: 'row',backgroundColor: '#EDEDED'}]}>
+                        <View style={[styles.requestRowInputBox,{flexDirection: 'row',
+                            backgroundColor: this.props.nightMode?'#2F2F2F':'#EDEDED'}]}>
                             <View style={styles.requestRowAmtLabelBox}>
                                 <Text style={styles.requestRowAmtLabel}>{utils.getCurrencyUnitUpcase(this.props.currency_type)}</Text>
                             </View>
@@ -416,7 +417,7 @@ class Send extends Component<{}> {
                             />
                             {this.state.isVerify || this.state.isAddressVerify?
                                 <Icon style={{
-                                    color: 'green',
+                                    color: this.props.nightMode?'#32CD32':'green',
                                     fontSize: 30,
                                     position: 'absolute',
                                     right: 7,
@@ -465,7 +466,9 @@ class Send extends Component<{}> {
                     visible={this.state.showMenu}
                     badgePending={this.props.totalPending}
                     navigation={this.props.navigation} />
-                <WalletFooter selected='Send' navigation={this.props.navigation} />
+                <WalletFooter selected='Send'
+                    nightMode={this.props.nightMode}
+                    navigation={this.props.navigation} />
                 <Loader show={this.props.loading} />
                 <Modal
                     transparent={true}
@@ -506,8 +509,8 @@ class Send extends Component<{}> {
                             <View style={{flexDirection:'row'}}>
                                 <Button
                                     onPress={()=>this.setState({visible:false})}
-                                    style={[styles.reqBtn,{backgroundColor: '#EFEFEF'}]}
-                                    textstyle={[styles.reqBtnLabel,{color:'#333'}]}
+                                    style={[styles.reqBtn,{backgroundColor: this.props.nightMode?'#b98e1b':'#EFEFEF'}]}
+                                    textstyle={[styles.reqBtnLabel,{color: this.props.nightMode?'#191714':'#333'}]}
                                     value='Cancel' />
                                 <Button
                                     onPress={()=>this.setState({isConfirm: true},this.sendMoney.bind(this))}
@@ -532,7 +535,7 @@ class Send extends Component<{}> {
                             <View style={styles.reqDetailBody}>
                                 <Text style={{
                                     fontSize: 15,
-                                    color: '#333',
+                                    color: this.props.nightMode?'#E9E9E9':'#333',
                                     textAlign: 'center',
                                     marginBottom: 15,
                                 }}>
@@ -559,8 +562,8 @@ class Send extends Component<{}> {
                             <View style={{flexDirection:'row'}}>
                                 <Button
                                     onPress={()=>this.setState({visibleGetPassword:false})}
-                                    style={[styles.reqBtn,{backgroundColor: '#EFEFEF'}]}
-                                    textstyle={[styles.reqBtnLabel,{color:'#333'}]}
+                                    style={[styles.reqBtn,{backgroundColor: this.props.nightMode?'#b98e1b':'#EFEFEF'}]}
+                                    textstyle={[styles.reqBtnLabel,{color: this.props.nightMode?'#191714':'#333'}]}
                                     value='Cancel' />
                                 <Button
                                     onPress={this.decryptWallets.bind(this)}
@@ -585,7 +588,7 @@ class Send extends Component<{}> {
                             <View style={styles.reqDetailBody}>
                                 <Text style={{
                                     fontSize: 15,
-                                    color: '#333',
+                                    color: this.props.nightMode?'#E9E9E9':'#333',
                                     marginBottom: 25,
                                 }}>
                                     {this.props.currency_type === constants.CURRENCY_TYPE.FLASH?
@@ -607,7 +610,7 @@ class Send extends Component<{}> {
                     transparent={true}
                     visible={!!this.state.scanQR}
                     onRequestClose={()=>this.setState({scanQR:false})}>
-                    <View style={styles.content}>
+                    <View style={styles.qrContent}>
                         <Camera
                             ref={(cam) => {
                                 this.camera = cam;
@@ -654,7 +657,8 @@ function mapStateToProps({params}) {
         wallet_address: params.wallet_address || null,
         sendTxnSuccess: params.sendTxnSuccess || null,
         decryptedWallets: params.decryptedWallets || null,
-        totalPending: params.totalPending
+        totalPending: params.totalPending,
+        nightMode: params.nightMode,
     };
 }
 

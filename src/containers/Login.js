@@ -24,6 +24,8 @@ import * as Validation from '@lib/validation';
 
 const styles = require("@styles/login");
 
+TextInput.defaultProps.placeholderTextColor = '#7D7D7D';
+
 class Login extends Component<{}> {
 
     static navigationOptions = {

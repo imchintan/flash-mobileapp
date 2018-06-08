@@ -40,9 +40,9 @@ const styles = StyleSheet.create({
         width: '100%',
     },
     requestRowAmtLabelBox:{
-        top:-2,
+        top:-0.5,
         width: 80,
-        height: 44,
+        height: 42,
         marginLeft: 49,
         borderTopLeftRadius:10,
         borderBottomLeftRadius:10,
@@ -73,6 +73,12 @@ const styles = StyleSheet.create({
     reqDetailBox:{
         width: '100%',
         paddingHorizontal: 20,
+    },
+    reqDetailBoxNote:{
+        fontSize: 15,
+        color: '#333',
+        textAlign: 'center',
+        marginBottom: 15,
     },
     reqDetailCloseIcon:{
         fontSize: 18,

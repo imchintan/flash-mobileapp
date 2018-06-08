@@ -32,7 +32,6 @@ import IncomingRequests from './IncomingRequests';
 import OutgoingRequests from './OutgoingRequests';
 
 const { width } = Dimensions.get('window');
-const styles = require("@styles/app");
 
 const TabNav = createMaterialTopTabNavigator({
     Incoming: { screen: IncomingRequests },
@@ -93,6 +92,7 @@ class PendingTab extends React.Component {
     refresh = () => this.props.updateRequestReportDate(this.props.date_from,this.props.date_to)
 
     render() {
+        const styles = (this.props.nightMode?require('@styles/nightMode/app'):require('@styles/app'));
         let customI18n = {
            'text': {
              'save': 'Confirm',
@@ -175,6 +175,7 @@ function mapStateToProps({params}) {
       maxDate: moment().format('YYYYMMDD235959'),
       inReqs_total: params.inReqs_total || 0,
       outReqs_total: params.outReqs_total || 0,
+      nightMode: params.nightMode,
   };
 }
 

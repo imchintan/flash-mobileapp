@@ -33,8 +33,6 @@ import { PROFILE_URL } from '@src/config';
 import * as utils from '@lib/utils';
 import * as constants from '@src/constants';
 
-const styles = require("@styles/request");
-
 class Request extends Component<{}> {
 
     static navigationOptions = {
@@ -143,6 +141,7 @@ class Request extends Component<{}> {
     }
 
     render() {
+        const styles = (this.props.nightMode?require('@styles/nightMode/request'):require('@styles/request'));
         return (
             <Container>
                 <Header>
@@ -171,7 +170,7 @@ class Request extends Component<{}> {
                         </View>:null}
                     </HeaderRight>
                 </Header>
-                <Content bounces={false}>
+                <Content bounces={false} style={styles.content}>
                     <View style={styles.walletBalanceTab}>
                         <Text style={styles.walletBalanceLabel}>Balance</Text>
                         <TouchableOpacity style={styles.walletBalanceDetail}>
@@ -302,7 +301,9 @@ class Request extends Component<{}> {
                     visible={this.state.showMenu}
                     badgePending={this.props.totalPending}
                     navigation={this.props.navigation} />
-                <WalletFooter selected='Request' navigation={this.props.navigation} />
+                <WalletFooter selected='Request'
+                    nightMode={this.props.nightMode}
+                    navigation={this.props.navigation} />
                 <Loader show={this.props.loading} />
                 <Modal
                     transparent={true}
@@ -332,8 +333,8 @@ class Request extends Component<{}> {
                             <View style={{flexDirection:'row'}}>
                                 <Button
                                     onPress={()=>this.setState({visible:false})}
-                                    style={[styles.reqBtn,{backgroundColor: '#EFEFEF'}]}
-                                    textstyle={[styles.reqBtnLabel,{color:'#333'}]}
+                                    style={[styles.reqBtn,{backgroundColor: this.props.nightMode?'#b98e1b':'#EFEFEF'}]}
+                                    textstyle={[styles.reqBtnLabel,{color: this.props.nightMode?'#191714':'#333'}]}
                                     value='Cancel' />
                                 <Button
                                     onPress={()=>this.setState({visible:false},
@@ -364,7 +365,8 @@ function mapStateToProps({params}) {
         fiat_balance: params.fiat_balance,
         fiat_per_value: params.fiat_per_value,
         thresholdAmount: params.thresholdAmount,
-        totalPending: params.totalPending
+        totalPending: params.totalPending,
+        nightMode: params.nightMode,
     };
 }
 

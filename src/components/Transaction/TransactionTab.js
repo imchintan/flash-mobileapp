@@ -25,10 +25,12 @@ export default class TransactionTab extends Component {
     }
 
     static defaultProps = {
-        txn: {}
+        txn: {},
+        nightMode: false
     }
 
     render() {
+        const styles = this.props.nightMode?stylesDark:stylesLight;
         return (
             <View key={'_txn_'+this.props.txn.transaction_id}>
                 <TouchableOpacity activeOpacity={0.7} {...this.props}
@@ -43,7 +45,7 @@ export default class TransactionTab extends Component {
                                 {uri:PROFILE_URL+this.props.txn.sender_profile_pic_url}:utils.getCurrencyIcon(this.props.currency_type)} />
                     }
                     <View style={styles.txnDetail}>
-                        <Text numberOfLines={1} style={[styles.txnAmount,{color:this.props.txn.type == 1?'#D04100':'#007E33'}]}>{this.props.txn.type == 1?'-':'+'} {utils.localizeFlash(this.props.txn.amount.toString())}
+                        <Text numberOfLines={1} style={[styles.txnAmount,{color:this.props.txn.type == 1?'#D04100':(this.props.nightMode?'#32CD32':'#007E33')}]}>{this.props.txn.type == 1?'-':'+'} {utils.localizeFlash(this.props.txn.amount.toString())}
                         <Text style={styles.txnRecvFrom}> {this.props.txn.type == 1?'to':'from'} {this.props.txn.type == 1?
                                 (this.props.txn.receiver_display_name || 'Anonymous'):(this.props.txn.sender_display_name || 'Anonymous')}</Text></Text>
                         <Text style={styles.txnDateTime}> {utils.getDisplayDateTime(this.props.txn.created_ts, this.props.timezone)}</Text>
@@ -134,11 +136,12 @@ TransactionTab.propTypes = {
 	style: PropTypes.oneOfType([PropTypes.object, PropTypes.number, PropTypes.array]),
 	txn: PropTypes.object,
 	txnLoader: PropTypes.bool,
+	nightMode: PropTypes.bool,
 	txnDetail: PropTypes.object,
 	timezone: PropTypes.string,
 };
 
-const styles = StyleSheet.create({
+const stylesLight = StyleSheet.create({
     txnTab: {
         flexDirection: 'row',
         backgroundColor: '#FFFFFF',
@@ -251,3 +254,70 @@ const styles = StyleSheet.create({
     },
 
 });
+
+const stylesDark = {
+    ...stylesLight,
+    ...StyleSheet.create({
+        txnTab: {
+            flexDirection: 'row',
+            backgroundColor: '#393939',
+            alignSelf: 'center',
+            alignItems: 'center',
+            width: width - 40,
+            height: 70,
+            padding:10,
+            marginBottom: 10,
+            borderRadius: 5,
+            ...Platform.select({
+                ios: {
+                    shadowColor: 'rgba(0,0,0, 0.3)',
+                    shadowOffset: { height: 1, width: 0 },
+                    shadowOpacity: 0.5,
+                },
+                android: {
+                    elevation: 3,
+                },
+            }),
+        },
+        // txnAmount:{
+        //     color: '#333333',
+        //     fontSize: 18,
+        //     fontWeight: '600',
+        // },
+        txnRecvFrom:{
+            color: '#DFDFDF',
+            fontSize: 14,
+            fontStyle: 'italic',
+            fontWeight: '400',
+        },
+        txnDateTime:{
+            color: '#A4A4A4',
+            fontSize: 15,
+        },
+        txnDetailBody:{
+            backgroundColor: '#313131',
+            padding: 15,
+        },
+        txnDetailLabel:{
+            width: 85,
+            fontSize: 14,
+            color: '#E9E9E9',
+        },
+        txnDetailText:{
+            width: width - 160,
+            fontSize: 14,
+            color: '#C2C2C2',
+        },
+        txnDetailTextWithBox:{
+            width: width - 160,
+            minHeight: 30,
+            fontSize: 14,
+            color: '#C2C2C2',
+            borderWidth: 1,
+            borderColor: '#6A6A6A',
+            paddingVertical: 5,
+            paddingHorizontal: 10,
+            borderRadius: 10,
+        },
+    })
+}

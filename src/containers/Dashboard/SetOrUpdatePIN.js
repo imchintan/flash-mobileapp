@@ -119,7 +119,7 @@ class SetOrUpdatePIN extends Component<{}> {
                     </HeaderLeft>:null}
                     <HeaderTitle>{this.state.isUpdatePIN?'Update':'Set'} PIN</HeaderTitle>
                 </Header>
-                <Content contentContainerStyle={{
+                <Content style={styles.content} contentContainerStyle={{
                     flex: 1/2,
                     flexDirection: 'column',
                     justifyContent: 'center',

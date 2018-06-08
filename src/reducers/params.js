@@ -10,11 +10,12 @@ const initialState = {
     fiat_balance: 0,
     fiat_per_value: 0,
     total_fiat_balance: 0,
+    nightMode: false,
     balances: [
-        {color: '#111111', amt:0, uamt:0, amt2:0, per_value:0, currency_type: constants.CURRENCY_TYPE.FLASH}, // Flash
+        {color: '#191714', amt:0, uamt:0, amt2:0, per_value:0, currency_type: constants.CURRENCY_TYPE.FLASH}, // Flash
         {color: '#343434', amt:0, uamt:0, amt2:0, per_value:0, currency_type: constants.CURRENCY_TYPE.BTC}, // BTC
         {color: '#565656', amt:0, uamt:0, amt2:0, per_value:0, currency_type: constants.CURRENCY_TYPE.LTC}, // LTC
-        {color: '#898989', amt:0, uamt:0, amt2:0, per_value:0, currency_type: constants.CURRENCY_TYPE.DASH}, // DASH
+        {color: '#787878', amt:0, uamt:0, amt2:0, per_value:0, currency_type: constants.CURRENCY_TYPE.DASH}, // DASH
     ],
     loading: false,
     bcMedianTxSize: 250,

@@ -18,7 +18,6 @@ import moment from 'moment-timezone';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ActionCreators } from '@actions';
-const styles = require("@styles/activity");
 
 class PaymentSent extends Component<{}> {
 
@@ -36,6 +35,7 @@ class PaymentSent extends Component<{}> {
     }
 
     render() {
+        const styles = (this.props.nightMode?require('@styles/nightMode/activity'):require('@styles/activity'));
         return (
             <View style={{flex:1}}>
                 <FlatList
@@ -56,6 +56,7 @@ class PaymentSent extends Component<{}> {
                     renderItem={({item, index})=>{
                         return(
                             <TransactionTab txn={item}
+                                nightMode={this.props.nightMode}
                                 currency_type={this.props.currency_type}
                                 timezone={this.props.timezone}
                                 txnLoader={this.props.txnLoader}
@@ -94,7 +95,8 @@ function mapStateToProps({params}) {
         currency_type: params.currency_type,
         timezone: params.profile.timezone || moment.tz.guess(),
         minDate: moment(params.profile.created_ts),
-        maxDate: moment()
+        maxDate: moment(),
+        nightMode: params.nightMode,
     };
 }
 
