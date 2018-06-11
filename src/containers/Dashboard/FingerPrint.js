@@ -8,7 +8,8 @@ import {
     TouchableOpacity,
     Image,
     TextInput,
-    Dimensions
+    Dimensions,
+    Platform
 } from 'react-native';
 import {
     Container,
@@ -32,6 +33,7 @@ class FingerPrint extends Component<{}> {
 
     static navigationOptions = {
         header: null,
+        gesturesEnabled: true,
     }
 
     constructor(props) {
@@ -60,7 +62,7 @@ class FingerPrint extends Component<{}> {
                     </View>
                     <View>
                         <Text style={styles.fingerprintNote}>
-                            Use your fingerprint to unlock your FLASH App.
+                            Use your fingerprint to unlock your {Platform.OS === 'ios'?'Coinodes Wallet':'FLASH app'}.
                         </Text>
                         <View style={styles.fingerprintSwitch}>
                             <Text style={styles.fingerprintSwitchLabel}>

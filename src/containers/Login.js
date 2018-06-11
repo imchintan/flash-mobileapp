@@ -7,6 +7,7 @@ import {
     View,
     Image,
     TextInput,
+    Platform,
     TouchableOpacity
 } from 'react-native';
 import {
@@ -67,7 +68,9 @@ class Login extends Component<{}> {
         return (
             <Container style={{backgroundColor:'#191714'}}>
                 <Content hasHeader={false} style={{backgroundColor:'#191714'}} contentContainerStyle={styles.loginBox}>
-                    <Image style={styles.appLogo}  source={require('@images/app-text-icon-white-vertical.png')}/>
+                    <Image style={styles.appLogo}  source={Platform.OS === 'ios'?
+                    require('@images/app-text-icon-white-vertical-ios.png'):
+                    require('@images/app-text-icon-white-vertical.png')}/>
                     <View style={styles.loginInputRow}>
                         <TextInput
                             style={styles.loginInput}

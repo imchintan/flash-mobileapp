@@ -37,6 +37,7 @@ class Request extends Component<{}> {
 
     static navigationOptions = {
         header: null,
+        gesturesEnabled: true,
     }
 
     constructor(props) {

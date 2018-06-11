@@ -620,15 +620,18 @@ export const _logout = async(dispatch, clearAll=false) => {
             payload.isEnableTouchID = (isEnableTouchID === 'true');
         }
         let fiat_currency = await AsyncStorage.getItem('fiat_currency');
-        if(fiat_currency){
+        if(fiat_currency !== null){
             payload.fiat_currency = parseInt(fiat_currency);
         }
     }
     await AsyncStorage.clear();
     if(!clearAll){
-        if(payload.pin) AsyncStorage.setItem('pin', payload.pin);
-        if(payload.fiat_currency !== null) AsyncStorage.setItem('fiat_currency', payload.fiat_currency);
-        if(payload.isEnableTouchID !== null) AsyncStorage.setItem('isEnableTouchID', payload.isEnableTouchID.toString());
+        if(payload.pin !== null && typeof payload.pin !== 'undefined')
+            AsyncStorage.setItem('pin', payload.pin);
+        if(payload.fiat_currency !== null && typeof payload.fiat_currency !== 'undefined')
+            AsyncStorage.setItem('fiat_currency', payload.fiat_currency);
+        if(payload.isEnableTouchID !== null && typeof payload.isEnableTouchID !== 'undefined')
+            AsyncStorage.setItem('isEnableTouchID', payload.isEnableTouchID.toString());
     }
     dispatch({ type: types.LOGOUT, payload });
     dispatch(getCoinMarketCapDetail());

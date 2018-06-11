@@ -8,7 +8,6 @@ import {
     Text,
     TextInput,
     TouchableOpacity,
-    Modal,
     ScrollView
 } from 'react-native';
 import {
@@ -17,6 +16,7 @@ import {
     Header,
     HeaderLeft,
     HeaderTitle,
+    Modal,
     Icon,
     Button,
     Loader,
@@ -34,6 +34,7 @@ class SecurityQuestion extends Component<{}> {
 
     static navigationOptions = {
         header: null,
+        gesturesEnabled: true,
     }
 
     constructor(props) {

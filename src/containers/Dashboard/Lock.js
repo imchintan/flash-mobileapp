@@ -8,6 +8,7 @@ import {
     TouchableOpacity,
     Image,
     View,
+    Platform,
     Vibration,
     Alert
 } from 'react-native';
@@ -47,6 +48,7 @@ class Lock extends Component<{}> {
     }
 
     async componentDidMount(){
+        this.props.customAction({lockApp:true});
         this.isMount = true;
         BackHandler.addEventListener('hardwareBackPress', this.backHandler.bind(this));
         let isEnableTouchID = this.props.isEnableTouchID;
@@ -79,6 +81,7 @@ class Lock extends Component<{}> {
     touchID(){
         TouchID.authenticate(null, optionalConfigObject).then(success => {
             this.props.navigation.goBack();
+            setTimeout(()=>this.props.customAction({lockApp:false}),500);
         }).catch(error => {
             if(error.details == 'failed')
                 this.touchID();
@@ -100,7 +103,7 @@ class Lock extends Component<{}> {
             return;
         }
         this.props.navigation.goBack();
-
+        this.props.customAction({lockApp:false});
     }
 
     removePIN(){
@@ -115,7 +118,9 @@ class Lock extends Component<{}> {
             <Container>
                 <Content hasHeader={false} style={{backgroundColor:'#191714'}}>
                     <View style={styles.pinBoxContent}>
-                        <Image style={styles.appLogo}  source={require('@images/app-text-icon-white-vertical.png')}/>
+                        <Image style={styles.appLogo}  source={Platform.OS === 'ios'?
+                        require('@images/app-text-icon-white-vertical-ios.png'):
+                        require('@images/app-text-icon-white-vertical.png')}/>
                         <Text style={styles.pinDarkTitle}>Enter PIN</Text>
                         <View style={styles.pinBox}>
                             <Icon style={[styles.pinIcon, this.state.pin.length > 0 && styles.pinIconDarkFilled]} name={'circle'}/>

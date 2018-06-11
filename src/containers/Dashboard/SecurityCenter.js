@@ -7,7 +7,8 @@ import {
     View,
     TouchableOpacity,
     TextInput,
-    Dimensions
+    Dimensions,
+    Platform
 } from 'react-native';
 import {
     Container,
@@ -29,6 +30,7 @@ class SecurityCenter extends Component<{}> {
 
     static navigationOptions = {
         header: null,
+        gesturesEnabled: true,
     }
 
     constructor(props) {
@@ -68,7 +70,7 @@ class SecurityCenter extends Component<{}> {
                                     Security Questions
                                 </Text>
                                 <Text style={styles.securityCenterTabNote}>
-                                    To recover your FLASH account if you forget password.
+                                    To recover your {Platform.OS === 'ios'?'Coinodes Wallet':'FLASH'} account if you forget password.
                                 </Text>
                             </View>
                             <Icon style={styles.securityCenterTabRightIcon} name='angle-right'/>
@@ -82,7 +84,7 @@ class SecurityCenter extends Component<{}> {
                                     6-Digit PIN
                                 </Text>
                                 <Text style={styles.securityCenterTabNote}>
-                                    Protect your FLASH app from unauthorized access.
+                                    Protect your {Platform.OS === 'ios'?'Coinodes Wallet':'FLASH app'} from unauthorized access.
                                 </Text>
                             </View>
                             <Icon style={styles.securityCenterTabRightIcon} name='angle-right'/>
@@ -97,7 +99,7 @@ class SecurityCenter extends Component<{}> {
                                     Two phase authentication
                                 </Text>
                                 <Text style={styles.securityCenterTabNote}>
-                                    Enable google authenticator to protect your FLASH account.
+                                    Enable google authenticator to protect your {Platform.OS === 'ios'?'Coinodes Wallet':'FLASH'} account.
                                 </Text>
                             </View>
                             <Icon style={styles.securityCenterTabRightIcon} name='angle-right'/>
@@ -112,7 +114,7 @@ class SecurityCenter extends Component<{}> {
                                     Fingerprint Authentication
                                 </Text>
                                 <Text style={styles.securityCenterTabNote}>
-                                    Conveniently unlock your FLASH app with fingerprint.
+                                    Conveniently unlock your {Platform.OS === 'ios'?'Coinodes Wallet':'FLASH app'} with fingerprint.
                                 </Text>
                             </View>
                             <Icon style={styles.securityCenterTabRightIcon} name='angle-right'/>

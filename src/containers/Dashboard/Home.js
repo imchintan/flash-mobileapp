@@ -6,9 +6,9 @@ import React, { Component } from 'react';
 import {
     View,
     Image,
-    Modal,
     ScrollView,
     AppState,
+    Platform,
     TouchableOpacity,
     RefreshControl,
 } from 'react-native';
@@ -18,6 +18,7 @@ import {
     Header,
     HeaderLeft,
     HeaderRight,
+    Modal,
     Icon,
     Text,
 } from '@components';
@@ -54,13 +55,14 @@ class Home extends Component<{}> {
         }
         this.refreshingHome();
     }
+
     componentWillUnmount(){
         AppState.removeEventListener('change', this._handleAppStateChange.bind(this));
     }
 
     _handleAppStateChange(nextAppState){
-        if ((this.state.appState.match(/inactive|background/) && nextAppState === 'active')){
-            this.props.navigation.navigate('Lock',{goBack:true})
+        if ((!!this.props.pin && !this.props.lockApp && this.state.appState.match(/inactive|background/) && nextAppState === 'active')){
+            this.props.navigation.navigate('Lock');
         }
         this.setState({appState: nextAppState});
     }
@@ -83,7 +85,9 @@ class Home extends Component<{}> {
             <Container>
                 <Header>
                     <HeaderLeft>
-                        <Image style={styles.headerTextLogo} source={require('@images/app-text-icon-white.png')} />
+                        <Image style={styles.headerTextLogo} source={Platform.OS === 'ios'?
+                            require('@images/app-text-icon-white-ios.png'):
+                            require('@images/app-text-icon-white.png')} />
                     </HeaderLeft>
                     <HeaderRight>
                         <View style={styles.headerBalanceBox}>
@@ -248,7 +252,8 @@ function mapStateToProps({params}) {
         balances: params.balances,
         fiat_currency: params.fiat_currency,
         total_fiat_balance: params.total_fiat_balance,
-        isNewSession: params.isNewSession,
+        isNewSession: params.isNewSession || false,
+        lockApp: params.lockApp || false,
         pin: params.pin,
         nightMode: params.nightMode,
     };

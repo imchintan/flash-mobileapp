@@ -9,7 +9,8 @@ import {
   TouchableOpacity,
   Image,
   Clipboard,
-  Modal,
+  Linking,
+  Platform,
   Dimensions
 } from 'react-native';
 import {
@@ -21,12 +22,13 @@ import {
     Icon,
     Text,
     Button,
+    Modal,
     Loader,
     WalletMenu,
     WalletFooter,
     Toast
 } from '@components';
-import Camera from 'react-native-camera';
+import Camera, { RNCamera } from 'react-native-camera';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ActionCreators } from '@actions';
@@ -42,6 +44,7 @@ class Send extends Component<{}> {
 
     static navigationOptions = {
         header: null,
+        gesturesEnabled: true,
     }
 
     componentWillReceiveProps(nextProps){
@@ -433,12 +436,23 @@ class Send extends Component<{}> {
                                 <Icon style={styles.requestRowActionLinkIcon} name='paste'/>
                                 <Text  style={styles.requestRowActionLinkLabel}>Paste from Clipboard</Text>
                             </TouchableOpacity>
-                            <Text  style={styles.requestRowActionLinkDiv}> / </Text>
-                            <TouchableOpacity style={styles.requestRowActionLink}
-                                onPress={()=>this.setState({scanQR:true})}>
+                            {Platform.OS !== 'ios'?<Text  style={styles.requestRowActionLinkDiv}> / </Text>:null}
+                            {Platform.OS !== 'ios'?<TouchableOpacity style={styles.requestRowActionLink}
+                                onPress={()=>{
+                                    if(Platform.OS === 'ios'){
+                                        this.props.customAction({lockApp:true});
+                                        Camera.checkDeviceAuthorizationStatus()
+                                            .then(d=>{
+                                                this.setState({scanQR:true});
+                                                setTimeout(()=>this.props.customAction({lockApp:false}),500);
+                                            }).catch(e=>setTimeout(()=>this.props.customAction({lockApp:false}),500))
+                                    }else{
+                                        this.setState({scanQR:true})
+                                    }
+                                }}>
                                 <Icon style={styles.requestRowActionLinkIcon} name='qrcode'/>
                                 <Text  style={styles.requestRowActionLinkLabel}>Scan QR Code</Text>
-                            </TouchableOpacity>
+                            </TouchableOpacity>:null}
                         </View>
                         <Text style={styles.requestRowLabel}>Note</Text>
                         <View style={styles.hr}/>
@@ -611,7 +625,7 @@ class Send extends Component<{}> {
                     visible={!!this.state.scanQR}
                     onRequestClose={()=>this.setState({scanQR:false})}>
                     <View style={styles.qrContent}>
-                        <Camera
+                        <RNCamera
                             ref={(cam) => {
                                 this.camera = cam;
                             }}
@@ -629,10 +643,12 @@ class Send extends Component<{}> {
                                         value="Go to Settings"/>
                                 </View>
                             }
-                            style={styles.preview}
-                            aspect={Camera.constants.Aspect.fill}>
+                            type={RNCamera.Constants.Type.back}
+                            style={styles.preview}>
                             <Image style={styles.scanQRBoxImg} source={require('@images/scan-qr.png')} />
-                        </Camera>
+                            <Button value='Close' onPress={()=>this.setState({scanQR:false})}
+                                style={{ position:'absolute' , width: 150, alignItems:'center', bottom:70}}/>
+                        </RNCamera>
                     </View>
                 </Modal>
             </Container>

@@ -7,7 +7,8 @@ import {
     TouchableOpacity,
     Image,
     View,
-    BackHandler
+    BackHandler,
+    Platform
 } from 'react-native';
 import {
     Container,
@@ -29,9 +30,10 @@ const styles = require("@styles/lock");
 
 class SetOrUpdatePIN extends Component<{}> {
 
-    static navigationOptions = {
-        // header: null,
-    }
+    static navigationOptions = ({ navigation }) => ({
+        header: null,
+        gesturesEnabled: !!navigation.state.params.update_pin,
+    })
 
     constructor(props) {
         super(props);
@@ -137,7 +139,8 @@ class SetOrUpdatePIN extends Component<{}> {
                 </Content>
                 <View style={styles.keypad}>
                     <Text style={styles.pinNote}>
-                        {"Remember this PIN, If you forget it, You won't be able to access your FLASH App"}
+                        {"Remember this PIN, If you forget it, You won't be able to access your "+
+                            (Platform.OS === 'ios'?'Coinodes Wallet':'FLASH app')}
                     </Text>
                     <View style={styles.keypadBox}>
                         <View style={styles.keypadRow}>

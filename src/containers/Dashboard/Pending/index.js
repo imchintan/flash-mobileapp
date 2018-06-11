@@ -70,8 +70,9 @@ const TabNav = createMaterialTopTabNavigator({
 });
 
 class PendingTab extends React.Component {
+
     static navigationOptions = {
-        header: null,
+        gesturesEnabled: true,
     }
 
     constructor(props) {

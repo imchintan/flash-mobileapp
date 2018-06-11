@@ -8,7 +8,6 @@ import {
   Image,
   FlatList,
   TextInput,
-  Modal,
   RefreshControl
 } from 'react-native';
 import {
@@ -16,6 +15,7 @@ import {
     Button,
     Text,
     RequestTab,
+    Modal,
     Toast,
     Icon
 } from '@components';

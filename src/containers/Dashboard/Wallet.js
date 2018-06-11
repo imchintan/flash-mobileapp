@@ -19,6 +19,7 @@ import {
     WalletMenu,
     WalletFooter,
     Icon,
+    Loader,
     Text
 } from '@components';
 import { connect } from 'react-redux';
@@ -32,6 +33,7 @@ class Wallet extends Component<{}> {
 
     static navigationOptions = {
         header: null,
+        gesturesEnabled: true,
     }
 
     constructor(props) {
@@ -85,7 +87,7 @@ class Wallet extends Component<{}> {
                         <RefreshControl
                             colors={['#191714']}
                             tintColor='#191714'
-                            refreshing={this.props.loading}
+                            refreshing={false}
                             onRefresh={this.props.refreshingHome}/>
                     }>
                     <View style={styles.walletBalanceTab}>
@@ -133,6 +135,7 @@ class Wallet extends Component<{}> {
                 <WalletFooter
                     nightMode={this.props.nightMode}
                     navigation={this.props.navigation} />
+                <Loader show={this.props.loading} />
             </Container>
         );
     }

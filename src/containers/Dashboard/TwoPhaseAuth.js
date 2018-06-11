@@ -34,6 +34,7 @@ class TwoPhaseAuth extends Component<{}> {
 
     static navigationOptions = {
         header: null,
+        gesturesEnabled: true,
     }
 
     constructor(props) {

@@ -73,6 +73,10 @@ const TabNav = createMaterialTopTabNavigator({
 
 class ActivityTab extends React.Component {
 
+    static navigationOptions = {
+        gesturesEnabled: true,
+    }
+
     constructor(props) {
         super(props);
         this.state ={}

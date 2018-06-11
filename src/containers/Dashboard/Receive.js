@@ -36,7 +36,8 @@ const { width } = Dimensions.get('window');
 class Receive extends Component < {} > {
 
     static navigationOptions = {
-        header: null
+        header: null,
+        gesturesEnabled: true,
     }
 
     constructor(props) {

@@ -50,15 +50,19 @@ class SignUP extends Component<{}> {
     getInjectScript(){
         return `
           (function ready() {
-              showSignUp();
-              $("#header").remove();
-              $('#social-forum').remove();
-              $('#wallet').remove();
-              $('#footer').remove();
-              $('.page-section.topmargin-sm').remove();
-              $(".col-lg-7.d-none.d-sm-block.textcenter-sm").remove();
-              $(".back-login").remove();
-              $('#gcaptcha > div').css({'margin': '0 auto'});
+              setTimeout(()=>{
+                  if(!!window.signup) return ;
+                  window.signup = true;
+                  showSignUp();
+                  $("#header").remove();
+                  $('#social-forum').remove();
+                  $('#wallet').remove();
+                  $('#footer').remove();
+                  $('.page-section.topmargin-sm').remove();
+                  $(".col-lg-7.d-none.d-sm-block.textcenter-sm").remove();
+                  $(".back-login").remove();
+                  $('#gcaptcha > div').css({'margin': '0 auto'});
+              },1000);
           })();
         `
     }
@@ -74,7 +78,9 @@ class SignUP extends Component<{}> {
                 </Header>
                 <WebView
                     injectedJavaScript={this.getInjectScript()}
+                    injectedJavaScript={this.getInjectScript()}
                     onLoadEnd={()=>setTimeout(()=>this.setState({loading:false}),1500)}
+                    onError={(e)=>console.log(e)}
                     style={styles.webViewCreateWallet}
                     source={{uri: url}}
                 />

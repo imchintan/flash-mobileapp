@@ -5,11 +5,11 @@ import {
     View,
     Image,
     TouchableOpacity,
-    Modal,
     ViewPropTypes,
     Dimensions
 } from 'react-native';
 import Text from './../Text';
+import Modal from './../Modal';
 import Loader from './../Loader';
 import PropTypes from "prop-types";
 import { PROFILE_URL } from '@src/config';
@@ -279,11 +279,6 @@ const stylesDark = {
                 },
             }),
         },
-        // txnAmount:{
-        //     color: '#333333',
-        //     fontSize: 18,
-        //     fontWeight: '600',
-        // },
         txnRecvFrom:{
             color: '#DFDFDF',
             fontSize: 14,

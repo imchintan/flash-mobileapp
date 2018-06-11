@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
     pinBoxContent:{
         flexDirection: 'column',
         justifyContent: 'center',
-        height: ((width-40)/3)*9/20*7,
+        height: ((width-40)/3)*4,
     },
     pinBox:{
         alignSelf: 'center',
@@ -81,7 +81,7 @@ const styles = StyleSheet.create({
     },
     keypadDarkBox:{
         paddingTop: 7,
-        backgroundColor: 'rgba(255, 255, 255, 0.15)',       
+        backgroundColor: 'rgba(255, 255, 255, 0.15)',
     },
     keypadRow:{
         marginHorizontal: 5,

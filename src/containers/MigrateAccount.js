@@ -8,7 +8,6 @@ import {
     Text,
     TextInput,
     TouchableOpacity,
-    Modal,
     ScrollView,
     Linking
 } from 'react-native';
@@ -16,6 +15,7 @@ import {
     Container,
     Content,
     Button,
+    Modal,
     Loader,
     Toast
 } from '@components';
