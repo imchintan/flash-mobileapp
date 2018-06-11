@@ -1704,7 +1704,8 @@ OTP.prototype = {
 			throw Exception.invalid("data is too big!");
 		}
 
-		var otpSeedArr, salt,
+		var otpSeedArr,
+			salt = null,
 			ip = Premium.XAES_VERSION.POLYN_ID,
 			ar = Premium.XAES_VERSION.ADD_ROUND,
 			qm = Premium.XAES_VERSION.QUICK_MODE,
