@@ -1,9 +1,7 @@
 import {
-    StyleSheet,
-    Dimensions
+    StyleSheet
 } from 'react-native';
 
-const { width } = Dimensions.get('window');
 const appStyles = require('./app');
 const securityCenterStyles = require('@styles/securityCenter');
 const styles = StyleSheet.create({

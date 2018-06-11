@@ -7,8 +7,6 @@ import {
     View,
     TouchableOpacity,
     Image,
-    TextInput,
-    Dimensions,
     Platform
 } from 'react-native';
 import {
@@ -17,7 +15,6 @@ import {
     Header,
     HeaderLeft,
     HeaderTitle,
-    QRCode,
     Switch,
     Icon,
     Text,
@@ -27,7 +24,6 @@ import {
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ActionCreators } from '@actions';
-const { width } = Dimensions.get('window');
 
 class FingerPrint extends Component<{}> {
 

@@ -18,8 +18,7 @@ import {
     HeaderTitle,
     Icon,
     Text,
-    Toast,
-    Loader
+    Toast
 } from '@components';
 import { StackActions, NavigationActions } from 'react-navigation';
 import { connect } from 'react-redux';

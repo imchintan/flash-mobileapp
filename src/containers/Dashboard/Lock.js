@@ -22,7 +22,6 @@ import {
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ActionCreators } from '@actions';
-import { StackActions, NavigationActions } from 'react-navigation';
 import TouchID from 'react-native-touch-id'
 import * as constants from '@src/constants';
 
@@ -66,7 +65,7 @@ class Lock extends Component<{}> {
                 isEnableTouchID=false;
             }
         });
-        if(this.props.isEnableTouchID)this.touchID();
+        if(isEnableTouchID)this.touchID();
     }
 
     componentWillUnmount(){

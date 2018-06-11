@@ -6,8 +6,6 @@ import React, { Component } from 'react';
 import {
     View,
     TouchableOpacity,
-    TextInput,
-    Dimensions,
     Platform
 } from 'react-native';
 import {
@@ -24,7 +22,6 @@ import {
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ActionCreators } from '@actions';
-const { width } = Dimensions.get('window');
 
 class SecurityCenter extends Component<{}> {
 

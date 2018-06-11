@@ -78,7 +78,6 @@ class SignUP extends Component<{}> {
                 </Header>
                 <WebView
                     injectedJavaScript={this.getInjectScript()}
-                    injectedJavaScript={this.getInjectScript()}
                     onLoadEnd={()=>setTimeout(()=>this.setState({loading:false}),1500)}
                     onError={(e)=>console.log(e)}
                     style={styles.webViewCreateWallet}

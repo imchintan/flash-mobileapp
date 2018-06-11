@@ -4,7 +4,7 @@ import {
     Platform
 } from 'react-native';
 
-const { height, width } = Dimensions.get('window');
+const { width } = Dimensions.get('window');
 const homeStyles = require('@styles/home');
 const appStyles = require('./app');
 const reqStyles = require('./request');
