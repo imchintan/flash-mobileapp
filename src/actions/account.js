@@ -146,15 +146,15 @@ export const getBalanceV2 = (currency_type=constants.CURRENCY_TYPE.FLASH ,refres
 export const getProfile = () => {
     return (dispatch,getState) => {
         let params = getState().params;
-        apis.getProfile(params.profile.auth_version, params.profile.sessionToken).then((d)=>{
+        apis.getProfile(params.profile.auth_version, params.profile.sessionToken).then(async(d)=>{
             if(d.rc == 1){
-                constants.SOUND.SUCCESS.play();
-                AsyncStorage.mergeItem('user',JSON.stringify(d.profile));
+                let profile = {...params.profile,...d.profile};
+                await AsyncStorage.setItem('user',JSON.stringify(profile));
                 dispatch({
                     type: types.GET_PROFILE,
                     payload: {
                         loading:false,
-                        profile:{...params.profile,...d.profile}
+                        profile
                     }
                 });
             }else if(d.rc == 3){
@@ -547,15 +547,14 @@ export const changeCurrency = (currency_type) =>{
                 fixedTxnFee: 0.00002,
                 recentTxns: [],
                 totalPending: 0,
+                refreshingHome:true
             }
         });
         setTimeout(()=>{
-            dispatch(getBalanceV2(currency_type));
             dispatch(getWalletsByEmail());
-            dispatch(txns.getRecentTransactions());
             dispatch(reqs.getIncomingRequests(0,true));
             dispatch(reqs.getOutgoingRequests(0,true));
-
+            dispatch(refreshingHome(false));
             if(currency_type !== constants.CURRENCY_TYPE.FLASH && currency_type !== constants.CURRENCY_TYPE.DASH){
                 dispatch(txns.setBcMedianTxSize());
                 dispatch(txns.setSatoshiPerByte());
@@ -576,10 +575,30 @@ export const changeCurrency = (currency_type) =>{
     }
 }
 
-export const refreshingHome = () =>{
+export const setDevicePIN = (pin, isSet=false) =>{
+    return async(dispatch,getState) => {
+        await AsyncStorage.setItem('pin',pin.toString());
+        if(!isSet){
+            dispatch({ type: types.CREATE_PIN, payload:{pin}});
+        }else{
+            dispatch({ type: types.UPDATE_PIN, payload:{pin}});
+        }
+
+    }
+}
+
+export const setTouchID = (isEnableTouchID=false) =>{
+    return async(dispatch,getState) => {
+        await AsyncStorage.setItem('isEnableTouchID',isEnableTouchID.toString());
+        dispatch({ type: types.ENABLE_DISABLE_TOUCH_ID, payload:{isEnableTouchID}});
+
+    }
+}
+
+export const refreshingHome = (refresh=true) =>{
     return (dispatch,getState) => {
         dispatch({ type: types.LOADING, payload:{refreshingHome:true} });
-        dispatch(getBalanceV2(getState().params.currency_type,true));
+        dispatch(getBalanceV2(getState().params.currency_type,refresh));
         dispatch(txns.getRecentTransactions());
     }
 }

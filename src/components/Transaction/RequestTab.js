@@ -28,11 +28,13 @@ export default class RequestTab extends Component {
 
     static defaultProps = {
         req: {
-            outgoing: false
+            outgoing: false,
+            nightMode: false
         }
     }
 
     render() {
+        const styles = this.props.nightMode?stylesDark:stylesLight;
         return (
             <View key={'_req_'+this.props.req.id}>
                 <TouchableOpacity activeOpacity={0.7} {...this.props}
@@ -180,8 +182,8 @@ export default class RequestTab extends Component {
                                     onPress={()=>this.setState({cancelRequest:true,visible:false})}
                                     value='Cancel Request' />:((this.state.reject || this.state.accept)?
                                     <View style={{flexDirection:'row'}}>
-                                        <Button style={[styles.reqBtn,{backgroundColor: '#EFEFEF'}]}
-                                            textstyle={[styles.reqBtnLabel,{color:'#333'}]}
+                                        <Button style={[styles.reqBtn,{backgroundColor:  this.props.nightMode?'#b98e1b':'#EFEFEF'}]}
+                                            textstyle={[styles.reqBtnLabel,{color:this.props.nightMode?'#191714':'#333'}]}
                                             onPress={()=>this.setState({reject: false, accept: false, note: ''})}
                                             value='Cancel' />
                                         <Button style={styles.reqBtn}
@@ -203,8 +205,8 @@ export default class RequestTab extends Component {
                                             textstyle={styles.reqBtnLabel}
                                             onPress={()=>this.setState({accept: true})}
                                             value='Accept' />
-                                        <Button style={[styles.reqBtn,{backgroundColor: '#EFEFEF'}]}
-                                            textstyle={[styles.reqBtnLabel,{color:'#333'}]}
+                                        <Button style={[styles.reqBtn,{backgroundColor:  this.props.nightMode?'#b98e1b':'#EFEFEF'}]}
+                                            textstyle={[styles.reqBtnLabel,{color:this.props.nightMode?'#191714':'#333'}]}
                                             onPress={()=>this.setState({reject: true})}
                                             value='Reject' />
                                     </View>
@@ -228,7 +230,7 @@ export default class RequestTab extends Component {
                                     padding: 20,
                                     fontSize: 20,
                                     textAlign: 'center',
-                                    color: '#4A4A4A'
+                                    color: this.props.nightMode?'#C2C2C2':'#4A4A4A'
                                 }}>Are you sure you want to cancel this request?</Text>
                             </View>
                             <View style={{flexDirection:'row'}}>
@@ -255,10 +257,11 @@ RequestTab.propTypes = {
 	style: PropTypes.oneOfType([PropTypes.object, PropTypes.number, PropTypes.array]),
 	req: PropTypes.object,
 	outgoing: PropTypes.bool,
+    nightMode: PropTypes.bool,
     timezone: PropTypes.string,
 };
 
-const styles = StyleSheet.create({
+const stylesLight = StyleSheet.create({
     reqTab: {
         flexDirection: 'row',
         backgroundColor: '#FFFFFF',
@@ -310,19 +313,6 @@ const styles = StyleSheet.create({
         fontSize: 40,
         color: '#B9B9B9',
         paddingRight:3
-    },
-    reqStatus:{
-        width: 90,
-        height: 36,
-        borderRadius: 18,
-        backgroundColor: '#EE517C',
-        alignItems: 'center',
-        justifyContent: 'center'
-    },
-    reqStatusLabel:{
-        color: '#FFFFFF',
-        fontSize: 13,
-        fontWeight: 'bold',
     },
     reqDetailModal:{
         backgroundColor: '#0007',
@@ -402,11 +392,7 @@ const styles = StyleSheet.create({
         width: width - 160,
         fontSize: 14,
         color: '#4A4A4A',
-        // borderWidth: 1,
-        // borderColor: '#999999',
         paddingVertical: 5,
-        // paddingHorizontal: 10,
-        // borderRadius: 10,
     },
     reqBtn:{
         backgroundColor: '#191714',
@@ -431,3 +417,98 @@ const styles = StyleSheet.create({
         color: '#9B9B9B'
     },
 });
+
+const stylesDark = {
+    ...stylesLight,
+    ...StyleSheet.create({
+        reqTab: {
+            flexDirection: 'row',
+            backgroundColor: '#393939',
+            alignSelf: 'center',
+            alignItems: 'center',
+            justifyContent: 'space-between',
+            width: width - 40,
+            height: 70,
+            padding:10,
+            marginBottom: 10,
+            borderRadius: 5,
+            ...Platform.select({
+                ios: {
+                    shadowColor: 'rgba(0,0,0, 0.3)',
+                    shadowOffset: { height: 1, width: 0 },
+                    shadowOpacity: 0.5,
+                },
+                android: {
+                    elevation: 3,
+                },
+            }),
+        },
+        reqAmount:{
+            color: '#F3F3F3',
+            fontSize: 18,
+            fontWeight: '600',
+        },
+        reqRecvFrom:{
+            color: '#DFDFDF',
+            fontSize: 14,
+            fontStyle: 'italic',
+            fontWeight: '400',
+        },
+        reqDateTime:{
+            paddingTop: 2,
+            color: '#A4A4A4',
+            fontSize: 13,
+        },
+        reqDetailArrow:{
+            fontSize: 40,
+            color: '#7D7D7D',
+            paddingRight:3
+        },
+        reqDetailBody:{
+            backgroundColor: '#313131',
+            padding: 15,
+        },
+        reqDetailLabel:{
+            width: 85,
+            fontSize: 14,
+            color: '#E9E9E9',
+        },
+        reqDetailText:{
+            fontSize: 14,
+            color: '#C2C2C2',
+        },
+        reqFiatAmtText:{
+            fontSize: 12,
+            color: '#C2C2C2',
+        },
+        reqDetailTextInputBox:{
+            justifyContent: 'center',
+            width: width - 160,
+            height: 100,
+            paddingVertical: 5,
+            marginTop: 5,
+            paddingHorizontal: 10,
+            borderWidth: 1.5,
+            borderRadius:10,
+            borderColor: '#6A6A6A'
+        },
+        reqDetailTextInput:{
+            width: width - 160,
+            fontSize: 14,
+            color: '#C2C2C2',
+            paddingVertical: 5,
+            paddingHorizontal: 10,
+        },
+        reqDetailTextWithBox:{
+            width: width - 160,
+            fontSize: 14,
+            color: '#C2C2C2',
+            paddingVertical: 5,
+        },
+        requestRowNote:{
+            fontSize: 13,
+            paddingHorizontal: 5,
+            color: '#AEAEAE'
+        },
+    })
+}

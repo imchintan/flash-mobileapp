@@ -30,12 +30,12 @@ import { ActionCreators } from '@actions';
 import PhoneInput from 'react-native-phone-input'
 import PhoneNumber from 'react-native-phone-input/lib/phoneNumber'
 import Premium from 'Premium';
-const styles = require("@styles/myAccount");
 
 class MyProfile extends Component<{}> {
 
     static navigationOptions = {
         header: null,
+        gesturesEnabled: true,
     }
 
     constructor(props) {
@@ -193,6 +193,8 @@ class MyProfile extends Component<{}> {
     }
 
     render() {
+        const styles = (this.props.nightMode?require('@styles/nightMode/myAccount'):
+            require('@styles/myAccount'));
 
         const timezones = this.state.timezones.map((tz,index) =>
             <TouchableOpacity key={'_tz_'+index}
@@ -214,11 +216,11 @@ class MyProfile extends Component<{}> {
                     <HeaderTitle>My Profile</HeaderTitle>
                     <HeaderRight>
                         <TouchableOpacity>
-                            <Icon style={styles.headerFAIcon} onPress={this.props.logout} name='power-off' />
+                            <Icon style={styles.headerFAIcon} onPress={()=>this.props.logout(false)} name='power-off' />
                         </TouchableOpacity>
                     </HeaderRight>
                 </Header>
-                <Content>
+                <Content style={styles.content}>
                     <View style={styles.profile}>
                         <View style={styles.profileRow}>
                             <View style={styles.profileRowTitle}>
@@ -231,12 +233,12 @@ class MyProfile extends Component<{}> {
                                         <TouchableOpacity
                                             onPress={this.updateDisplayName.bind(this)}
                                             style={styles.profileActionBtn}>
-                                            <Icon style={[styles.profileActionIcon,{color: 'green'}]} name={'check'}/>
+                                            <Icon style={[styles.profileActionIcon,styles.profileActionGreenIcon]} name={'check'}/>
                                         </TouchableOpacity>
                                         <TouchableOpacity
                                             onPress={()=>this.setState({editName:false,display_name:''})}
                                             style={styles.profileActionBtn}>
-                                            <Icon style={[styles.profileActionIcon, ,{color: 'red'}]} name={'close'}/>
+                                            <Icon style={[styles.profileActionIcon,{color: 'red'}]} name={'close'}/>
                                         </TouchableOpacity>
                                     </View>
                                 }
@@ -278,7 +280,7 @@ class MyProfile extends Component<{}> {
                                         <TouchableOpacity
                                             onPress={this.changePassword.bind(this)}
                                             style={styles.profileActionBtn}>
-                                            <Icon style={[styles.profileActionIcon,{color: 'green'}]} name={'check'}/>
+                                            <Icon style={[styles.profileActionIcon,styles.profileActionGreenIcon]} name={'check'}/>
                                         </TouchableOpacity>
                                         <TouchableOpacity
                                             onPress={()=>this.setState({
@@ -346,7 +348,7 @@ class MyProfile extends Component<{}> {
                                         <TouchableOpacity
                                             onPress={this.updateTimeZone.bind(this)}
                                             style={styles.profileActionBtn}>
-                                            <Icon style={[styles.profileActionIcon,{color: 'green'}]} name={'check'}/>
+                                            <Icon style={[styles.profileActionIcon,styles.profileActionGreenIcon]} name={'check'}/>
                                         </TouchableOpacity>
                                         <TouchableOpacity
                                             onPress={()=>this.setState({editTZ:false,timezone:''})}
@@ -369,7 +371,7 @@ class MyProfile extends Component<{}> {
                                         {!!this.props.profile.phone && this.props.profile.phone_verified === 0?<TouchableOpacity
                                             onPress={this.sendVerificationSMS.bind(this)}
                                             style={styles.profileActionBtn}>
-                                            <Icon style={[styles.profileActionIcon,{color: 'green'}]} name={'check-square-o'}/>
+                                            <Icon style={[styles.profileActionIcon,styles.profileActionGreenIcon]} name={'check-square-o'}/>
                                         </TouchableOpacity>:null}
                                         <TouchableOpacity
                                             onPress={()=>this.setState({editPhone:true})}
@@ -380,7 +382,7 @@ class MyProfile extends Component<{}> {
                                         <TouchableOpacity
                                             onPress={this.updatePhoneNumber.bind(this)}
                                             style={styles.profileActionBtn}>
-                                            <Icon style={[styles.profileActionIcon,{color: 'green'}]} name={'check'}/>
+                                            <Icon style={[styles.profileActionIcon,styles.profileActionGreenIcon]} name={'check'}/>
                                         </TouchableOpacity>
                                         <TouchableOpacity
                                             onPress={()=>this.setState({editPhone:false,timezone:''})}
@@ -518,6 +520,7 @@ function mapStateToProps({params}) {
         loading: params.loading,
         errorMsg: params.verifyCodeErrorMsg || null,
         successMsg: params.verifyCodeSuccessMsg || null,
+        nightMode: params.nightMode,
     };
 }
 

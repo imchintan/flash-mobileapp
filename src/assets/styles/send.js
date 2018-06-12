@@ -7,7 +7,7 @@ const { width } = Dimensions.get('window');
 const requestStyles = require('./request');
 
 const styles = StyleSheet.create({
-    content:{
+    qrContent:{
         flex: 1,
         flexDirection: 'row',
         backgroundColor: '#191714'

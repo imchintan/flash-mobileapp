@@ -19,6 +19,7 @@ import {
     WalletMenu,
     WalletFooter,
     Icon,
+    Loader,
     Text
 } from '@components';
 import { connect } from 'react-redux';
@@ -28,12 +29,11 @@ import moment from 'moment-timezone';
 import * as utils from '@lib/utils';
 import * as constants from '@src/constants';
 
-const styles = require("@styles/wallet");
-
 class Wallet extends Component<{}> {
 
     static navigationOptions = {
         header: null,
+        gesturesEnabled: true,
     }
 
     constructor(props) {
@@ -49,6 +49,7 @@ class Wallet extends Component<{}> {
     }
 
     render() {
+        const styles = (this.props.nightMode?require('@styles/nightMode/wallet'):require('@styles/wallet'));
         return (
             <Container>
                 <Header>
@@ -80,13 +81,13 @@ class Wallet extends Component<{}> {
                         </View>:null}
                     </HeaderRight>
                 </Header>
-                <Content
+                <Content style={styles.content}
                     hasFooter={true}
                     refreshControl={
                         <RefreshControl
                             colors={['#191714']}
                             tintColor='#191714'
-                            refreshing={this.props.loading}
+                            refreshing={false}
                             onRefresh={this.props.refreshingHome}/>
                     }>
                     <View style={styles.walletBalanceTab}>
@@ -110,6 +111,7 @@ class Wallet extends Component<{}> {
                         {
                             this.props.txns.map((txn,index)=>
                                 <TransactionTab txn={txn}
+                                    nightMode={this.props.nightMode}
                                     currency_type={this.props.currency_type}
                                     timezone={this.props.profile.timezone || moment.tz.guess()}
                                     txnLoader={this.props.txnLoader}
@@ -118,8 +120,11 @@ class Wallet extends Component<{}> {
                                     key={'_txn_'+txn.transaction_id+'_'+index} />
                             )
                         }
-                        {this.props.txns.length == 0?<Text style={styles.txnListEmpty}>
-                            There is no recent transactions.
+                        {this.props.txns.length == 0 && !this.props.refreshingHomeLoader?<Text style={styles.txnListEmpty}>
+                            There are no recent transactions.
+                        </Text>:null}
+                        {this.props.txns.length == 0 && this.props.refreshingHomeLoader?<Text style={styles.txnListEmpty}>
+                            loading transactions....please wait
                         </Text>:null}
                     </View>
                 </Content>
@@ -127,7 +132,10 @@ class Wallet extends Component<{}> {
                     visible={this.state.showMenu}
                     badgePending={this.props.totalPending}
                     navigation={this.props.navigation} />
-                <WalletFooter navigation={this.props.navigation} />
+                <WalletFooter
+                    nightMode={this.props.nightMode}
+                    navigation={this.props.navigation} />
+                <Loader show={this.props.loading} />
             </Container>
         );
     }
@@ -138,6 +146,7 @@ function mapStateToProps({params}) {
         isLoggedIn: params.isLoggedIn,
         profile: params.profile,
         loading: params.balanceLoader ||  params.loading,
+        refreshingHomeLoader: params.refreshingHome ||  false,
         errorMsg: params.errorMsg || null,
         successMsg: params.successMsg || null,
         balance: params.balance,
@@ -148,7 +157,8 @@ function mapStateToProps({params}) {
         fiat_currency: params.fiat_currency,
         fiat_balance: params.fiat_balance,
         fiat_per_value: params.fiat_per_value,
-        totalPending: params.totalPending
+        totalPending: params.totalPending,
+        nightMode: params.nightMode,
     };
 }
 

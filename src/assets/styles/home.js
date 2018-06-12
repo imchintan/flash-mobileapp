@@ -12,14 +12,7 @@ const styles = StyleSheet.create({
     headerTextLogo:{
         resizeMode: 'contain',
         height: 40,
-        width: 273*40/100,
-        ...Platform.select({
-            ios: {
-                marginTop: 7,
-            },
-            android: {
-            },
-        }),
+        width: 350*40/100,
     },
     headerBalanceBox:{
         width: width/2,
@@ -122,6 +115,12 @@ const styles = StyleSheet.create({
         marginRight:5
     },
     adminTabRightIcon:{
+        ...Platform.select({
+            ios: {
+                height: 40,
+                bottom: 1
+            },
+        }),
         fontSize: 40,
         color: '#a37d17',
     },

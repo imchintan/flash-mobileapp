@@ -6,8 +6,9 @@ import React, { Component } from 'react';
 import {
     View,
     Image,
-    Modal,
     ScrollView,
+    AppState,
+    Platform,
     TouchableOpacity,
     RefreshControl,
 } from 'react-native';
@@ -17,6 +18,7 @@ import {
     Header,
     HeaderLeft,
     HeaderRight,
+    Modal,
     Icon,
     Text,
 } from '@components';
@@ -25,7 +27,6 @@ import { bindActionCreators } from 'redux';
 import { ActionCreators } from '@actions';
 import * as utils from '@lib/utils';
 import * as constants from '@src/constants';
-const styles = require('@styles/home');
 
 class Home extends Component<{}> {
 
@@ -36,11 +37,34 @@ class Home extends Component<{}> {
     constructor(props) {
         super(props);
         this.state = {
+            appState: 'active',
         };
     }
 
     componentDidMount(){
+        AppState.addEventListener('change', this._handleAppStateChange.bind(this));
+        if(!this.props.pin){
+            this.props.navigation.navigate('SetOrUpdatePIN',{update_pin:false});
+            this.props.customAction({isNewSession:true});
+            return;
+        }else if(!this.props.isNewSession){
+            this.props.navigation.navigate('Lock');
+        }else{
+            this.props.customAction({isNewSession:false});
+            constants.SOUND.SUCCESS.play();
+        }
         this.refreshingHome();
+    }
+
+    componentWillUnmount(){
+        AppState.removeEventListener('change', this._handleAppStateChange.bind(this));
+    }
+
+    _handleAppStateChange(nextAppState){
+        if ((!!this.props.pin && !this.props.lockApp && this.state.appState.match(/inactive|background/) && nextAppState === 'active')){
+            this.props.navigation.navigate('Lock');
+        }
+        this.setState({appState: nextAppState});
     }
 
     refreshingHome(){
@@ -56,11 +80,14 @@ class Home extends Component<{}> {
     }
 
     render() {
+        const styles = (this.props.nightMode?require('@styles/nightMode/home'):require('@styles/home'));
         return (
             <Container>
                 <Header>
                     <HeaderLeft>
-                        <Image style={styles.headerTextLogo} source={require('@images/app-text-icon-white.png')} />
+                        <Image style={styles.headerTextLogo} source={Platform.OS === 'ios'?
+                            require('@images/app-text-icon-white-ios.png'):
+                            require('@images/app-text-icon-white.png')} />
                     </HeaderLeft>
                     <HeaderRight>
                         <View style={styles.headerBalanceBox}>
@@ -72,7 +99,7 @@ class Home extends Component<{}> {
                         </View>
                     </HeaderRight>
                 </Header>
-                <Content contentContainerStyle={{marginHorizontal: 20}}
+                <Content style={styles.content}
                     refreshControl={
                         <RefreshControl
                             colors={['#191714']}
@@ -80,79 +107,93 @@ class Home extends Component<{}> {
                             refreshing={this.props.loading}
                             onRefresh={this.refreshingHome.bind(this)}/>
                     }>
-                    <Text style={styles.label}>Wallets</Text>
-                    <View style={styles.hr}/>
-                    { this.props.balances.map(balance =>
-                        <TouchableOpacity activeOpacity={0.5} onPress={()=>this.changeCurrency(balance.currency_type)}
-                            key={'_wallet_'+balance.currency_type+'_'+balance.amt}
-                            style={[styles.walletTab,{backgroundColor: balance.color}]}>
-                            <Image style={styles.walletIcon} source={utils.getCurrencyIcon(balance.currency_type)} />
-                            <View style={styles.walletTabDetail}>
-                                <View>
-                                    <Text style={styles.currencyLabel}>
-                                        {utils.getCurrencyName(balance.currency_type)}
-                                    </Text>
-                                    <Text style={styles.walletConversionRate}>{
-                                        utils.getCurrencySymbol(this.props.fiat_currency) + ' ' +
-                                        utils.flashNFormatter(balance.per_value,2) + ' / ' +
-                                        utils.getCurrencyUnitUpcase(balance.currency_type)}
-                                    </Text>
+                    <View style={{marginHorizontal: 20}}>
+                        <Text style={styles.label}>Wallets</Text>
+                        <View style={styles.hr}/>
+                        { this.props.balances.map(balance =>
+                            <TouchableOpacity activeOpacity={0.5} onPress={()=>this.changeCurrency(balance.currency_type)}
+                                key={'_wallet_'+balance.currency_type+'_'+balance.amt}
+                                style={[styles.walletTab,{backgroundColor: balance.color}]}>
+                                <Image style={styles.walletIcon} source={utils.getCurrencyIcon(balance.currency_type)} />
+                                <View style={styles.walletTabDetail}>
+                                    <View>
+                                        <Text style={styles.currencyLabel}>
+                                            {utils.getCurrencyName(balance.currency_type)}
+                                        </Text>
+                                        <Text style={styles.walletConversionRate}>{
+                                            utils.getCurrencySymbol(this.props.fiat_currency) + ' ' +
+                                            utils.flashNFormatter(balance.per_value,2) + ' / ' +
+                                            utils.getCurrencyUnitUpcase(balance.currency_type)}
+                                        </Text>
+                                    </View>
+                                    <View style={styles.walletBalanceDetail}>
+                                        <Text style={styles.walletBalanceInFiatCurrency}>{
+                                            utils.getCurrencySymbol(this.props.fiat_currency) + ' ' +
+                                            utils.flashNFormatter(balance.amt2,2)}
+                                        </Text>
+                                        <Text style={styles.walletBalance}>{
+                                            utils.getCurrencyUnitUpcase(balance.currency_type) + ' ' +
+                                            utils.flashNFormatter((balance.currency_type == constants.CURRENCY_TYPE.FLASH?
+                                                utils.satoshiToFlash(balance.amt).toFixed(10):balance.amt),2)}
+                                        </Text>
+                                    </View>
                                 </View>
-                                <View style={styles.walletBalanceDetail}>
-                                    <Text style={styles.walletBalanceInFiatCurrency}>{
-                                        utils.getCurrencySymbol(this.props.fiat_currency) + ' ' +
-                                        utils.flashNFormatter(balance.amt2,2)}
-                                    </Text>
-                                    <Text style={styles.walletBalance}>{
-                                        utils.getCurrencyUnitUpcase(balance.currency_type) + ' ' +
-                                        utils.flashNFormatter((balance.currency_type == constants.CURRENCY_TYPE.FLASH?
-                                            utils.satoshiToFlash(balance.amt).toFixed(10):balance.amt),2)}
-                                    </Text>
-                                </View>
+                            </TouchableOpacity>
+                        )}
+                        <Text style={styles.label}>Admin</Text>
+                        <View style={styles.hr}/>
+                        <TouchableOpacity style={styles.adminTab}
+                            onPress={()=>this.setState({changeCurrencyModal: true})}>
+                            <View style={styles.adminTabTitle}>
+                                <Icon style={[styles.adminTabTitleIcon,{fontSize:20}]} name='money'/>
+                                <Text style={styles.adminTabTitleLabel}>Default Currency</Text>
+                            </View>
+                            <View style={styles.adminTabTitle}>
+
+                                <Text style={styles.adminTabSubTitleLabel}>{
+                                    constants.FIAT_CURRENCY_UNIT[this.props.fiat_currency]
+                                }</Text>
+                                <Icon style={styles.adminTabRightIcon} name='angle-right'/>
+
                             </View>
                         </TouchableOpacity>
-                    )}
-                    <Text style={styles.label}>Admin</Text>
-                    <View style={styles.hr}/>
-                    <TouchableOpacity style={styles.adminTab}
-                        onPress={()=>this.setState({changeCurrencyModal: true})}>
-                        <View style={styles.adminTabTitle}>
-                            <Icon style={[styles.adminTabTitleIcon,{fontSize:20}]} name='money'/>
-                            <Text style={styles.adminTabTitleLabel}>Default Currency</Text>
-                        </View>
-                        <View style={styles.adminTabTitle}>
-
-                            <Text style={styles.adminTabSubTitleLabel}>{
-                                constants.FIAT_CURRENCY_UNIT[this.props.fiat_currency]
-                            }</Text>
+                        <TouchableOpacity style={styles.adminTab}
+                            onPress={()=>this.props.navigation.navigate('Profile')}>
+                            <View style={styles.adminTabTitle}>
+                                <Icon style={styles.adminTabTitleIcon} name='user'/>
+                                <Text style={styles.adminTabTitleLabel}>My Profile</Text>
+                            </View>
                             <Icon style={styles.adminTabRightIcon} name='angle-right'/>
-
-                        </View>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.adminTab}
-                        onPress={()=>this.props.navigation.navigate('Profile')}>
-                        <View style={styles.adminTabTitle}>
-                            <Icon style={styles.adminTabTitleIcon} name='user'/>
-                            <Text style={styles.adminTabTitleLabel}>My Profile</Text>
-                        </View>
-                        <Icon style={styles.adminTabRightIcon} name='angle-right'/>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.adminTab}
-                        onPress={()=>this.props.navigation.navigate('Settings')}>
-                        <View style={styles.adminTabTitle}>
-                            <Icon style={styles.adminTabTitleIcon} name='cog'/>
-                            <Text style={styles.adminTabTitleLabel}>Settings</Text>
-                        </View>
-                        <Icon style={styles.adminTabRightIcon} name='angle-right'/>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.adminTab}
-                        onPress={()=>this.props.navigation.navigate('SecurityQuestion')}>
-                        <View style={styles.adminTabTitle}>
-                            <Icon style={styles.adminTabTitleIcon} name='shield'/>
-                            <Text style={styles.adminTabTitleLabel}>Security Questions</Text>
-                        </View>
-                        <Icon style={styles.adminTabRightIcon} name='angle-right'/>
-                    </TouchableOpacity>
+                        </TouchableOpacity>
+                        {/*
+                        <TouchableOpacity style={styles.adminTab}
+                            onPress={()=>this.props.navigation.navigate('Settings')}>
+                            <View style={styles.adminTabTitle}>
+                                <Icon style={styles.adminTabTitleIcon} name='cog'/>
+                                <Text style={styles.adminTabTitleLabel}>Settings</Text>
+                            </View>
+                            <Icon style={styles.adminTabRightIcon} name='angle-right'/>
+                        </TouchableOpacity>
+                        */}
+                        <TouchableOpacity style={styles.adminTab}
+                            onPress={()=>this.props.navigation.navigate('SecurityCenter')}>
+                            <View style={styles.adminTabTitle}>
+                                <Icon style={styles.adminTabTitleIcon} name='shield'/>
+                                <Text style={styles.adminTabTitleLabel}>Security Center</Text>
+                            </View>
+                            <Icon style={styles.adminTabRightIcon} name='angle-right'/>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.adminTab}
+                            onPress={()=>this.props.changeNightMode(!this.props.nightMode)}>
+                            <View style={styles.adminTabTitle}>
+                                <Icon style={styles.adminTabTitleIcon} name='moon-o'/>
+                                <Text style={styles.adminTabTitleLabel}>Night Mode</Text>
+                            </View>
+                            <Text style={styles.adminTabSubTitleLabel}>
+                                {this.props.nightMode?'ON':'OFF'}
+                            </Text>
+                        </TouchableOpacity>
+                    </View>
                 </Content>
                 <Modal
                     transparent={true}
@@ -211,6 +252,10 @@ function mapStateToProps({params}) {
         balances: params.balances,
         fiat_currency: params.fiat_currency,
         total_fiat_balance: params.total_fiat_balance,
+        isNewSession: params.isNewSession || false,
+        lockApp: params.lockApp || false,
+        pin: params.pin,
+        nightMode: params.nightMode,
     };
 }
 

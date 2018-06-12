@@ -8,7 +8,6 @@ import {
     Text,
     TextInput,
     TouchableOpacity,
-    Modal,
     ScrollView,
     Linking
 } from 'react-native';
@@ -16,6 +15,7 @@ import {
     Container,
     Content,
     Button,
+    Modal,
     Loader,
     Toast
 } from '@components';
@@ -239,7 +239,7 @@ class MigrateAccount extends Component<{}> {
                                         Account upgraded Successfully, Please login again.
                                     </Text>
                                     <Button
-                                        onPress={this.props.logout}
+                                        onPress={()=>this.props.logout(false)}
                                         style={[styles.reqBtn,{marginTop:10}]}
                                         textstyle={styles.reqBtnLabel}
                                         value='OK' />

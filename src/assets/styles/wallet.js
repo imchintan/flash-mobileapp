@@ -5,7 +5,7 @@ import {
 
 const { width } = Dimensions.get('window');
 const appStyles = require('./app');
-
+const activityStyles = require('./activity');
 const styles = StyleSheet.create({
     walletHeader:{
         paddingHorizontal: 10,
@@ -91,5 +91,6 @@ const styles = StyleSheet.create({
 
 module.exports = {
     ...appStyles,
+    ...activityStyles,
     ...styles
 }

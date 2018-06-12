@@ -8,7 +8,6 @@ import {
     Text,
     TextInput,
     TouchableOpacity,
-    Modal,
     ScrollView
 } from 'react-native';
 import {
@@ -17,6 +16,7 @@ import {
     Header,
     HeaderLeft,
     HeaderTitle,
+    Modal,
     Icon,
     Button,
     Loader,
@@ -30,12 +30,11 @@ import { ActionCreators } from '@actions';
 import Premium from 'Premium';
 import secrets from 'secrets.js-grempe';
 
-const styles = require("@styles/myAccount");
-
 class SecurityQuestion extends Component<{}> {
 
     static navigationOptions = {
         header: null,
+        gesturesEnabled: true,
     }
 
     constructor(props) {
@@ -119,6 +118,8 @@ class SecurityQuestion extends Component<{}> {
     }
 
     render() {
+        const styles = (this.props.nightMode?require('@styles/nightMode/myAccount'):
+            require('@styles/myAccount'));
         return (
             <Container>
                 <Header>
@@ -130,7 +131,7 @@ class SecurityQuestion extends Component<{}> {
                     </HeaderLeft>
                     <HeaderTitle>Security Questions</HeaderTitle>
                 </Header>
-                <Content>
+                <Content style={styles.content}>
                     <View style={styles.profile}>
                         <View style={styles.profileRow}>
                             <Text style={styles.profileRowLabel}>Security question 1</Text>
@@ -250,12 +251,7 @@ class SecurityQuestion extends Component<{}> {
                                         onPress={()=>this.setState({visibleGetPassword:false})}>X</Text>
                                 </View>
                                 <View style={styles.reqDetailBody}>
-                                    <Text style={{
-                                        fontSize: 15,
-                                        color: '#333',
-                                        textAlign: 'center',
-                                        marginBottom: 15,
-                                    }}>
+                                    <Text style={styles.reqDetailBoxNote}>
                                         For additional security check, Please enter your password.
                                     </Text>
                                     <View style={styles.requestRowInputBox}>
@@ -291,6 +287,7 @@ function mapStateToProps({params}) {
         profile: params.profile,
         loading: params.loading,
         successMsg: params.securityQueSuccessMsg || null,
+        nightMode: params.nightMode,
     };
 }
 

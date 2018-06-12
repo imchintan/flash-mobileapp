@@ -33,7 +33,6 @@ import PaymentReceived from './PaymentReceived';
 import PaymentSent from './PaymentSent';
 
 const { width } = Dimensions.get('window');
-const styles = require("@styles/app");
 
 const TabNav = createMaterialTopTabNavigator({
     All: { screen: AllTransactions },
@@ -74,6 +73,10 @@ const TabNav = createMaterialTopTabNavigator({
 
 class ActivityTab extends React.Component {
 
+    static navigationOptions = {
+        gesturesEnabled: true,
+    }
+
     constructor(props) {
         super(props);
         this.state ={}
@@ -92,6 +95,7 @@ class ActivityTab extends React.Component {
     refresh = () => this.props.updateTransactionReportDate(this.props.date_from,this.props.date_to)
 
     render() {
+        const styles = (this.props.nightMode?require('@styles/nightMode/app'):require('@styles/app'));
         let customI18n = {
            'text': {
              'save': 'Confirm',
@@ -171,7 +175,8 @@ function mapStateToProps({params}) {
       date_from: params.date_from,
       date_to: params.date_to,
       minDate: moment(params.profile.created_ts).format('YYYYMMDD000000'),
-      maxDate: moment().format('YYYYMMDD235959')
+      maxDate: moment().format('YYYYMMDD235959'),
+      nightMode: params.nightMode,
   };
 }
 

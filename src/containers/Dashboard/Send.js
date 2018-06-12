@@ -9,7 +9,8 @@ import {
   TouchableOpacity,
   Image,
   Clipboard,
-  Modal,
+  Linking,
+  Platform,
   Dimensions
 } from 'react-native';
 import {
@@ -21,12 +22,13 @@ import {
     Icon,
     Text,
     Button,
+    Modal,
     Loader,
     WalletMenu,
     WalletFooter,
     Toast
 } from '@components';
-import Camera from 'react-native-camera';
+import Camera, { RNCamera } from 'react-native-camera';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ActionCreators } from '@actions';
@@ -37,12 +39,12 @@ import { PROFILE_URL } from '@src/config';
 import Premium from 'Premium';
 
 const { width } = Dimensions.get('window');
-const styles = require("@styles/send");
 
 class Send extends Component<{}> {
 
     static navigationOptions = {
         header: null,
+        gesturesEnabled: true,
     }
 
     componentWillReceiveProps(nextProps){
@@ -286,6 +288,7 @@ class Send extends Component<{}> {
     }
 
     render() {
+        const styles = (this.props.nightMode?require('@styles/nightMode/send'):require('@styles/send'));
         return (
             <Container>
                 <Header>
@@ -314,7 +317,7 @@ class Send extends Component<{}> {
                         </View>:null}
                     </HeaderRight>
                 </Header>
-                <Content bounces={false}>
+                <Content bounces={false} style={styles.content}>
                     <View style={styles.walletBalanceTab}>
                         <Text style={styles.walletBalanceLabel}>Balance</Text>
                         <TouchableOpacity style={styles.walletBalanceDetail}>
@@ -387,7 +390,8 @@ class Send extends Component<{}> {
                         </View>
                         <Text style={styles.requestRowLabel}>Fee</Text>
                         <View style={styles.hr}/>
-                        <View style={[styles.requestRowInputBox,{flexDirection: 'row',backgroundColor: '#EDEDED'}]}>
+                        <View style={[styles.requestRowInputBox,{flexDirection: 'row',
+                            backgroundColor: this.props.nightMode?'#2F2F2F':'#EDEDED'}]}>
                             <View style={styles.requestRowAmtLabelBox}>
                                 <Text style={styles.requestRowAmtLabel}>{utils.getCurrencyUnitUpcase(this.props.currency_type)}</Text>
                             </View>
@@ -416,7 +420,7 @@ class Send extends Component<{}> {
                             />
                             {this.state.isVerify || this.state.isAddressVerify?
                                 <Icon style={{
-                                    color: 'green',
+                                    color: this.props.nightMode?'#32CD32':'green',
                                     fontSize: 30,
                                     position: 'absolute',
                                     right: 7,
@@ -432,12 +436,23 @@ class Send extends Component<{}> {
                                 <Icon style={styles.requestRowActionLinkIcon} name='paste'/>
                                 <Text  style={styles.requestRowActionLinkLabel}>Paste from Clipboard</Text>
                             </TouchableOpacity>
-                            <Text  style={styles.requestRowActionLinkDiv}> / </Text>
-                            <TouchableOpacity style={styles.requestRowActionLink}
-                                onPress={()=>this.setState({scanQR:true})}>
+                            {Platform.OS !== 'ios'?<Text  style={styles.requestRowActionLinkDiv}> / </Text>:null}
+                            {Platform.OS !== 'ios'?<TouchableOpacity style={styles.requestRowActionLink}
+                                onPress={()=>{
+                                    if(Platform.OS === 'ios'){
+                                        this.props.customAction({lockApp:true});
+                                        Camera.checkDeviceAuthorizationStatus()
+                                            .then(d=>{
+                                                this.setState({scanQR:true});
+                                                setTimeout(()=>this.props.customAction({lockApp:false}),500);
+                                            }).catch(e=>setTimeout(()=>this.props.customAction({lockApp:false}),500))
+                                    }else{
+                                        this.setState({scanQR:true})
+                                    }
+                                }}>
                                 <Icon style={styles.requestRowActionLinkIcon} name='qrcode'/>
                                 <Text  style={styles.requestRowActionLinkLabel}>Scan QR Code</Text>
-                            </TouchableOpacity>
+                            </TouchableOpacity>:null}
                         </View>
                         <Text style={styles.requestRowLabel}>Note</Text>
                         <View style={styles.hr}/>
@@ -465,7 +480,9 @@ class Send extends Component<{}> {
                     visible={this.state.showMenu}
                     badgePending={this.props.totalPending}
                     navigation={this.props.navigation} />
-                <WalletFooter selected='Send' navigation={this.props.navigation} />
+                <WalletFooter selected='Send'
+                    nightMode={this.props.nightMode}
+                    navigation={this.props.navigation} />
                 <Loader show={this.props.loading} />
                 <Modal
                     transparent={true}
@@ -506,8 +523,8 @@ class Send extends Component<{}> {
                             <View style={{flexDirection:'row'}}>
                                 <Button
                                     onPress={()=>this.setState({visible:false})}
-                                    style={[styles.reqBtn,{backgroundColor: '#EFEFEF'}]}
-                                    textstyle={[styles.reqBtnLabel,{color:'#333'}]}
+                                    style={[styles.reqBtn,{backgroundColor: this.props.nightMode?'#b98e1b':'#EFEFEF'}]}
+                                    textstyle={[styles.reqBtnLabel,{color: this.props.nightMode?'#191714':'#333'}]}
                                     value='Cancel' />
                                 <Button
                                     onPress={()=>this.setState({isConfirm: true},this.sendMoney.bind(this))}
@@ -532,7 +549,7 @@ class Send extends Component<{}> {
                             <View style={styles.reqDetailBody}>
                                 <Text style={{
                                     fontSize: 15,
-                                    color: '#333',
+                                    color: this.props.nightMode?'#E9E9E9':'#333',
                                     textAlign: 'center',
                                     marginBottom: 15,
                                 }}>
@@ -559,8 +576,8 @@ class Send extends Component<{}> {
                             <View style={{flexDirection:'row'}}>
                                 <Button
                                     onPress={()=>this.setState({visibleGetPassword:false})}
-                                    style={[styles.reqBtn,{backgroundColor: '#EFEFEF'}]}
-                                    textstyle={[styles.reqBtnLabel,{color:'#333'}]}
+                                    style={[styles.reqBtn,{backgroundColor: this.props.nightMode?'#b98e1b':'#EFEFEF'}]}
+                                    textstyle={[styles.reqBtnLabel,{color: this.props.nightMode?'#191714':'#333'}]}
                                     value='Cancel' />
                                 <Button
                                     onPress={this.decryptWallets.bind(this)}
@@ -585,7 +602,7 @@ class Send extends Component<{}> {
                             <View style={styles.reqDetailBody}>
                                 <Text style={{
                                     fontSize: 15,
-                                    color: '#333',
+                                    color: this.props.nightMode?'#E9E9E9':'#333',
                                     marginBottom: 25,
                                 }}>
                                     {this.props.currency_type === constants.CURRENCY_TYPE.FLASH?
@@ -607,8 +624,8 @@ class Send extends Component<{}> {
                     transparent={true}
                     visible={!!this.state.scanQR}
                     onRequestClose={()=>this.setState({scanQR:false})}>
-                    <View style={styles.content}>
-                        <Camera
+                    <View style={styles.qrContent}>
+                        <RNCamera
                             ref={(cam) => {
                                 this.camera = cam;
                             }}
@@ -626,10 +643,12 @@ class Send extends Component<{}> {
                                         value="Go to Settings"/>
                                 </View>
                             }
-                            style={styles.preview}
-                            aspect={Camera.constants.Aspect.fill}>
+                            type={RNCamera.Constants.Type.back}
+                            style={styles.preview}>
                             <Image style={styles.scanQRBoxImg} source={require('@images/scan-qr.png')} />
-                        </Camera>
+                            <Button value='Close' onPress={()=>this.setState({scanQR:false})}
+                                style={{ position:'absolute' , width: 150, alignItems:'center', bottom:70}}/>
+                        </RNCamera>
                     </View>
                 </Modal>
             </Container>
@@ -654,7 +673,8 @@ function mapStateToProps({params}) {
         wallet_address: params.wallet_address || null,
         sendTxnSuccess: params.sendTxnSuccess || null,
         decryptedWallets: params.decryptedWallets || null,
-        totalPending: params.totalPending
+        totalPending: params.totalPending,
+        nightMode: params.nightMode,
     };
 }
 

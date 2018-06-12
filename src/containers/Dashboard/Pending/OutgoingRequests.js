@@ -18,7 +18,6 @@ import moment from 'moment-timezone';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ActionCreators } from '@actions';
-const styles = require("@styles/pending");
 
 class OutgoingRequests extends Component<{}> {
 
@@ -38,6 +37,7 @@ class OutgoingRequests extends Component<{}> {
     }
 
     render() {
+        const styles = (this.props.nightMode?require('@styles/nightMode/pending'):require('@styles/pending'));
         return (
             <View style={{flex:1}}>
                 <FlatList
@@ -60,6 +60,7 @@ class OutgoingRequests extends Component<{}> {
                             outgoing={true}
                             timezone={this.props.timezone}
                             req={item}
+                            nightMode={this.props.nightMode}
                             fiat_currency={this.props.fiat_currency}
                             fiat_per_value={this.props.fiat_per_value}
                             onCancel={this.markCancelledMoneyRequests.bind(this)}
@@ -68,7 +69,7 @@ class OutgoingRequests extends Component<{}> {
                     ListEmptyComponent={()=>
                         <View>
                             <Text style={styles.reqListEmpty}>
-                                There is no request in this date range.
+                                There are no request in this date range.
                             </Text>
                             <Button value='Show All Requests'
                                 onPress={()=>this.props.updateRequestReportDate(this.props.minDate,
@@ -92,7 +93,8 @@ function mapStateToProps({params}) {
       loading: params.outReqs_loading || params.loading,
       timezone: params.profile.timezone || moment.tz.guess(),
       minDate: moment(params.profile.created_ts),
-      maxDate: moment()
+      maxDate: moment(),
+      nightMode: params.nightMode,
   };
 }
 

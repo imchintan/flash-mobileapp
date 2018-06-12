@@ -4,6 +4,7 @@ import Content from './Content';
 import Footer from './Footer';
 import Button from './Button';
 import Text from './Text';
+import Modal from './Modal';
 import FAB from './FAB';
 import Loader from './Loader';
 import Transaction from './Transaction';
@@ -23,6 +24,7 @@ module.exports = {
     ...Footer,
     Button,
     Text,
+    Modal,
     FAB,
     Loader,
     ...Transaction,

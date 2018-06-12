@@ -121,7 +121,7 @@ class Verify2FA extends Component<{}> {
                                 borderRadius: 25,
                             }}
                             value={'Cancel'}
-                            onPress={()=>this.props.logout()}
+                            onPress={()=>this.props.logout(false)}
                         />
                     </View>
                 </View>

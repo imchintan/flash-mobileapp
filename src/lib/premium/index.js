@@ -162,17 +162,17 @@ Array.prototype.toHexString = function(len) {
 };
 
 Array.prototype.toString = function(base, len) {
-	var s = ["["];
+	var s = ["["], tmp;
 	if (!len) {
 		for (var i=0; i<this.length; i++) {
-			var tmp = this[i].toString(base);
+			tmp = this[i].toString(base);
 			if (base==16) s.push("0x");
 			s.push(tmp);
 			if (i<this.length-1) s.push(",");
 		}
 	} else {
 		for (var i=0; i<this.length; i++) {
-			var tmp = this[i].toString(base);
+			tmp = this[i].toString(base);
 			if (tmp.length > len) {
 				throw Exception.invalid("Cannot parse to string with format " + len + " chars.");
 			} else {
@@ -1027,7 +1027,7 @@ Xaes.prototype = {
 
         var temp = [];
 
-        for (var row = Nk; row < Nb * (Nr + 1); row++) {
+        for (row = Nk; row < Nb * (Nr + 1); row++) {
             for (var b = 0; b < Nw; ++b) {
                 temp[b] = this.w[Nw * (row - 1) + b];
             }
@@ -1612,6 +1612,7 @@ OTP.prototype = {
 			throw Exception.invalid("OTP secure key cannot be empty!");
 		}
 		this.otpMode = otpMode;
+		var checkResult;
 		switch (this.otpMode) {
 			case Premium.MODE.LITE_OTP:
 				this.otpSeedByteArr = UnicodeString2ByteArray(otpSeed);
@@ -1621,7 +1622,7 @@ OTP.prototype = {
 				break;
 			case Premium.MODE.OTP:
 				this.otpSeedByteArr = ByteArray2IntArray(otpSeed).reverse();	// Revert to avoid same file header
-				var checkResult = this.checkOtpSeed(this.otpSeedByteArr);
+				checkResult = this.checkOtpSeed(this.otpSeedByteArr);
 				if (checkResult != '') {	// Not good OTP seed
 					throw Exception.invalid(checkResult);
 				}
@@ -1631,7 +1632,7 @@ OTP.prototype = {
 				break;
 			case Premium.MODE.HASHED_OTP:
 				this.otpSeedByteArr = ByteArray2IntArray(otpSeed).reverse();	// Revert to avoid same file header
-				var checkResult = this.checkOtpSeed(this.otpSeedByteArr);
+				checkResult = this.checkOtpSeed(this.otpSeedByteArr);
 				if (checkResult == '') {	// Good OTP seed
 					var ip = Premium.XAES_VERSION.POLYN_ID, ar = Premium.XAES_VERSION.ADD_ROUND, qm = Premium.XAES_VERSION.QUICK_MODE, gs = Premium.XAES_VERSION.GRAY_SBOX;
 					this.otpHashedSeedByteArr = XaesHashBigFile(this.otpSeedByteArr, 512/*keyByteSize*/, 64/*blockLength*/, ip, ar, qm, gs);
@@ -1703,7 +1704,8 @@ OTP.prototype = {
 			throw Exception.invalid("data is too big!");
 		}
 
-		var otpSeedArr, salt,
+		var otpSeedArr,
+			salt = null,
 			ip = Premium.XAES_VERSION.POLYN_ID,
 			ar = Premium.XAES_VERSION.ADD_ROUND,
 			qm = Premium.XAES_VERSION.QUICK_MODE,
@@ -1939,9 +1941,9 @@ Premium.decrypt = function() {
 		throw Exception.invalid("Premium.decrypt() is missing arguments.");
 	}
 	var cipherData = Premium.readCipherData(data),
-		mode = cipherData.mode,
-		param = (mode == Premium.MODE.XAES) ? cipherData.ks>>3 : param,
-		premiumObj = new Premium(mode, param);
+		mode = cipherData.mode;
+	param = (mode == Premium.MODE.XAES) ? cipherData.ks>>3 : param;
+	var	premiumObj = new Premium(mode, param);
 	return premiumObj.decrypt(password, cipherData);
 };
 
