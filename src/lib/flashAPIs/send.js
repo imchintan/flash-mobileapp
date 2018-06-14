@@ -48,6 +48,44 @@ export const rawTransaction = (auth_version, sessionToken='',
 }
 
 /**
+ * Get ETH transaction count
+ * @param  {Number} auth_version        [description]
+ * @param  {String} [sessionToken='']   [description]
+ * @param  {Number} [currency_type=1]   [description]
+ * @param  {String} [address='']        [description]
+ * @return {Promise}                    [description]
+ */
+export const getEthTransactionCount = (auth_version, sessionToken='',
+    currency_type = 1, address='') => {
+    return new Promise((resolve,reject) => {
+        fetch(API_URL+'/eth-txn-count?currency_type='+currency_type
+                +'&address='+address+"&appversion="+APP_VERSION
+                +"&res="+RESOURCE,{
+            method: 'GET',
+            body: null,
+            headers: {
+               'Content-Type': 'application/json; charset=utf-8',
+               'authorization': sessionToken,
+               'fl_auth_version': auth_version
+            },
+        })
+        .then(async res =>{
+            let _res = await res.text();
+            if(_res.toLowerCase().indexOf("session") == -1){
+                return JSON.parse(_res);
+            }else{
+                return {rc:3,reason:_res};
+            }
+        })
+        .then(json => resolve(json))
+        .catch(e =>{
+            console.log(e);
+            reject('Something went wrong!')
+        });
+    });
+}
+
+/**
  * Add transaction
  * @param {Number} auth_version                 [description]
  * @param {String} [sessionToken='']            [description]

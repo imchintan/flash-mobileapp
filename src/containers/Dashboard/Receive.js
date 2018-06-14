@@ -48,8 +48,6 @@ class Receive extends Component < {} > {
         };
     }
 
-
-
     verifyAmount() {
         this.setState({isAmtVerify: false});
         if (!this.state.amount)
@@ -121,56 +119,53 @@ class Receive extends Component < {} > {
                     <View style={styles.requestBox}>
                         <Text style={styles.requestRowLabel}>Amount</Text>
                         <View style={styles.hr}/>
-                        <View style={[
-                            styles.requestRowInputBox, {
-                                flexDirection: 'row'
-                            }
-                        ]}>
+                        <View style={[styles.requestRowInputBox, {flexDirection: 'row'}]}>
                             <View style={styles.requestRowAmtLabelBox}>
                                 <Text style={styles.requestRowAmtLabel}>{utils.getFiatCurrencyUnit(this.props.fiat_currency)}</Text>
                             </View>
-                            <TextInput ref={'_input_fiat_amount'} underlineColorAndroid='transparent' style={[
-                                styles.requestRowInput, {
-                                    paddingLeft: 10
-                                }
-                            ]} keyboardType='numeric' returnKeyType='next' onSubmitEditing={() => this.refs._input_email.focus()} placeholder={'Enter amount in ' + utils.getFiatCurrencyUnit(this.props.fiat_currency)} value={this.state.fiat_amount || ''} onBlur={this.verifyAmount.bind(this)} onChangeText={(fiat_amount) => this.setState({
-                                fiat_amount
-                            }, () => {
-                                fiat_amount = utils.toOrginalNumber(fiat_amount);
-                                if(isNaN(fiat_amount)) fiat_amount=0;
-                                let amount = utils.toOrginalNumber(utils.otherCurrencyToCrypto(fiat_amount, this.props.fiat_per_value));
-                                this.setState({
-                                    amount: amount > 0
-                                        ? utils.formatAmountInput(amount)
-                                        : ''
-                                });
-                            })}/>
+                            <TextInput
+                                ref={'_input_fiat_amount'}
+                                underlineColorAndroid='transparent' s
+                                style={[styles.requestRowInput, {paddingLeft: 10}]}
+                                keyboardType='numeric'
+                                returnKeyType='done'
+                                placeholder={'Enter amount in ' + utils.getFiatCurrencyUnit(this.props.fiat_currency)}
+                                value={this.state.fiat_amount || ''} onBlur={this.verifyAmount.bind(this)}
+                                onChangeText={(fiat_amount) => this.setState({fiat_amount}, () => {
+                                    fiat_amount = utils.toOrginalNumber(fiat_amount);
+                                    if(isNaN(fiat_amount)) fiat_amount=0;
+                                    let amount = utils.toOrginalNumber(utils.otherCurrencyToCrypto(fiat_amount,
+                                            this.props.fiat_per_value));
+                                    this.setState({
+                                        amount: amount > 0
+                                            ? utils.formatAmountInput(amount)
+                                            : ''
+                                    });
+                                })}/>
                         </View>
-                        <View style={[
-                            styles.requestRowInputBox, {
-                                flexDirection: 'row',
-                                marginTop: 5
-                            }
-                        ]}>
+                        <View style={[styles.requestRowInputBox, {flexDirection: 'row',marginTop: 5}]}>
                             <View style={styles.requestRowAmtLabelBox}>
                                 <Text style={styles.requestRowAmtLabel}>{utils.getCurrencyUnitUpcase(this.props.currency_type)}</Text>
                             </View>
-                            <TextInput ref={'_input_amount'} underlineColorAndroid='transparent' style={[
-                                styles.requestRowInput, {
-                                    paddingLeft: 10
-                                }
-                            ]} keyboardType='numeric' returnKeyType='next' onSubmitEditing={() => this.refs._input_email.focus()} placeholder={'Enter amount in ' + utils.getCurrencyUnitUpcase(this.props.currency_type)} value={this.state.amount || ''} onBlur={this.verifyAmount.bind(this)} onChangeText={(amount) => this.setState({
-                                amount
-                            }, () => {
-                                if(isNaN(amount)) amount=0;
-                                amount = utils.toOrginalNumber(amount);
-                                let fiat_amount = utils.toOrginalNumber(utils.cryptoToOtherCurrency(amount, this.props.fiat_per_value, 0));
-                                this.setState({
-                                    fiat_amount: fiat_amount > 0
-                                        ? utils.formatAmountInput(fiat_amount)
-                                        : ''
-                                });
-                            })}/>
+                            <TextInput
+                                ref={'_input_amount'}
+                                underlineColorAndroid='transparent'
+                                style={[styles.requestRowInput, {paddingLeft: 10}]}
+                                keyboardType='numeric'
+                                returnKeyType='done'
+                                placeholder={'Enter amount in ' + utils.getCurrencyUnitUpcase(this.props.currency_type)}
+                                value={this.state.amount || ''}
+                                onBlur={this.verifyAmount.bind(this)}
+                                onChangeText={(amount) => this.setState({amount}, () => {
+                                    if(isNaN(amount)) amount=0;
+                                    amount = utils.toOrginalNumber(amount);
+                                    let fiat_amount = utils.toOrginalNumber(utils.cryptoToOtherCurrency(amount, this.props.fiat_per_value, 0));
+                                    this.setState({
+                                        fiat_amount: fiat_amount > 0
+                                            ? utils.formatAmountInput(fiat_amount)
+                                            : ''
+                                    });
+                                })}/>
                         </View>
                         <Text style={styles.requestRowLabel}>QR Code</Text>
                         <View style={styles.hr}/>
@@ -199,7 +194,8 @@ class Receive extends Component < {} > {
                             </TouchableOpacity>
                             <Text  style={styles.requestRowActionLinkDiv}> / </Text>
                             <TouchableOpacity style={styles.requestRowActionLink}
-                                onPress={()=>Share.share({message:this.props.wallet_address,title: utils.getCurrencyUnitUpcase(this.props.currency_type)})}>
+                                onPress={()=>Share.share({message:this.props.wallet_address,
+                                    title: utils.getCurrencyUnitUpcase(this.props.currency_type)})}>
                                 <Icon style={styles.requestRowActionLinkIcon} name='share-alt'/>
                                 <Text  style={styles.requestRowActionLinkLabel}>Share</Text>
                             </TouchableOpacity>

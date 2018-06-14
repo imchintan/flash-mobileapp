@@ -82,7 +82,9 @@ class IncomingRequests extends Component<{}> {
     }
 
     accept(req, note){
-        if(this.props.currency_type !== constants.CURRENCY_TYPE.FLASH && this.props.currency_type !== constants.CURRENCY_TYPE.DASH){
+        if(this.props.currency_type !== constants.CURRENCY_TYPE.FLASH
+            && this.props.currency_type !== constants.CURRENCY_TYPE.ETH
+            && this.props.currency_type !== constants.CURRENCY_TYPE.DASH){
             this.props.setBcMedianTxSize();
             this.props.setSatoshiPerByte();
         }
@@ -91,6 +93,9 @@ class IncomingRequests extends Component<{}> {
 
         if(this.props.currency_type === constants.CURRENCY_TYPE.DASH)
             this.props.setFixedTxnFee();
+
+        if(this.props.currency_type === constants.CURRENCY_TYPE.ETH)
+            this.props.setEtherGasValues();
 
         this.setState({req,note},
             ()=>this.props.searchWallet(req.sender_email, true));

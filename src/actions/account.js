@@ -40,6 +40,7 @@ export const getBalance = (refresh = false) => {
                     }
                 });
             }else{
+                d.balance = Number(d.balance);
                 AsyncStorage.setItem('balance',JSON.stringify(d.balance));
                 dispatch({
                     type: types.GET_BALANCE,
@@ -96,6 +97,7 @@ export const getBalanceV2 = (currency_type=constants.CURRENCY_TYPE.FLASH ,refres
                     }
                 });
             }else{
+                d.balance = Number(d.balance);
                 params = getState().params;
                 let balances = params.balances;
                 let idx  =  balances.findIndex(bal => bal.currency_type === currency_type);
@@ -555,7 +557,9 @@ export const changeCurrency = (currency_type) =>{
             dispatch(reqs.getIncomingRequests(0,true));
             dispatch(reqs.getOutgoingRequests(0,true));
             dispatch(refreshingHome(false));
-            if(currency_type !== constants.CURRENCY_TYPE.FLASH && currency_type !== constants.CURRENCY_TYPE.DASH){
+            if(currency_type !== constants.CURRENCY_TYPE.FLASH
+                && currency_type !== constants.CURRENCY_TYPE.ETH
+                && currency_type !== constants.CURRENCY_TYPE.DASH){
                 dispatch(txns.setBcMedianTxSize());
                 dispatch(txns.setSatoshiPerByte());
             }
@@ -564,6 +568,9 @@ export const changeCurrency = (currency_type) =>{
 
             if(currency_type === constants.CURRENCY_TYPE.DASH)
                 dispatch(txns.setFixedTxnFee());
+
+            if(currency_type === constants.CURRENCY_TYPE.ETH)
+                dispatch(txns.setEtherGasValues());
 
             dispatch(txns.getAllTransactions(0,true));
             dispatch(txns.getSentTransactions(0,true));

@@ -515,6 +515,33 @@ export const getMyWallets = (profile,password=null) => {
                         });
                     })
                 }
+                
+                //if no ETH wallet
+                if (!send.getActiveWallet(d.my_wallets, constants.CURRENCY_TYPE.ETH)) {
+                    apis.createETHWallet(profile.auth_version, profile.sessionToken, params).then((d)=>{
+                        if(d.rc==1){
+                            apis.getMyWallets(profile.auth_version, profile.sessionToken).then((d)=>{
+                                if(d.rc == 1){
+                                    dispatch({
+                                        type: types.GET_MY_WALLETS,
+                                        payload: {
+                                            my_wallets:d.my_wallets
+                                        }
+                                    });
+                                    if(password || profile.auth_version == 3) dispatch(decryptWallets(password));
+                                }
+                            }).catch(e=>console.log(e))
+                        }
+                    }).catch(e=>{
+                        dispatch({
+                            type: types.GET_MY_WALLETS,
+                            payload: {
+                                errorMsg: e.message,
+                                stack: e.stack,
+                            }
+                        });
+                    })
+                }
             }
         }).catch(e=>{
             dispatch({

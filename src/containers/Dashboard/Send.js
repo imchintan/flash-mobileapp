@@ -90,7 +90,9 @@ class Send extends Component<{}> {
 
     componentDidMount(){
 
-        if(this.props.currency_type !== constants.CURRENCY_TYPE.FLASH && this.props.currency_type !== constants.CURRENCY_TYPE.DASH){
+        if(this.props.currency_type !== constants.CURRENCY_TYPE.FLASH
+            && this.props.currency_type !== constants.CURRENCY_TYPE.ETH
+            && this.props.currency_type !== constants.CURRENCY_TYPE.DASH){
             this.props.setBcMedianTxSize();
             this.props.setSatoshiPerByte();
         }
@@ -100,7 +102,9 @@ class Send extends Component<{}> {
         if(this.props.currency_type === constants.CURRENCY_TYPE.DASH)
             this.props.setFixedTxnFee();
 
-        // this.refs._input_fiat_amount.focus();
+        if(this.props.currency_type === constants.CURRENCY_TYPE.ETH)
+            this.props.setEtherGasValues();
+
     }
 
     resetState(){
@@ -241,6 +245,7 @@ class Send extends Component<{}> {
     onBarCodeRead(e){
         this.setState({scanQR:false});
         let data = e.data;
+        console.log(data);
         let amount = null;
         if(!data){
             Toast.errorTop('Invalid qr code!');
@@ -257,14 +262,11 @@ class Send extends Component<{}> {
         if (containsQueMark >= 0) {
             data = data.substring(0, containsQueMark);
         }
-
-        if(data.length < 25 || data.length > 34){
+        if(data.length < 25 || data.length > 42){
             Toast.errorTop('Invalid qr code!');
             return false;
         }
-
         this.setState({term:data},this.verifyAddress);
-
         //check for amount
         let containsAmtMark = e.data.indexOf('amount=');
         if(containsAmtMark > 0){

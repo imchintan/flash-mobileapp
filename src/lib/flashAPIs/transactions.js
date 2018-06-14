@@ -231,3 +231,36 @@ export const fixedTxnFee = (auth_version, sessionToken='', currency_type = CURRE
         });
     });
 }
+
+/**
+ *  Get ether gas values
+ * @param  {Number} auth_version      [description]
+ * @param  {String} [sessionToken=''] [description]
+ * @param  {Number} [currency_type=2] [description]
+ * @return {Promise}                  [description]
+ */
+export const getEtherGasValues = (auth_version, sessionToken='', currency_type = CURRENCY_TYPE.ETH) => {
+    return new Promise((resolve,reject) => {
+        fetch(API_URL+'/gas-values?currency_type='+currency_type,{
+            method: 'GET',
+            headers: {
+               'Content-Type': 'application/json; charset=utf-8',
+               'authorization': sessionToken,
+               'fl_auth_version': auth_version
+            },
+        })
+        .then(async res =>{
+            let _res = await res.text();
+            if(_res.toLowerCase().indexOf("session") == -1){
+                return JSON.parse(_res);
+            }else{
+                return {rc:3,reason:_res};
+            }
+        })
+        .then(json => resolve(json))
+        .catch(e =>{
+            console.log(e);
+            reject('Something went wrong!')
+        });
+    });
+}

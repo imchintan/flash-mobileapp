@@ -3,6 +3,7 @@ import * as constants from '@src/constants';
 import Big from 'big.js';
 import _tmp from 'moment-timezone';
 import moment from 'moment-timezone';
+import { keccak256 } from 'js-sha3';
 import Wallet, { Address } from './wallet';
 import Premium from 'Premium';
 import nacl from 'tweetnacl';
@@ -72,6 +73,11 @@ export const litoshiToLtc = (num) => {
 export const duffToDash = (num) => {
     if (num == undefined || num === '') return;
     return parseFloat(new Big(num).div(100000000).toString());
+}
+
+export const weiToEth = (num) => {
+  if (num == undefined || num === '') return;
+  return parseFloat(new Big(num).div(1000000000000000000).toString());
 }
 
 export const localizeFlash = (num, digits=8) => {
@@ -147,6 +153,11 @@ export const flashToSatoshi = (num) => {
     return parseInt(new Big(num).times(10000000000).toString(), 10);
 }
 
+export const ethToWei = (num) => {
+  if (num == undefined || num === '') return;
+  return parseInt(new Big(num).times(1000000000000000000).toString(), 10);
+}
+
 export const calcFee = (amount, currency_type=constants.CURRENCY_TYPE.FLASH, bcMedianTxSize, fastestFee, fixedTxnFee) => {
     switch (currency_type) {
         case constants.CURRENCY_TYPE.BTC:
@@ -161,6 +172,10 @@ export const calcFee = (amount, currency_type=constants.CURRENCY_TYPE.FLASH, bcM
         case constants.CURRENCY_TYPE.DASH:
             return fixedTxnFee ;
             break;
+        case constants.CURRENCY_TYPE.ETH:
+              let wei = bcMedianTxSize * fastestFee;
+              return weiToEth(wei);
+              break;
         case constants.CURRENCY_TYPE.FLASH:
         default:
             return 0.001; // default fee for web-wallet transaction
@@ -184,6 +199,9 @@ export const formatCurrency = (amount, currency_type=constants.CURRENCY_TYPE.FLA
             break;
         case constants.CURRENCY_TYPE.DASH:
             return `${amount} DASH`;
+            break;
+        case constants.CURRENCY_TYPE.ETH:
+            return `${amount} ETH`;
             break;
         case constants.CURRENCY_TYPE.FLASH:
         default:
@@ -372,8 +390,10 @@ export const isValidFlashAddress = (value) => {
 
 export const isValidCryptoAddress = (value, currency_type) => {
     try {
+        if(currency_type == constants.CURRENCY_TYPE.ETH){
+            return isEtherAddress(value);
+        }
         let address = Address.fromBase58Check(value);
-        console.log(address);
         let network;
         switch(currency_type){
             case constants.CURRENCY_TYPE.BTC:
@@ -403,6 +423,47 @@ export const isValidCryptoAddress = (value, currency_type) => {
         return false;
     }
 }
+
+/**
+ * Checks if the given string is an address
+ *
+ * @method isAddress
+ * @param {String} address the given HEX adress
+ * @return {Boolean}
+*/
+export const isEtherAddress = (address) => {
+    if (!/^(0x)?[0-9a-f]{40}$/i.test(address)) {
+        // check if it has the basic requirements of an address
+        return false;
+    } else if (/^(0x)?[0-9a-f]{40}$/.test(address) || /^(0x)?[0-9A-F]{40}$/.test(address)) {
+        // If it's all small caps or all all caps, return true
+        return true;
+    } else {
+        // Otherwise check each case
+        return isChecksumAddress(address);
+    }
+};
+
+/**
+ * Checks if the given string is a checksummed address
+ *
+ * @method isChecksumAddress
+ * @param {String} address the given HEX adress
+ * @return {Boolean}
+*/
+export const isChecksumAddress = (address) => {
+    // Check each case
+    address = address.replace('0x','');
+    let addressHash = keccak256(address.toLowerCase());
+    for (var i = 0; i < 40; i++ ) {
+        // the nth letter should be uppercase if the nth digit of casemap is 1
+        if ((parseInt(addressHash[i], 16) > 7 && address[i].toUpperCase() !== address[i])
+            || (parseInt(addressHash[i], 16) <= 7 && address[i].toLowerCase() !== address[i])) {
+            return false;
+        }
+    }
+    return true;
+};
 
 export const decimalFormat = (number, n?, x?) => {
     if (typeof number == 'undefined' || number == 'undefined') return '';

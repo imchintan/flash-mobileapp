@@ -70,6 +70,7 @@ class Home extends Component<{}> {
     refreshingHome(){
         this.props.getBalanceV2(constants.CURRENCY_TYPE.FLASH);
         this.props.getBalanceV2(constants.CURRENCY_TYPE.BTC);
+        this.props.getBalanceV2(constants.CURRENCY_TYPE.ETH);
         this.props.getBalanceV2(constants.CURRENCY_TYPE.LTC);
         this.props.getBalanceV2(constants.CURRENCY_TYPE.DASH);
     }
