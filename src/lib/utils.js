@@ -48,6 +48,33 @@ export const decryptPassphraseV2 = (email, wallets, password, userKey) => {
     return decryptedWallets;
 }
 
+export const decryptPassphraseV2ByWallet = (email, wallet, password, userKey) => {
+    let nonce = 'nnfyPFFbK7NdGtf73uGwt+CsS6mHAmAq';
+    let casPubKey = 'vjPu6e8nhoxfLNxmNzNxXYr++1onlC1XuAt3VdxLISQ=';
+    let box = null;
+    let originMessage = null;
+    let privKeyHex = Premium.xaesDecrypt(password, userKey.encryptedPrivKey);
+    let privKeyBase64 = hexToBase64(privKeyHex);
+
+    let keyPair = nacl.box.keyPair.fromSecretKey(decodeBase64(privKeyBase64));
+
+    if (!keyPair) {
+        return;
+    }
+
+    box = decodeBase64(wallet.passphrase);
+    originMessage = nacl.box.open(
+        box,
+        decodeBase64(nonce),
+        decodeBase64(casPubKey),
+        keyPair.secretKey
+    );
+    wallet.pure_passphrase = strFromUtf8Ab(originMessage);
+    wallet.email = email;
+    return new Wallet().openWallet(wallet);
+
+}
+
 export const utcDateToLocal = (str) => {
     return moment(str)
         .local()

@@ -72,7 +72,7 @@ class Wallet extends Component<{}> {
                     </View>
                     <HeaderRight>
                         <TouchableOpacity>
-                            <Icon style={[styles.headerFAIcon,{paddingLeft:15}]}
+                            <Icon style={[styles.headerFAIcon,{paddingLeft:25}]}
                                 onPress={()=>this.setState({showMenu: !this.state.showMenu})}
                                 name='ellipsis-v' />
                         </TouchableOpacity>

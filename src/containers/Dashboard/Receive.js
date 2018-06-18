@@ -94,7 +94,7 @@ class Receive extends Component < {} > {
                     </View>
                     <HeaderRight>
                         <TouchableOpacity>
-                            <Icon style={[styles.headerFAIcon,{paddingLeft:15}]}
+                            <Icon style={[styles.headerFAIcon,{paddingLeft:25}]}
                                 onPress={()=>this.setState({showMenu: !this.state.showMenu})}
                                 name='ellipsis-v' />
                         </TouchableOpacity>
@@ -174,8 +174,8 @@ class Receive extends Component < {} > {
                                 value={constants.CURRENCY_TYPE_QR_PREFIX[this.props.currency_type]+':'+
                                     this.props.wallet_address+'?amount='+this.state.amount}
                                 size={width-190}
-                                bgColor={this.props.nightMode?'#FFFFFF':'#191714'}
-                                fgColor={this.props.nightMode?'#191714':'#FFFFFF'}/>
+                                bgColor={'#191714'}
+                                fgColor={'#FFFFFF'}/>
                             <View style={styles.qrCodeBorder}/>
                         </View>
                         <View style={styles.walletAddress}>

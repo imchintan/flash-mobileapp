@@ -1,5 +1,6 @@
 
 //action
+export const INIT = 'INIT';
 export const CUSTOM_ACTION = 'CUSTOM_ACTION';
 export const LOGOUT = 'LOGOUT';
 

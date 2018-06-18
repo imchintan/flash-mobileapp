@@ -94,10 +94,10 @@ const styles = StyleSheet.create({
     },
     qrCodeBorder:{
         position: 'absolute',
-        top:0,
-        width:width-170,
-        height:width-170,
-        borderWidth: 7,
+        top:-3,
+        width:width-164,
+        height:width-164,
+        borderWidth: 10,
         borderColor: '#FFFFFF',
     },
     walletAddress:{
