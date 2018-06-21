@@ -12,7 +12,7 @@ const styles = StyleSheet.create({
     headerTextLogo:{
         resizeMode: 'contain',
         height: 40,
-        width: 350*40/100,
+        width: 272*40/100,
     },
     headerBalanceBox:{
         width: width/2,
