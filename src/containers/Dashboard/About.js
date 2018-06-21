@@ -16,7 +16,7 @@ import {
     Icon,
     Text,
 } from '@components';
-
+import { APP_VERSION } from '@src/config';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ActionCreators } from '@actions';
@@ -48,7 +48,7 @@ class About extends Component<{}> {
                         <Image style={styles.appLogo} source={Platform.OS === 'ios'?
                         require('@images/app-text-icon-white-vertical-ios.png'):
                         require('@images/app-text-icon-white-vertical.png')}/>
-                        <Text style={styles.versionText}>Version: 1.8.2</Text>
+                        <Text style={styles.versionText}>Version: {APP_VERSION}</Text>
                         <TouchableOpacity style={styles.emailBox}
                             onPress={()=>Linking.openURL("mailto:?to=support@flashcoin.io")}>
                             <Icon style={styles.envelopeIcon} name="envelope"/>
