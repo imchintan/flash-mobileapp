@@ -9,7 +9,7 @@
     "assert": "^1.4.1",
     "big.js": "^5.0.3",
     "bip39": "^2.5.0",
-    "bitcoinjs-lib": "^2.3.0",
+    "bitcoinjs-lib": "github:imchintan/bitcoinjs-lib",
     "bs58check": "^2.1.1",
     "buffer": "^4.9.1",
     "events": "^1.1.1",

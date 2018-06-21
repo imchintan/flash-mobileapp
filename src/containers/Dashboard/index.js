@@ -26,10 +26,14 @@ import Receive from './Receive';
 import Request from './Request';
 import Activity from './Activity';
 import Pending from './Pending';
+import About from './About';
 
 const routes = {
     Home: {
         screen: Home,
+    },
+    About: {
+        screen: About,
     },
     Wallet: {
         screen: Wallet,

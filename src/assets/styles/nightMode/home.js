@@ -10,18 +10,6 @@ const appStyles = require('./app');
 const reqStyles = require('./request');
 
 const styles = StyleSheet.create({
-    headerTextLogo:{
-        resizeMode: 'contain',
-        height: 40,
-        width: 273*40/100,
-        ...Platform.select({
-            ios: {
-                marginTop: 7,
-            },
-            android: {
-            },
-        }),
-    },
     optionContainer: {
         borderRadius:5,
         width:width-30,
@@ -62,7 +50,7 @@ const styles = StyleSheet.create({
 
 module.exports = {
     ...reqStyles,
-    ...homeStyles,
     ...appStyles,
+    ...homeStyles,    
     ...styles
 }

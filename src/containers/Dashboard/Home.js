@@ -193,6 +193,14 @@ class Home extends Component<{}> {
                                 {this.props.nightMode?'ON':'OFF'}
                             </Text>
                         </TouchableOpacity>
+                        <TouchableOpacity style={styles.adminTab}
+                            onPress={()=>this.props.navigation.navigate('About')}>
+                            <View style={styles.adminTabTitle}>
+                                <Icon style={styles.adminTabTitleIcon} name='info'/>
+                                <Text style={styles.adminTabTitleLabel}>About</Text>
+                            </View>
+                            <Icon style={styles.adminTabRightIcon} name='angle-right'/>
+                        </TouchableOpacity>
                     </View>
                 </Content>
                 <Modal
