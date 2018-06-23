@@ -286,6 +286,7 @@ class Request extends Component<{}> {
                                 style={styles.requestRowInput}
                                 placeholder={'Enter note (optional)'}
                                 value={this.state.note || ''}
+                                maxLength={50}
                                 onChangeText={(note) => note.length <= 50 &&
                                     this.setState({note})}
                             />

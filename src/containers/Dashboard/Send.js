@@ -441,23 +441,25 @@ class Send extends Component<{}> {
                                 <Icon style={styles.requestRowActionLinkIcon} name='paste'/>
                                 <Text  style={styles.requestRowActionLinkLabel}>Paste from Clipboard</Text>
                             </TouchableOpacity>
-                            {Platform.OS !== 'ios'?<Text  style={styles.requestRowActionLinkDiv}> / </Text>:null}
-                            {Platform.OS !== 'ios'?<TouchableOpacity style={styles.requestRowActionLink}
+                            <Text  style={styles.requestRowActionLinkDiv}> / </Text>
+                            <TouchableOpacity style={styles.requestRowActionLink}
                                 onPress={()=>{
                                     if(Platform.OS === 'ios'){
                                         this.props.customAction({lockApp:true});
-                                        Camera.checkDeviceAuthorizationStatus()
+                                        Camera.checkVideoAuthorizationStatus()
                                             .then(d=>{
                                                 this.setState({scanQR:true});
                                                 setTimeout(()=>this.props.customAction({lockApp:false}),500);
-                                            }).catch(e=>setTimeout(()=>this.props.customAction({lockApp:false}),500))
+                                            }).catch(e=>this.setState({scanQR:true},()=>
+                                                setTimeout(()=>this.props.customAction({lockApp:false}),500)));
+
                                     }else{
                                         this.setState({scanQR:true})
                                     }
                                 }}>
                                 <Icon style={styles.requestRowActionLinkIcon} name='qrcode'/>
                                 <Text  style={styles.requestRowActionLinkLabel}>Scan QR Code</Text>
-                            </TouchableOpacity>:null}
+                            </TouchableOpacity>
                         </View>
                         <Text style={styles.requestRowLabel}>Note</Text>
                         <View style={styles.hr}/>
@@ -471,6 +473,7 @@ class Send extends Component<{}> {
                                 style={styles.requestRowInput}
                                 placeholder={'Enter note (optional)'}
                                 value={this.state.note || ''}
+                                maxLength={50}
                                 onChangeText={(note) => note.length <= 50 &&
                                     this.setState({note})}
                             />
@@ -640,7 +643,7 @@ class Send extends Component<{}> {
                                     <Text  style={styles.notAuthorizedViewText}>
                                         Need permission to access Camera,{"\n"}
                                         Please go to <Text style={{fontWeight: 'bold'}}>Settings</Text> and allow{"\n"}
-                                        <Text style={{fontWeight: 'bold', color:'#E0AE27'}}>FLASH</Text> to access Camera
+                                        <Text style={{fontWeight: 'bold', color:'#E0AE27'}}>{Platform.OS === 'ios'?'FLASH Wallet':'FLASH'}</Text> to access Camera
                                     </Text>
                                     <Button
                                         style={{marginTop:15}}

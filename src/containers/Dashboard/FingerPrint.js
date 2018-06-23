@@ -58,7 +58,7 @@ class FingerPrint extends Component<{}> {
                     </View>
                     <View>
                         <Text style={styles.fingerprintNote}>
-                            Use your fingerprint to unlock your {Platform.OS === 'ios'?'Coinodes Wallet':'FLASH app'}.
+                            Use your fingerprint to unlock your {Platform.OS === 'ios'?'FLASH Wallet':'FLASH app'}.
                         </Text>
                         <View style={styles.fingerprintSwitch}>
                             <Text style={styles.fingerprintSwitchLabel}>
