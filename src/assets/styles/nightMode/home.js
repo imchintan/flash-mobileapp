@@ -13,14 +13,7 @@ const styles = StyleSheet.create({
     headerTextLogo:{
         resizeMode: 'contain',
         height: 40,
-        width: 273*40/100,
-        ...Platform.select({
-            ios: {
-                marginTop: 7,
-            },
-            android: {
-            },
-        }),
+        width: 272*40/100,
     },
     optionContainer: {
         borderRadius:5,

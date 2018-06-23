@@ -64,7 +64,7 @@ class Send extends Component<{}> {
             if(!nextProps.loading && this.props.loading !== nextProps.loading){
                 this.resetState();
             }
-            if(nextProps.decryptedWallets && this.props.decryptedWallets !== nextProps.decryptedWallets){
+            if(nextProps.decryptedWallet && this.props.decryptedWallet !== nextProps.decryptedWallet){
                 this.sendMoney(true);
             }
         }
@@ -85,6 +85,7 @@ class Send extends Component<{}> {
             isAddressVerify: false,
             search_wallet: null,
             sendTxnSuccess: null,
+            password: this.props.password || null,
         };
     }
 
@@ -210,8 +211,12 @@ class Send extends Component<{}> {
     }
 
     sendMoney(force=false){
-        if(!force && !this.props.decryptedWallets)
-            return this.setState({visible:false, visibleGetPassword: true, password: '', errorMsg: ''});
+        if(!force && !this.props.decryptedWallet){
+            if(!this.state.password)
+                return this.setState({visible:false, visibleGetPassword: true, password: '', errorMsg: ''});
+            else
+                return this.setState({visible:false},this.decryptWallet);
+        }
         if(!this.state.isConfirm) return ;
         this.setState({visible:false, visibleGetPassword:false, isConfirm: false}, ()=>{
             let receiver_bare_uid =
@@ -227,7 +232,7 @@ class Send extends Component<{}> {
         })
     }
 
-    decryptWallets(){
+    decryptWallet(){
         if(!this.state.password){
             return this.setState({errorMsg:'Password is invalid!'});
         }
@@ -237,9 +242,9 @@ class Send extends Component<{}> {
         }catch(e){
             return this.setState({errorMsg:'Password is invalid!'});
         }
-        this.props.customAction({loading:true});
-        this.setState({visibleGetPassword:false, errorMsg:''},()=>
-            setTimeout(()=>this.props.decryptWallets(this.state.password,true),0));
+        this.props.customAction({loading:true, password: this.state.password});
+        this.setState({visibleGetPassword:false, errorMsg:''},
+            ()=>setTimeout(()=>this.props.decryptWallet(this.props.currency_type,this.state.password,true),0));
     }
 
     onBarCodeRead(e){
@@ -310,7 +315,7 @@ class Send extends Component<{}> {
                     </View>
                     <HeaderRight>
                         <TouchableOpacity>
-                            <Icon style={[styles.headerFAIcon,{paddingLeft:15}]}
+                            <Icon style={[styles.headerFAIcon,{paddingLeft:25}]}
                                 onPress={()=>this.setState({showMenu: !this.state.showMenu})}
                                 name='ellipsis-v' />
                         </TouchableOpacity>
@@ -438,23 +443,25 @@ class Send extends Component<{}> {
                                 <Icon style={styles.requestRowActionLinkIcon} name='paste'/>
                                 <Text  style={styles.requestRowActionLinkLabel}>Paste from Clipboard</Text>
                             </TouchableOpacity>
-                            {Platform.OS !== 'ios'?<Text  style={styles.requestRowActionLinkDiv}> / </Text>:null}
-                            {Platform.OS !== 'ios'?<TouchableOpacity style={styles.requestRowActionLink}
+                            <Text  style={styles.requestRowActionLinkDiv}> / </Text>
+                            <TouchableOpacity style={styles.requestRowActionLink}
                                 onPress={()=>{
                                     if(Platform.OS === 'ios'){
                                         this.props.customAction({lockApp:true});
-                                        Camera.checkDeviceAuthorizationStatus()
+                                        Camera.checkVideoAuthorizationStatus()
                                             .then(d=>{
                                                 this.setState({scanQR:true});
                                                 setTimeout(()=>this.props.customAction({lockApp:false}),500);
-                                            }).catch(e=>setTimeout(()=>this.props.customAction({lockApp:false}),500))
+                                            }).catch(e=>this.setState({scanQR:true},()=>
+                                                setTimeout(()=>this.props.customAction({lockApp:false}),500)));
+
                                     }else{
                                         this.setState({scanQR:true})
                                     }
                                 }}>
                                 <Icon style={styles.requestRowActionLinkIcon} name='qrcode'/>
                                 <Text  style={styles.requestRowActionLinkLabel}>Scan QR Code</Text>
-                            </TouchableOpacity>:null}
+                            </TouchableOpacity>
                         </View>
                         <Text style={styles.requestRowLabel}>Note</Text>
                         <View style={styles.hr}/>
@@ -468,6 +475,7 @@ class Send extends Component<{}> {
                                 style={styles.requestRowInput}
                                 placeholder={'Enter note (optional)'}
                                 value={this.state.note || ''}
+                                maxLength={50}
                                 onChangeText={(note) => note.length <= 50 &&
                                     this.setState({note})}
                             />
@@ -565,7 +573,7 @@ class Send extends Component<{}> {
                                         placeholder={'Enter your password'}
                                         value={this.state.password || ''}
                                         onChangeText={(password) => this.setState({password})}
-                                        onSubmitEditing={this.decryptWallets.bind(this)}
+                                        onSubmitEditing={this.decryptWallet.bind(this)}
                                     />
                                 </View>
                                 {!!this.state.errorMsg?<Text style={{
@@ -582,7 +590,7 @@ class Send extends Component<{}> {
                                     textstyle={[styles.reqBtnLabel,{color: this.props.nightMode?'#191714':'#333'}]}
                                     value='Cancel' />
                                 <Button
-                                    onPress={this.decryptWallets.bind(this)}
+                                    onPress={this.decryptWallet.bind(this)}
                                     style={styles.reqBtn}
                                     textstyle={styles.reqBtnLabel}
                                     value='Send' />
@@ -637,7 +645,7 @@ class Send extends Component<{}> {
                                     <Text  style={styles.notAuthorizedViewText}>
                                         Need permission to access Camera,{"\n"}
                                         Please go to <Text style={{fontWeight: 'bold'}}>Settings</Text> and allow{"\n"}
-                                        <Text style={{fontWeight: 'bold', color:'#E0AE27'}}>FLASH</Text> to access Camera
+                                        <Text style={{fontWeight: 'bold', color:'#E0AE27'}}>{Platform.OS === 'ios'?'FLASH Wallet':'FLASH'}</Text> to access Camera
                                     </Text>
                                     <Button
                                         style={{marginTop:15}}
@@ -648,9 +656,11 @@ class Send extends Component<{}> {
                             type={RNCamera.Constants.Type.back}
                             style={styles.preview}>
                             <Image style={styles.scanQRBoxImg} source={require('@images/scan-qr.png')} />
-                            <Button value='Close' onPress={()=>this.setState({scanQR:false})}
-                                style={{ position:'absolute' , width: 150, alignItems:'center', bottom:70}}/>
                         </RNCamera>
+                        <View style={{ position:'absolute' ,  bottom:70, width: '100%', alignItems:'center'}}>
+                            <Button value='Close' onPress={()=>this.setState({scanQR:false})}
+                                style={{width: 150, alignItems:'center'}}/>
+                        </View>
                     </View>
                 </Modal>
             </Container>
@@ -674,9 +684,10 @@ function mapStateToProps({params}) {
         fixedTxnFee: params.fixedTxnFee,
         wallet_address: params.wallet_address || null,
         sendTxnSuccess: params.sendTxnSuccess || null,
-        decryptedWallets: params.decryptedWallets || null,
+        decryptedWallet: params.decryptedWallet || null,
         totalPending: params.totalPending,
         nightMode: params.nightMode,
+        password: params.password || null,
     };
 }
 

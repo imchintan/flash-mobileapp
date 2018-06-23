@@ -16,7 +16,7 @@
                 <rect key="frame" x="0.0" y="0.0" width="375" height="667"/>
                 <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
                 <subviews>
-                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" image="app-text-logo.png" id="rPR-35-us1">
+                    <imageView userInteractionEnabled="NO" contentMode="scaleToFill" horizontalHuggingPriority="251" verticalHuggingPriority="251" misplaced="YES" image="app-text-logo-new.png" id="rPR-35-us1">
                         <rect key="frame" x="62" y="208" width="250" height="250"/>
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                     </imageView>
@@ -28,6 +28,6 @@
         </viewController>
     </objects>
     <resources>
-        <image name="app-text-logo.png" width="1600" height="1600"/>
+        <image name="app-text-logo-new.png" width="1600" height="1600"/>
     </resources>
 </document>

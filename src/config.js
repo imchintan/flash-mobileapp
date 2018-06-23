@@ -2,9 +2,13 @@
  *  Application configuration
  */
 
+ import {
+     Platform
+ } from 'react-native';
+
 export const  RESOURCE = 'app';
-export const  APP_MODE = 'DEV'; // DEV , PROD
-export const  APP_VERSION = 13;
+export const  APP_MODE = 'PROD'; // DEV , PROD
+export const  APP_VERSION = (Platform.OS == 'ios'?'1.2':'1.8.3');
 
 let appUrl;
 

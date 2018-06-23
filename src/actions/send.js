@@ -16,7 +16,7 @@ export const rawTransaction = (amount=0, custom_fee=0, receiver_public_address='
                 params.currency_type, amount, custom_fee, receiver_public_address, memo).then((d)=>{
                 if(d.rc == 1){
                     dispatch({type: types.RAW_TRANSACTION});
-                    let wallet = getActiveWallet(params.decryptedWallets, params.currency_type);
+                    let wallet = params.decryptedWallet;
                     let tx = wallet.signTx(d.transaction.rawtx);
                     let ip = params.ip;
                     dispatch(addTransaction(amount, ip, memo, receiver_bare_uid, receiver_id,
@@ -220,11 +220,13 @@ export const addRoster = (bare_uid='') => {
 }
 
 export const getActiveWallet= (wallets, currency_type) => {
+    if(!wallets) return null;
     let currency_wallets = wallets.filter((wallet) => {
       if(parseInt(wallet.currency_type) == currency_type)
         return true;
       else
         return false;
     });
-    return currency_wallets[0];
+    if(currency_wallets.length > 0 )return currency_wallets[0];
+    else return null;
   }

@@ -9,6 +9,7 @@ import { _logout } from '@actions/navigation';
 import { getActiveWallet } from '@actions/send';
 import * as txns from '@actions/transactions';
 import * as reqs from '@actions/request';
+import * as send from '@actions/send';
 
 export const getBalance = (refresh = false) => {
     return (dispatch,getState) => {
@@ -533,8 +534,10 @@ export const changeFiatCurrency = (fiat_currency) =>{
 export const changeCurrency = (currency_type) =>{
     return (dispatch,getState) => {
         dispatch({ type: types.LOADING_START });
-        let balances = getState().params.balances;
+        let params = getState().params;
+        let balances = params.balances;
         let idx  =  balances.findIndex(bal => bal.currency_type === currency_type);
+        let decryptedWallet = send.getActiveWallet(params.decryptedWallets, currency_type) || null;
         dispatch({
             type: types.CHANGE_CURRENCY,
             payload:{
@@ -549,6 +552,7 @@ export const changeCurrency = (currency_type) =>{
                 fixedTxnFee: 0.00002,
                 recentTxns: [],
                 totalPending: 0,
+                decryptedWallet,
                 refreshingHome:true
             }
         });
