@@ -39,6 +39,7 @@
 		361BABB2207237D900C3F6B4 /* libRCTPushNotification.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 361BAB94207237CD00C3F6B4 /* libRCTPushNotification.a */; };
 		361BABB5207238B400C3F6B4 /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 361BABB3207238B300C3F6B4 /* FontAwesome.ttf */; };
 		361BABB6207238B400C3F6B4 /* Microsoft Tai Le.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 361BABB4207238B300C3F6B4 /* Microsoft Tai Le.ttf */; };
+		36C6471520E12770004CDCB4 /* LoadingScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 36C6471420E1276F004CDCB4 /* LoadingScreen.xib */; };
 		36D1A1A320DA9067000C06CE /* app-text-logo-new.png in Resources */ = {isa = PBXBuildFile; fileRef = 36D1A1A220DA9067000C06CE /* app-text-logo-new.png */; };
 		46C48F8A47CC41BDA11F8B36 /* libRNSound.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A176802BD3D14AF592E6760C /* libRNSound.a */; };
 		772A6CF96F10474CBF9E08CD /* libTouchID.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 2798134354544578948B284F /* libTouchID.a */; };
@@ -397,6 +398,7 @@
 		3638676220CA5973006474A7 /* futura-medium.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "futura-medium.ttf"; path = "../android/app/src/main/assets/fonts/futura-medium.ttf"; sourceTree = "<group>"; };
 		3638678E20CA5974006474A7 /* futura-light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "futura-light.ttf"; path = "../android/app/src/main/assets/fonts/futura-light.ttf"; sourceTree = "<group>"; };
 		3638678F20CA7B5A006474A7 /* flash.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = flash.entitlements; path = flash/flash.entitlements; sourceTree = "<group>"; };
+		36C6471420E1276F004CDCB4 /* LoadingScreen.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LoadingScreen.xib; sourceTree = "<group>"; };
 		36D1A1A220DA9067000C06CE /* app-text-logo-new.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "app-text-logo-new.png"; sourceTree = "<group>"; };
 		4FF55EFFE57E482D846133E5 /* RNCamera.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNCamera.xcodeproj; path = "../node_modules/react-native-camera/ios/RNCamera.xcodeproj"; sourceTree = "<group>"; };
 		5E91572D1DD0AC6500FF2AA8 /* RCTAnimation.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTAnimation.xcodeproj; path = "../node_modules/react-native/Libraries/NativeAnimation/RCTAnimation.xcodeproj"; sourceTree = "<group>"; };
@@ -551,6 +553,7 @@
 		13B07FAE1A68108700A75B9A /* flash */ = {
 			isa = PBXGroup;
 			children = (
+				36C6471420E1276F004CDCB4 /* LoadingScreen.xib */,
 				3638678F20CA7B5A006474A7 /* flash.entitlements */,
 				36D1A1A220DA9067000C06CE /* app-text-logo-new.png */,
 				361BABB7207238C100C3F6B4 /* fonts */,
@@ -608,6 +611,7 @@
 		361BABB7207238C100C3F6B4 /* fonts */ = {
 			isa = PBXGroup;
 			children = (
+				36489F5020E12100004D7683 /* LaunchScreen.xib */,
 				3638678E20CA5974006474A7 /* futura-light.ttf */,
 				3638676220CA5973006474A7 /* futura-medium.ttf */,
 				361BABB3207238B300C3F6B4 /* FontAwesome.ttf */,
@@ -1272,6 +1276,7 @@
 				36D1A1A320DA9067000C06CE /* app-text-logo-new.png in Resources */,
 				361BABB5207238B400C3F6B4 /* FontAwesome.ttf in Resources */,
 				13B07FBF1A68108700A75B9A /* Images.xcassets in Resources */,
+				36C6471520E12770004CDCB4 /* LoadingScreen.xib in Resources */,
 				361BABB6207238B400C3F6B4 /* Microsoft Tai Le.ttf in Resources */,
 				13B07FBD1A68108700A75B9A /* LaunchScreen.xib in Resources */,
 				274FCCB94415484394FDE70D /* FontAwesome.ttf in Resources */,
@@ -1381,6 +1386,14 @@
 			isa = PBXVariantGroup;
 			children = (
 				13B07FB21A68108700A75B9A /* Base */,
+			);
+			name = LaunchScreen.xib;
+			path = flash;
+			sourceTree = "<group>";
+		};
+		36489F5020E12100004D7683 /* LaunchScreen.xib */ = {
+			isa = PBXVariantGroup;
+			children = (
 			);
 			name = LaunchScreen.xib;
 			path = flash;

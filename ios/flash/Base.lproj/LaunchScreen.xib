@@ -21,10 +21,10 @@
                         <autoresizingMask key="autoresizingMask" flexibleMinX="YES" flexibleMaxX="YES" flexibleMinY="YES" flexibleMaxY="YES"/>
                     </imageView>
                 </subviews>
-                <color key="backgroundColor" red="0.087429739534854889" green="0.082243926823139191" blue="0.076777063310146332" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
+                <color key="backgroundColor" red="0.086274509803921567" green="0.082352941176470587" blue="0.078431372549019607" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
                 <color key="tintColor" red="0.087429739529999995" green="0.082243926819999993" blue="0.076777063310000004" alpha="1" colorSpace="custom" customColorSpace="sRGB"/>
             </view>
-            <point key="canvasLocation" x="158.5" y="188.5"/>
+            <point key="canvasLocation" x="46" y="27"/>
         </viewController>
     </objects>
     <resources>

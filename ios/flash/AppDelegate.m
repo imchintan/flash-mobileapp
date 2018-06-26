@@ -36,6 +36,12 @@
   UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
   center.delegate = self;
   
+   UIView *launchScreen =  [[[NSBundle mainBundle] loadNibNamed:@"LoadingScreen" owner:self options:nil] objectAtIndex:0];
+  launchScreen.frame = self.window.bounds;
+  rootView.loadingView = launchScreen;
+  rootView.loadingViewFadeDelay = 0.20;
+  rootView.loadingViewFadeDuration = 0.30;
+  
   return YES;
 }
 

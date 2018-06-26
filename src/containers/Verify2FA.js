@@ -10,6 +10,7 @@ import {
 } from 'react-native';
 import {
     Container,
+    Content,
     Button,
     Text,
     Loader,
@@ -40,18 +41,13 @@ class Verify2FA extends Component<{}> {
     render() {
         return (
             <Container>
-                <View style={{
-                    flex: 1,
-                    width: '100%',
-                    paddingHorizontal: 40,
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                }}>
+                <Content hasHeader={false}>
                     <View style={{
                         width: '100%',
                         alignItems: 'center',
                         marginBottom: 50,
                         marginTop: 30,
+                        paddingHorizontal: 40,
                     }}>
                         <Image style={{
                             alignSelf: 'center',
@@ -124,7 +120,7 @@ class Verify2FA extends Component<{}> {
                             onPress={()=>this.props.logout(false)}
                         />
                     </View>
-                </View>
+                </Content>
                 <Loader show={this.props.loading} />
             </Container>
         );

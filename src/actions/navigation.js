@@ -179,6 +179,7 @@ export const login = (email,password) => {
                 constants.SOUND.ERROR.play();
             }
         }).catch(e=>{
+            console.log(e);
             dispatch({
                 type: types.LOGIN_FAILED,
                 payload: {
@@ -523,7 +524,7 @@ export const getMyWallets = (profile,password=null) => {
                         });
                     })
                 }
-                
+
                 //if no ETH wallet
                 if (!send.getActiveWallet(d.my_wallets, constants.CURRENCY_TYPE.ETH)) {
                     apis.createETHWallet(profile.auth_version, profile.sessionToken, params).then((d)=>{
