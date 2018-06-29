@@ -1,5 +1,5 @@
 /**
- * Home Container
+ * Send Container
  */
 
 import React, { Component } from 'react';

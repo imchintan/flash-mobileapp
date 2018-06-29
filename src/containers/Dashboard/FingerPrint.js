@@ -1,5 +1,5 @@
 /**
- * Settings Container
+ * Finger Print Container
  */
 
 import React, { Component } from 'react';

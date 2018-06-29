@@ -1,5 +1,5 @@
 /**
- * Settings Container
+ * Security Center Container
  */
 
 import React, { Component } from 'react';

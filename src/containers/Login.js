@@ -1,5 +1,5 @@
 /**
- * Home Container
+ * Login Container
  */
 
 import React, { Component } from 'react';

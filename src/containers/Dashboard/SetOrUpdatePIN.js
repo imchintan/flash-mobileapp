@@ -1,5 +1,5 @@
 /**
- * Forgot Password Container
+ * Set Or Update PIN Container
  */
 
 import React, { Component } from 'react';

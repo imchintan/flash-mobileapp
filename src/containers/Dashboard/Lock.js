@@ -1,5 +1,5 @@
 /**
- * Forgot Password Container
+ * Lock Screen Container
  */
 
 import React, { Component } from 'react';
@@ -14,7 +14,6 @@ import {
     Alert
 } from 'react-native';
 import {
-    Container,
     Content,
     Icon,
     Text,

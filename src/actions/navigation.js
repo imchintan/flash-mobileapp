@@ -199,7 +199,6 @@ export const check2FA = (code) =>{
         .then((d)=>{
             if(d.rc == 1){
                 let profile = {...params.profile,...d.profile};
-                let password = params.password;
                 AsyncStorage.setItem('user',JSON.stringify(profile));
                 dispatch({
                     type: types.VERIFY_2FA_SUCCESS,
@@ -542,7 +541,6 @@ export const decryptWallet = (currency_type,password,sendMoney=false) => {
             dispatch({ type: types.LOADING_START });
             let params = getState().params;
             let profile = params.profile;
-            let auth_version = params.profile.auth_version;
             let decryptedWallets = params.decryptedWallets;
             let decryptedWallet = null;
 
