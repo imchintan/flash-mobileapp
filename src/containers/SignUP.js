@@ -1,5 +1,5 @@
 /**
- * Forgot Password Container
+ * SignUP Container
  */
 
 import React, { Component } from 'react';

@@ -1,5 +1,5 @@
 /**
- * Settings Container
+ * About Container
  */
 
 import React, { Component } from 'react';

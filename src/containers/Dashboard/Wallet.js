@@ -1,5 +1,5 @@
 /**
- * Home Container
+ * Wallet Container
  */
 
 import React, { Component } from 'react';
