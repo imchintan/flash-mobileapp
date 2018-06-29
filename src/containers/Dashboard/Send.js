@@ -418,6 +418,8 @@ class Send extends Component<{}> {
                                 underlineColorAndroid='transparent'
                                 style={styles.requestRowInput}
                                 keyboardType='email-address'
+                                autoCapitalize={false}
+                                autoCorrect={false}
                                 returnKeyType='next'
                                 placeholder='Enter email or public address'
                                 value={this.state.term}

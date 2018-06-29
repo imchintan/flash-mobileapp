@@ -78,6 +78,10 @@ class Login extends Component<{}> {
                             underlineColorAndroid='transparent'
                             placeholder={'Email address'}
                             keyboardType={'email-address'}
+                            autoCapitalize={false}
+                            autoCorrect={false}
+                            autoCapitalize={false}
+                            autoCorrect={false}
                             returnKeyType='next'
                             onChangeText={(email) => this.setState({email})}
                             value={this.state.email || ''}

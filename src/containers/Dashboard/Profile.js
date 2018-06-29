@@ -265,6 +265,8 @@ class MyProfile extends Component<{}> {
                                     style={styles.profileRowInput}
                                     placeholder={'Enter email address'}
                                     keyboardType={'email-address'}
+                                    autoCapitalize={false}
+                                    autoCorrect={false}
                                     value={this.props.profile.email}
                                 />
                             </View>

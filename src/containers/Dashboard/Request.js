@@ -250,6 +250,8 @@ class Request extends Component<{}> {
                                 underlineColorAndroid='transparent'
                                 style={styles.requestRowInput}
                                 keyboardType='email-address'
+                                autoCapitalize={false}
+                                autoCorrect={false}
                                 returnKeyType='next'
                                 placeholder='Enter email address'
                                 onBlur={this.verifyAddress.bind(this)}
