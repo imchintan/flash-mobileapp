@@ -253,6 +253,8 @@ class Request extends Component<{}> {
                                 autoCapitalize={false}
                                 autoCorrect={false}
                                 returnKeyType='next'
+                                autoCapitalize={'none'}
+                                autoCorrect={false}
                                 placeholder='Enter email address'
                                 onBlur={this.verifyAddress.bind(this)}
                                 value={this.state.email || ''}

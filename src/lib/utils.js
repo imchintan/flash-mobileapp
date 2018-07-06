@@ -1,3 +1,4 @@
+import { Dimensions, Platform } from 'react-native';
 import { APP_MODE, API_URL } from '@src/config';
 import * as constants from '@src/constants';
 import Big from 'big.js';
@@ -7,6 +8,8 @@ import { keccak256 } from 'js-sha3';
 import Wallet, { Address } from './wallet';
 import Premium from 'Premium';
 import nacl from 'tweetnacl';
+
+const { height, width } = Dimensions.get('window');
 
 export const publicIP = async endpoint => {
   const response = await fetch(endpoint || 'https://api.ipify.org');
@@ -18,6 +21,16 @@ export const getLocation = async endpoint => {
   const response = await fetch(endpoint || API_URL+'/check-location');
   return response.json();
 };
+
+export const isIphoneX = () => {
+    return (
+        // This has to be iOS duh
+        Platform.OS === 'ios' &&
+
+        // Accounting for the height in either orientation
+        (height === 812 || width === 812)
+    );
+}
 
 export const decryptPassphraseV2 = (email, wallets, password, userKey) => {
     let nonce = 'nnfyPFFbK7NdGtf73uGwt+CsS6mHAmAq';

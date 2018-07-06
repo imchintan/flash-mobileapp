@@ -6,7 +6,7 @@ import {
     ViewPropTypes,
 } from 'react-native';
 import PropTypes from "prop-types";
-
+import { isIphoneX } from '@lib/utils'
 export default class Header extends Component {
 
     constructor(props) {
@@ -56,7 +56,7 @@ const styles = StyleSheet.create({
     },
     statusBar:{
         width: '100%',
-        height: 22,
+        height: isIphoneX()?37:22,
         backgroundColor: '#000000',
     }
 });

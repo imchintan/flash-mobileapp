@@ -250,7 +250,6 @@ class Send extends Component<{}> {
     onBarCodeRead(e){
         this.setState({scanQR:false});
         let data = e.data;
-        console.log(data);
         let amount = null;
         if(!data){
             Toast.errorTop('Invalid qr code!');
@@ -422,6 +421,8 @@ class Send extends Component<{}> {
                                 autoCorrect={false}
                                 returnKeyType='next'
                                 placeholder='Enter email or public address'
+                                autoCapitalize={'none'}
+                                autoCorrect={false}
                                 value={this.state.term}
                                 onBlur={this.verifyAddress.bind(this)}
                                 onSubmitEditing={()=>this.refs._input_note.focus()}

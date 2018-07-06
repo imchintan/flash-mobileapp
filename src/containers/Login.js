@@ -83,6 +83,8 @@ class Login extends Component<{}> {
                             autoCapitalize={false}
                             autoCorrect={false}
                             returnKeyType='next'
+                            autoCapitalize={'none'}
+                            autoCorrect={false}
                             onChangeText={(email) => this.setState({email})}
                             value={this.state.email || ''}
                         />
