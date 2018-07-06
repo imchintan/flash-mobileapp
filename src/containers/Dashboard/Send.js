@@ -418,6 +418,8 @@ class Send extends Component<{}> {
                                 keyboardType='email-address'
                                 returnKeyType='next'
                                 placeholder='Enter email or public address'
+                                autoCapitalize={'none'}
+                                autoCorrect={false}
                                 value={this.state.term}
                                 onBlur={this.verifyAddress.bind(this)}
                                 onSubmitEditing={()=>this.refs._input_note.focus()}

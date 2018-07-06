@@ -3,7 +3,7 @@ import {
     Dimensions
 } from 'react-native';
 
-const { width } = Dimensions.get('window');
+const { width, height } = Dimensions.get('window');
 const appStyles = require('./app');
 
 const styles = StyleSheet.create({
@@ -22,8 +22,8 @@ const styles = StyleSheet.create({
     },
     pinDarkTitle:{
         alignSelf: 'center',
-        marginTop: 40,
-        marginBottom: 20,
+        marginTop: '10%',
+        marginBottom: '4%',
         color: '#FFFFFF',
         fontFamily: 'futura-medium',
         fontSize: 24,
@@ -32,7 +32,7 @@ const styles = StyleSheet.create({
     pinBoxContent:{
         flexDirection: 'column',
         justifyContent: 'center',
-        height: ((width-40)/3)*4,
+        height: height - (width*3/4.5),
     },
     pinBox:{
         alignSelf: 'center',
@@ -64,7 +64,7 @@ const styles = StyleSheet.create({
         borderBottomColor: '#E0AE27',
     },
     pinResetBoxText:{
-        marginTop: 20,
+        marginTop: '4%',
         fontSize: 16,
         color: '#E0AE27',
     },

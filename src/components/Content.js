@@ -5,6 +5,7 @@ import {
     ScrollView
 } from 'react-native';
 import PropTypes from "prop-types";
+import { isIphoneX } from '@lib/utils'
 import { KeyboardAwareScrollView } from "react-native-keyboard-aware-scroll-view";
 
 export default class Content extends Component {
@@ -62,7 +63,7 @@ const styles = StyleSheet.create({
         width: '100%',
         ...Platform.select({
             ios: {
-                marginTop: 77,
+                marginTop: isIphoneX()?92:77,
             },
             android: {
                 marginTop: 55,

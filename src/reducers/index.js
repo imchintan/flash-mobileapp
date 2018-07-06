@@ -4,5 +4,5 @@ import params from '@reducers/params';
 
 export default combineReducers({
     nav: navigation,
-    params:params,
+    params: params,
 });

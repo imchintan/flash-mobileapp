@@ -251,6 +251,8 @@ class Request extends Component<{}> {
                                 style={styles.requestRowInput}
                                 keyboardType='email-address'
                                 returnKeyType='next'
+                                autoCapitalize={'none'}
+                                autoCorrect={false}
                                 placeholder='Enter email address'
                                 onBlur={this.verifyAddress.bind(this)}
                                 value={this.state.email || ''}
