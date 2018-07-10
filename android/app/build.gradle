@@ -100,9 +100,9 @@ android {
     defaultConfig {
         applicationId "com.flash.wallet.android"
         minSdkVersion 16
-        targetSdkVersion 22
-        versionCode 15
-        versionName "1.8.3"
+        targetSdkVersion 23
+        versionCode 16
+        versionName "1.9"
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }

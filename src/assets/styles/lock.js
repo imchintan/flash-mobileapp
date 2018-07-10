@@ -1,6 +1,7 @@
 import {
     StyleSheet,
-    Dimensions
+    Dimensions,
+    Platform
 } from 'react-native';
 
 const { width, height } = Dimensions.get('window');
@@ -11,6 +12,7 @@ const styles = StyleSheet.create({
         width: width/2.5,
         height: width/2.5,
         alignSelf: 'center',
+        marginTop: Platform.OS === 'ios'?40:0,
     },
     pinTitle:{
         alignSelf: 'center',
