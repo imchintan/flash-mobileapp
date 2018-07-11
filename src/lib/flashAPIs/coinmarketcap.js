@@ -1,3 +1,5 @@
+import * as constants from '@src/constants';
+
 /**
  * Get Coin Market Cap Detail
  */
@@ -80,6 +82,25 @@ export const getCoinMarketCapDetailBTC = () => {
         })
         .catch(e =>{
             console.log(e);
+            reject('Something went wrong!')
+        });
+    });
+}
+
+
+export const getCoinMarketCapDetail = (currency_type, fiat_currency) => {
+    return new Promise((resolve,reject) => {
+        let currencyId  = constants.COIN_MARKET_CAP_CURRENCY_ID[constants.CURRENCY_TYPE_UNIT_UPCASE[currency_type]];
+        fetch('https://api.coinmarketcap.com/v2/ticker/' + currencyId +
+            '/?convert='+constants.FIAT_CURRENCY_UNIT[fiat_currency])
+        .then(res => res.json())
+        .then(json =>{
+            if(json.data)
+                resolve(json.data);
+            else
+                reject('Data not found!')
+        })
+        .catch(e =>{
             reject('Something went wrong!')
         });
     });

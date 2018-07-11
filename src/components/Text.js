@@ -6,7 +6,7 @@ import { Text as RNText } from "react-native";
 export default class Text extends Component {
 	render() {
 		return (
-			<RNText ref={c => (this._root = c)} {...this.props} style={[this.props.style,{fontFamily: 'Microsoft Tai Le'}]}>
+			<RNText ref={c => (this._root = c)} {...this.props} style={[{fontFamily: 'Microsoft Tai Le'},this.props.style]}>
 				{this.props.children}
 			</RNText>
 		);

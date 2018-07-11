@@ -119,7 +119,7 @@ export const markSentMoneyRequests = (request_id, sender_bare_uid, note_processi
                 dispatch({
                     type: types.MARK_SENT_MONEY_REQUESTS,
                     payload: {
-                        successMsg: 'You have sent a request.',
+                        successMsg: 'You paid a request.',
                     }
                 });
                 dispatch(updateRequestReportDate(params.pending_date_from,params.pending_date_to));
