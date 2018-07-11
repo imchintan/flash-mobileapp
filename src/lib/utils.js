@@ -1,12 +1,5 @@
 import { APP_MODE, API_URL } from '@src/config';
-import {
-    NETWORKS,
-    MOMENT_FORMAT,
-    CURRENCY_TYPE,
-    CURRENCY_ICON,
-    CURRENCY_TYPE_UNIT,
-    CURRENCY_TYPE_UNIT_UPCASE
-} from '@src/constants';
+import * as constants from '@src/constants';
 import Big from 'big.js';
 import _tmp from 'moment-timezone';
 import moment from 'moment-timezone';
@@ -86,6 +79,20 @@ export const localizeFlash = (num, digits=8) => {
     return parseFloat(num).toLocaleString('en',{maximumFractionDigits:digits});
 }
 
+export const cryptoToOtherCurrency = (value,othCur, p=0) => {
+    if (value == undefined || value === '') return;
+    if (othCur == undefined || othCur === '') return;
+    return parseFloat(new Big(value).times(othCur).div(Math.pow(10,p)).toString())
+        .toFixed(3).toLocaleString('en',{maximumFractionDigits:3});
+}
+
+export const otherCurrencyToCrypto = (value,othCur) => {
+    if (value == undefined || value === '') return;
+    if (othCur == undefined || othCur === '') return;
+    return parseFloat(new Big(value).div(othCur).toString())
+        .toLocaleString('en',{maximumFractionDigits:8});
+}
+
 export const flashToOtherCurrency = (flash,othCur) => {
     if (flash == undefined || flash === '') return;
     if (othCur == undefined || othCur === '') return;
@@ -140,21 +147,21 @@ export const flashToSatoshi = (num) => {
     return parseInt(new Big(num).times(10000000000).toString(), 10);
 }
 
-export const calcFee = (amount, currency_type=CURRENCY_TYPE.FLASH, bcMedianTxSize, fastestFee, fixedTxnFee) => {
+export const calcFee = (amount, currency_type=constants.CURRENCY_TYPE.FLASH, bcMedianTxSize, fastestFee, fixedTxnFee) => {
     switch (currency_type) {
-        case CURRENCY_TYPE.BTC:
+        case constants.CURRENCY_TYPE.BTC:
             let satoshis = bcMedianTxSize * fastestFee;
             return satoshiToBtc(satoshis);
             break;
-        case CURRENCY_TYPE.LTC:
+        case constants.CURRENCY_TYPE.LTC:
             fastestFee = new Big(fastestFee).div(1024); //Converting fee rate in per byte
             let litoshis = bcMedianTxSize * fastestFee;
             return litoshiToLtc(litoshis.toFixed(0));
             break;
-        case CURRENCY_TYPE.DASH:
+        case constants.CURRENCY_TYPE.DASH:
             return fixedTxnFee ;
             break;
-        case CURRENCY_TYPE.FLASH:
+        case constants.CURRENCY_TYPE.FLASH:
         default:
             return 0.001; // default fee for web-wallet transaction
             break;
@@ -167,18 +174,18 @@ export const calcFee = (amount, currency_type=CURRENCY_TYPE.FLASH, bcMedianTxSiz
     }
 }
 
-export const formatCurrency = (amount, currency_type=CURRENCY_TYPE.FLASH) => {
+export const formatCurrency = (amount, currency_type=constants.CURRENCY_TYPE.FLASH) => {
     switch (currency_type) {
-        case CURRENCY_TYPE.BTC:
+        case constants.CURRENCY_TYPE.BTC:
             return `${amount} BTC`;
             break;
-        case CURRENCY_TYPE.LTC:
+        case constants.CURRENCY_TYPE.LTC:
             return `${amount} LTC`;
             break;
-        case CURRENCY_TYPE.DASH:
+        case constants.CURRENCY_TYPE.DASH:
             return `${amount} DASH`;
             break;
-        case CURRENCY_TYPE.FLASH:
+        case constants.CURRENCY_TYPE.FLASH:
         default:
             return `${amount} Flash`;
             break;
@@ -189,20 +196,20 @@ export const getDisplayDate = (date, toTimeZone) => {
     if (toTimeZone && _tmp.tz.zone(toTimeZone) != null)
         return _tmp(date)
             .tz(toTimeZone)
-            .format(MOMENT_FORMAT.DATE);
+            .format(constants.MOMENT_FORMAT.DATE);
     return _tmp(date)
         .local()
-        .format(MOMENT_FORMAT.DATE);
+        .format(constants.MOMENT_FORMAT.DATE);
 }
 
 export const getDisplayDateTime = (date, toTimeZone) => {
     if (toTimeZone && _tmp.tz.zone(toTimeZone) != null)
         return _tmp(date)
             .tz(toTimeZone)
-            .format(MOMENT_FORMAT.DATE_TIME_2);
+            .format(constants.MOMENT_FORMAT.DATE_TIME_2);
     return _tmp(date)
         .local()
-        .format(MOMENT_FORMAT.DATE_TIME_2);
+        .format(constants.MOMENT_FORMAT.DATE_TIME_2);
 }
 
 export const calcPasswordStreng = (password) => {
@@ -352,8 +359,8 @@ export const isValidEmail = (email) => {
 export const isValidFlashAddress = (value) => {
     try{
         let address = Address.fromBase58Check(value);
-        if( address.version === NETWORKS.FLASH.pubKeyHash ||
-            address.version === NETWORKS.FLASH.scriptHash ){
+        if( address.version === constants.NETWORKS.FLASH.pubKeyHash ||
+            address.version === constants.NETWORKS.FLASH.scriptHash ){
             return true;
         }else{
             return false;
@@ -369,21 +376,21 @@ export const isValidCryptoAddress = (value, currency_type) => {
         console.log(address);
         let network;
         switch(currency_type){
-            case CURRENCY_TYPE.BTC:
-                if(APP_MODE == 'PROD') network = NETWORKS.BTC;
-                else network = NETWORKS.BTC_TESTNET;
+            case constants.CURRENCY_TYPE.BTC:
+                if(APP_MODE == 'PROD') network = constants.NETWORKS.BTC;
+                else network = constants.NETWORKS.BTC_TESTNET;
                 break;
-            case CURRENCY_TYPE.LTC:
-                if(APP_MODE == 'PROD') network = NETWORKS.LTC;
-                else network = NETWORKS.LTC_TESTNET;
+            case constants.CURRENCY_TYPE.LTC:
+                if(APP_MODE == 'PROD') network = constants.NETWORKS.LTC;
+                else network = constants.NETWORKS.LTC_TESTNET;
                 break;
-            case CURRENCY_TYPE.DASH:
-                if (APP_MODE == 'PROD') network = NETWORKS.DASH;
-                else network = NETWORKS.DASH_TESTNET;
+            case constants.CURRENCY_TYPE.DASH:
+                if (APP_MODE == 'PROD') network = constants.NETWORKS.DASH;
+                else network = constants.NETWORKS.DASH_TESTNET;
                 break;
-            case CURRENCY_TYPE.FLASH:
+            case constants.CURRENCY_TYPE.FLASH:
             default:
-                network = NETWORKS.FLASH;
+                network = constants.NETWORKS.FLASH;
                 break;
         }
         if(address.version === network.pubKeyHash ||
@@ -481,13 +488,30 @@ export const getSecurityQuestion = () => {
 
 
 export const getCurrencyUnitUpcase = (currency_type) => {
-    return CURRENCY_TYPE_UNIT_UPCASE[currency_type];
+    return constants.CURRENCY_TYPE_UNIT_UPCASE[currency_type];
+}
+
+export const getCurrencyName = (currency_type) => {
+    return constants.CURRENCY_TYPE_NAME[constants.CURRENCY_TYPE_UNIT_UPCASE[currency_type]];
 }
 
 export const getCurrencyIcon = (currency_type) => {
-    return CURRENCY_ICON[currency_type];
+    return constants.CURRENCY_ICON[currency_type];
 }
 
 export const getCurrencyUnit = (currency_type) => {
-    return CURRENCY_TYPE_UNIT[currency_type];
+    return constants.CURRENCY_TYPE_UNIT[currency_type];
+}
+
+export const getCurrencySymbol = (fiat_currency) => {
+    return constants.FIAT_CURRENCY_SYMBOL[fiat_currency];
+}
+
+export const getFiatCurrencyUnit = (fiat_currency) => {
+    return constants.FIAT_CURRENCY_UNIT[fiat_currency];
+}
+export const getFiatCurrencyByCountry = (country_code) => {
+    let fiat_currency_unit = constants.FIAT_CURRENCY_UNIT_BY_COUNTRY[country_code];
+    if(fiat_currency_unit) return constants.FIAT_CURRENCY[fiat_currency_unit];
+    else return constants.FIAT_CURRENCY.USD;
 }

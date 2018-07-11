@@ -1,7 +1,7 @@
 /**
  * Navigation Routes defind
  */
-import { StackNavigator } from 'react-navigation';
+import { createStackNavigator } from 'react-navigation';
 import Dashboard from '@containers/Dashboard';
 import Login from '@containers/Login';
 import ForgotPassword from '@containers/ForgotPassword';
@@ -38,6 +38,6 @@ const routeConfig = {
    }
 };
 
-const AppNavigation = StackNavigator(routes,routeConfig);
+const AppNavigation = createStackNavigator(routes,routeConfig);
 
 export default AppNavigation;

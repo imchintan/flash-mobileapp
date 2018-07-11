@@ -1,13 +1,13 @@
 import {
     StyleSheet,
+    Dimensions,
     Platform
 } from 'react-native';
-
-const appStyles = require('./app');
+const { width } = Dimensions.get('window');
 const requestStyles = require('./request');
 
 const styles = StyleSheet.create({
-    content:{
+    qrContent:{
         flex: 1,
         flexDirection: 'row',
         backgroundColor: '#191714'
@@ -86,12 +86,11 @@ const styles = StyleSheet.create({
     },
     scanQRBoxImg:{
         flex: 1,
-        width: '100%'
+        width,
     },
 });
 
 module.exports = {
-    ...appStyles,
     ...requestStyles,
     ...styles
 }

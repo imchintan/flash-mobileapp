@@ -23,6 +23,9 @@ const styles = StyleSheet.create({
         fontSize: 16,
         paddingRight: 15,
     },
+    profileActionGreenIcon:{
+        color: 'green'
+    },
     profileActionBtnGrp:{
         flexDirection: 'row',
     },

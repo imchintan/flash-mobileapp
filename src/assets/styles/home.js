@@ -9,226 +9,166 @@ const appStyles = require('./app');
 const reqStyles = require('./request');
 
 const styles = StyleSheet.create({
-    balanceBox:{
-        alignItems: 'center',
-        backgroundColor: '#000000',
-        paddingVertical: 20,
-        marginTop: 2,
+    headerTextLogo:{
+        resizeMode: 'contain',
+        height: 40,
+        width: 350*40/100,
     },
-    balanceLabel:{
-        color: '#FFFFFF',
+    headerBalanceBox:{
+        width: width/2,
+        alignItems: 'flex-end',
+    },
+    headerBalance:{
+        color: '#EDEDED',
         fontSize: 24,
-        fontWeight: '400',
-    },
-    balanceRefresh:{
-        padding: 5,
-        position: 'absolute',
-        top: 10,
-        right: 10
-    },
-    balanceRefreshIcon:{
-        color: '#FFFFFF',
-        fontSize: 30,
-    },
-    balanceText:{
-        marginVertical: 8,
-        textAlign: 'center',
-        color: '#E0AE27',
-        fontSize: 40,
-        fontWeight: 'bold',
-        paddingHorizontal: 10,
-    },
-    otherBalanceRow:{
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'space-between',
-        width: 300,
-    },
-    otherBalanceTab:{
-        alignItems: 'center',
-    },
-    otherBalanceView:{
-        borderBottomWidth: 1,
-        borderBottomColor: '#FFDD4D',
-        // width: 85,
-        width: 125,
-        alignItems: 'center'
-    },
-    otherBalanceAmtText:{
-        color: '#FFFFFF',
-        // fontSize: 13,
-        fontSize: 15,
-    },
-    otherBalanceText:{
-        color: '#FFFFFF',
-        // fontSize: 15,
-        fontSize: 17,
-    },
-    recentTxnLabel: {
-        marginHorizontal: 20,
-        marginVertical: 10,
-        color: '#000000',
-        fontSize: 22,
-    },
-    qrCodeModal:{
-        backgroundColor: '#191714',
-        width: '100%',
-        height: '100%',
-        alignItems: 'center',
-        justifyContent: 'center',
-    },
-    qrCodeModalTitle:{
-        marginBottom: 20,
-        color: '#E0AE27',
-        fontSize: 24,
-    },
-    qrCodeModalWalletAddress:{
-        backgroundColor: '#fff',
-        justifyContent: 'center',
-        marginTop: 20,
-        width: width-60,
-        height: 50,
-        borderWidth: 1.5,
-        borderRadius:25,
-        borderColor: '#ddd'
-    },
-    qrCodeModalWalletAddressText:{
-        fontSize:14,
         fontWeight: '500',
-        textAlign:'center'
+        marginTop: -7
     },
-    qrCodeModalBtnGrp:{
-        marginTop: 20,
-        flexDirection: 'row',
-        width: 200,
-        justifyContent: 'space-between',
-    },
-    qrCodeModalBtn:{
-        flexDirection: 'row',
-        alignItems: 'center',
-        justifyContent: 'center',
-        width: 90,
-        borderColor:'#FFFFFF',
-        borderWidth: 2,
-        padding: 5,
-        borderRadius: 10,
-    },
-    qrCodeModalBtnIcon:{
-        fontSize: 20,
-        color: '#FFFFFF',
-        marginRight: 10,
-    },
-    qrCodeModalBtnText:{
+    headerBalanceLabel:{
+        color: '#BDBDBD',
         fontSize: 16,
-        color: '#FFFFFF'
     },
-    qrCodeModalCloseBtn:{
-        borderRadius:25,
-        marginTop: 20
-    },
-    txnList: {
-        flex: 1,
-        minHeight: 200,
-    },
-    txnListEmpty: {
-        marginTop: 70,
+    label:{
         fontSize: 18,
-        padding: 20,
-        textAlign: 'center'
-    },
-    sendReceiveBtnGrp:{
+        color: '#4A4A4A',
         marginTop: 15,
+    },
+    hr:{
+        width: '100%',
+        borderBottomWidth: 1,
+        borderColor: '#9F9F9F',
+        marginBottom: 15,
+    },
+    walletTab:{
         flexDirection: 'row',
-        width: 280,
+        alignItems: 'center',
         justifyContent: 'space-between',
-    },
-    sendReceiveBtn:{
-        width: 135,
-        alignItems: 'center',
-    },
-    userProfileImage:{
-        width:34,
-        height:34,
-        borderRadius: 17
-    },
-    currencyMenuTab:{
-        alignItems: 'center',
-        flexDirection: 'row',
-        padding: 7,
+        padding: 10,
+        width: '100%',
+        height: 65,
         borderRadius: 5,
-        backgroundColor: 'rgba(155,155,155,0.5)'
+        backgroundColor: '#111111',
+        marginBottom: 10,
     },
-    currencyMenuTabIcon:{
-        width:24,
-        height:24,
-        borderRadius: 12
+    walletIcon:{
+        width: 50,
+        height: 50,
     },
-    currencyMenuTabArrow:{
-        color: '#FFFFFF',
+    walletTabDetail:{
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        width: width - 120,
+    },
+    currencyLabel:{
+        color:'#FFFFFF',
+        fontFamily: 'futura-medium',
+        fontSize: 20,
+    },
+    walletConversionRate:{
+        color:'rgba(255,255,255,0.8)',
+        fontSize: 13,
+    },
+    walletBalanceDetail:{
+        alignItems: 'flex-end',
+    },
+    walletBalanceInFiatCurrency:{
+        color:'#FFFFFF',
+        fontWeight: '500',
+        fontSize: 18,
+    },
+    walletBalance:{
+        color:'#FFFFFF',
+        fontSize: 13,
+    },
+    adminTab:{
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: 10,
+        width: '100%',
+        height: 45,
+        borderRadius: 5,
+        backgroundColor: '#E0AE27',
+        marginBottom: 10,
+    },
+    adminTabTitle:{
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    adminTabTitleIcon:{
+        width: 25,
+        textAlign: 'center',
+        fontSize: 24,
+        color: '#333333',
+        marginRight: 8,
+    },
+    adminTabTitleLabel:{
         fontSize: 17,
-        paddingLeft: 5
+        color: '#333333',
+        fontFamily: 'futura-medium',
     },
-    currencyMenuPopup:{
-        position: 'absolute',
-        right: 5,
-        top: 38,
+    adminTabSubTitleLabel:{
+        fontSize: 15,
+        color: '#111111',
+        fontFamily: 'futura-medium',
+        marginRight:5
+    },
+    adminTabRightIcon:{
         ...Platform.select({
             ios: {
-                shadowColor: 'rgba(0,0,0, 0.5)',
-                shadowOffset: { height: 1, width: 0 },
-                shadowOpacity: 0.7,
-                top: 60,
-            },
-            android: {
-                elevation: 12,
-                top: 38,
+                height: 40,
+                bottom: 1
             },
         }),
-        zIndex: 100000
+        fontSize: 40,
+        color: '#a37d17',
     },
-    currencyMenuPopupContainer:{
-        width,
-        height
+    overlayStyle: {
+        justifyContent: 'center',
+        width: width,
+        height: height,
+        backgroundColor: 'rgba(0,0,0,0.7)'
     },
-    currencyMenuPopupBox:{
-        position: 'absolute',
-        right: 0,
-        top: 10,
-        backgroundColor: '#989898',
-        width: 125,
+    optionContainer: {
+        borderRadius:5,
+        width:width-30,
+        height:400,
+        backgroundColor:'rgba(255,255,255,0.8)',
+        left:15,
+    },
+    cancelContainer: {
+        left:15,
+        top: 10
+    },
+    cancelStyle: {
         borderRadius: 5,
+        width: width-30,
+        backgroundColor: 'rgba(255,255,255,0.8)',
+        padding: 10
     },
-    currencyMenuPopupUpArrow:{
-        position: 'absolute',
-        right: 8,
-        top: -12,
-        color: '#989898',
-        fontSize: 32
+    canceTextStyle: {
+        fontSize: 18,
+        color: '#4A4A4A',
+        textAlign: 'center'
     },
-    currencyMenuPopupTab:{
-        padding: 5,
-        marginHorizontal: 5,
-        borderBottomWidth: 1,
-        borderBottomColor: '#777',
+    fiatCurrencyName: {
+        fontSize: 16,
+        color: '#4A4A4A'
+    },
+    fiatCurrencyUnit: {
+        fontSize: 16,
+        color: '#4A4A4A'
+    },
+    optionStyle: {
         flexDirection: 'row',
         justifyContent: 'space-between',
-        alignItems: 'center'
-    },
-    currencyMenuPopupTabIcon:{
-        width:25,
-        height:25,
-        borderRadius: 12.5
-    },
-    currencyMenuPopupTabIconF:{
-        width:26,
-        height:26,
-        borderRadius: 13
-    },
-    currencyMenuPopupTabLabel:{
-        paddingLeft: 6,
-        fontSize: 16,
-        fontWeight: 'bold',
-        color: '#FFFFFF'
+        alignItems: 'center',
+        paddingHorizontal: 10,
+        paddingTop: 10,
+        paddingBottom: 5,
+        borderBottomWidth: 1,
+        borderBottomColor: '#B1B1B1'
     },
 });
 

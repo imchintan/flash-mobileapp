@@ -11,19 +11,39 @@ import * as send from './send'
 import Premium from 'Premium';
 import secrets from 'secrets.js-grempe';
 import nacl from 'tweetnacl';
+import TouchID from 'react-native-touch-id'
 
 import { getCoinMarketCapDetail, getProfile } from '@actions/account';
 
 export const init = () => {
     return async (dispatch,getState) => {
         dispatch({ type: types.LOADING_START });
-
         initTimezone();
-        dispatch(getCoinMarketCapDetail());
+        let location = null;
+        TouchID.isSupported().then(async biometryType => {
+            // Success code
+            if (biometryType !== 'FaceID') {
+                let payload = { isSupportedTouchID: true };
+                let isEnableTouchID = await AsyncStorage.getItem('isEnableTouchID');
+                if(isEnableTouchID){
+                    payload.isEnableTouchID = (isEnableTouchID == 'true');
+                }else{
+                    payload.isEnableTouchID = false;
+                }
+                dispatch({
+                    type: types.CUSTOM_ACTION,
+                    payload
+                });
+            }
+        }).catch(error => {
+            // Failure code
+            console.log(error);
+        });
 
-        utils.getLocation().then(res => {
+        await utils.getLocation().then(res => {
             if(res.rc == 1){
-                dispatch({ type: types.SET_LOCATION, location: res.info });
+                location = res.info;
+                dispatch({ type: types.SET_LOCATION, location });
                 dispatch({ type: types.SET_PUBLIC_IP, ip: res.info.ip });
             }else{
                 utils.publicIP().then(ip => {
@@ -31,36 +51,28 @@ export const init = () => {
                 });
             }
         });
-
+        let payload = {};
+        let pin = await AsyncStorage.getItem('pin');
+        if(pin){
+            payload.pin = pin.toString();
+        }
+        let nightMode = await AsyncStorage.getItem('nightMode');
+        if(nightMode !== null){
+            payload.nightMode = (nightMode == 'true');
+        }
+        let fiat_currency = await AsyncStorage.getItem('fiat_currency');
+        if(fiat_currency){
+            payload.fiat_currency = parseInt(fiat_currency);
+        }else if(location && location.country_code){
+            payload.fiat_currency = utils.getFiatCurrencyByCountry(location.country_code);
+        }
         let user = await AsyncStorage.getItem('user');
         if(user){
-            let payload = {
-                profile:JSON.parse(user),
-            };
+            payload.profile = JSON.parse(user);
             if(payload.profile.auth_version < 4){
                 _logout(dispatch);
                 return;
             }
-            let balance = await AsyncStorage.getItem('balance');
-            if(balance){
-                payload.balance = Number(JSON.parse(balance));
-                AsyncStorage.getItem('coinmarketcapValue',(err,succ)=>{
-                    if(err || !succ) return;
-                    let d = JSON.parse(succ);
-                    if(!d || !d.flash || !d.btc || !d.ltc || !d.usd) return;
-                    dispatch({
-                        type: types.GET_COIN_MARKET_CAP_VALUE,
-                        payload: {
-                            balance_in_flash:utils.flashToOtherCurrency(payload.balance, Number(d.flash)),
-                            balance_in_btc:utils.flashToOtherCurrency(payload.balance, Number(d.btc)),
-                            balance_in_ltc:utils.flashToOtherCurrency(payload.balance, Number(d.ltc)),
-                            balance_in_usd:utils.flashToOtherCurrency(payload.balance, Number(d.usd)),
-                        }
-                    });
-
-                });
-            }
-
             let last_message_datetime = await AsyncStorage.getItem('last_message_datetime');
             if(last_message_datetime){
                 payload.last_message_datetime = Number(last_message_datetime);
@@ -69,10 +81,12 @@ export const init = () => {
                 type: types.LOGIN_SUCCESS,
                 payload
             });
+            dispatch(getCoinMarketCapDetail());
             dispatch(getProfile());
             dispatch(getMyWallets(payload.profile));
         }else{
-            dispatch({ type: types.LOADING_END });
+            dispatch({ type: types.LOADING_END, payload });
+            dispatch(getCoinMarketCapDetail());
         }
     }
 }
@@ -116,23 +130,21 @@ export const login = (email,password) => {
         dispatch({ type: types.LOADING_START });
         apis.login(email,password).then((d)=>{
             if(d.rc == 1){
-                if(!d.profile.totp_enabled && d.profile.auth_version > 3)
-                    AsyncStorage.setItem('user',JSON.stringify(d.profile));
                 dispatch({
                     type: d.profile.auth_version < 4?types.MIGRATE_ACCOUNT:((!d.profile.totp_enabled)?types.LOGIN_SUCCESS:types.VERIFY_2FA),
                     payload: {
+                        isNewSession: true,
                         profile:d.profile,
                         password:(!d.profile.totp_enabled && d.profile.auth_version > 3)?null:password,
                         loading:(!d.profile.totp_enabled && d.profile.auth_version > 3),
                     }
                 });
-                if(!d.profile.totp_enabled && d.profile.auth_version > 3){
-                    dispatch(getProfile());
-                }
                 if(!d.profile.totp_enabled){
                     dispatch(getMyWallets(d.profile,password));
                 }
-
+                if(!d.profile.totp_enabled && d.profile.auth_version > 3){
+                    setTimeout(()=>dispatch(getProfile()),1000);
+                }
             }else{
                 let errorMsg = d.reason;
                 if(d.status !== 'ACCOUNT_LOCKED'){
@@ -155,6 +167,7 @@ export const login = (email,password) => {
                         loading:false
                     }
                 });
+                constants.SOUND.ERROR.play();
             }
         }).catch(e=>{
             dispatch({
@@ -164,6 +177,7 @@ export const login = (email,password) => {
                     loading:false
                 }
             });
+            constants.SOUND.SUCCESS.play();
         })
     }
 }
@@ -185,8 +199,8 @@ export const check2FA = (code) =>{
                         password:null,
                     }
                 });
-                dispatch(getProfile());
                 dispatch(getMyWallets(profile,password));
+                setTimeout(()=>dispatch(getProfile()),1000);
             }else{
                 dispatch({
                     type: types.VERIFY_2FA_FAILED,
@@ -574,19 +588,52 @@ export const decryptWallets = (password,sendMoney=false) => {
     }
 }
 
+export const changeNightMode = (nightMode=false) =>{
+    return (dispatch,getState) => {
+        dispatch({
+            type: types.CHANGE_NIGHT_MODE,
+            payload:{nightMode}
+        });
+        AsyncStorage.setItem('nightMode',nightMode.toString());
+    }
+}
+
 export const customAction = (payload) => ({
     type: types.CUSTOM_ACTION,
     payload
 });
 
-export const logout = () => {
-    return (dispatch,getState) => _logout(dispatch);
+export const logout = (clearAll=false) => {
+    return (dispatch,getState) => _logout(dispatch, clearAll);
 }
 
-export const _logout = async(dispatch) => {
+export const _logout = async(dispatch, clearAll=false) => {
     dispatch({ type: types.LOADING_START });
+    let payload={};
+    if(!clearAll){
+        let pin = await AsyncStorage.getItem('pin');
+        if(pin){
+            payload.pin = pin.toString();
+        }
+        let isEnableTouchID = await AsyncStorage.getItem('isEnableTouchID');
+        if(isEnableTouchID){
+            payload.isEnableTouchID = (isEnableTouchID === 'true');
+        }
+        let fiat_currency = await AsyncStorage.getItem('fiat_currency');
+        if(fiat_currency !== null){
+            payload.fiat_currency = parseInt(fiat_currency);
+        }
+    }
     await AsyncStorage.clear();
-    dispatch({ type: types.LOGOUT });
+    if(!clearAll){
+        if(payload.pin !== null && typeof payload.pin !== 'undefined')
+            AsyncStorage.setItem('pin', payload.pin);
+        if(payload.fiat_currency !== null && typeof payload.fiat_currency !== 'undefined')
+            AsyncStorage.setItem('fiat_currency', payload.fiat_currency);
+        if(payload.isEnableTouchID !== null && typeof payload.isEnableTouchID !== 'undefined')
+            AsyncStorage.setItem('isEnableTouchID', payload.isEnableTouchID.toString());
+    }
+    dispatch({ type: types.LOGOUT, payload });
     dispatch(getCoinMarketCapDetail());
 }
 

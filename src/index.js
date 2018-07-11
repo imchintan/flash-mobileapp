@@ -17,9 +17,6 @@ import {
     connect
 } from 'react-redux';
 import {
-    addNavigationHelpers,
-} from 'react-navigation';
-import {
     createReduxBoundAddListener,
     createReactNavigationReduxMiddleware,
 } from 'react-navigation-redux-helpers';
@@ -58,11 +55,11 @@ class App extends React.Component {
                     backgroundColor="#000000"
                     barStyle="light-content"
                   />
-                <AppNavigator navigation={addNavigationHelpers({
+                <AppNavigator navigation={{
                     dispatch: this.props.dispatch,
                     state: this.props.nav,
                     addListener,
-                })} />
+                }} />
             </View>
         );
     }

@@ -24,6 +24,12 @@ allprojects {
             url "$rootDir/../node_modules/react-native/android"
         }
     }
+    project.ext {
+        compileSdkVersion=27
+        buildToolsVersion="27.0.3"
+        minSdkVersion=16
+        targetSdkVersion=22
+    }
 }
 
 subprojects {
@@ -31,7 +37,16 @@ subprojects {
         resolutionStrategy.eachDependency { details ->
             if (details.requested.group == 'com.android.support'
                     && !details.requested.name.contains('multidex') ) {
-                details.useVersion "26.1.0"
+                details.useVersion "27.0.2"
+            }
+        }
+    }
+
+    afterEvaluate{
+        if((project.plugins.hasPlugin('android') || project.plugins.hasPlugin('android-library'))) {
+            android {
+                compileSdkVersion project.ext.compileSdkVersion
+                buildToolsVersion project.ext.buildToolsVersion
             }
         }
     }

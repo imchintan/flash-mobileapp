@@ -27,6 +27,7 @@ export const rawTransaction = (amount=0, custom_fee=0, receiver_public_address='
                         loading: false
                     }
                 });
+                constants.SOUND.ERROR.play();
             }
         }).catch(e=>{
             dispatch({
@@ -36,6 +37,7 @@ export const rawTransaction = (amount=0, custom_fee=0, receiver_public_address='
                     loading: false
                 }
             });
+            constants.SOUND.ERROR.play();
         })
     }
 }
@@ -61,6 +63,7 @@ export const addTransaction = (amount, ip, memo, receiver_bare_uid, receiver_id,
                         loading: false
                     }
                 });
+                constants.SOUND.ERROR.play();
             }
         }).catch(e=>{
             dispatch({
@@ -70,6 +73,7 @@ export const addTransaction = (amount, ip, memo, receiver_bare_uid, receiver_id,
                     loading: false
                 }
             });
+            constants.SOUND.ERROR.play();
         })
     }
 }
@@ -89,6 +93,7 @@ export const transactionById = (id, index, amount, ip, memo, receiver_bare_uid,
                         loading: false
                     }
                 });
+                constants.SOUND.ERROR.play();
             }else{
                 if(d.txn.status > 0 || params.currency_type !== constants.CURRENCY_TYPE.FLASH){
                     dispatch({
@@ -102,6 +107,7 @@ export const transactionById = (id, index, amount, ip, memo, receiver_bare_uid,
                     dispatch(getRecentTransactions());
                     dispatch(updateTransactionReportDate(params.date_from, params.date_to));
                     dispatch(updateRequestReportDate(params.pending_date_from, params.pending_date_to));
+                    constants.SOUND.SEND.play();
                 }else if(index === 4){
                     dispatch({
                         type: types.TRANSACTION_BY_ID,
@@ -122,6 +128,7 @@ export const transactionById = (id, index, amount, ip, memo, receiver_bare_uid,
                     dispatch(getRecentTransactions());
                     dispatch(updateTransactionReportDate(params.date_from, params.date_to));
                     dispatch(updateRequestReportDate(params.pending_date_from, params.pending_date_to));
+                    constants.SOUND.SEND.play();
                 }else{
                     dispatch(transactionById(id,(index+1),amount, ip, memo, receiver_bare_uid, receiver_id,
                         receiver_public_address, transaction_hex, transaction_id));
@@ -136,6 +143,7 @@ export const transactionById = (id, index, amount, ip, memo, receiver_bare_uid,
                     loading: false
                 }
             });
+            constants.SOUND.ERROR.play();
         })
     }
 }
