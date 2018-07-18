@@ -4,6 +4,7 @@ import * as TransactionsActions from '@actions/transactions'
 import * as RequestActions from '@actions/request'
 import * as SendActions from '@actions/send'
 import * as MessagesActions from '@actions/messages'
+import * as SharingActions from '@actions/sharing'
 
 export const ActionCreators = Object.assign({},
     NavigationActions,
@@ -11,5 +12,6 @@ export const ActionCreators = Object.assign({},
     TransactionsActions,
     RequestActions,
     SendActions,
-    MessagesActions
+    MessagesActions,
+    SharingActions
 );

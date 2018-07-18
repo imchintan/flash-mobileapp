@@ -1,18 +1,36 @@
 import React, { Component } from 'react';
 import {
     StyleSheet,
-    View
+    View,
+    Keyboard
 } from 'react-native';
 export default class Footer extends Component {
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = {
+          isVisible: true
+        }
     }
 
+    componentDidMount() {
+        this.keyboardWillShowSub = Keyboard.addListener('keyboardDidShow', this.keyboardWillShow)
+        this.keyboardWillHideSub = Keyboard.addListener('keyboardDidHide', this.keyboardWillHide)
+    }
+
+    componentWillUnmount() {
+        this.keyboardWillShowSub.remove()
+        this.keyboardWillHideSub.remove()
+    }
+
+    keyboardWillShow = event => this.setState({isVisible: false})
+    
+    keyboardWillHide = event => this.setState({isVisible: true})
+
     render() {
-        return (
-            <View style={[styles.footer,this.props.style]}>{this.props.children}</View>
-        )
+        return this.state.isVisible ?
+                <View style={[styles.footer,this.props.style]}>
+                    {this.props.children}
+                </View>:null;
     }
 }
 

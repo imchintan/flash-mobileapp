@@ -587,6 +587,15 @@ export const getSecurityQuestion = () => {
   // };
 }
 
+export const getSixCharString = () => {
+    let randomText = "";
+    let possible = "ABCDEFGHJKLMNPQRSTUVWXYZ123456789";
+
+    for (let i = 0; i < 6; i++)
+        randomText += possible.charAt(Math.floor(Math.random() * possible.length));
+
+    return randomText;
+}
 
 export const getCurrencyUnitUpcase = (currency_type) => {
     return constants.CURRENCY_TYPE_UNIT_UPCASE[currency_type];

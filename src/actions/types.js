@@ -98,3 +98,12 @@ export const TRANSACTION_BY_ID = 'TRANSACTION_BY_ID';
 
 //Messages
 export const GET_MESSAGES = 'GET_MESSAGES';
+
+//Sharing
+export const GET_PAYOUT_CODE = 'GET_PAYOUT_CODE';
+export const ADD_PAYOUT_CODE = 'ADD_PAYOUT_CODE';
+export const REMOVE_PAYOUT_CODE = 'REMOVE_PAYOUT_CODE';
+
+export const GET_SHARING_CODE = 'GET_SHARING_CODE';
+export const ADD_SHARING_CODE = 'ADD_SHARING_CODE';
+export const UPDATE_SHARING_CODE = 'UPDATE_SHARING_CODE';

@@ -64,15 +64,20 @@ export default class WalletMenu extends React.PureComponent {
                     <Text style={styles.menuPopupTabLabel}>Request</Text>
                 </TouchableOpacity>
                 <TouchableOpacity
-                    style={[styles.menuPopupTab,{
-                        borderBottomWidth: 0,
-                        borderBottomColor: 'transparent',
-                    }]}
+                    style={styles.menuPopupTab}
                     onPress={()=>this.switchTab('Pending')}>
                     <Text style={styles.menuPopupTabLabel}>Pending</Text>
                     {this.props.badgePending>0?<View style={styles.badge}>
                         <Text style={styles.badgeText}>{this.props.badgePending}</Text>
                     </View>:null}
+                </TouchableOpacity>
+                <TouchableOpacity
+                    style={[styles.menuPopupTab,{
+                        borderBottomWidth: 0,
+                        borderBottomColor: 'transparent',
+                    }]}
+                    onPress={()=>this.switchTab('Sharing')}>
+                    <Text style={styles.menuPopupTabLabel}>Sharing</Text>                
                 </TouchableOpacity>
             </View>
         </TouchableOpacity>
