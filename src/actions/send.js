@@ -11,16 +11,41 @@ export const rawTransaction = (amount=0, custom_fee=0, receiver_public_address='
     return (dispatch,getState) => {
         dispatch({ type: types.LOADING_START });
         let params = getState().params;
-        if(params.currency_type !== constants.CURRENCY_TYPE.ETH){
-            apis.rawTransaction(params.profile.auth_version, params.profile.sessionToken,
-                params.currency_type, amount, custom_fee, receiver_public_address, memo).then((d)=>{
+        if(params.currency_type === constants.CURRENCY_TYPE.FLASH){
+            let toAddresses = [];
+            toAddresses.push({ address: receiver_public_address, amount: amount });
+            let payout_info =  params.payout_info;
+            let sharing_fee = parseFloat(
+                utils.calcSharingFee(amount, params.currency_type, payout_info.payout_sharing_fee)
+            );
+            let remaining_sharing_fee = sharing_fee;
+
+            for (let i = 0; i < payout_info.addresses.length; i++) {
+                if (remaining_sharing_fee <= 0) continue;
+                let address = payout_info.addresses[i];
+                let address_sharing_fee = parseFloat(
+                    utils.calcSharingFee(sharing_fee, params.currency_type, Number(address.percentage), 4)
+                );
+                if (address_sharing_fee > remaining_sharing_fee ||
+                    i == payout_info.addresses.length)
+                    //to manage any fraction change, mostly last address
+                    address_sharing_fee = remaining_sharing_fee;
+
+                toAddresses.push({
+                    address: address.address,
+                    amount: address_sharing_fee,
+                });
+                remaining_sharing_fee = remaining_sharing_fee - address_sharing_fee;
+            }
+            apis.rawTransactionMulti(params.profile.auth_version, params.profile.sessionToken,
+                params.currency_type, toAddresses, custom_fee, memo).then((d)=>{
                 if(d.rc == 1){
                     dispatch({type: types.RAW_TRANSACTION});
                     let wallet = params.decryptedWallet;
                     let tx = wallet.signTx(d.transaction.rawtx);
                     let ip = params.ip;
                     dispatch(addTransaction(amount, ip, memo, receiver_bare_uid, receiver_id,
-                        receiver_public_address, tx.toHex(), tx.getId(), request_id));
+                        receiver_public_address, tx.toHex(), tx.getId(), request_id, toAddresses));
                 }else{
                     dispatch({
                         type: types.RAW_TRANSACTION,
@@ -41,10 +66,9 @@ export const rawTransaction = (amount=0, custom_fee=0, receiver_public_address='
                 });
                 constants.SOUND.ERROR.play();
             })
-        }else{
+        }else if(params.currency_type === constants.CURRENCY_TYPE.ETH){
             apis.getEthTransactionCount(params.profile.auth_version, params.profile.sessionToken,
                 params.currency_type, params.wallet_address).then((d)=>{
-                    console.log(d);
                 if(d.rc == 1){
                     dispatch({type: types.RAW_TRANSACTION});
                     let wallet = getActiveWallet(params.decryptedWallets, params.currency_type);
@@ -82,44 +106,107 @@ export const rawTransaction = (amount=0, custom_fee=0, receiver_public_address='
                 });
                 constants.SOUND.ERROR.play();
             })
+        }else{
+            apis.rawTransaction(params.profile.auth_version, params.profile.sessionToken,
+                params.currency_type, amount, custom_fee, receiver_public_address, memo).then((d)=>{
+                if(d.rc == 1){
+                    dispatch({type: types.RAW_TRANSACTION});
+                    let wallet = params.decryptedWallet;
+                    let tx = wallet.signTx(d.transaction.rawtx);
+                    let ip = params.ip;
+                    dispatch(addTransaction(amount, ip, memo, receiver_bare_uid, receiver_id,
+                        receiver_public_address, tx.toHex(), tx.getId(), request_id));
+                }else{
+                    dispatch({
+                        type: types.RAW_TRANSACTION,
+                        payload: {
+                            errorMsg:d.reason,
+                            loading: false
+                        }
+                    });
+                    constants.SOUND.ERROR.play();
+                }
+            }).catch(e=>{
+                dispatch({
+                    type: types.RAW_TRANSACTION,
+                    payload: {
+                        errorMsg: e.message,
+                        loading: false
+                    }
+                });
+                constants.SOUND.ERROR.play();
+            })
         }
     }
 }
 
 export const addTransaction = (amount, ip, memo, receiver_bare_uid, receiver_id,
-        receiver_public_address, transaction_hex, transaction_id, request_id) => {
+        receiver_public_address, transaction_hex, transaction_id, request_id, toAddresses=[]) => {
     return (dispatch,getState) => {
         let params = getState().params;
-        apis.addTransaction(params.profile.auth_version, params.profile.sessionToken,
-            params.currency_type, amount, ip, memo, receiver_bare_uid, receiver_id,
-            receiver_public_address, transaction_hex, transaction_id).then((d)=>{
-            if(d.rc == 1){
-                dispatch({type: types.ADD_TRANSACTION});
-                if(!transaction_id) transaction_id = d.transaction_id;
-                if(receiver_bare_uid) dispatch(addRoster(receiver_bare_uid));
-                if(request_id && request_id>0) dispatch(markSentMoneyRequests(request_id, receiver_bare_uid, memo));
-                dispatch(transactionById(d.id, 0, amount, ip, memo, receiver_bare_uid, receiver_id,
-                    receiver_public_address, transaction_hex, transaction_id));
-            }else{
+        if(params.currency_type === constants.CURRENCY_TYPE.FLASH){
+            apis.addTransactionMulti(params.profile.auth_version, params.profile.sessionToken,
+                params.currency_type, amount, ip, memo, receiver_bare_uid, receiver_id,
+                receiver_public_address, transaction_hex, transaction_id, toAddresses, params.payout_info).then((d)=>{
+                if(d.rc == 1){
+                    dispatch({type: types.ADD_TRANSACTION});
+                    if(!transaction_id) transaction_id = d.transaction_id;
+                    if(receiver_bare_uid) dispatch(addRoster(receiver_bare_uid));
+                    if(request_id && request_id>0) dispatch(markSentMoneyRequests(request_id, receiver_bare_uid, memo));
+                    dispatch(transactionById(d.id, 0, amount, ip, memo, receiver_bare_uid, receiver_id,
+                        receiver_public_address, transaction_hex, transaction_id));
+                }else{
+                    dispatch({
+                        type: types.ADD_TRANSACTION,
+                        payload: {
+                            errorMsg:d.reason,
+                            loading: false
+                        }
+                    });
+                    constants.SOUND.ERROR.play();
+                }
+            }).catch(e=>{
                 dispatch({
                     type: types.ADD_TRANSACTION,
                     payload: {
-                        errorMsg:d.reason,
+                        errorMsg: e.message,
                         loading: false
                     }
                 });
                 constants.SOUND.ERROR.play();
-            }
-        }).catch(e=>{
-            dispatch({
-                type: types.ADD_TRANSACTION,
-                payload: {
-                    errorMsg: e.message,
-                    loading: false
+            })
+        }else{
+            apis.addTransaction(params.profile.auth_version, params.profile.sessionToken,
+                params.currency_type, amount, ip, memo, receiver_bare_uid, receiver_id,
+                receiver_public_address, transaction_hex, transaction_id).then((d)=>{
+                if(d.rc == 1){
+                    dispatch({type: types.ADD_TRANSACTION});
+                    if(!transaction_id) transaction_id = d.transaction_id;
+                    if(receiver_bare_uid) dispatch(addRoster(receiver_bare_uid));
+                    if(request_id && request_id>0) dispatch(markSentMoneyRequests(request_id, receiver_bare_uid, memo));
+                    dispatch(transactionById(d.id, 0, amount, ip, memo, receiver_bare_uid, receiver_id,
+                        receiver_public_address, transaction_hex, transaction_id));
+                }else{
+                    dispatch({
+                        type: types.ADD_TRANSACTION,
+                        payload: {
+                            errorMsg:d.reason,
+                            loading: false
+                        }
+                    });
+                    constants.SOUND.ERROR.play();
                 }
-            });
-            constants.SOUND.ERROR.play();
-        })
+            }).catch(e=>{
+                dispatch({
+                    type: types.ADD_TRANSACTION,
+                    payload: {
+                        errorMsg: e.message,
+                        loading: false
+                    }
+                });
+                constants.SOUND.ERROR.play();
+            })
+        }
     }
 }
 

@@ -83,7 +83,7 @@ class SharingTab extends React.Component {
                 flex: 1,
                 ...Platform.select({
                     ios: {
-                        paddingTop: 77,
+                        paddingTop: utils.isIphoneX()?92:77,
                     },
                     android: {
                         paddingTop: 55

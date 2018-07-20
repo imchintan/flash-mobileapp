@@ -1,7 +1,6 @@
 import {
     StyleSheet
 } from 'react-native';
-
 const activityStyles = require('@styles/activity');
 const styles = StyleSheet.create({
     txnListEmpty: {
@@ -13,6 +12,17 @@ const styles = StyleSheet.create({
     },
     txnList: {
         backgroundColor: '#212121',
+    },
+    label:{
+        fontSize: 18,
+        color: '#E9E9E9',
+        marginTop: 15,
+    },
+    hr:{
+        width: '100%',
+        borderBottomWidth: 1,
+        borderColor: '#FFB400',
+        marginBottom: 15,
     },
 });
 

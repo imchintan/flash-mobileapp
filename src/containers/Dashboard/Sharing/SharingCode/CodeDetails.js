@@ -52,6 +52,7 @@ class CodeDetails extends Component<{}> {
             <Container>
                 {this.props.sharing_code && this.props.sharing_code.length > 0 ?
                 <Content hasHeader={false} hasFooter={true}
+                    style={styles.content}
                     contentContainerStyle={{marginHorizontal: 20}}>
                     <Text style={styles.label}>Share Code & Percentage</Text>
                     <View style={styles.hr}/>

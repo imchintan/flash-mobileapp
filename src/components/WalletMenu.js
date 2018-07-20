@@ -7,6 +7,7 @@ import {
     TouchableOpacity
 } from 'react-native'
 import { StackActions } from 'react-navigation';
+import * as constants from '@src/constants';
 import Icon from 'react-native-fa-icons';
 import Text from './Text';
 
@@ -51,18 +52,6 @@ export default class WalletMenu extends React.PureComponent {
                     onPress={()=>this.switchTab('Activity')}>
                     <Text style={styles.menuPopupTabLabel}>Activity</Text>
                 </TouchableOpacity>
-                <TouchableOpacity style={styles.menuPopupTab}
-                    onPress={()=>this.switchTab('Send')}>
-                    <Text style={styles.menuPopupTabLabel}>Send</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.menuPopupTab}
-                    onPress={()=>this.switchTab('Receive')}>
-                    <Text style={styles.menuPopupTabLabel}>Receive</Text>
-                </TouchableOpacity>
-                <TouchableOpacity style={styles.menuPopupTab}
-                    onPress={()=>this.switchTab('Request')}>
-                    <Text style={styles.menuPopupTabLabel}>Request</Text>
-                </TouchableOpacity>
                 <TouchableOpacity
                     style={styles.menuPopupTab}
                     onPress={()=>this.switchTab('Pending')}>
@@ -71,14 +60,29 @@ export default class WalletMenu extends React.PureComponent {
                         <Text style={styles.badgeText}>{this.props.badgePending}</Text>
                     </View>:null}
                 </TouchableOpacity>
+                {this.props.currency_type === constants.CURRENCY_TYPE.FLASH?
+                    <TouchableOpacity style={styles.menuPopupTab}
+                        onPress={()=>this.switchTab('Sharing')}>
+                        <Text style={styles.menuPopupTabLabel}>Sharing</Text>
+                    </TouchableOpacity>:null}
+                <TouchableOpacity style={styles.menuPopupTab}
+                    onPress={()=>this.switchTab('Send')}>
+                    <Text style={styles.menuPopupTabLabel}>Send</Text>
+                </TouchableOpacity>
+                <TouchableOpacity style={styles.menuPopupTab}
+                    onPress={()=>this.switchTab('Receive')}>
+                    <Text style={styles.menuPopupTabLabel}>Receive</Text>
+                </TouchableOpacity>
                 <TouchableOpacity
                     style={[styles.menuPopupTab,{
                         borderBottomWidth: 0,
                         borderBottomColor: 'transparent',
                     }]}
-                    onPress={()=>this.switchTab('Sharing')}>
-                    <Text style={styles.menuPopupTabLabel}>Sharing</Text>                
+                    onPress={()=>this.switchTab('Request')}>
+                    <Text style={styles.menuPopupTabLabel}>Request</Text>
                 </TouchableOpacity>
+
+
             </View>
         </TouchableOpacity>
     </View>:null

@@ -52,7 +52,7 @@ class GenerateCode extends Component<{}> {
         const styles = (this.props.nightMode?require('@styles/nightMode/sharing'):require('@styles/sharing'));
         return (
             <Container>
-                <Content hasHeader={false} hashFooter={true}>
+                <Content hasHeader={false} hashFooter={true} style={styles.content}>
                     <Text style={styles.payoutCodeNote}>
                         This share percentage associated with
                         My {utils.getCurrencyUnit(this.props.currency_type)} share

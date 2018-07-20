@@ -109,6 +109,37 @@ export const getPayoutCode = () => {
     }
 }
 
+export const getPayoutInfo = () => {
+    return (dispatch,getState) => {
+        let params = getState().params;
+        apis.getPayoutInfo(params.profile.auth_version, params.profile.sessionToken,
+            params.currency_type).then((d)=>{
+            if(d.rc !== 1){
+                dispatch({
+                    type: types.GET_PAYOUT_INFO,
+                    payload: {
+                        // errorMsg:d.reason,
+                    }
+                });
+            }else{
+                dispatch({
+                    type: types.GET_PAYOUT_INFO,
+                    payload: {
+                        payout_info: d.payout_info,
+                    }
+                });
+            }
+        }).catch(e=>{
+            dispatch({
+                type: types.GET_PAYOUT_INFO,
+                payload: {
+                    // errorMsg: e.message
+                }
+            });
+        })
+    }
+}
+
 export const getSharingCode = () => {
     return (dispatch,getState) => {
         let params = getState().params;

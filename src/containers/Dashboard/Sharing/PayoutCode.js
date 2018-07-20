@@ -70,7 +70,7 @@ class PayoutCode extends Component<{}> {
         const styles = (this.props.nightMode?require('@styles/nightMode/sharing'):require('@styles/sharing'));
         return (
             <Container>
-                <Content hasHeader={false}>
+                <Content hasHeader={false} style={styles.content}>
                     <Text style={styles.payoutCodeNote}>
                         Once you add a Code here. You will be charged extra fee
                         which is  a fixed percent of your transaction amount.

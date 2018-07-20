@@ -3,6 +3,7 @@ import {
     Dimensions,
     Platform
 } from 'react-native';
+import { getAdjustedSize } from './utils';
 
 const { height, width } = Dimensions.get('window');
 const appStyles = require('./app');
@@ -11,8 +12,8 @@ const reqStyles = require('./request');
 const styles = StyleSheet.create({
     headerTextLogo:{
         resizeMode: 'contain',
-        height: 40,
-        width: 272*40/100,
+        height: getAdjustedSize(40),
+        width: getAdjustedSize(272*40/100),
     },
     headerBalanceBox:{
         width: width/2,
@@ -20,16 +21,16 @@ const styles = StyleSheet.create({
     },
     headerBalance:{
         color: '#EDEDED',
-        fontSize: 24,
+        fontSize: getAdjustedSize(24),
         fontWeight: '500',
         marginTop: -7
     },
     headerBalanceLabel:{
         color: '#BDBDBD',
-        fontSize: 16,
+        fontSize: getAdjustedSize(16),
     },
     label:{
-        fontSize: 18,
+        fontSize: getAdjustedSize(18),
         color: '#4A4A4A',
         marginTop: 15,
     },
@@ -45,29 +46,29 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         padding: 10,
         width: '100%',
-        height: 65,
+        height: getAdjustedSize(65),
         borderRadius: 5,
         backgroundColor: '#111111',
         marginBottom: 10,
     },
     walletIcon:{
-        width: 50,
-        height: 50,
+        width: getAdjustedSize(50),
+        height: getAdjustedSize(50),
     },
     walletTabDetail:{
         flexDirection: 'row',
         alignItems: 'center',
         justifyContent: 'space-between',
-        width: width - 120,
+        width: width - getAdjustedSize(120),
     },
     currencyLabel:{
         color:'#FFFFFF',
         fontFamily: 'futura-medium',
-        fontSize: 20,
+        fontSize: getAdjustedSize(20),
     },
     walletConversionRate:{
         color:'rgba(255,255,255,0.8)',
-        fontSize: 13,
+        fontSize: getAdjustedSize(13),
     },
     walletBalanceDetail:{
         alignItems: 'flex-end',
@@ -75,11 +76,11 @@ const styles = StyleSheet.create({
     walletBalanceInFiatCurrency:{
         color:'#FFFFFF',
         fontWeight: '500',
-        fontSize: 18,
+        fontSize: getAdjustedSize(18),
     },
     walletBalance:{
         color:'#FFFFFF',
-        fontSize: 13,
+        fontSize: getAdjustedSize(13),
     },
     adminTab:{
         flexDirection: 'row',
@@ -87,7 +88,7 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         padding: 10,
         width: '100%',
-        height: 45,
+        height: getAdjustedSize(45),
         borderRadius: 5,
         backgroundColor: '#E0AE27',
         marginBottom: 10,
@@ -97,19 +98,19 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     adminTabTitleIcon:{
-        width: 25,
+        width: getAdjustedSize(26),
         textAlign: 'center',
-        fontSize: 24,
+        fontSize: getAdjustedSize(24),
         color: '#333333',
         marginRight: 8,
     },
     adminTabTitleLabel:{
-        fontSize: 17,
+        fontSize: getAdjustedSize(17),
         color: '#333333',
         fontFamily: 'futura-medium',
     },
     adminTabSubTitleLabel:{
-        fontSize: 15,
+        fontSize: getAdjustedSize(15),
         color: '#111111',
         fontFamily: 'futura-medium',
         marginRight:5
@@ -121,7 +122,7 @@ const styles = StyleSheet.create({
                 bottom: 1
             },
         }),
-        fontSize: 40,
+        fontSize: getAdjustedSize(40),
         color: '#a37d17',
     },
     overlayStyle: {
@@ -148,16 +149,16 @@ const styles = StyleSheet.create({
         padding: 10
     },
     canceTextStyle: {
-        fontSize: 18,
+        fontSize: getAdjustedSize(18),
         color: '#4A4A4A',
         textAlign: 'center'
     },
     fiatCurrencyName: {
-        fontSize: 16,
+        fontSize: getAdjustedSize(16),
         color: '#4A4A4A'
     },
     fiatCurrencyUnit: {
-        fontSize: 16,
+        fontSize: getAdjustedSize(16),
         color: '#4A4A4A'
     },
     optionStyle: {

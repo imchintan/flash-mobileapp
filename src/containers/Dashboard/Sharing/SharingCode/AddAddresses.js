@@ -36,10 +36,15 @@ class AddAddresses extends Component<{}> {
     }
 
     componentDidMount(){
+        this.mount = true;
         if(!this.state.editMode)
             this.addAddressRow();
         else
             this.initAddresses();
+    }
+
+    componentWillUnmount(){
+        this.mount = false;
     }
 
     componentWillReceiveProps(nextProps){
@@ -74,7 +79,7 @@ class AddAddresses extends Component<{}> {
             percentage: add.percentage,
             label: add.label,
         }))
-        this.setState({addresses});
+        if(this.mount)this.setState({addresses});
     }
 
     addAddressRow(){
@@ -90,19 +95,19 @@ class AddAddresses extends Component<{}> {
             percentage: '',
             label: '',
         });
-        this.setState({addresses},()=>this.refs['_addr_'+index].focus());
+        if(this.mount)this.setState({addresses},()=>this.refs['_addr_'+index].focus());
     }
 
     removeAddressRow(idx){
         let addresses = this.state.addresses;
         addresses.splice(idx, 1);
-        this.setState({addresses});
+        if(this.mount)this.setState({addresses});
     }
 
     addAddressText(address,idx){
         let addresses = this.state.addresses;
         addresses[idx].address = address;
-        this.setState({addresses});
+        if(this.mount)this.setState({addresses});
     }
 
     async verifyAddress(idx){
@@ -147,14 +152,14 @@ class AddAddresses extends Component<{}> {
             }
         }
         addresses[idx] = add;
-        this.setState({addresses}
+        if(this.mount)this.setState({addresses}
         /*,()=> !add.isValidAddress && this.refs['_addr_'+add.index].focus()*/);
     }
 
     addAddressPer(percentage,idx){
         let addresses = this.state.addresses;
         addresses[idx].percentage = percentage;
-        this.setState({addresses});
+        if(this.mount)this.setState({addresses});
     }
 
     validatePercentage(idx){
@@ -175,13 +180,13 @@ class AddAddresses extends Component<{}> {
                 addresses[idx] = add;
             }
         }
-        this.setState({addresses});
+        if(this.mount)this.setState({addresses});
     }
 
     addAddressLabel(label,idx){
         let addresses = this.state.addresses;
         addresses[idx].label = label;
-        this.setState({addresses});
+        if(this.mount)this.setState({addresses});
     }
 
     generateCode(){
@@ -218,7 +223,7 @@ class AddAddresses extends Component<{}> {
         const styles = (this.props.nightMode?require('@styles/nightMode/sharing'):require('@styles/sharing'));
         return (
             <Container>
-                <Content hasHeader={false} hasFooter={true}>
+                <Content hasHeader={false} hasFooter={true} style={styles.content}>
                     <Text style={styles.payoutCodeNote}>
                         Add {utils.getCurrencyUnitUpcase(this.props.currency_type)} addresses
                         you want to share {utils.getCurrencyUnit(this.props.currency_type)} with
@@ -277,7 +282,7 @@ class AddAddresses extends Component<{}> {
                     <Button value={'Add Row'}
                         style={{
                             marginBottom:20,
-                            backgroundColor: '#191714'
+                            backgroundColor: this.props.nightMode?'#5F5F5F':'#191714'
                         }}
                         textstyle={{
                             color: '#E0AE27'
@@ -292,10 +297,11 @@ class AddAddresses extends Component<{}> {
                             borderRadius: 0,
                             alignItems: 'center',
                             justifyContent: 'center',
-                            backgroundColor: '#fff'
+                            backgroundColor: this.props.nightMode?'#404040':'#fff'
                         }}
                         textstyle={{
-                            fontSize: 24
+                            fontSize: 24,
+                            color:this.props.nightMode?'#E9E9E9' : '#000'
                         }}
                         onPress={()=>this.props.navigation.goBack()}/>
                     <Button value={this.state.editMode?'Update':'Generate'}

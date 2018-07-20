@@ -98,6 +98,29 @@ const login = (state = initialState, action) => {
             let receivedTxns_total = action.payload.total_txns;
             return { ...state, receivedTxns, receivedTxns_total, receivedTxns_loading: false, receivedTxns_retrieve: false};
 
+        case types.GET_SHARING_IN_TRANSACTIONS:
+            let sharingInTxns = (!action.payload.reset)?
+                _.concat(state.sharingInTxns || [], action.payload.txns):action.payload.txns;
+            _.sortedIndexBy(sharingInTxns,{created_ts: null},'created_ts');
+            let sharingInTxns_total = action.payload.total_txns;
+            return { ...state, sharingInTxns, sharingInTxns_total, sharingInTxns_loading: false, sharingInTxns_retrieve: false};
+
+        case types.GET_SHARING_OUT_TRANSACTIONS:
+            let sharingOutTxns = (!action.payload.reset)?
+                _.concat(state.sharingOutTxns || [], action.payload.txns):action.payload.txns;
+            _.sortedIndexBy(sharingOutTxns,{created_ts: null},'created_ts');
+            let sharingOutTxns_total = action.payload.total_txns;
+            return { ...state, sharingOutTxns, sharingOutTxns_total, sharingOutTxns_loading: false, sharingOutTxns_retrieve: false};
+
+        case types.GET_SHARING_USAGE_TRANSACTIONS:
+            let sharingUsageTxns = (!action.payload.reset)?
+                _.concat(state.sharingUsageTxns || [], action.payload.txns):action.payload.txns;
+            _.sortedIndexBy(sharingUsageTxns,{created_ts: null},'created_ts');
+            let sharingUsageTxns_total = action.payload.total_txns;
+            let sharingUsageTxns_total_sharing_fee = action.payload.total_sharing_fee;
+            return { ...state, sharingUsageTxns, sharingUsageTxns_total, sharingUsageTxns_total_sharing_fee,
+                    sharingUsageTxns_loading: false, sharingOutTxns_retrieve: false};
+
         case types.RESET_TRANSACTIONS:
             return { ...state, allTxns: [], sentTxns: [],  receivedTxns: [],
                     allTxns_total: 0, sentTxns_total: 0, receivedTxns_total: 0};

@@ -70,7 +70,46 @@ export const getTransactionDetail = (auth_version, sessionToken='',
     return new Promise((resolve,reject) => {
 
         fetch(API_URL+'/transaction-detail?transaction_id='+transaction_id+
-            '&currency_type='+currency_type,{
+            '&currency_type='+currency_type+'&appversion='+APP_VERSION
+            +'&res='+RESOURCE,{
+            method: 'GET',
+            headers: {
+               'Content-Type': 'application/json; charset=utf-8',
+               'authorization': sessionToken,
+               'fl_auth_version': auth_version
+            },
+        })
+        .then(async res =>{
+            let _res = await res.text();
+            if(_res.toLowerCase().indexOf("session") == -1){
+                return JSON.parse(_res);
+            }else{
+                return {rc:3,reason:_res};
+            }
+        })
+        .then(json => resolve(json))
+        .catch(e =>{
+            console.log(e);
+            reject('Something went wrong!')
+        });
+    });
+}
+
+/**
+ * Get sharing transaction detail
+ * @param  {Number} auth_version      [description]
+ * @param  {String} [sessionToken=''] [description]
+ * @param  {String} [transaction_id]  [description]
+ * @param  {Number} [currency_type=1] [description]
+ * @return {Promise}                  [description]
+ */
+export const getSharingTransactionDetail = (auth_version, sessionToken='',
+    transaction_id, currency_type = CURRENCY_TYPE.FLASH) => {
+    return new Promise((resolve,reject) => {
+
+        fetch(API_URL+'/sharing-transaction-detail?transaction_id='+transaction_id+
+            '&currency_type='+currency_type+'&appversion='+APP_VERSION
+            +'&res='+RESOURCE,{
             method: 'GET',
             headers: {
                'Content-Type': 'application/json; charset=utf-8',

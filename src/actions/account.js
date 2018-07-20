@@ -571,6 +571,7 @@ export const changeCurrency = (currency_type) =>{
                 totalPending: 0,
                 decryptedWallet,
                 refreshingHome:true,
+                payout_info: null,
                 sharing_code: [],
                 payout_code: '',
                 payout_code_is_locked: 0,
@@ -592,6 +593,9 @@ export const changeCurrency = (currency_type) =>{
             }
             if(currency_type !== constants.CURRENCY_TYPE.FLASH)
                 dispatch(txns.setThresholdAmount());
+
+            if(currency_type === constants.CURRENCY_TYPE.FLASH)
+                    dispatch(sharing.getPayoutInfo());
 
             if(currency_type === constants.CURRENCY_TYPE.DASH)
                 dispatch(txns.setFixedTxnFee());

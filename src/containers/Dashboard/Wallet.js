@@ -131,6 +131,7 @@ class Wallet extends Component<{}> {
                 <WalletMenu onPress={()=>this.setState({showMenu:false})}
                     visible={this.state.showMenu}
                     badgePending={this.props.totalPending}
+                    currency_type={this.props.currency_type}
                     navigation={this.props.navigation} />
                 <WalletFooter
                     nightMode={this.props.nightMode}
