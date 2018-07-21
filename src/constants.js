@@ -92,6 +92,12 @@ export const NETWORKS = {
     wif: 0xef,
     dustThreshold: 546
   },
+  ETH: {
+    chainId: 1,
+  },
+  ETH_TESTNET: {
+    chainId: 4
+  },
 };
 
 /**
@@ -102,6 +108,7 @@ export const CURRENCY_TYPE = {
     BTC: 2,
     LTC: 3,
     DASH: 4,
+    ETH: 5,
 };
 
 export const CURRENCY_TYPE_NAME = {
@@ -109,6 +116,7 @@ export const CURRENCY_TYPE_NAME = {
     BTC: 'Bitcoin',
     LTC: 'Litecoin',
     DASH: 'DASH',
+    ETH: 'Ethereum',
 };
 
 export const CURRENCY_TYPE_UNIT = {
@@ -116,6 +124,7 @@ export const CURRENCY_TYPE_UNIT = {
     2: 'BTC',
     3: 'LTC',
     4: 'DASH',
+    5: 'ETH',
 };
 
 export const CURRENCY_TYPE_UNIT_UPCASE = {
@@ -123,6 +132,7 @@ export const CURRENCY_TYPE_UNIT_UPCASE = {
     2: 'BTC',
     3: 'LTC',
     4: 'DASH',
+    5: 'ETH',
 };
 
 export const CURRENCY_TYPE_QR_PREFIX = {
@@ -130,6 +140,7 @@ export const CURRENCY_TYPE_QR_PREFIX = {
     2: 'bitcoin',
     3: 'litecoin',
     4: 'dash',
+    5: 'ethereum',
 };
 
 export const CURRENCY_ICON = {
@@ -137,6 +148,7 @@ export const CURRENCY_ICON = {
     2: require('@images/btc-icon.png'),
     3: require('@images/ltc-icon.png'),
     4: require('@images/dash-icon.png'),
+    5: require('@images/eth-icon.png'),
 };
 
 //Coinmarketcap currency ID
@@ -145,6 +157,7 @@ export const COIN_MARKET_CAP_CURRENCY_ID = {
     BTC: 1,
     LTC: 2,
     DASH: 131,
+    ETH: 1027,
 };
 
 //Fiat currency

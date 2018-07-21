@@ -1,5 +1,6 @@
 
 //action
+export const INIT = 'INIT';
 export const CUSTOM_ACTION = 'CUSTOM_ACTION';
 export const LOGOUT = 'LOGOUT';
 
@@ -55,6 +56,7 @@ export const SET_BC_MEDIAN_TX_SIZE = 'SET_BC_MEDIAN_TX_SIZE';
 export const SET_SATOSHI_PER_BYTE = 'SET_SATOSHI_PER_BYTE';
 export const SET_THRESHOLD_AMOUNT = 'SET_THRESHOLD_AMOUNT';
 export const SET_FIXED_TXN_FEE = 'SET_FIXED_TXN_FEE';
+export const SET_ETHER_GAS_VALUES = 'SET_ETHER_GAS_VALUES';
 
 // Money Request
 export const ADD_MONEY_REQUEST = 'ADD_MONEY_REQUEST';

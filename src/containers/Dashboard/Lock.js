@@ -1,5 +1,5 @@
 /**
- * Forgot Password Container
+ * Lock Screen Container
  */
 
 import React, { Component } from 'react';
@@ -10,10 +10,10 @@ import {
     View,
     Platform,
     Vibration,
+    Modal,
     Alert
 } from 'react-native';
 import {
-    Container,
     Content,
     Icon,
     Text,
@@ -114,7 +114,10 @@ class Lock extends Component<{}> {
 
     render() {
         return (
-            <Container>
+            <Modal
+                transparent={false}
+                visible={true}
+                onRequestClose={this.backHandler}>
                 <Content hasHeader={false} style={{backgroundColor:'#191714'}}>
                     <View style={styles.pinBoxContent}>
                         <Image style={styles.appLogo}  source={Platform.OS === 'ios'?
@@ -203,7 +206,7 @@ class Lock extends Component<{}> {
                         </View>
                     </View>
                 </View>
-            </Container>
+            </Modal>
         );
     }
 }

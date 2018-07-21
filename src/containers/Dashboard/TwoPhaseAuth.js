@@ -1,5 +1,5 @@
 /**
- * Settings Container
+ * Two Phase Authentication Container
  */
 
 import React, { Component } from 'react';

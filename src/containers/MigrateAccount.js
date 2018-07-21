@@ -1,5 +1,5 @@
 /**
- * Security Question Container
+ * Migrate Account Container
  */
 
 import React, { Component } from 'react';

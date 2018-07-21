@@ -41,6 +41,7 @@ class IncomingRequests extends Component<{}> {
         this.state = {
             fee: utils.calcFee(0,this.props.currency_type, this.props.bcMedianTxSize,
                 this.props.satoshiPerByte, this.props.fixedTxnFee),
+            password: this.props.password || null,
         };
     }
 
@@ -62,7 +63,7 @@ class IncomingRequests extends Component<{}> {
             if(!this.state.visible && !nextProps.loading && this.props.loading !== nextProps.loading){
                 this.resetState();
             }
-            if(nextProps.decryptedWallets && this.props.decryptedWallets !== nextProps.decryptedWallets){
+            if(nextProps.decryptedWallet && this.props.decryptedWallet !== nextProps.decryptedWallet){
                 this.sendMoney(true);
             }
         }
@@ -82,7 +83,9 @@ class IncomingRequests extends Component<{}> {
     }
 
     accept(req, note){
-        if(this.props.currency_type !== constants.CURRENCY_TYPE.FLASH && this.props.currency_type !== constants.CURRENCY_TYPE.DASH){
+        if(this.props.currency_type !== constants.CURRENCY_TYPE.FLASH
+            && this.props.currency_type !== constants.CURRENCY_TYPE.ETH
+            && this.props.currency_type !== constants.CURRENCY_TYPE.DASH){
             this.props.setBcMedianTxSize();
             this.props.setSatoshiPerByte();
         }
@@ -92,12 +95,20 @@ class IncomingRequests extends Component<{}> {
         if(this.props.currency_type === constants.CURRENCY_TYPE.DASH)
             this.props.setFixedTxnFee();
 
+        if(this.props.currency_type === constants.CURRENCY_TYPE.ETH)
+            this.props.setEtherGasValues();
+
         this.setState({req,note},
             ()=>this.props.searchWallet(req.sender_email, true));
     }
 
     sendMoney(force=false){
-        if(!force && !this.props.decryptedWallets) return this.setState({visible:false, visibleGetPassword: true, password: '', errorMsg: ''});
+        if(!force && !this.props.decryptedWallet){
+            if(!this.state.password)
+                return this.setState({visible:false, visibleGetPassword: true, password: '', errorMsg: ''});
+            else
+                return this.setState({visible:false},this.decryptWallet);
+        }
         if(!this.state.isConfirm) return ;
         let amount = utils.toOrginalNumber(this.state.req.amount);
         let fee = utils.calcFee(amount, this.props.currency_type, this.props.bcMedianTxSize,
@@ -127,7 +138,7 @@ class IncomingRequests extends Component<{}> {
         })
     }
 
-    decryptWallets(){
+    decryptWallet(){
         if(!this.state.password){
             return this.setState({errorMsg:'Password is invalid!'});
         }
@@ -138,9 +149,9 @@ class IncomingRequests extends Component<{}> {
             return this.setState({errorMsg:'Password is invalid!'});
         }
 
-        this.props.customAction({loading:true});
-        this.setState({visibleGetPassword:false, errorMsg:''},()=>
-            setTimeout(()=>this.props.decryptWallets(this.state.password,true),0));
+        this.props.customAction({loading:true, password: this.state.password});
+        this.setState({visibleGetPassword:false, errorMsg:''},
+            ()=>setTimeout(()=>this.props.decryptWallet(this.props.currency_type,this.state.password,true),0));
     }
 
     render() {
@@ -266,7 +277,7 @@ class IncomingRequests extends Component<{}> {
                                         secureTextEntry={true}
                                         value={this.state.password || ''}
                                         onChangeText={(password) => this.setState({password})}
-                                        onSubmitEditing={this.decryptWallets.bind(this)}
+                                        onSubmitEditing={this.decryptWallet.bind(this)}
                                     />
                                 </View>
                                 {!!this.state.errorMsg?<Text style={{
@@ -283,7 +294,7 @@ class IncomingRequests extends Component<{}> {
                                     textstyle={[styles.reqBtnLabel,{color: this.props.nightMode?'#191714':'#333'}]}
                                     value='Cancel' />
                                 <Button
-                                    onPress={this.decryptWallets.bind(this)}
+                                    onPress={this.decryptWallet.bind(this)}
                                     style={styles.reqBtn}
                                     textstyle={styles.reqBtnLabel}
                                     value='Confirm' />
@@ -346,11 +357,12 @@ function mapStateToProps({params}) {
       fixedTxnFee: params.fixedTxnFee,
       search_wallet: params.search_wallet || null,
       sendTxnSuccess: params.sendTxnSuccess || null,
-      decryptedWallets: params.decryptedWallets || null,
+      decryptedWallet: params.decryptedWallet || null,
       timezone: params.profile.timezone || moment.tz.guess(),
       minDate: moment(params.profile.created_ts),
       maxDate: moment(),
       nightMode: params.nightMode,
+      password: params.password || null,
   };
 }
 

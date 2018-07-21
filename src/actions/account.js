@@ -9,6 +9,7 @@ import { _logout } from '@actions/navigation';
 import { getActiveWallet } from '@actions/send';
 import * as txns from '@actions/transactions';
 import * as reqs from '@actions/request';
+import * as send from '@actions/send';
 
 export const getBalance = (refresh = false) => {
     return (dispatch,getState) => {
@@ -40,6 +41,7 @@ export const getBalance = (refresh = false) => {
                     }
                 });
             }else{
+                d.balance = Number(d.balance);
                 AsyncStorage.setItem('balance',JSON.stringify(d.balance));
                 dispatch({
                     type: types.GET_BALANCE,
@@ -96,6 +98,7 @@ export const getBalanceV2 = (currency_type=constants.CURRENCY_TYPE.FLASH ,refres
                     }
                 });
             }else{
+                d.balance = Number(d.balance);
                 params = getState().params;
                 let balances = params.balances;
                 let idx  =  balances.findIndex(bal => bal.currency_type === currency_type);
@@ -531,8 +534,10 @@ export const changeFiatCurrency = (fiat_currency) =>{
 export const changeCurrency = (currency_type) =>{
     return (dispatch,getState) => {
         dispatch({ type: types.LOADING_START });
-        let balances = getState().params.balances;
+        let params = getState().params;
+        let balances = params.balances;
         let idx  =  balances.findIndex(bal => bal.currency_type === currency_type);
+        let decryptedWallet = send.getActiveWallet(params.decryptedWallets, currency_type) || null;
         dispatch({
             type: types.CHANGE_CURRENCY,
             payload:{
@@ -547,6 +552,7 @@ export const changeCurrency = (currency_type) =>{
                 fixedTxnFee: 0.00002,
                 recentTxns: [],
                 totalPending: 0,
+                decryptedWallet,
                 refreshingHome:true
             }
         });
@@ -555,7 +561,9 @@ export const changeCurrency = (currency_type) =>{
             dispatch(reqs.getIncomingRequests(0,true));
             dispatch(reqs.getOutgoingRequests(0,true));
             dispatch(refreshingHome(false));
-            if(currency_type !== constants.CURRENCY_TYPE.FLASH && currency_type !== constants.CURRENCY_TYPE.DASH){
+            if(currency_type !== constants.CURRENCY_TYPE.FLASH
+                && currency_type !== constants.CURRENCY_TYPE.ETH
+                && currency_type !== constants.CURRENCY_TYPE.DASH){
                 dispatch(txns.setBcMedianTxSize());
                 dispatch(txns.setSatoshiPerByte());
             }
@@ -564,6 +572,9 @@ export const changeCurrency = (currency_type) =>{
 
             if(currency_type === constants.CURRENCY_TYPE.DASH)
                 dispatch(txns.setFixedTxnFee());
+
+            if(currency_type === constants.CURRENCY_TYPE.ETH)
+                dispatch(txns.setEtherGasValues());
 
             dispatch(txns.getAllTransactions(0,true));
             dispatch(txns.getSentTransactions(0,true));

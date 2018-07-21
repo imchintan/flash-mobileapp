@@ -1,5 +1,5 @@
 /**
- * Home Container
+ * Login Container
  */
 
 import React, { Component } from 'react';
@@ -79,6 +79,8 @@ class Login extends Component<{}> {
                             placeholder={'Email address'}
                             keyboardType={'email-address'}
                             returnKeyType='next'
+                            autoCapitalize={'none'}
+                            autoCorrect={false}
                             onChangeText={(email) => this.setState({email})}
                             value={this.state.email || ''}
                         />

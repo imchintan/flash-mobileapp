@@ -1,5 +1,5 @@
 /**
- * Activity Tab Navigation Component
+ * Pending Tab Navigation Component
  */
 
 import React from 'react';

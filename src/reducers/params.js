@@ -16,14 +16,17 @@ const initialState = {
     nightMode: false,
     balances: Platform.OS === 'ios'?[
         {color: '#191714', amt:0, uamt:0, amt2:0, per_value:0, currency_type: constants.CURRENCY_TYPE.BTC}, // BTC
-        {color: '#343434', amt:0, uamt:0, amt2:0, per_value:0, currency_type: constants.CURRENCY_TYPE.LTC}, // LTC
-        {color: '#565656', amt:0, uamt:0, amt2:0, per_value:0, currency_type: constants.CURRENCY_TYPE.DASH}, // DASH
-        {color: '#787878', amt:0, uamt:0, amt2:0, per_value:0, currency_type: constants.CURRENCY_TYPE.FLASH}, // Flash
+        {color: '#343434', amt:0, uamt:0, amt2:0, per_value:0, currency_type: constants.CURRENCY_TYPE.ETH}, // Flash
+        {color: '#565656', amt:0, uamt:0, amt2:0, per_value:0, currency_type: constants.CURRENCY_TYPE.LTC}, // LTC
+        {color: '#787878', amt:0, uamt:0, amt2:0, per_value:0, currency_type: constants.CURRENCY_TYPE.DASH}, // DASH
+        {color: '#989898', amt:0, uamt:0, amt2:0, per_value:0, currency_type: constants.CURRENCY_TYPE.FLASH}, // Flash
     ]:[
         {color: '#191714', amt:0, uamt:0, amt2:0, per_value:0, currency_type: constants.CURRENCY_TYPE.FLASH}, // Flash
         {color: '#343434', amt:0, uamt:0, amt2:0, per_value:0, currency_type: constants.CURRENCY_TYPE.BTC}, // BTC
-        {color: '#565656', amt:0, uamt:0, amt2:0, per_value:0, currency_type: constants.CURRENCY_TYPE.LTC}, // LTC
-        {color: '#787878', amt:0, uamt:0, amt2:0, per_value:0, currency_type: constants.CURRENCY_TYPE.DASH}, // DASH
+        {color: '#565656', amt:0, uamt:0, amt2:0, per_value:0, currency_type: constants.CURRENCY_TYPE.ETH}, // ETH
+        {color: '#787878', amt:0, uamt:0, amt2:0, per_value:0, currency_type: constants.CURRENCY_TYPE.LTC}, // LTC
+        {color: '#989898', amt:0, uamt:0, amt2:0, per_value:0, currency_type: constants.CURRENCY_TYPE.DASH}, // DASH
+
     ],
     loading: false,
     bcMedianTxSize: 250,

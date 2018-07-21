@@ -17,8 +17,11 @@ import { getCoinMarketCapDetail, getProfile } from '@actions/account';
 
 export const init = () => {
     return async (dispatch,getState) => {
-        dispatch({ type: types.LOADING_START });
-        initTimezone();
+        let user = await AsyncStorage.getItem('user');
+        if(user){
+            dispatch({ type: types.LOADING_START });
+        }
+
         let location = null;
         TouchID.isSupported().then(async biometryType => {
             // Success code
@@ -51,23 +54,30 @@ export const init = () => {
                 });
             }
         });
+
         let payload = {};
+
         let pin = await AsyncStorage.getItem('pin');
         if(pin){
             payload.pin = pin.toString();
         }
+
         let nightMode = await AsyncStorage.getItem('nightMode');
         if(nightMode !== null){
             payload.nightMode = (nightMode == 'true');
         }
+
         let fiat_currency = await AsyncStorage.getItem('fiat_currency');
         if(fiat_currency){
             payload.fiat_currency = parseInt(fiat_currency);
         }else if(location && location.country_code){
             payload.fiat_currency = utils.getFiatCurrencyByCountry(location.country_code);
         }
-        let user = await AsyncStorage.getItem('user');
-        if(user){
+
+        if(!user){
+            dispatch({ type: types.INIT, payload });
+            dispatch(getCoinMarketCapDetail());
+        } else {
             payload.profile = JSON.parse(user);
             if(payload.profile.auth_version < 4){
                 _logout(dispatch);
@@ -81,13 +91,11 @@ export const init = () => {
                 type: types.LOGIN_SUCCESS,
                 payload
             });
-            dispatch(getCoinMarketCapDetail());
             dispatch(getProfile());
             dispatch(getMyWallets(payload.profile));
-        }else{
-            dispatch({ type: types.LOADING_END, payload });
             dispatch(getCoinMarketCapDetail());
         }
+        initTimezone();
     }
 }
 
@@ -135,15 +143,16 @@ export const login = (email,password) => {
                     payload: {
                         isNewSession: true,
                         profile:d.profile,
-                        password:(!d.profile.totp_enabled && d.profile.auth_version > 3)?null:password,
+                        // password:(!d.profile.totp_enabled && d.profile.auth_version > 3)?null:password,
+                        password,
                         loading:(!d.profile.totp_enabled && d.profile.auth_version > 3),
                     }
                 });
                 if(!d.profile.totp_enabled){
-                    dispatch(getMyWallets(d.profile,password));
+                    dispatch(getMyWallets(d.profile));
                 }
                 if(!d.profile.totp_enabled && d.profile.auth_version > 3){
-                    setTimeout(()=>dispatch(getProfile()),1000);
+                    dispatch(getProfile());
                 }
             }else{
                 let errorMsg = d.reason;
@@ -170,6 +179,7 @@ export const login = (email,password) => {
                 constants.SOUND.ERROR.play();
             }
         }).catch(e=>{
+            console.log(e);
             dispatch({
                 type: types.LOGIN_FAILED,
                 payload: {
@@ -190,17 +200,15 @@ export const check2FA = (code) =>{
         .then((d)=>{
             if(d.rc == 1){
                 let profile = {...params.profile,...d.profile};
-                let password = params.password;
                 AsyncStorage.setItem('user',JSON.stringify(profile));
                 dispatch({
                     type: types.VERIFY_2FA_SUCCESS,
                     payload: {
                         profile,
-                        password:null,
                     }
                 });
-                dispatch(getMyWallets(profile,password));
-                setTimeout(()=>dispatch(getProfile()),1000);
+                dispatch(getMyWallets(profile));
+                dispatch(getProfile());
             }else{
                 dispatch({
                     type: types.VERIFY_2FA_FAILED,
@@ -515,6 +523,33 @@ export const getMyWallets = (profile,password=null) => {
                         });
                     })
                 }
+
+                //if no ETH wallet
+                if (!send.getActiveWallet(d.my_wallets, constants.CURRENCY_TYPE.ETH)) {
+                    apis.createETHWallet(profile.auth_version, profile.sessionToken, params).then((d)=>{
+                        if(d.rc==1){
+                            apis.getMyWallets(profile.auth_version, profile.sessionToken).then((d)=>{
+                                if(d.rc == 1){
+                                    dispatch({
+                                        type: types.GET_MY_WALLETS,
+                                        payload: {
+                                            my_wallets:d.my_wallets
+                                        }
+                                    });
+                                    if(password || profile.auth_version == 3) dispatch(decryptWallets(password));
+                                }
+                            }).catch(e=>console.log(e))
+                        }
+                    }).catch(e=>{
+                        dispatch({
+                            type: types.GET_MY_WALLETS,
+                            payload: {
+                                errorMsg: e.message,
+                                stack: e.stack,
+                            }
+                        });
+                    })
+                }
             }
         }).catch(e=>{
             dispatch({
@@ -525,6 +560,70 @@ export const getMyWallets = (profile,password=null) => {
                 }
             });
         })
+    }
+}
+
+export const decryptWallet = (currency_type,password,sendMoney=false) => {
+    return (dispatch,getState) => {
+        try {
+            dispatch({ type: types.LOADING_START });
+            let params = getState().params;
+            let profile = params.profile;
+            let decryptedWallets = params.decryptedWallets;
+            let decryptedWallet = null;
+
+            if(!decryptedWallets){
+                decryptedWallets = [];
+            }
+
+            decryptedWallet = send.getActiveWallet(decryptedWallets, currency_type);
+            if(decryptedWallet){
+                return dispatch({
+                    type: types.STORE_FOUNTAIN_SECRET,
+                    payload: {
+                        decryptedWallet,
+                        loading: sendMoney,
+                    }
+                });
+            }
+
+            let wallet = send.getActiveWallet(params.my_wallets, currency_type);
+            let userKey = {
+                  idToken: profile.idToken,
+                  encryptedPrivKey: profile.privateKey,
+                  publicKey: profile.publicKey,
+            };
+            if (password) {
+                decryptedWallet = utils.decryptPassphraseV2ByWallet(
+                    profile.email,
+                    wallet,
+                    password,
+                    userKey
+                );
+            } else {
+                // Store CAS version 2 account wallet
+                // Only decrypt wallet if user send money
+                decryptedWallet = wallet;
+            }
+            decryptedWallets.push(decryptedWallet);
+            dispatch({
+                type: types.STORE_FOUNTAIN_SECRET,
+                payload: {
+                    decryptedWallets,
+                    decryptedWallet,
+                    loading: sendMoney,
+                }
+            });
+        } catch (e) {
+            console.log(e);
+            dispatch({
+                type: types.STORE_FOUNTAIN_SECRET,
+                payload: {
+                    errorMsg: 'Please check your password!',
+                    loading: false,
+                }
+            });
+        }
     }
 }
 

@@ -70,6 +70,7 @@ class Home extends Component<{}> {
     refreshingHome(){
         this.props.getBalanceV2(constants.CURRENCY_TYPE.FLASH);
         this.props.getBalanceV2(constants.CURRENCY_TYPE.BTC);
+        this.props.getBalanceV2(constants.CURRENCY_TYPE.ETH);
         this.props.getBalanceV2(constants.CURRENCY_TYPE.LTC);
         this.props.getBalanceV2(constants.CURRENCY_TYPE.DASH);
     }
@@ -192,6 +193,14 @@ class Home extends Component<{}> {
                             <Text style={styles.adminTabSubTitleLabel}>
                                 {this.props.nightMode?'ON':'OFF'}
                             </Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.adminTab}
+                            onPress={()=>this.props.navigation.navigate('About')}>
+                            <View style={styles.adminTabTitle}>
+                                <Icon style={styles.adminTabTitleIcon} name='info'/>
+                                <Text style={styles.adminTabTitleLabel}>About</Text>
+                            </View>
+                            <Icon style={styles.adminTabRightIcon} name='angle-right'/>
                         </TouchableOpacity>
                     </View>
                 </Content>
