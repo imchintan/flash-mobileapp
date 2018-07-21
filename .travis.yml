@@ -51,3 +51,20 @@ matrix:
       - addon-google_apis-google-16
     script:
     - cd android && ./gradlew assembleRelease
+  - language: objective-c
+    os: osx
+    osx_image: xcode9.2
+    node_js: false
+    before_install:
+      - nvm install 7
+      - node --version
+      - travis_retry npm install -g yarn
+      - yarn -version
+    install:
+      - travis_retry gem install xcpretty
+      - travis_retry yarn
+    xcode_project: ios/flash.xcodeproj
+    xcode_scheme: ios/flash
+    script:
+      - cd ios
+      - xcodebuild -scheme flash -sdk iphonesimulator ONLY_ACTIVE_ARCH=NO | xcpretty
