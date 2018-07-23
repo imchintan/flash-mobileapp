@@ -250,8 +250,6 @@ class Request extends Component<{}> {
                                 underlineColorAndroid='transparent'
                                 style={styles.requestRowInput}
                                 keyboardType='email-address'
-                                autoCapitalize={false}
-                                autoCorrect={false}
                                 returnKeyType='next'
                                 autoCapitalize={'none'}
                                 autoCorrect={false}
