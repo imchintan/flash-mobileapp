@@ -1,4 +1,7 @@
-# FLASH - Mobile Wallet
+[![GitHub license](https://img.shields.io/badge/license-MIT-blue.svg)](https://github.com/flash-coin/webwallet/blob/master/LICENSE) [![FOSSA Status](https://app.fossa.io/api/projects/git%2Bgithub.com%2Fmaxeverest%2Fflash-mobileapp.svg?type=shield)](https://app.fossa.io/projects/git%2Bgithub.com%2Fmaxeverest%2Fflash-mobileapp?ref=badge_shield) [![DeepScan grade](https://deepscan.io/api/projects/2452/branches/15568/badge/grade.svg?token=a1fa0980263b30233c0ddf1e9c3ed778290db2ee)](https://deepscan.io/dashboard#view=project&pid=2452&bid=15568) [![Build Status](https://travis-ci.com/maxeverest/flash-mobileapp.svg?token=bmdR7pSx6iBkVZhq26eG&branch=master)](https://travis-ci.com/maxeverest/flash-mobileapp)
+
+
+# FLASH - Mobile App
 This is the JavaScript and [React Native](http://facebook.github.io/react-native/) source code for [FLASH](https://www.flashcoin.io) mobile wallet.
 
 
