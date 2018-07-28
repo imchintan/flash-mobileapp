@@ -97,6 +97,7 @@ export default class RequestTab extends Component {
                                                     placeholder={'Enter note (optional)'}
                                                     underlineColorAndroid='transparent'
                                                     value={this.state.note || ''}
+                                                    maxLength={50}
                                                     onChangeText={(note) => note.length <= 50 && this.setState({note})}
                                                 />
                                             </View>

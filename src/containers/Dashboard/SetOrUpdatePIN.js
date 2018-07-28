@@ -1,5 +1,5 @@
 /**
- * Forgot Password Container
+ * Set Or Update PIN Container
  */
 
 import React, { Component } from 'react';
@@ -139,7 +139,7 @@ class SetOrUpdatePIN extends Component<{}> {
                 <View style={styles.keypad}>
                     <Text style={styles.pinNote}>
                         {"Remember this PIN, If you forget it, You won't be able to access your "+
-                            (Platform.OS === 'ios'?'Coinodes Wallet':'FLASH app')}
+                            (Platform.OS === 'ios'?'FLASH Wallet':'FLASH app')}
                     </Text>
                     <View style={styles.keypadBox}>
                         <View style={styles.keypadRow}>

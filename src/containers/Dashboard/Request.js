@@ -162,7 +162,7 @@ class Request extends Component<{}> {
                     </View>
                     <HeaderRight>
                         <TouchableOpacity>
-                            <Icon style={[styles.headerFAIcon,{paddingLeft:15}]}
+                            <Icon style={[styles.headerFAIcon,{paddingLeft:25}]}
                                 onPress={()=>this.setState({showMenu: !this.state.showMenu})}
                                 name='ellipsis-v' />
                         </TouchableOpacity>
@@ -251,6 +251,8 @@ class Request extends Component<{}> {
                                 style={styles.requestRowInput}
                                 keyboardType='email-address'
                                 returnKeyType='next'
+                                autoCapitalize={'none'}
+                                autoCorrect={false}
                                 placeholder='Enter email address'
                                 onBlur={this.verifyAddress.bind(this)}
                                 value={this.state.email || ''}
@@ -286,6 +288,7 @@ class Request extends Component<{}> {
                                 style={styles.requestRowInput}
                                 placeholder={'Enter note (optional)'}
                                 value={this.state.note || ''}
+                                maxLength={50}
                                 onChangeText={(note) => note.length <= 50 &&
                                     this.setState({note})}
                             />

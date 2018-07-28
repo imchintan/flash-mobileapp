@@ -367,3 +367,26 @@ export const setFixedTxnFee = () => {
         })
     }
 }
+
+export const setEtherGasValues = () => {
+    return (dispatch,getState) => {
+        let params = getState().params;
+        apis.getEtherGasValues(params.profile.auth_version, params.profile.sessionToken,
+            params.currency_type).then((d)=>{
+            if(d.rc == 1 && d.gas_price && d.gas_limit) dispatch({
+                type: types.SET_ETHER_GAS_VALUES,
+                payload: {
+                    satoshiPerByte: parseInt(d.gas_price),  //price per gas in Wei (Wei unit of Ether)
+                    bcMedianTxSize: parseInt(d.gas_limit)   //max gas to be used
+                }
+            });
+        }).catch(e=>{
+            dispatch({
+                type: types.SET_ETHER_GAS_VALUES,
+                payload: {
+                    errorMsg: e.message,
+                }
+            });
+        })
+    }
+}
