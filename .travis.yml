@@ -25,7 +25,7 @@ matrix:
     sudo: required
     node_js: false
     before_install:
-    - openssl aes-256-cbc -K $encrypted_23470f2f73ac_key -iv $encrypted_23470f2f73ac_iv
+    - openssl aes-256-cbc -K $encrypted_09681104ef66_key -iv $encrypted_09681104ef66_iv
       -in $TRAVIS_BUILD_DIR/android/app/my-release-key.keystore.enc -out $TRAVIS_BUILD_DIR/android/app/my-release-key.keystore -d
     - nvm install 7
     - node --version
