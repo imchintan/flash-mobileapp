@@ -26,7 +26,7 @@ matrix:
     node_js: false
     before_install:
     - openssl aes-256-cbc -K $encrypted_09681104ef66_key -iv $encrypted_09681104ef66_iv
-      -in $TRAVIS_BUILD_DIR/android/app/my-release-key.keystore.enc -out $TRAVIS_BUILD_DIR/android/app/my-release-key.keystore -d
+        -in ./android/app/my-release-key.keystore.enc -out ./android/app/my-release-key.keystore -d
     - nvm install 7
     - node --version
     - travis_retry curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key
