@@ -11,6 +11,7 @@ import * as txns from '@actions/transactions';
 import * as reqs from '@actions/request';
 import * as send from '@actions/send';
 import * as sharing from '@actions/sharing';
+import * as htm from './htm';
 
 export const getBalance = (refresh = false) => {
     return (dispatch,getState) => {
@@ -161,6 +162,7 @@ export const getProfile = () => {
                         profile
                     }
                 });
+                dispatch(htm.getHTMProfile());
             }else if(d.rc == 3){
                 dispatch({
                     type: types.CUSTOM_ACTION,

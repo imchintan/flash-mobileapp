@@ -2,16 +2,16 @@ import {
     AsyncStorage
 } from 'react-native';
 import moment from 'moment-timezone';
-import * as types from '@actions/types'
-import apis from '@flashAPIs'
-import Wallet from '@lib/wallet'
-import * as utils from '@lib/utils'
+import * as types from '@actions/types';
+import apis from '@flashAPIs';
+import Wallet from '@lib/wallet';
+import * as utils from '@lib/utils';
 import * as constants from '@src/constants';
-import * as send from './send'
+import * as send from './send';
 import Premium from 'Premium';
 import secrets from 'secrets.js-grempe';
 import nacl from 'tweetnacl';
-import TouchID from 'react-native-touch-id'
+import TouchID from 'react-native-touch-id';
 
 import { getCoinMarketCapDetail, getProfile } from '@actions/account';
 
@@ -21,6 +21,7 @@ export const init = () => {
         if(user){
             dispatch({ type: types.LOADING_START });
         }
+        dispatch(getCurrentPosition());
 
         let location = null;
         TouchID.isSupported().then(async biometryType => {
@@ -46,11 +47,11 @@ export const init = () => {
         await utils.getLocation().then(res => {
             if(res.rc == 1){
                 location = res.info;
-                dispatch({ type: types.SET_LOCATION, location });
-                dispatch({ type: types.SET_PUBLIC_IP, ip: res.info.ip });
+                dispatch({ type: types.SET_LOCATION, payload:{location} });
+                dispatch({ type: types.SET_PUBLIC_IP, payload:{ip: res.info.ip} });
             }else{
                 utils.publicIP().then(ip => {
-                    dispatch({ type: types.SET_PUBLIC_IP, ip });
+                    dispatch({ type: types.SET_PUBLIC_IP, payload:{ip} });
                 });
             }
         });
@@ -65,6 +66,11 @@ export const init = () => {
         let nightMode = await AsyncStorage.getItem('nightMode');
         if(nightMode !== null){
             payload.nightMode = (nightMode == 'true');
+        }
+
+        let htmProfile = await AsyncStorage.getItem('htmProfile');
+        if(htmProfile !== null){
+            payload.htmProfile = JSON.parse(htmProfile);
         }
 
         let fiat_currency = await AsyncStorage.getItem('fiat_currency');
@@ -96,6 +102,22 @@ export const init = () => {
             dispatch(getCoinMarketCapDetail());
         }
         initTimezone();
+    }
+}
+
+export const getCurrentPosition = (email) => {
+    return (dispatch,getState) => {
+        utils.getCurrentPosition().then(pos => {
+            let position = {
+                accuracy: pos.coords.accuracy,
+                latitude: pos.coords.latitude,
+                longitude: pos.coords.longitude,
+            }
+            dispatch({
+                type: types.SET_POSITION,
+                payload:{ position }
+            });
+        }).catch(e=>console.log(e));
     }
 }
 

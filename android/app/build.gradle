@@ -148,6 +148,12 @@ android {
 }
 
 dependencies {
+    compile(project(':react-native-maps')){
+        exclude group: 'com.google.android.gms', module: 'play-services-base'
+        exclude group: 'com.google.android.gms', module: 'play-services-maps'
+    }
+    compile 'com.google.android.gms:play-services-base:+'
+    compile 'com.google.android.gms:play-services-maps:+'
     compile project(':react-native-camera')
     compile project(':react-native-touch-id')
     compile project(':react-native-sound')

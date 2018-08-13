@@ -45,6 +45,20 @@ export const amount = (amt,dec=8) => {
     return {success:true, message:'', amount: amt};
 }
 
+export const percentage = (per,dec=2) => {
+    if(!per || isNaN(per)){
+         return {success:false,message:'Invalid percentage!'};
+    }
+
+    let dig = per.toString().split('.');
+    if(dig.length == 2 && dig[1].length > dec)
+        per = (Math.floor(Number(per*Math.pow(10,dec)))/Math.pow(10,dec));
+    else
+        per = Number(per);
+
+    return {success:true, message:'', percentage: per};
+}
+
 export const flashAddress = (value) => {
     if(isValidFlashAddress(value)){
         return {success:true,message:''};

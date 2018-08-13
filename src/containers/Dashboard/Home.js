@@ -195,6 +195,14 @@ class Home extends Component<{}> {
                             </Text>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.adminTab}
+                            onPress={()=>this.props.navigation.navigate('HTM')}>
+                            <View style={styles.adminTabTitle}>
+                                <Icon style={styles.adminTabTitleIcon} name='info'/>
+                                <Text style={styles.adminTabTitleLabel}>HTM</Text>
+                            </View>
+                            <Icon style={styles.adminTabRightIcon} name='angle-right'/>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.adminTab}
                             onPress={()=>this.props.navigation.navigate('About')}>
                             <View style={styles.adminTabTitle}>
                                 <Icon style={styles.adminTabTitleIcon} name='info'/>

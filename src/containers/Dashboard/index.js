@@ -28,6 +28,7 @@ import Activity from './Activity';
 import Pending from './Pending';
 import Sharing from './Sharing';
 import About from './About';
+import HTM from './HTM';
 
 const routes = {
     Home: {
@@ -80,6 +81,9 @@ const routes = {
     },
     SetOrUpdatePIN: {
         screen: SetOrUpdatePIN,
+    },
+    HTM: {
+        screen: HTM,
     },
 
 };

@@ -17,6 +17,7 @@ const navigation = (state = initialState, action) => {
                 state
             );
 
+        case types.NAVIGATE_BACK:
         case 'Navigation/BACK':
             return AppNavigator.router.getStateForAction(
                 NavigationActions.back(),

@@ -22,6 +22,23 @@ export const getLocation = async endpoint => {
   return response.json();
 };
 
+export const getCurrentPosition=(enableHighAccuracy=true)=>{
+    return new Promise((resolve,reject) => {
+        navigator.geolocation.getCurrentPosition(
+            (position) => resolve(position),
+            (error) => {
+                // if(enableHighAccuracy)
+                //     getCurrentPosition(false)
+                //     .then(position=>resolve(position))
+                //     .catch(error=>reject(error));
+                // else
+                    reject(error);
+            },
+            {/*enableHighAccuracy, timeout: 10000, maximumAge: 3000*/}
+        );
+    });
+};
+
 export const isIphoneX = () => {
     return (
         // This has to be iOS duh
