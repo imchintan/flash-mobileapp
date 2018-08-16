@@ -8,7 +8,7 @@ export const  APP_VERSION = '1.9.1';
 let appUrl;
 
 if(APP_MODE == 'PROD')
-    appUrl = 'https://keys.flashcoin.io';
+    appUrl = 'https://mkeys.flashcoin.io';
 else
     appUrl = 'https://dev03keys.flashcoin.io';
 

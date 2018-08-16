@@ -12,7 +12,7 @@ export const isSharingCodeAvailable = (auth_version, sessionToken='',
     currency_type = 1, sharing_code='') => {
     return new Promise((resolve,reject) => {
         fetch(API_URL+'/is-sharing-code-available?sharing_code='+sharing_code
-            +'&appversion='+APP_VERSION+'&res='+RESOURCE,{
+            +'&currency_type='+currency_type+'&appversion='+APP_VERSION+'&res='+RESOURCE,{
             method: 'GET',
             body: null,
             headers: {
@@ -136,7 +136,8 @@ export const updateSharingCode = (auth_version, sessionToken='',
  */
 export const getSharingCode = (auth_version, sessionToken='', currency_type = 1) => {
     return new Promise((resolve,reject) => {
-        fetch(API_URL+'/get-sharing-code?appversion='+APP_VERSION+'&res='+RESOURCE,{
+        fetch(API_URL+'/get-sharing-code?currency_type='+currency_type
+            +'&appversion='+APP_VERSION+'&res='+RESOURCE,{
             method: 'GET',
             body: null,
             headers: {

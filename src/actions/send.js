@@ -35,7 +35,7 @@ export const rawTransaction = (amount=0, custom_fee=0, receiver_public_address='
                     address: address.address,
                     amount: address_sharing_fee,
                 });
-                remaining_sharing_fee = remaining_sharing_fee - address_sharing_fee;
+                remaining_sharing_fee = parseFloat((remaining_sharing_fee - address_sharing_fee).toFixed(8));
             }
             apis.rawTransactionMulti(params.profile.auth_version, params.profile.sessionToken,
                 params.currency_type, toAddresses, custom_fee, memo).then((d)=>{
