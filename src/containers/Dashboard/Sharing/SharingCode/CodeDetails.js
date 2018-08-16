@@ -5,7 +5,6 @@
 import React, { Component } from 'react';
 import {
     View,
-    TextInput,
     Clipboard,
     Share,
     TouchableOpacity
@@ -24,7 +23,6 @@ import { StackActions, NavigationActions } from 'react-navigation';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ActionCreators } from '@actions';
-import * as Validation from '@lib/validation';
 import * as utils from '@lib/utils';
 
 class CodeDetails extends Component<{}> {

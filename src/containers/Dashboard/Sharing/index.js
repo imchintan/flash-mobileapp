@@ -6,7 +6,6 @@ import React from 'react';
 import {
     View,
     Platform,
-    Dimensions,
     TouchableOpacity
 } from 'react-native';
 import {
@@ -17,7 +16,6 @@ import {
     HeaderTitle,
     HeaderLeft,
     Icon,
-    Text
 } from '@components';
 import * as utils from '@lib/utils';
 import { connect } from 'react-redux';
@@ -26,8 +24,6 @@ import { ActionCreators } from '@actions';
 
 import SharingCode from './SharingCode';
 import PayoutCode from './PayoutCode';
-
-const { width } = Dimensions.get('window');
 
 const TabNav = createMaterialTopTabNavigator({
     ShareCode: { screen: SharingCode },
