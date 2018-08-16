@@ -21,6 +21,9 @@ export const updateTransactionReportDate = (date_from,date_to) => {
         dispatch(getAllTransactions());
         dispatch(getSentTransactions());
         dispatch(getReceivedTransactions());
+        dispatch(getSharingInTransactions());
+        dispatch(getSharingOutTransactions());
+        dispatch(getSharingUsageTransactions());
     }
 }
 
@@ -211,6 +214,160 @@ export const getReceivedTransactions = (start=0, reset=false) => {
     }
 }
 
+export const getSharingInTransactions = (start=0, reset=false) => {
+    return (dispatch,getState) => {
+        if(reset)
+            dispatch({
+                type: types.CUSTOM_ACTION,
+                payload: {
+                    sharingInTxns_loading: true,
+                    sharingInTxns_retrieve: true,
+                    sharingInTxns_total: 0
+                }
+            });
+        else
+            dispatch({
+                type: types.CUSTOM_ACTION,
+                payload: {
+                    sharingInTxns_retrieve: true,
+                }
+            });
+        let params = getState().params;
+        let date_from = params.date_from.format('YYYY-MM-DDT00:00:00.000\\Z');
+        let date_to = params.date_to.format('YYYY-MM-DDT23:59:59.000\\Z');
+        apis.getTransactions(params.profile.auth_version, params.profile.sessionToken,
+            params.currency_type, date_from, date_to, 3, start).then((d)=>{
+            if(d.rc !== 1){
+                dispatch({
+                    type: types.GET_SHARING_IN_TRANSACTIONS,
+                    payload: {
+                        errorMsg:d.reason,
+                    }
+                });
+            }else{
+                dispatch({
+                    type: types.GET_SHARING_IN_TRANSACTIONS,
+                    payload: {
+                        total_txns:d.total_txns,
+                        txns:d.txns,
+                        reset
+                    }
+                });
+            }
+        }).catch(e=>{
+            dispatch({
+                type: types.GET_SHARING_IN_TRANSACTIONS,
+                payload: {
+                    errorMsg: e.message,
+                }
+            });
+        })
+    }
+}
+
+export const getSharingOutTransactions = (start=0, reset=false) => {
+    return (dispatch,getState) => {
+        if(reset)
+            dispatch({
+                type: types.CUSTOM_ACTION,
+                payload: {
+                    sharingOutTxns_loading: true,
+                    sharingOutTxns_retrieve: true,
+                    sharingOutTxns_total: 0
+                }
+            });
+        else
+            dispatch({
+                type: types.CUSTOM_ACTION,
+                payload: {
+                    sharingOutTxns_retrieve: true,
+                }
+            });
+        let params = getState().params;
+        let date_from = params.date_from.format('YYYY-MM-DDT00:00:00.000\\Z');
+        let date_to = params.date_to.format('YYYY-MM-DDT23:59:59.000\\Z');
+        apis.getTransactions(params.profile.auth_version, params.profile.sessionToken,
+            params.currency_type, date_from, date_to, 4, start).then((d)=>{
+            if(d.rc !== 1){
+                dispatch({
+                    type: types.GET_SHARING_OUT_TRANSACTIONS,
+                    payload: {
+                        errorMsg:d.reason,
+                    }
+                });
+            }else{
+                dispatch({
+                    type: types.GET_SHARING_OUT_TRANSACTIONS,
+                    payload: {
+                        total_txns:d.total_txns,
+                        txns:d.txns,
+                        reset
+                    }
+                });
+            }
+        }).catch(e=>{
+            dispatch({
+                type: types.GET_SHARING_OUT_TRANSACTIONS,
+                payload: {
+                    errorMsg: e.message,
+                }
+            });
+        })
+    }
+}
+
+export const getSharingUsageTransactions = (start=0, reset=false) => {
+    return (dispatch,getState) => {
+        if(reset)
+            dispatch({
+                type: types.CUSTOM_ACTION,
+                payload: {
+                    sharingUsageTxns_loading: true,
+                    sharingUsageTxns_retrieve: true,
+                    sharingUsageTxns_total: 0,
+                    sharingUsageTxns_total_sharing_fee: 0
+                }
+            });
+        else
+            dispatch({
+                type: types.CUSTOM_ACTION,
+                payload: {
+                    sharingUsageTxns_retrieve: true,
+                }
+            });
+        let params = getState().params;
+        let date_from = params.date_from.format('YYYY-MM-DDT00:00:00.000\\Z');
+        let date_to = params.date_to.format('YYYY-MM-DDT23:59:59.000\\Z');
+        apis.getTransactions(params.profile.auth_version, params.profile.sessionToken,
+            params.currency_type, date_from, date_to, 5, start).then((d)=>{
+            if(d.rc !== 1){
+                dispatch({
+                    type: types.GET_SHARING_USAGE_TRANSACTIONS,
+                    payload: {
+                        errorMsg:d.reason,
+                    }
+                });
+            }else{
+                dispatch({
+                    type: types.GET_SHARING_USAGE_TRANSACTIONS,
+                    payload: {
+                        total_txns:d.total_txns,
+                        total_sharing_fee:d.total_sharing_fee,
+                        txns:d.txns,
+                        reset
+                    }
+                });
+            }
+        }).catch(e=>{
+            dispatch({
+                type: types.GET_SHARING_USAGE_TRANSACTIONS,
+                payload: {
+                    errorMsg: e.message,
+                }
+            });
+        })
+    }
+}
 
 export const getTransactionDetail = (transaction_id) => {
     return (dispatch,getState) => {
@@ -253,6 +410,56 @@ export const getTransactionDetail = (transaction_id) => {
         }).catch(e=>{
             dispatch({
                 type: types.GET_TRANSACTION_DETAIL,
+                payload: {
+                    errorMsg: e.message,
+                    txnLoader: false,
+                }
+            });
+        })
+    }
+}
+
+export const getSharingTransactionDetail = (transaction_id) => {
+    return (dispatch,getState) => {
+        dispatch({
+            type: types.CUSTOM_ACTION,
+            payload: {
+                txnLoader: true,
+                txnDetail: null
+            }
+        });
+        let params = getState().params;
+        apis.getSharingTransactionDetail(params.profile.auth_version, params.profile.sessionToken,
+            transaction_id, params.currency_type).then((d)=>{
+            if(d.rc == 3){
+                dispatch({
+                    type: types.GET_SHARING_TRANSACTION_DETAIL,
+                    payload: {
+                        errorMsg:d.reason,
+                        txnLoader: false,
+                    }
+                });
+                setTimeout(()=>_logout(dispatch),500);
+            }else if(d.rc !== 1){
+                dispatch({
+                    type: types.GET_SHARING_TRANSACTION_DETAIL,
+                    payload: {
+                        errorMsg:d.reason,
+                        txnLoader: false,
+                    }
+                });
+            }else{
+                dispatch({
+                    type: types.GET_SHARING_TRANSACTION_DETAIL,
+                    payload: {
+                        txnDetail:d.transactions,
+                        txnLoader: false,
+                    }
+                });
+            }
+        }).catch(e=>{
+            dispatch({
+                type: types.GET_SHARING_TRANSACTION_DETAIL,
                 payload: {
                     errorMsg: e.message,
                     txnLoader: false,

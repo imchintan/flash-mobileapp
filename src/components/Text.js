@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import PropTypes from "prop-types";
 import { Text as RNText } from "react-native";
 
+RNText.defaultProps.allowFontScaling=false
 
 export default class Text extends Component {
 	render() {

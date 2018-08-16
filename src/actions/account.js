@@ -10,6 +10,7 @@ import { getActiveWallet } from '@actions/send';
 import * as txns from '@actions/transactions';
 import * as reqs from '@actions/request';
 import * as send from '@actions/send';
+import * as sharing from '@actions/sharing';
 
 export const getBalance = (refresh = false) => {
     return (dispatch,getState) => {
@@ -512,6 +513,22 @@ export const searchWallet = (term, loading=false) => {
     }
 }
 
+export const isValidEmailForWallet = (email, profile, currency_type) => {
+    return (dispatch,getState) => new Promise((resolve,reject) => {
+        apis.searchWallet(profile.auth_version, profile.sessionToken,
+            currency_type, email).then((d)=>{
+            console.log(d);
+            if(d.rc !== 1){
+                reject(d.reason);
+            }else if(d.total_wallets > 0){
+                resolve(d.wallets[0]);
+            }else{
+                reject("Wallet not found!!");
+            }
+        }).catch(e=>reject(e.message))
+    })
+}
+
 export const changeFiatCurrency = (fiat_currency) =>{
     return (dispatch,getState) => {
         dispatch({ type: types.LOADING_START });
@@ -553,11 +570,18 @@ export const changeCurrency = (currency_type) =>{
                 recentTxns: [],
                 totalPending: 0,
                 decryptedWallet,
-                refreshingHome:true
+                refreshingHome:true,
+                payout_info: null,
+                sharing_code: [],
+                payout_code: '',
+                payout_code_is_locked: 0,
+                payout_sharing_fee: 0,
             }
         });
         setTimeout(()=>{
             dispatch(getWalletsByEmail());
+            dispatch(sharing.getPayoutCode());
+            dispatch(sharing.getSharingCode());
             dispatch(reqs.getIncomingRequests(0,true));
             dispatch(reqs.getOutgoingRequests(0,true));
             dispatch(refreshingHome(false));
@@ -569,6 +593,9 @@ export const changeCurrency = (currency_type) =>{
             }
             if(currency_type !== constants.CURRENCY_TYPE.FLASH)
                 dispatch(txns.setThresholdAmount());
+
+            if(currency_type === constants.CURRENCY_TYPE.FLASH)
+                    dispatch(sharing.getPayoutInfo());
 
             if(currency_type === constants.CURRENCY_TYPE.DASH)
                 dispatch(txns.setFixedTxnFee());

@@ -14,13 +14,15 @@ const initialState = {
     fiat_per_value: 0,
     total_fiat_balance: 0,
     nightMode: false,
-    balances: Platform.OS === 'ios'?[
-        {color: '#191714', amt:0, uamt:0, amt2:0, per_value:0, currency_type: constants.CURRENCY_TYPE.BTC}, // BTC
-        {color: '#343434', amt:0, uamt:0, amt2:0, per_value:0, currency_type: constants.CURRENCY_TYPE.ETH}, // Flash
-        {color: '#565656', amt:0, uamt:0, amt2:0, per_value:0, currency_type: constants.CURRENCY_TYPE.LTC}, // LTC
-        {color: '#787878', amt:0, uamt:0, amt2:0, per_value:0, currency_type: constants.CURRENCY_TYPE.DASH}, // DASH
-        {color: '#989898', amt:0, uamt:0, amt2:0, per_value:0, currency_type: constants.CURRENCY_TYPE.FLASH}, // Flash
-    ]:[
+    balances:
+    // Platform.OS === 'ios'?[
+    //     {color: '#191714', amt:0, uamt:0, amt2:0, per_value:0, currency_type: constants.CURRENCY_TYPE.BTC}, // BTC
+    //     {color: '#343434', amt:0, uamt:0, amt2:0, per_value:0, currency_type: constants.CURRENCY_TYPE.ETH}, // Flash
+    //     {color: '#565656', amt:0, uamt:0, amt2:0, per_value:0, currency_type: constants.CURRENCY_TYPE.LTC}, // LTC
+    //     {color: '#787878', amt:0, uamt:0, amt2:0, per_value:0, currency_type: constants.CURRENCY_TYPE.DASH}, // DASH
+    //     {color: '#989898', amt:0, uamt:0, amt2:0, per_value:0, currency_type: constants.CURRENCY_TYPE.FLASH}, // Flash
+    // ]:
+    [
         {color: '#191714', amt:0, uamt:0, amt2:0, per_value:0, currency_type: constants.CURRENCY_TYPE.FLASH}, // Flash
         {color: '#343434', amt:0, uamt:0, amt2:0, per_value:0, currency_type: constants.CURRENCY_TYPE.BTC}, // BTC
         {color: '#565656', amt:0, uamt:0, amt2:0, per_value:0, currency_type: constants.CURRENCY_TYPE.ETH}, // ETH
@@ -97,6 +99,29 @@ const login = (state = initialState, action) => {
             _.sortedIndexBy(receivedTxns,{created_ts: null},'created_ts');
             let receivedTxns_total = action.payload.total_txns;
             return { ...state, receivedTxns, receivedTxns_total, receivedTxns_loading: false, receivedTxns_retrieve: false};
+
+        case types.GET_SHARING_IN_TRANSACTIONS:
+            let sharingInTxns = (!action.payload.reset)?
+                _.concat(state.sharingInTxns || [], action.payload.txns):action.payload.txns;
+            _.sortedIndexBy(sharingInTxns,{created_ts: null},'created_ts');
+            let sharingInTxns_total = action.payload.total_txns;
+            return { ...state, sharingInTxns, sharingInTxns_total, sharingInTxns_loading: false, sharingInTxns_retrieve: false};
+
+        case types.GET_SHARING_OUT_TRANSACTIONS:
+            let sharingOutTxns = (!action.payload.reset)?
+                _.concat(state.sharingOutTxns || [], action.payload.txns):action.payload.txns;
+            _.sortedIndexBy(sharingOutTxns,{created_ts: null},'created_ts');
+            let sharingOutTxns_total = action.payload.total_txns;
+            return { ...state, sharingOutTxns, sharingOutTxns_total, sharingOutTxns_loading: false, sharingOutTxns_retrieve: false};
+
+        case types.GET_SHARING_USAGE_TRANSACTIONS:
+            let sharingUsageTxns = (!action.payload.reset)?
+                _.concat(state.sharingUsageTxns || [], action.payload.txns):action.payload.txns;
+            _.sortedIndexBy(sharingUsageTxns,{created_ts: null},'created_ts');
+            let sharingUsageTxns_total = action.payload.total_txns;
+            let sharingUsageTxns_total_sharing_fee = action.payload.total_sharing_fee;
+            return { ...state, sharingUsageTxns, sharingUsageTxns_total, sharingUsageTxns_total_sharing_fee,
+                    sharingUsageTxns_loading: false, sharingOutTxns_retrieve: false};
 
         case types.RESET_TRANSACTIONS:
             return { ...state, allTxns: [], sentTxns: [],  receivedTxns: [],

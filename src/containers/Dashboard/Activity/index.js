@@ -22,7 +22,8 @@ import {
 } from '@components';
 import moment from 'moment-timezone';
 import { getDisplayDate } from '@lib/utils';
-import { MOMENT_FORMAT } from '@src/constants';
+import * as constants from '@src/constants';
+import { isIphoneX } from '@lib/utils'
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -31,15 +32,14 @@ import { ActionCreators } from '@actions';
 import AllTransactions from './AllTransactions';
 import PaymentReceived from './PaymentReceived';
 import PaymentSent from './PaymentSent';
+import SharingIn from './SharingIn';
+import SharingOut from './SharingOut';
+import SharingUsage from './SharingUsage';
 
 const { width } = Dimensions.get('window');
 
-const TabNav = createMaterialTopTabNavigator({
-    All: { screen: AllTransactions },
-    Received: { screen: PaymentReceived },
-    Sent: { screen: PaymentSent },
-},{
-    navigationOptions: ({ navigation }) => ({
+const stackNavigatorConfig = {
+    navigationOptions: ({ navigation, screenProps }) => ({
     }),
     tabBarOptions: {
         activeTintColor: '#E0AE27',
@@ -60,16 +60,22 @@ const TabNav = createMaterialTopTabNavigator({
                 },
             }),
         },
-        labelStyle: {
-            fontSize: 16
+        tabStyle:{
+            width: 140,
         },
+        labelStyle: {
+            fontSize: 16,
+            marginLeft:0,
+            marginRight:0,
+        },
+        scrollEnabled: true,
     },
     showIcon: false,
     // tabBarComponent: TabBarTop,
     tabBarPosition: 'top',
     animationEnabled: true,
     swipeEnabled: true,
-});
+}
 
 class ActivityTab extends React.Component {
 
@@ -94,13 +100,35 @@ class ActivityTab extends React.Component {
 
     refresh = () => this.props.updateTransactionReportDate(this.props.date_from,this.props.date_to)
 
+    tabNav = () => {
+        let routeConfigs = {
+            All: { screen: AllTransactions },
+            Received: { screen: PaymentReceived },
+            Sent: { screen: PaymentSent },
+        }
+        if(this.props.currency_type == constants.CURRENCY_TYPE.FLASH){
+            routeConfigs = Object.assign(routeConfigs,{
+                SharingIn: { screen: SharingIn },
+                SharingOut: { screen: SharingOut }
+            });
+        }
+        if(this.props.sharing_code.length > 0){
+            routeConfigs = Object.assign(routeConfigs,{
+                SharingUsage: { screen: SharingUsage }
+            });
+        }
+
+        return createMaterialTopTabNavigator(routeConfigs, stackNavigatorConfig);
+    }
+
     render() {
+        const TabNav = this.tabNav();
         const styles = (this.props.nightMode?require('@styles/nightMode/app'):require('@styles/app'));
         let customI18n = {
            'text': {
              'save': 'Confirm',
            },
-           'date': MOMENT_FORMAT.DATE  // date format
+           'date': constants.MOMENT_FORMAT.DATE  // date format
          };
         let color = {
             mainColor: '#191714',
@@ -112,7 +140,7 @@ class ActivityTab extends React.Component {
                 flex: 1,
                 ...Platform.select({
                     ios: {
-                        paddingTop: 77,
+                        paddingTop: isIphoneX()?92:77,
                     },
                     android: {
                         paddingTop: 55
@@ -172,6 +200,8 @@ class ActivityTab extends React.Component {
 
 function mapStateToProps({params}) {
   return {
+      currency_type: params.currency_type,
+      sharing_code: params.sharing_code || [],
       date_from: params.date_from,
       date_to: params.date_to,
       minDate: moment(params.profile.created_ts).format('YYYYMMDD000000'),

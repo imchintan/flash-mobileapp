@@ -56,6 +56,9 @@ class IncomingRequests extends Component<{}> {
                 this.setState({
                     visible: true,
                     isVerify:true,
+                    sharing_fee: this.props.payout_info?utils.localizeFlash(
+                        utils.calcSharingFee(this.state.req.amount, this.props.currency_type,
+                        this.props.payout_info.payout_sharing_fee),2):0,
                     search_wallet:nextProps.search_wallet,
                     publicAddress:nextProps.search_wallet.address
                 });
@@ -89,8 +92,12 @@ class IncomingRequests extends Component<{}> {
             this.props.setBcMedianTxSize();
             this.props.setSatoshiPerByte();
         }
+
         if(this.props.currency_type !== constants.CURRENCY_TYPE.FLASH)
             this.props.setThresholdAmount();
+
+        if(this.props.currency_type === constants.CURRENCY_TYPE.FLASH)
+            this.props.getPayoutInfo();
 
         if(this.props.currency_type === constants.CURRENCY_TYPE.DASH)
             this.props.setFixedTxnFee();
@@ -116,7 +123,10 @@ class IncomingRequests extends Component<{}> {
         this.setState({visible:false, visibleGetPassword:false, isConfirm: false},
             ()=>{
                 if(this.props.currency_type === constants.CURRENCY_TYPE.FLASH){
-                    if(utils.flashToSatoshi(amount+fee) > this.props.balance){
+                    let sharing_fee = this.props.payout_info?utils.toOrginalNumber(
+                        utils.calcSharingFee(amount, this.props.currency_type,
+                            this.props.payout_info.payout_sharing_fee)):0;
+                    if(utils.flashToSatoshi(amount+fee+sharing_fee) > this.props.balance){
                         this.resetState();
                         return Toast.errorTop("You do not have enough fee to make this payment");
                     }
@@ -214,8 +224,11 @@ class IncomingRequests extends Component<{}> {
                                 <Text style={styles.reqFiatAmtText}>≈ {utils.getCurrencySymbol(this.props.fiat_currency)} {utils.cryptoToOtherCurrency(this.state.req?this.state.req.amount:0.00, this.props.fiat_per_value, 0)}</Text>
                                 <Text style={styles.reqFeeText}>
                                     + {this.state.fee} {this.state.req?utils.getCurrencyUnitUpcase(this.state.req.currency):
-                                        utils.getCurrencyUnitUpcase(constants.CURRENCY_TYPE.FLASH)} transaction fee
+                                        utils.getCurrencyUnitUpcase(constants.CURRENCY_TYPE.FLASH)+' '} transaction fee
                                 </Text>
+                                {this.state.sharing_fee?<Text style={[styles.reqFeeText,{paddingTop:5}]}>
+                                    + {this.state.sharing_fee} {utils.getCurrencyUnitUpcase(this.props.currency_type)} sharing fee
+                                </Text>:null}
                                 <Icon style={styles.reqDownArrow} name='arrow-down'/>
                                 <View style={styles.reqDetailRow}>
                                     <Image style={styles.reqDetailIcon}
@@ -355,6 +368,7 @@ function mapStateToProps({params}) {
       bcMedianTxSize: params.bcMedianTxSize,
       satoshiPerByte: params.satoshiPerByte,
       fixedTxnFee: params.fixedTxnFee,
+      payout_info: params.payout_info || null,
       search_wallet: params.search_wallet || null,
       sendTxnSuccess: params.sendTxnSuccess || null,
       decryptedWallet: params.decryptedWallet || null,

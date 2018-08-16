@@ -26,6 +26,7 @@ import Receive from './Receive';
 import Request from './Request';
 import Activity from './Activity';
 import Pending from './Pending';
+import Sharing from './Sharing';
 import About from './About';
 
 const routes = {
@@ -70,6 +71,9 @@ const routes = {
     },
     Pending: {
         screen: Pending,
+    },
+    Sharing: {
+        screen: Sharing,
     },
     Lock: {
         screen: Lock,

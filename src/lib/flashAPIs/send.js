@@ -48,6 +48,51 @@ export const rawTransaction = (auth_version, sessionToken='',
 }
 
 /**
+ * Create raw transaction Multi
+ * @param  {Number} auth_version        [description]
+ * @param  {String} [sessionToken='']   [description]
+ * @param  {Number} [currency_type=1]   [description]
+ * @param  {Array} [toAddresses=[]]     [description]
+ * @param  {Number} [custom_fee=0]      [description]
+ * @param  {String} [message='']        [description]
+ * @return {Promise}                    [description]
+ */
+export const rawTransactionMulti = (auth_version, sessionToken='',
+    currency_type = 1, toAddresses=[], custom_fee=0, message='') => {
+    return new Promise((resolve,reject) => {
+        fetch(API_URL+'/raw-transaction-multi',{
+            method: 'POST',
+            body: JSON.stringify({
+                currency_type,
+                custom_fee,
+                message,
+                toAddresses,
+                appversion:APP_VERSION,
+                res:RESOURCE,
+            }),
+            headers: {
+               'Content-Type': 'application/json; charset=utf-8',
+               'authorization': sessionToken,
+               'fl_auth_version': auth_version
+            },
+        })
+        .then(async res =>{
+            let _res = await res.text();
+            if(_res.toLowerCase().indexOf("session") == -1){
+                return JSON.parse(_res);
+            }else{
+                return {rc:3,reason:_res};
+            }
+        })
+        .then(json => resolve(json))
+        .catch(e =>{
+            console.log(e);
+            reject('Something went wrong!')
+        });
+    });
+}
+
+/**
  * Get ETH transaction count
  * @param  {Number} auth_version        [description]
  * @param  {String} [sessionToken='']   [description]
@@ -98,6 +143,7 @@ export const getEthTransactionCount = (auth_version, sessionToken='',
  * @param {String} [receiver_public_address=''] [description]
  * @param {String} [transaction_hex='']         [description]
  * @param {String} [transaction_id='']          [description]
+ * @return {Promise}                            [description]
  */
 export const addTransaction = (auth_version, sessionToken='', currency_type = 1,
     amount=0, ip='', memo='', receiver_bare_uid='', receiver_id='',
@@ -141,10 +187,73 @@ export const addTransaction = (auth_version, sessionToken='', currency_type = 1,
 }
 
 /**
+ * Add transaction Multi
+ * @param {Number} auth_version                 [description]
+ * @param {String} [sessionToken='']            [description]
+ * @param {Number} [currency_type=1]            [description]
+ * @param {Number} [amount=0]                   [description]
+ * @param {String} [ip='']                      [description]
+ * @param {String} [memo='']                    [description]
+ * @param {String} [receiver_bare_uid='']       [description]
+ * @param {String} [receiver_id='']             [description]
+ * @param {String} [receiver_public_address=''] [description]
+ * @param {String} [transaction_hex='']         [description]
+ * @param {String} [transaction_id='']          [description]
+ * @param {Array} [toAddresses]                 [description]
+ * @param {Object} [payout_info]                [description]
+ * @return {Promise}                            [description]
+ */
+export const addTransactionMulti = (auth_version, sessionToken='', currency_type = 1,
+    amount=0, ip='', memo='', receiver_bare_uid='', receiver_id='',
+    receiver_public_address='', transaction_hex='', transaction_id= '',
+    toAddresses, payout_info) => {
+    return new Promise((resolve,reject) => {
+        fetch(API_URL+'/add-transaction-multi',{
+            method: 'POST',
+            body: JSON.stringify({
+                currency_type,
+                amount,
+                ip,
+                memo,
+                receiver_bare_uid,
+                receiver_id,
+                receiver_public_address,
+                transaction_hex,
+                transaction_id,
+                toAddresses,
+                sharing_fee_percentage: payout_info.payout_sharing_fee,
+                payout_code: payout_info.payout_code,
+                appversion:APP_VERSION,
+                res:RESOURCE,
+            }),
+            headers: {
+               'Content-Type': 'application/json; charset=utf-8',
+               'authorization': sessionToken,
+               'fl_auth_version': auth_version
+            },
+        })
+        .then(async res =>{
+            let _res = await res.text();
+            if(_res.toLowerCase().indexOf("session") == -1){
+                return JSON.parse(_res);
+            }else{
+                return {rc:3,reason:_res};
+            }
+        })
+        .then(json => resolve(json))
+        .catch(e =>{
+            console.log(e);
+            reject('Something went wrong!')
+        });
+    });
+}
+
+/**
  * Add roster
  * @param {Number} auth_version      [description]
  * @param {String} [sessionToken=''] [description]
  * @param {String} [bare_uid='']     [description]
+ * @return {Promise}                 [description]
  */
 export const addRoster = (auth_version, sessionToken='', bare_uid = '') => {
     return new Promise((resolve,reject) => {

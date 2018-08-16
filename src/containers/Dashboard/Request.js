@@ -304,6 +304,7 @@ class Request extends Component<{}> {
                     selected='Request'
                     visible={this.state.showMenu}
                     badgePending={this.props.totalPending}
+                    currency_type={this.props.currency_type}
                     navigation={this.props.navigation} />
                 <WalletFooter selected='Request'
                     nightMode={this.props.nightMode}

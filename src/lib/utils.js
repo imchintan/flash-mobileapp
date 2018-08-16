@@ -229,6 +229,28 @@ export const calcFee = (amount, currency_type=constants.CURRENCY_TYPE.FLASH, bcM
     }
 }
 
+export const calcSharingFee = (amount, currency_type=constants.CURRENCY_TYPE.FLASH,
+        sharingFeePercentage, fixed_to) => {
+    if (!fixed_to) fixed_to = 2;
+    switch (currency_type) {
+        case constants.CURRENCY_TYPE.BTC:
+        case constants.CURRENCY_TYPE.LTC:
+        case constants.CURRENCY_TYPE.ETH:
+        case constants.CURRENCY_TYPE.DASH:
+            return 0;
+            break;
+        case constants.CURRENCY_TYPE.FLASH:
+        default:
+            let sharing_fee = 0.0;
+            if (amount != '' && sharingFeePercentage != 0) {
+                sharing_fee = (sharingFeePercentage / 100) * amount;
+                sharing_fee = sharing_fee.toFixed(parseInt(fixed_to));
+            }
+            return sharing_fee;
+            break;
+    }
+}
+
 export const formatCurrency = (amount, currency_type=constants.CURRENCY_TYPE.FLASH) => {
     switch (currency_type) {
         case constants.CURRENCY_TYPE.BTC:
@@ -587,6 +609,15 @@ export const getSecurityQuestion = () => {
   // };
 }
 
+export const getSixCharString = () => {
+    let randomText = "";
+    let possible = "ABCDEFGHJKLMNPQRSTUVWXYZ123456789";
+
+    for (let i = 0; i < 6; i++)
+        randomText += possible.charAt(Math.floor(Math.random() * possible.length));
+
+    return randomText;
+}
 
 export const getCurrencyUnitUpcase = (currency_type) => {
     return constants.CURRENCY_TYPE_UNIT_UPCASE[currency_type];

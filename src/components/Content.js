@@ -2,7 +2,8 @@ import React, { Component } from 'react';
 import {
     StyleSheet,
     Platform,
-    ScrollView
+    ScrollView,
+    Keyboard
 } from 'react-native';
 import PropTypes from "prop-types";
 import { isIphoneX } from '@lib/utils'
@@ -17,13 +18,29 @@ export default class Content extends Component {
 
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = {
+          isVisible: true
+        }
     }
+
+    componentDidMount() {
+        this.keyboardWillShowSub = Keyboard.addListener('keyboardDidShow', this.keyboardWillShow)
+        this.keyboardWillHideSub = Keyboard.addListener('keyboardDidHide', this.keyboardWillHide)
+    }
+
+    componentWillUnmount() {
+        this.keyboardWillShowSub.remove()
+        this.keyboardWillHideSub.remove()
+    }
+
+    keyboardWillShow = event => this.setState({isVisible: false})
+
+    keyboardWillHide = event => this.setState({isVisible: true})
 
     render() {
 
         let _style = [styles.content];
-        if(!!this.props.hasFooter){ _style.push({marginBottom: 60})}
+        if(!!this.props.hasFooter && this.state.isVisible){ _style.push({marginBottom: 60})}
         if(!this.props.hasHeader){ _style.push({marginTop: 0})}
 
         return (
