@@ -2,7 +2,9 @@ import {
     StyleSheet
 } from 'react-native';
 
-module.exports = StyleSheet.create({
+const appStyles = require('./app');
+
+const styles = StyleSheet.create({
     txnList: {
         backgroundColor: '#FCFCFC',
     },
@@ -20,3 +22,8 @@ module.exports = StyleSheet.create({
         fontWeight: '500',
     },
 });
+
+module.exports = {
+    ...appStyles,
+    ...styles
+}

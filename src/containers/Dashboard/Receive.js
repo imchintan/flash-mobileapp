@@ -206,6 +206,7 @@ class Receive extends Component < {} > {
                     selected='Receive'
                     visible={this.state.showMenu}
                     badgePending={this.props.totalPending}
+                    currency_type={this.props.currency_type}
                     navigation={this.props.navigation} />
                 <WalletFooter selected='Receive'
                     nightMode={this.props.nightMode}

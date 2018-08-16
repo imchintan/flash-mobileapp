@@ -38,9 +38,9 @@ export const init = () => {
                     payload
                 });
             }
-        }).catch(error => {
+        }).catch(e => {
             // Failure code
-            console.log(error);
+            console.log(e);
         });
 
         await utils.getLocation().then(res => {

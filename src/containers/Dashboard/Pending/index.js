@@ -23,6 +23,7 @@ import {
 import moment from 'moment-timezone';
 import { getDisplayDate } from '@lib/utils';
 import { MOMENT_FORMAT } from '@src/constants';
+import { isIphoneX } from '@lib/utils'
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -110,7 +111,7 @@ class PendingTab extends React.Component {
                 flex: 1,
                 ...Platform.select({
                     ios: {
-                        paddingTop: 77,
+                        paddingTop: isIphoneX()?92:77,
                     },
                     android: {
                         paddingTop: 55

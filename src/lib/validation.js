@@ -60,3 +60,24 @@ export const cryptoAddress = (value, currency_type) => {
         return {success:false,message:'Invalid address!'};
     }
 }
+
+export const shareCode = (value) => {
+    let regEX = /^[A-Z0-9]{6}$/;
+    if(!value || !regEX.test(value))
+        return {success:false,message:'Invalid code!'};
+    else
+        return {success:true,message:''};
+}
+export const sharePercent = (value) => {
+    if(!value || isNaN(value)){
+         return {success:false,message:'Invalid share percentage!'};
+    }
+
+    let dig = value.toString().split('.');
+    if(dig.length == 2 && dig[1].length > 2)
+        value = (Math.floor(Number(value*Math.pow(10,2)))/Math.pow(10,2)).toString();
+    else
+        value = Number(value).toString();
+
+    return {success:true, message:'', value};
+}

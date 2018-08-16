@@ -97,8 +97,12 @@ class Send extends Component<{}> {
             this.props.setBcMedianTxSize();
             this.props.setSatoshiPerByte();
         }
+
         if(this.props.currency_type !== constants.CURRENCY_TYPE.FLASH)
             this.props.setThresholdAmount();
+
+        if(this.props.currency_type === constants.CURRENCY_TYPE.FLASH)
+            this.props.getPayoutInfo();
 
         if(this.props.currency_type === constants.CURRENCY_TYPE.DASH)
             this.props.setFixedTxnFee();
@@ -140,7 +144,9 @@ class Send extends Component<{}> {
             amount:utils.formatAmountInput(res.amount),
             fiat_amount: utils.formatAmountInput(fiat_amount),
             fee: utils.calcFee(res.amount, this.props.currency_type,
-                this.props.bcMedianTxSize, this.props.satoshiPerByte, this.props.fixedTxnFee)
+                this.props.bcMedianTxSize, this.props.satoshiPerByte, this.props.fixedTxnFee),
+            sharing_fee: this.props.payout_info?utils.localizeFlash(utils.calcSharingFee(res.amount, this.props.currency_type,
+                this.props.payout_info.payout_sharing_fee),2):0
         });
     }
 
@@ -187,11 +193,18 @@ class Send extends Component<{}> {
         let fee = utils.calcFee(amount, this.props.currency_type,
             this.props.bcMedianTxSize, this.props.satoshiPerByte, this.props.fixedTxnFee);
 
+        let fiat_sharing_fee=0;
         if(this.props.currency_type === constants.CURRENCY_TYPE.FLASH){
             if(amount < 1){
                 return Toast.errorTop("Amount must be at least 1");
             }
-            if(utils.flashToSatoshi(amount+fee) > this.props.balance){
+            let sharing_fee = this.props.payout_info?utils.toOrginalNumber(
+                utils.calcSharingFee(amount, this.props.currency_type,
+                    this.props.payout_info.payout_sharing_fee)):0;
+            fiat_sharing_fee = utils.toOrginalNumber(
+                utils.cryptoToOtherCurrency(sharing_fee, this.props.fiat_per_value, 0)
+            );
+            if(utils.flashToSatoshi(amount+fee+sharing_fee) > this.props.balance){
                 return Toast.errorTop("You do not have enough fee to make this payment");
             }
         }else{
@@ -207,7 +220,7 @@ class Send extends Component<{}> {
             utils.cryptoToOtherCurrency(fee, this.props.fiat_per_value, 0)
         );
 
-        this.setState({visible:true, fee, fiat_amount_fee});
+        this.setState({visible:true, fee, fiat_amount_fee, fiat_sharing_fee});
     }
 
     sendMoney(force=false){
@@ -409,6 +422,23 @@ class Send extends Component<{}> {
                                 value={this.state.fee.toString()}
                             />
                         </View>
+                        {this.props.payout_info && this.props.payout_info.payout_sharing_fee > 0?<View>
+                            <Text style={styles.requestRowLabel}>Sharing Fee</Text>
+                            <View style={styles.hr}/>
+                            <View style={[styles.requestRowInputBox,{flexDirection: 'row',
+                                backgroundColor: this.props.nightMode?'#2F2F2F':'#EDEDED'}]}>
+                                <View style={styles.requestRowAmtLabelBox}>
+                                    <Text style={styles.requestRowAmtLabel}>{utils.getCurrencyUnitUpcase(this.props.currency_type)}</Text>
+                                </View>
+                                <TextInput
+                                    editable={false}
+                                    underlineColorAndroid='transparent'
+                                    style={[styles.requestRowInput,{paddingLeft:10}]}
+                                    placeholder='Sharing Fee'
+                                    value={this.state.sharing_fee || ''}
+                                />
+                            </View>
+                        </View>:null}
                         <Text style={styles.requestRowLabel}>Email / Public address</Text>
                         <View style={styles.hr}/>
                         <View style={styles.requestRowInputBox}>
@@ -490,6 +520,7 @@ class Send extends Component<{}> {
                     selected='Send'
                     visible={this.state.showMenu}
                     badgePending={this.props.totalPending}
+                    currency_type={this.props.currency_type}
                     navigation={this.props.navigation} />
                 <WalletFooter selected='Send'
                     nightMode={this.props.nightMode}
@@ -511,8 +542,12 @@ class Send extends Component<{}> {
                                 <Text style={styles.reqFiatAmtText}>≈ {utils.getCurrencySymbol(this.props.fiat_currency)} {this.state.fiat_amount}</Text>
                                 <Text style={styles.reqFeeText}>
                                     + {this.state.fee} {utils.getCurrencyUnitUpcase(this.props.currency_type)+' '}
-                                    ({utils.getCurrencySymbol(this.props.fiat_currency)} {this.state.fiat_amount_fee}) transaction fee
+                                    (≈ {utils.getCurrencySymbol(this.props.fiat_currency)} {this.state.fiat_amount_fee}) transaction fee
                                 </Text>
+                                {this.state.sharing_fee?<Text style={[styles.reqFeeText,{paddingTop:5}]}>
+                                    + {this.state.sharing_fee} {utils.getCurrencyUnitUpcase(this.props.currency_type)+' '}
+                                    (≈ {utils.getCurrencySymbol(this.props.fiat_currency)} {this.state.fiat_sharing_fee}) sharing fee
+                                </Text>:null}
                                 <Icon style={styles.reqDownArrow} name='arrow-down'/>
                                 <View style={styles.reqDetailRow}>
                                     <Image style={styles.reqDetailIcon}
@@ -683,6 +718,7 @@ function mapStateToProps({params}) {
         satoshiPerByte: params.satoshiPerByte,
         thresholdAmount: params.thresholdAmount,
         fixedTxnFee: params.fixedTxnFee,
+        payout_info: params.payout_info || null,
         wallet_address: params.wallet_address || null,
         sendTxnSuccess: params.sendTxnSuccess || null,
         decryptedWallet: params.decryptedWallet || null,

@@ -6,6 +6,8 @@ import * as request from './request';
 import * as coinmarketcap from './coinmarketcap';
 import * as messages from './messages';
 import * as migrateAccount from './migrateAccount';
+import * as payoutCode from './payoutCode';
+import * as sharingCode from './sharingCode';
 
 module.exports = {
     ...login,
@@ -16,4 +18,6 @@ module.exports = {
     ...coinmarketcap,
     ...messages,
     ...migrateAccount,
+    ...payoutCode,
+    ...sharingCode,
 }
