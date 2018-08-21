@@ -15,27 +15,29 @@ export const rawTransaction = (amount=0, custom_fee=0, receiver_public_address='
             let toAddresses = [];
             toAddresses.push({ address: receiver_public_address, amount: amount });
             let payout_info =  params.payout_info;
-            let sharing_fee = parseFloat(
-                utils.calcSharingFee(amount, params.currency_type, payout_info.payout_sharing_fee)
-            );
-            let remaining_sharing_fee = sharing_fee;
-
-            for (let i = 0; i < payout_info.addresses.length; i++) {
-                if (remaining_sharing_fee <= 0) continue;
-                let address = payout_info.addresses[i];
-                let address_sharing_fee = parseFloat(
-                    utils.calcSharingFee(sharing_fee, params.currency_type, Number(address.percentage), 4)
+            if(payout_info){
+                let sharing_fee = parseFloat(
+                    utils.calcSharingFee(amount, params.currency_type, payout_info.payout_sharing_fee)
                 );
-                if (address_sharing_fee > remaining_sharing_fee ||
-                    i == payout_info.addresses.length)
-                    //to manage any fraction change, mostly last address
-                    address_sharing_fee = remaining_sharing_fee;
+                let remaining_sharing_fee = sharing_fee;
 
-                toAddresses.push({
-                    address: address.address,
-                    amount: address_sharing_fee,
-                });
-                remaining_sharing_fee = parseFloat((remaining_sharing_fee - address_sharing_fee).toFixed(8));
+                for (let i = 0; i < payout_info.addresses.length; i++) {
+                    if (remaining_sharing_fee <= 0) continue;
+                    let address = payout_info.addresses[i];
+                    let address_sharing_fee = parseFloat(
+                        utils.calcSharingFee(sharing_fee, params.currency_type, Number(address.percentage), 4)
+                    );
+                    if (address_sharing_fee > remaining_sharing_fee ||
+                        i == payout_info.addresses.length)
+                        //to manage any fraction change, mostly last address
+                        address_sharing_fee = remaining_sharing_fee;
+
+                    toAddresses.push({
+                        address: address.address,
+                        amount: address_sharing_fee,
+                    });
+                    remaining_sharing_fee = parseFloat((remaining_sharing_fee - address_sharing_fee).toFixed(8));
+                }
             }
             apis.rawTransactionMulti(params.profile.auth_version, params.profile.sessionToken,
                 params.currency_type, toAddresses, custom_fee, memo).then((d)=>{
