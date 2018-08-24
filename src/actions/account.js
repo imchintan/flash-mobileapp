@@ -519,7 +519,6 @@ export const isValidEmailForWallet = (email, profile, currency_type) => {
     return (dispatch,getState) => new Promise((resolve,reject) => {
         apis.searchWallet(profile.auth_version, profile.sessionToken,
             currency_type, email).then((d)=>{
-            console.log(d);
             if(d.rc !== 1){
                 reject(d.reason);
             }else if(d.total_wallets > 0){

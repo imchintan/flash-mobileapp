@@ -5,11 +5,10 @@
 import React, {Component} from 'react';
 import {
     View,
-    TouchableOpacity
+    TouchableOpacity,
+    Image
 } from 'react-native';
 import {
-    Container,
-    Content,
     Header,
     HeaderLeft,
     HeaderRight,
@@ -17,10 +16,23 @@ import {
     Icon,
     Text
 } from '@components';
-
+import { GiftedChat } from 'react-native-gifted-chat'
+const uuidv4 = require('uuid/v4');
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {ActionCreators} from '@actions';
+
+const message = [
+    ["Excuse me, do you have the time?"],
+    ["Do you know what time it is?"],
+    ["Pardon me.","Do you know what time this place closes?"],
+    ["That is a really nice hat","Can I ask where you got it?"],
+    ["Do they have other colours available?"],
+    ["Yeah, the shoes I have are getting worn out. It’s time to get a new pair."],
+    ["I appreciate the information."],
+    ["Really?","I’m a vegetarian too!","What made you decide to stop eating meat?"],
+    ["I don’t know. What do you think?"]
+]
 
 class ChatRoom extends Component < {} > {
 
@@ -32,30 +44,65 @@ class ChatRoom extends Component < {} > {
     constructor(props) {
         super(props);
         this.state = {
+            messages: [],
         };
+    }
+
+    componentDidMount() {
+        this.friend = this.props.navigation.state.params;
+        this.mount = true;
+        this.onSend([]);
+    }
+
+    componentWillUnmount(){
+        this.mount = false;
+    }
+
+    onSend(messages = []) {
+        this.setState(previousState => ({
+            messages: GiftedChat.append(previousState.messages, messages),
+        }))
+        let rand = Math.floor(Math.random()*message.length);
+        message[rand].forEach(msg=> setTimeout(()=>this.mount && this.setState(previousState => ({
+            messages: GiftedChat.append(previousState.messages, [{
+                _id: uuidv4(messages + new Date().getTime()),
+                createdAt: new Date(),
+                text: msg,
+                user: {
+                    _id: this.friend._id,
+                    name: this.friend.display_name,
+                    avatar: this.friend.profile_pic_url,
+                },
+            }]),
+        })),(Math.floor(Math.random()*1000)+200)))
     }
 
     render() {
         const styles = (this.props.nightMode?require('@styles/nightMode/htm'):require('@styles/htm'));
         return (
-            <Container>
+            <View style={{flex:1, paddingTop: 60}}>
                 <Header>
                     <HeaderLeft>
                         <TouchableOpacity>
                             <Icon onPress={() => this.props.navigation.goBack()} style={styles.headerBackIcon} name='angle-left'/>
                         </TouchableOpacity>
                     </HeaderLeft>
-                    <HeaderTitle>Chat Room</HeaderTitle>
+                    <HeaderTitle>{this.friend?this.friend.display_name:''}</HeaderTitle>
                     <HeaderRight>
-                        <TouchableOpacity>
-                            <Icon style={styles.headerFAIcon} name='ellipsis-v' />
-                        </TouchableOpacity>
+                        <Image style={{
+                            width: 40,
+                            height: 40,
+                            borderRadius: 20,
+                        }} source={{uri: this.friend?this.friend.profile_pic_url:''}}/>
                     </HeaderRight>
                 </Header>
-                <Content bounces={false} style={styles.content}>
-                    <Text> To do somthing here </Text>
-                </Content>
-            </Container>
+                <GiftedChat
+                    messages={this.state.messages}
+                    onSend={messages => this.onSend(messages)}
+                    user={{
+                      _id: 1,
+                  }} />
+            </View>
         );
     }
 }

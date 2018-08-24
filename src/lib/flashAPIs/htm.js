@@ -1,42 +1,66 @@
 import { API_URL, RESOURCE, APP_VERSION } from '@src/config';
-import {
-    AsyncStorage
-} from 'react-native';
+import * as utils from '@lib/utils';
 
 /**
  * Setup HTM profile
- * @param  {Number} auth_version    API authentication version
- * @param  {String} sessionToken    User authorization token
- * @param  {String} display_name    HTM profile display name
- * @param  {String} email           HTM profile email address
- * @param  {String} country         HTM Profile country
- * @param  {Number} want_to_buy     the percentage less than current spot price for buying
- * @param  {Number} want_to_sell    the percentage more than current spot price for selling
- * @return {Object}                 Return API response
+ * @param  {Number} auth_version             API authentication version
+ * @param  {String} sessionToken             User authorization token
+ * @param  {Object} Data                     HTM profile data
+ *   ⮑ @param  {String} display_name        Profile display name
+ *      @param  {String} email               Email address (optional)
+ *      @param  {String} country             HTM Profile country
+ *      @param  {Number} buy_at              the percentage more or less than current spot price for buying
+ *      @param  {Number} sell_at             the percentage more or less than current spot price for selling
+ *      @param  {Number} show_profile_pic    Show profile picture in HTM Profile
+ *      @param  {String} show_distance_in    Show distance in Miles / Kms
+ *      @param  {Object} currency_types      Array of currency object in include currency_type, buy_at and sell_at
+ * @return {Object}                          Return API response
  */
-export const setupHTMProfile = (auth_version, sessionToken,
-    display_name, email, country, want_to_buy, want_to_sell) => {
+export const setupHTMProfile = (auth_version, sessionToken, data) => {
     return new Promise((resolve,reject) => {
-        //**** Tmp setup *****//
-        AsyncStorage.setItem('_api_htm_profile', JSON.stringify({
-            display_name,
-            email,
-            country,
-            want_to_buy,
-            want_to_sell,
-            enable: true,
-        }));
-        return resolve({rc:1})
-        //*******************//
         fetch(API_URL+'/setup-htm-profile',{
             method: 'POST',
             body: JSON.stringify({
-                display_name,
-                email,
-                country,
-                want_to_buy,
-                want_to_sell,
-                enable: true,
+                ...data,
+                appversion:APP_VERSION,
+                res:RESOURCE,
+            }),
+            headers: {
+               'Content-Type': 'application/json; charset=utf-8',
+               'authorization': sessionToken,
+               'fl_auth_version': auth_version
+            },
+        })
+        .then(res =>res.json())
+        .then(json => resolve(json))
+        .catch(e =>{
+            console.log(e);
+            reject('Something went wrong!')
+        });
+    });
+}
+
+/**
+ * Update HTM profile
+ * @param  {Number} auth_version             API authentication version
+ * @param  {String} sessionToken             User authorization token
+ * @param  {Object} Data                     HTM profile data
+ *   ⮑ @param  {String} display_name        Profile display name
+ *      @param  {String} email               Email address (optional)
+ *      @param  {String} country             HTM Profile country
+ *      @param  {Number} buy_at              the percentage more or less than current spot price for buying
+ *      @param  {Number} sell_at             the percentage more or less than current spot price for selling
+ *      @param  {Number} show_profile_pic    Show profile picture in HTM Profile
+ *      @param  {String} show_distance_in    Show distance in Miles / Kms
+ *      @param  {Object} currency_types      Array of currency object in include currency_type, buy_at and sell_at
+ * @return {Object}                          Return API response
+ */
+export const updateHTMProfile = (auth_version, sessionToken, data) => {
+    return new Promise((resolve,reject) => {
+        fetch(API_URL+'/update-htm-profile',{
+            method: 'POST',
+            body: JSON.stringify({
+                ...data,
                 appversion:APP_VERSION,
                 res:RESOURCE,
             }),
@@ -62,18 +86,44 @@ export const setupHTMProfile = (auth_version, sessionToken,
  * @return {Object}                 Return API response
  */
 export const getHTMProfile = (auth_version, sessionToken) => {
-    return new Promise(async(resolve,reject) => {
+    return new Promise((resolve,reject) => {
+        let params=utils.buildURLQuery({
+            res         :RESOURCE,
+            appversion  :APP_VERSION,
+        });
+        fetch(API_URL+`/get-htm-profile?${params}`,{
+            method: 'GET',
+            body: null,
+            headers: {
+               'Content-Type': 'application/json; charset=utf-8',
+               'authorization': sessionToken,
+               'fl_auth_version': auth_version
+            },
+        })
+        .then(res => res.json())
+        .then(json => resolve(json))
+        .catch(e =>{
+            console.log(e);
+            reject('Something went wrong!')
+        });
+    });
+}
 
-        //**** Tmp get *****//
-        let htmProfile = await AsyncStorage.getItem('_api_htm_profile');
-        console.log(htmProfile);
-        if(!htmProfile) return resolve({rc:1,data:null});
-        return resolve({rc:1,data: JSON.parse(htmProfile)});
-        //*******************//
-
-        fetch(API_URL+'/get-htm-profile',{
+/**
+ * Update HTM Location
+ * @param  {Number} auth_version    API authentication version
+ * @param  {String} sessionToken    User authorization token
+ * @param  {Number} lat             HTM location latitude
+ * @param  {Number} long            HTM location longitude
+ * @return {Object}                 Return API response
+ */
+export const updateHTMLocation = (auth_version, sessionToken, lat, long) => {
+    return new Promise((resolve,reject) => {
+        fetch(API_URL+'/update-htm-location',{
             method: 'POST',
             body: JSON.stringify({
+                lat,
+                long,
                 appversion:APP_VERSION,
                 res:RESOURCE,
             }),
@@ -93,27 +143,82 @@ export const getHTMProfile = (auth_version, sessionToken) => {
 }
 
 /**
- * Update HTM profile
+ * Get HTM Detail
  * @param  {Number} auth_version    API authentication version
  * @param  {String} sessionToken    User authorization token
- * @param  {object} data            change profile params object
+ * @param  {String} username        HTM profile user name
  * @return {Object}                 Return API response
  */
-export const updateHTMProfile = (auth_version, sessionToken, data) => {
-    return new Promise(async(resolve,reject) => {
+export const getHTMDetail = (auth_version, sessionToken, username) => {
+    return new Promise((resolve,reject) => {
+        let params=utils.buildURLQuery({
+            username,
+            res         :RESOURCE,
+            appversion  :APP_VERSION,
+        });
+        fetch(API_URL+`/get-htm-detail?${params}`,{
+            method: 'GET',
+            body: null,
+            headers: {
+               'Content-Type': 'application/json; charset=utf-8',
+               'authorization': sessionToken,
+               'fl_auth_version': auth_version
+            },
+        })
+        .then(res =>res.json())
+        .then(json => resolve(json))
+        .catch(e =>{
+            console.log(e);
+            reject('Something went wrong!')
+        });
+    });
+}
 
-        //**** Tmp get *****//
-        await AsyncStorage.setItem('_api_htm_profile', JSON.stringify(data));
-        return resolve({rc:1});
-        //*******************//
+/**
+ * Disable HTM Profile
+ * @param  {Number} auth_version    API authentication version
+ * @param  {String} sessionToken    User authorization token
+ * @return {Object}                 Return API response
+ */
+export const disableHTMProfile = (auth_version, sessionToken) => {
+    return new Promise((resolve,reject) => {
+        let params=utils.buildURLQuery({
+            res         :RESOURCE,
+            appversion  :APP_VERSION,
+        });
+        fetch(API_URL+`/disable-htm-profile?${params}`,{
+            method: 'GET',
+            body: null,
+            headers: {
+               'Content-Type': 'application/json; charset=utf-8',
+               'authorization': sessionToken,
+               'fl_auth_version': auth_version
+            },
+        })
+        .then(res =>res.json())
+        .then(json => resolve(json))
+        .catch(e =>{
+            console.log(e);
+            reject('Something went wrong!')
+        });
+    });
+}
 
-        fetch(API_URL+'/update-htm-profile',{
-            method: 'POST',
-            body: JSON.stringify({
-                ...data,
-                appversion:APP_VERSION,
-                res:RESOURCE,
-            }),
+/**
+ * Enable HTM Profile
+ * @param  {Number} auth_version    API authentication version
+ * @param  {String} sessionToken    User authorization token
+ * @return {Object}                 Return API response
+ */
+export const enableHTMProfile = (auth_version, sessionToken) => {
+    return new Promise((resolve,reject) => {
+        let params=utils.buildURLQuery({
+            res         :RESOURCE,
+            appversion  :APP_VERSION,
+        });
+        fetch(API_URL+`/enable-htm-profile?${params}`,{
+            method: 'GET',
+            body: null,
             headers: {
                'Content-Type': 'application/json; charset=utf-8',
                'authorization': sessionToken,

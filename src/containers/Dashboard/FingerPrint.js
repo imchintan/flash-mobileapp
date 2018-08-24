@@ -65,13 +65,15 @@ class FingerPrint extends Component<{}> {
                                 Enable Fingerprint Authentication
                             </Text>
                             <Switch
-                                value={this.props.isEnableTouchID}
-                                activeText={''}
-                                inActiveText={''}
-                                backgroundActive={'#E0AE27'}
-                                barHeight={34}
-                                circleBorderWidth={0}
-                                onValueChange={(totp_enabled)=>{
+                                active={this.props.isEnableTouchID}
+                                buttonRadius={12}
+                                inactiveButtonColor={'#DFDFDF'}
+                                inactiveButtonPressedColor={'#191714'}
+                                activeButtonColor={'#191714'}
+                                activeButtonPressedColor={'#DFDFDF'}
+                                activeBackgroundColor={'#E0AE27'}
+                                inactiveBackgroundColor={'#B1B1B1'}
+                                onChangeState={(totp_enabled)=>{
                                     this.props.setTouchID((totp_enabled));
                                     Toast.successTop("Fingerprint Authentication is "+(totp_enabled?'enabled': 'disabled')+" successfully.");
                                     this.props.navigation.goBack();

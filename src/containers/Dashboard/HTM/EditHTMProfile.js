@@ -7,7 +7,8 @@
      View,
      TouchableOpacity,
      ScrollView,
-     TextInput
+     TextInput,
+     Alert,
  } from 'react-native';
  import {
      Container,
@@ -17,17 +18,18 @@
      HeaderTitle,
      Icon,
      Modal,
-     Switch,
      Text,
      Toast,
      Loader,
-     Button
+     Button,
+     Switch
  } from '@components';
 
  import {connect} from 'react-redux';
  import {bindActionCreators} from 'redux';
  import {ActionCreators} from '@actions';
 
+ import * as utils from '@lib/utils';
  import * as constants from '@src/constants'
  import * as Validation from '@lib/validation';
 
@@ -40,43 +42,221 @@ class EditHTMProfile extends Component < {} > {
 
     constructor(props) {
         super(props);
+        let currency_types =  (this.props.htmProfile && this.props.htmProfile.currencies?
+            Object.assign(...this.props.htmProfile.currencies.map(currency => ({
+                [currency.currency_type]: currency
+            }))):{});
         this.state = {
-            ...this.props.htmProfile
+            ...this.props.htmProfile,
+            currency_types
         };
     }
 
     saveProfile(){
-        let data={};
+        let data = {};
         if(!this.state.display_name.trim()){
             return Toast.errorTop("Display name is required!");
         }
         data.display_name = this.state.display_name.trim();
 
-        let res = Validation.email(this.state.email);
-        if(!res.success){
-            return Toast.errorTop(res.message);
+        data.email = this.state.email?this.state.email.trim():null;
+        if(data.email){
+            let res = Validation.email(data.email);
+            if(!res.success){
+                return Toast.errorTop(res.message);
+            }
+        }else{
+            data.email = null;
         }
-        data.email = this.state.email.trim();
 
         if(!this.state.country){
             return Toast.errorTop("Please select country!");
         }
         data.country = this.state.country;
 
-        res = Validation.percentage(this.state.want_to_buy);
-        if(!res.success){
-            return Toast.errorTop("Please enter valid percentage for buy!");
+        if(this.state.buy_at){
+            res = Validation.percentage(this.state.buy_at);
+            if(!res.success){
+                return Toast.errorTop("Please enter valid percentage for buy!");
+            }
+            data.buy_at = res.percentage;
+        } else {
+            data.buy_at = 0;
         }
-        data.want_to_buy = res.percentage;
 
-        res = Validation.percentage(this.state.want_to_sell);
-        if(!res.success){
-            return Toast.errorTop("Please enter valid percentage for sell!");
+        if(this.state.buy_at){
+            res = Validation.percentage(this.state.sell_at);
+            if(!res.success){
+                return Toast.errorTop("Please enter valid percentage for sell!");
+            }
+            data.sell_at = res.percentage;
+        } else {
+            data.sell_at = 0;
         }
-        data.want_to_sell = res.percentage;
 
-        data.enable = this.state.enable;
+        data.currency_types = Object.values(this.state.currency_types);
+        if(!data.currency_types.length){
+            return Toast.errorTop("Please choose at least one currency!");
+        }
+        data.show_profile_pic = this.state.show_profile_pic;
+        data.show_distance_in = this.state.show_distance_in;
         this.props.updateHTMProfile(data);
+    }
+
+    // 0 - manually editing, 1 - increase, 2 - decrease, 3 - manually editing on blur
+    buyAtTradeIn(value, type=0){
+        let buy_at = this.state.buy_at;
+        switch (type) {
+            case 0:
+                value = value.toString().trim();
+                if(value && value !== '-'){
+                    let res = Validation.percentage(value);
+                    if(!res.success){
+                        break;
+                    }
+                }
+                buy_at = value;
+                break;
+            case 1:
+                buy_at = Number((++buy_at).toFixed(2));
+                break;
+            case 2:
+                buy_at = Number((--buy_at).toFixed(2));
+                break;
+            case 3:
+                if(buy_at && buy_at !== '-'){
+                    let res1 = Validation.percentage(buy_at);
+                    if(!res1.success){
+                        Toast.errorTop("Please enter valid percentage for buy!");
+                        break;
+                    }
+                    buy_at = res1.percentage;
+                } else{
+                    buy_at =  0;
+                }
+                break;
+            default:
+                break;
+        }
+        this.setState({buy_at});
+    }
+
+    // 0 - manually editing, 1 - increase, 2 - decrease, 3 - manually editing on blur
+    sellAtTradeIn(value, type=0){
+        let sell_at = this.state.sell_at;
+        switch (type) {
+            case 0:
+                value = value.toString().trim();
+                if(value && value !== '-'){
+                    let res = Validation.percentage(value);
+                    if(!res.success){
+                        break;
+                    }
+                }
+                sell_at = value;
+                break;
+            case 1:
+                sell_at = Number((++sell_at).toFixed(2));
+                break;
+            case 2:
+                sell_at = Number((--sell_at).toFixed(2));
+                break;
+            case 3:
+                if(sell_at && sell_at !== '-'){
+                    let res1 = Validation.percentage(sell_at);
+                    if(!res1.success){
+                        Toast.errorTop("Please enter valid percentage for buy!");
+                        break;
+                    }
+                    sell_at = res1.percentage;
+                } else {
+                    sell_at = 0;
+                }
+                break;
+            default:
+                break;
+        }
+        this.setState({sell_at});
+    }
+
+    // 0 - manually editing, 1 - increase, 2 - decrease, 3 - manually editing on blur
+    buyAt(currency_type, value, type=0){
+        let currency_types = this.state.currency_types;
+        let buy_at = currency_types[currency_type].buy_at;
+        switch (type) {
+            case 0:
+                value = value.toString().trim();
+                if(value && value !== '-'){
+                    let res = Validation.percentage(value);
+                    if(!res.success){
+                        break;
+                    }
+                }
+                buy_at = value;
+                break;
+            case 1:
+                buy_at = Number((++buy_at).toFixed(2));
+                break;
+            case 2:
+                buy_at = Number((--buy_at).toFixed(2));
+                break;
+            case 3:
+                if(buy_at && buy_at !== '-'){
+                    let res1 = Validation.percentage(buy_at);
+                    if(!res1.success){
+                        Toast.errorTop("Please enter valid percentage for buy!");
+                        break;
+                    }
+                    buy_at = res1.percentage;
+                } else{
+                    buy_at =  0;
+                }
+                break;
+            default:
+                break;
+        }
+        currency_types[currency_type].buy_at = buy_at;
+        this.setState({currency_types});
+    }
+
+    // 0 - manually editing, 1 - increase, 2 - decrease, 3 - manually editing on blur
+    sellAt(currency_type, value, type=0){
+        let currency_types = this.state.currency_types;
+        let sell_at = currency_types[currency_type].sell_at;
+        switch (type) {
+            case 0:
+                value = value.toString().trim();
+                if(value && value !== '-'){
+                    let res = Validation.percentage(value);
+                    if(!res.success){
+                        break;
+                    }
+                }
+                sell_at = value;
+                break;
+            case 1:
+                sell_at = Number((++sell_at).toFixed(2));
+                break;
+            case 2:
+                sell_at = Number((--sell_at).toFixed(2));
+                break;
+            case 3:
+                if(sell_at && sell_at !== '-'){
+                    let res1 = Validation.percentage(sell_at);
+                    if(!res1.success){
+                        Toast.errorTop("Please enter valid percentage for buy!");
+                        break;
+                    }
+                    sell_at = res1.percentage;
+                } else {
+                    sell_at = 0;
+                }
+                break;
+            default:
+                break;
+        }
+        currency_types[currency_type].sell_at = sell_at;
+        this.setState({currency_types});
     }
 
     render() {
@@ -96,7 +276,10 @@ class EditHTMProfile extends Component < {} > {
                         <Text style={[styles.label,{marginTop:0}]}>Basic Info</Text>
                         <View style={[styles.hr,{marginBottom:15}]}/>
                         <View style={styles.htmProfile}>
-                            <Text style={styles.htmProfileLabel}>Diplay Name</Text>
+                            <Text style={styles.htmProfileLabel}>
+                                Diplay Name
+                                <Text style={styles.mandatoryField}>*</Text>
+                            </Text>
                             <View style={styles.htmProfileInputBox}>
                                 <TextInput
                                     underlineColorAndroid='transparent'
@@ -125,7 +308,10 @@ class EditHTMProfile extends Component < {} > {
                             </View>
                         </View>
                         <View style={styles.htmProfile}>
-                            <Text style={styles.htmProfileLabel}>Country</Text>
+                            <Text style={styles.htmProfileLabel}>
+                                Country
+                                <Text style={styles.mandatoryField}>*</Text>
+                            </Text>
                             <TouchableOpacity
                                 activeOpacity={0.7}
                                 onPress={()=>this.setState({selectCountry:true})}
@@ -147,60 +333,296 @@ class EditHTMProfile extends Component < {} > {
                                 }} name={'angle-down'} />
                             </TouchableOpacity>
                         </View>
+                        <Text style={[styles.label,{marginTop:10}]}>Trade In</Text>
+                        <View style={[styles.hr,{marginBottom:15}]}/>
+                        <View style={[styles.htmProfile,styles.htmWantToBuySell]}>
+                            <View>
+                                <Text style={styles.htmProfileLabel}>Want to buy at (%)</Text>
+                                <Text style={styles.htmProfileNote}>
+                                    Want to buy at % below/above spot/market price
+                                </Text>
+                            </View>
+                            <View style={styles.htmWantToBuySellInputGrp}>
+                                <TouchableOpacity
+                                    onPressIn={()=>{
+                                        this.buy_at = setInterval(()=>this
+                                            .buyAtTradeIn(0,2), 100);
+                                    }}
+                                    onPressOut={()=>{
+                                        if(!!this.buy_at)
+                                            clearInterval(this.buy_at);
+                                    }}
+                                    onPress={()=>this.buyAtTradeIn(0,2)}
+                                    style={styles.htmWantToBuySellBtn}>
+                                    <Text style={styles.htmWantToBuySellBtnText}>-</Text>
+                                </TouchableOpacity>
+                                <TextInput
+                                    underlineColorAndroid='transparent'
+                                    style={styles.htmWantToBuySellInputText}
+                                    keyboardType={'numeric'}
+                                    value={this.state.buy_at.toString()}
+                                    onBlur={()=>this.buyAtTradeIn(0,3)}
+                                    onChangeText={(buy_at)=>this.buyAtTradeIn(buy_at)}
+                                />
+                                <TouchableOpacity
+                                    onPressIn={()=>{
+                                        this.buy_at = setInterval(()=>this
+                                            .buyAtTradeIn(0,1), 100);
+                                    }}
+                                    onPressOut={()=>{
+                                        if(!!this.buy_at) clearInterval(this.buy_at);
+                                    }}
+                                    onPress={()=>this.buyAtTradeIn(0,1)}
+                                    style={styles.htmWantToBuySellBtn}>
+                                    <Text style={[styles.htmWantToBuySellBtnText,{
+                                        fontSize: 22
+                                    }]}>+</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                        <View style={[styles.htmProfile,styles.htmWantToBuySell]}>
+                            <View>
+                                <Text style={styles.htmProfileLabel}>Want to sell at (%)</Text>
+                                <Text style={styles.htmProfileNote}>
+                                    Want to sell at % below/above spot/market price
+                                </Text>
+                            </View>
+                            <View style={styles.htmWantToBuySellInputGrp}>
+                                <TouchableOpacity
+                                    onPressIn={()=>{
+                                        this.sell_at = setInterval(()=>this
+                                            .sellAtTradeIn(0,2), 100);
+                                    }}
+                                    onPressOut={()=>{
+                                        if(!!this.sell_at)
+                                            clearInterval(this.sell_at);
+                                    }}
+                                    onPress={()=>this.sellAtTradeIn(0,2)}
+                                    style={styles.htmWantToBuySellBtn}>
+                                    <Text style={styles.htmWantToBuySellBtnText}>-</Text>
+                                </TouchableOpacity>
+                                <TextInput
+                                    underlineColorAndroid='transparent'
+                                    style={styles.htmWantToBuySellInputText}
+                                    keyboardType={'numeric'}
+                                    value={this.state.sell_at.toString()}
+                                    onBlur={()=>this.sellAtTradeIn(0,3)}
+                                    onChangeText={(sell_at)=>this.sellAtTradeIn(sell_at)}
+                                />
+                                <TouchableOpacity
+                                    onPressIn={()=>{
+                                        this.sell_at = setInterval(()=>this
+                                            .sellAtTradeIn(0,1), 100);
+                                    }}
+                                    onPressOut={()=>{
+                                        if(!!this.sell_at) clearInterval(this.sell_at);
+                                    }}
+                                    onPress={()=>this.sellAtTradeIn(0,1)}
+                                    style={styles.htmWantToBuySellBtn}>
+                                    <Text style={[styles.htmWantToBuySellBtnText,{
+                                        fontSize: 22
+                                    }]}>+</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                        <Text style={[styles.label,{marginTop:10}]}>
+                            Currency
+                            <Text style={styles.mandatoryField}>*</Text>
+                        </Text>
+                        <View style={[styles.hr,{marginBottom:15}]}/>
+                        <Text style={styles.htmCurrencyNote1}>Choose currencies you want to trade in</Text>
+                        { this.props.balances.map(balance =>
+                            <View key={'_currency_'+balance.currency_type+'_'+balance.amt}
+                                style={styles.htmProfile}>
+                                <View style={styles.htmCurrency}>
+                                    <TouchableOpacity onPress={()=>{
+                                        let currency_types = this.state.currency_types;
+                                        if(currency_types[balance.currency_type])
+                                            delete currency_types[balance.currency_type];
+                                        else {
+                                            currency_types[balance.currency_type] = {
+                                                currency_type: balance.currency_type,
+                                                buy_at: this.state.buy_at,
+                                                sell_at: this.state.sell_at,
+                                            }
+                                        }
+                                        this.setState({currency_types});
+                                    }}>
+                                        <Icon style={styles.htmCurrencyCheckIcon}
+                                            name={this.state.currency_types[balance.currency_type]?'check-square-o':'square-o'}/>
+                                    </TouchableOpacity>
+                                    <Text style={styles.htmProfileLabel}>
+                                        {utils.getCurrencyName(balance.currency_type)}
+                                    </Text>
+                                </View>
+                                {this.state.currency_types[balance.currency_type]?
+                                <View style={styles.htmCurrencyWantToBuySell}>
+                                    <View style={[styles.htmProfile,styles.htmWantToBuySell]}>
+                                        <View>
+                                            <Text style={styles.htmCurrencyLabel}>Want to buy at (%)</Text>
+                                            <Text style={styles.htmCurrencyNote}>
+                                                Want to buy at % below/above spot/market price
+                                            </Text>
+                                        </View>
+                                        <View style={styles.htmWantToBuySellInputGrp}>
+                                            <TouchableOpacity
+                                                onPressIn={()=>{
+                                                    this.buy_at = setInterval(()=>this
+                                                        .buyAt(balance.currency_type,0,2), 100);
+                                                }}
+                                                onPressOut={()=>{
+                                                    if(!!this.buy_at)
+                                                        clearInterval(this.buy_at);
+                                                }}
+                                                onPress={()=>this.buyAt(balance.currency_type,0,2)}
+                                                style={styles.htmWantToBuySellBtn}>
+                                                <Text style={styles.htmCurrencyWantToBuySellBtnText}>-</Text>
+                                            </TouchableOpacity>
+                                            <TextInput
+                                                underlineColorAndroid='transparent'
+                                                style={styles.htmCurrencyWantToBuySellInputText}
+                                                keyboardType={'numeric'}
+                                                value={this.state
+                                                    .currency_types[balance.currency_type]
+                                                    .buy_at.toString()}
+                                                onBlur={()=>this.buyAt(balance.currency_type,0,3)}
+                                                onChangeText={(buy_at)=>this.buyAt(balance.currency_type,buy_at)}
+                                            />
+                                            <TouchableOpacity
+                                                onPressIn={()=>{
+                                                    this.buy_at = setInterval(()=>this
+                                                    .buyAt(balance.currency_type,0,1), 100);
+                                                }}
+                                                onPressOut={()=>{
+                                                    if(!!this.buy_at) clearInterval(this.buy_at);
+                                                }}
+                                                onPress={()=>this.buyAt(balance.currency_type,0,1)}
+                                                style={styles.htmWantToBuySellBtn}>
+                                                <Text style={[styles.htmCurrencyWantToBuySellBtnText,{
+                                                    fontSize: 17
+                                                }]}>+</Text>
+                                            </TouchableOpacity>
+                                        </View>
+                                    </View>
+                                    <View style={[styles.htmProfile,styles.htmWantToBuySell]}>
+                                        <View>
+                                            <Text style={styles.htmCurrencyLabel}>Want to sell at (%)</Text>
+                                            <Text style={styles.htmCurrencyNote}>
+                                                Want to sell at % below/above spot/market price
+                                            </Text>
+                                        </View>
+                                        <View style={styles.htmWantToBuySellInputGrp}>
+                                            <TouchableOpacity
+                                                onPressIn={()=>{
+                                                    this.sell_at = setInterval(()=>this
+                                                        .sellAt(balance.currency_type,0,2), 100);
+                                                }}
+                                                onPressOut={()=>{
+                                                    if(!!this.sell_at)
+                                                        clearInterval(this.sell_at);
+                                                }}
+                                                onPress={()=>this.sellAt(balance.currency_type,0,2)}
+                                                style={styles.htmWantToBuySellBtn}>
+                                                <Text style={styles.htmCurrencyWantToBuySellBtnText}>-</Text>
+                                            </TouchableOpacity>
+                                            <TextInput
+                                                underlineColorAndroid='transparent'
+                                                style={styles.htmCurrencyWantToBuySellInputText}
+                                                keyboardType={'numeric'}
+                                                value={this.state
+                                                    .currency_types[balance.currency_type]
+                                                    .sell_at.toString()}
+                                                onBlur={()=>this.sellAt(balance.currency_type,0,3)}
+                                                onChangeText={(sell_at)=>this.sellAt(balance.currency_type,sell_at)}
+                                            />
+                                            <TouchableOpacity
+                                                onPressIn={()=>{
+                                                    this.sell_at = setInterval(()=>this
+                                                        .sellAt(balance.currency_type,0,1), 100);
+                                                }}
+                                                onPressOut={()=>{
+                                                    if(!!this.sell_at) clearInterval(this.sell_at);
+                                                }}
+                                                onPress={()=>this.sellAt(balance.currency_type,0,1)}
+                                                style={styles.htmWantToBuySellBtn}>
+                                                <Text style={[styles.htmCurrencyWantToBuySellBtnText,{
+                                                    fontSize: 17
+                                                }]}>+</Text>
+                                            </TouchableOpacity>
+                                        </View>
+                                    </View>
+                                </View>:null}
+                            </View>
+                        )}
                         <Text style={[styles.label,{marginTop:10}]}>Setting</Text>
                         <View style={[styles.hr,{marginBottom:15}]}/>
-                        <View style={styles.htmProfile}>
-                            <Text style={styles.htmProfileLabel}>Want to Buy (%)</Text>
-                            <View style={styles.htmProfileInputBox}>
-                                <TextInput
-                                    underlineColorAndroid='transparent'
-                                    style={styles.htmProfileInput}
-                                    placeholder={'Enter percentage'}
-                                    keyboardType={'numeric'}
-                                    autoCapitalize={'none'}
-                                    autoCorrect={false}
-                                    value={this.state.want_to_buy.toString()}
-                                    onChangeText={(want_to_buy)=>this.setState({want_to_buy})}
-                                />
-                            </View>
-                            <Text style={styles.htmProfileNote}>Want to buy at % less than current spot price</Text>
-                        </View>
-                        <View style={styles.htmProfile}>
-                            <Text style={styles.htmProfileLabel}>Want to Sell (%)</Text>
-                            <View style={styles.htmProfileInputBox}>
-                                <TextInput
-                                    underlineColorAndroid='transparent'
-                                    style={styles.htmProfileInput}
-                                    placeholder={'Enter percentage'}
-                                    keyboardType={'numeric'}
-                                    autoCapitalize={'none'}
-                                    autoCorrect={false}
-                                    value={this.state.want_to_sell.toString()}
-                                    onChangeText={(want_to_sell)=>this.setState({want_to_sell})}
-                                />
-                            </View>
-                            <Text style={styles.htmProfileNote}>Want to sell at % more than current spot price</Text>
-                        </View>
-                        <View style={[styles.htmProfile,{
-                            flexDirection: 'row',
-                            justifyContent: 'space-between'
-                        }]}>
-                            <Text style={styles.htmProfileLabel}>Profile Enable</Text>
+                        <View style={[styles.htmProfile,styles.htmWantToBuySell]}>
+                            <Text style={[styles.htmProfileLabel,{marginTop:8}]}>
+                                Show Profile Picture
+                            </Text>
                             <Switch
-                                value={this.props.htmProfile.enable}
-                                activeText={''}
-                                inActiveText={''}
-                                backgroundActive={'#E0AE27'}
-                                barHeight={20}
-                                circleBorderWidth={0}
-                                onValueChange={(enable)=>this.setState({enable})} />
+                                active={(this.state.show_profile_pic==1)}
+                                buttonRadius={13}
+                                switchWidth={70}
+                                activeText={'ON'}
+                                activeTextStyle={styles.htmSwitchActiveTextStyle}
+                                inactiveText={'OFF'}
+                                inactiveTextStyle={styles.htmSwitchInactiveTextStyle}
+                                inactiveButtonColor={'#DFDFDF'}
+                                inactiveButtonPressedColor={'#191714'}
+                                activeButtonColor={'#191714'}
+                                activeButtonPressedColor={'#DFDFDF'}
+                                activeBackgroundColor={'#E0AE27'}
+                                inactiveBackgroundColor={'#A1A1A1'}
+                                onChangeState={(show_profile_pic)=>this.setState({show_profile_pic:show_profile_pic?1:0})} />
+                        </View>
+                        <View style={[styles.htmProfile,styles.htmWantToBuySell,{marginTop: -10}]}>
+                            <Text style={[styles.htmProfileLabel,{marginTop:8}]}>
+                                Show Distance in
+                            </Text>
+                            <View style={styles.htmSwitch}>
+                                <TouchableOpacity
+                                    onPress={()=>this.setState({show_distance_in:'kms'})}
+                                    style={[styles.htmSwitchLeft,
+                                        this.state.show_distance_in == 'kms' &&
+                                        styles.htmSwitchActive]}>
+                                    <Text style={[styles.htmSwitchText,
+                                        this.state.show_distance_in == 'kms' &&
+                                        styles.htmSwitchActiveText]}>KMS</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    onPress={()=>this.setState({show_distance_in:'miles'})}
+                                    style={[styles.htmSwitchRight,
+                                        this.state.show_distance_in !== 'kms' &&
+                                        styles.htmSwitchActive]}>
+                                    <Text style={[styles.htmSwitchText,
+                                        this.state.show_distance_in !== 'kms' &&
+                                        styles.htmSwitchActiveText]}>MILES</Text>
+                                </TouchableOpacity>
+                            </View>
                         </View>
                         <Button
                             style={{
-                                marginVertical: 20,
+                                marginVertical: 10,
                             }}
                             value={'Save Profile'}
                             onPress={this.saveProfile.bind(this)} />
+                        <TouchableOpacity style={styles.htmActiveDeactiveLink}
+                            onPress={()=>{
+                                Alert.alert(
+                                  'Deactivate HTM Profile',
+                                  'Are you sure, you want to deactivate HTM profile?',
+                                  [
+                                    {text: 'Cancel', style: 'cancel'},
+                                    {text: 'OK', onPress: () => this.props
+                                        .disableHTMProfile(this.props.navigation.goBack)},
+                                  ],
+                                )
+                            }}>
+                            <Text style={styles.htmActiveDeactiveLinkText}>
+                                Deactivate HTM Profile
+                            </Text>
+                        </TouchableOpacity>
                     </View>
                     <Loader show={this.props.loading} />
                 </Content>
@@ -245,8 +667,10 @@ class EditHTMProfile extends Component < {} > {
 
 function mapStateToProps({params}) {
     return {
+        loading: params.loading || false,
         nightMode: params.nightMode,
         htmProfile: params.htmProfile,
+        balances: params.balances,
     };
 }
 

@@ -66,4 +66,9 @@ module.exports = StyleSheet.create({
         borderColor: '#9F9F9F',
         marginBottom: 15,
     },
+    mandatoryField:{
+        bottom: -10,
+        fontSize: 20,
+        color: 'red'
+    }
 });

@@ -3,6 +3,7 @@ package com.flash.wallet.android;
 import android.app.Application;
 
 import com.facebook.react.ReactApplication;
+import com.levelasquez.androidopensettings.AndroidOpenSettingsPackage;
 import com.airbnb.android.react.maps.MapsPackage;
 import org.reactnative.camera.RNCameraPackage;
 import com.rnfingerprint.FingerprintAuthPackage;
@@ -29,6 +30,7 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new AndroidOpenSettingsPackage(),
             new MapsPackage(),
             new RNCameraPackage(),
             new FingerprintAuthPackage(),

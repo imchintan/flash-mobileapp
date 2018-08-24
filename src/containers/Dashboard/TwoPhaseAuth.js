@@ -77,13 +77,15 @@ class TwoPhaseAuth extends Component<{}> {
                                 Two Phase Authentication
                             </Text>
                             <Switch
-                                value={!!this.props.profile.totp_enabled || !!this.state.totp_enabled}
-                                activeText={''}
-                                inActiveText={''}
-                                backgroundActive={'#E0AE27'}
-                                barHeight={34}
-                                circleBorderWidth={0}
-                                onValueChange={(totp_enabled)=>{
+                                active={!!this.props.profile.totp_enabled || !!this.state.totp_enabled}
+                                buttonRadius={12}
+                                inactiveButtonColor={'#DFDFDF'}
+                                inactiveButtonPressedColor={'#191714'}
+                                activeButtonColor={'#191714'}
+                                activeButtonPressedColor={'#DFDFDF'}
+                                activeBackgroundColor={'#E0AE27'}
+                                inactiveBackgroundColor={'#B1B1B1'}
+                                onChangeState={(totp_enabled)=>{
                                     this.setState({totp_enabled})
                                     if(totp_enabled){
                                         this.props.start2FA();

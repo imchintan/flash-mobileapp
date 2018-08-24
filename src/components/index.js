@@ -15,7 +15,8 @@ import WalletFooter from './WalletFooter';
 import Icon from 'react-native-fa-icons';
 import Calendar from 'react-native-calendar-select';
 import QRCode from 'react-native-qrcode';
-import { Switch } from 'react-native-switch';
+
+const Switch = require('react-native-material-switch');
 
 module.exports = {
     Container,
@@ -35,5 +36,5 @@ module.exports = {
     Icon,
     Calendar,
     QRCode,
-    Switch
+    Switch,
 }
