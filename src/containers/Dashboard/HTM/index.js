@@ -7,7 +7,7 @@ import HTM from './HTM';
 import SetupHTMProfile from './SetupHTMProfile';
 import EditHTMProfile from './EditHTMProfile';
 import HTMListingMap from './HTMListingMap';
-import MerchantDetail from './MerchantDetail';
+import HTMDetail from './HTMDetail';
 import ChatRoom from './ChatRoom';
 import ChatHistory from './ChatHistory';
 
@@ -24,8 +24,8 @@ const routes = {
     HTMListingMap: {
         screen: HTMListingMap,
     },
-    MerchantDetail: {
-        screen: MerchantDetail,
+    HTMDetail: {
+        screen: HTMDetail,
     },
     ChatRoom: {
         screen: ChatRoom,

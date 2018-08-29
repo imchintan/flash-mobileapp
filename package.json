@@ -6,6 +6,7 @@
     "postinstall": "rn-nodeify --install stream,buffer,events,assert,crypto --hack"
   },
   "dependencies": {
+    "@ptomasroos/react-native-multi-slider": "^1.0.0",
     "assert": "^1.4.1",
     "big.js": "^5.0.3",
     "bip39": "^2.5.0",

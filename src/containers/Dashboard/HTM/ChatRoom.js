@@ -13,14 +13,18 @@ import {
     HeaderLeft,
     HeaderRight,
     HeaderTitle,
-    Icon,
-    Text
+    Icon
 } from '@components';
-import { GiftedChat } from 'react-native-gifted-chat'
-const uuidv4 = require('uuid/v4');
+
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {ActionCreators} from '@actions';
+
+import { GiftedChat } from 'react-native-gifted-chat'
+import { PROFILE_URL } from '@src/config';
+import * as utils from '@lib/utils';
+import * as constants from '@src/constants';
+const uuidv4 = require('uuid/v4');
 
 const message = [
     ["Excuse me, do you have the time?"],
@@ -71,7 +75,8 @@ class ChatRoom extends Component < {} > {
                 user: {
                     _id: this.friend._id,
                     name: this.friend.display_name,
-                    avatar: this.friend.profile_pic_url,
+                    avatar: this.friend.profile_pic_url?(PROFILE_URL + this.friend.profile_pic_url):
+                    utils.getCurrencyIcon(constants.CURRENCY_TYPE.FLASH),
                 },
             }]),
         })),(Math.floor(Math.random()*1000)+200)))

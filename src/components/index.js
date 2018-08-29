@@ -16,7 +16,8 @@ import Icon from 'react-native-fa-icons';
 import Calendar from 'react-native-calendar-select';
 import QRCode from 'react-native-qrcode';
 
-const Switch = require('react-native-material-switch');
+import Slider from '@ptomasroos/react-native-multi-slider';
+import Switch from 'react-native-material-switch';
 
 module.exports = {
     Container,
@@ -37,4 +38,5 @@ module.exports = {
     Calendar,
     QRCode,
     Switch,
+    Slider
 }

@@ -8,7 +8,6 @@ import {
     TouchableOpacity,
     Platform,
     Linking,
-    Dimensions,
     PermissionsAndroid,
     Image
 } from 'react-native';
@@ -17,9 +16,11 @@ import {
     Header,
     HeaderLeft,
     HeaderTitle,
+    HeaderRight,
     Text,
     Icon,
     Button,
+    Slider,
     Loader,
 } from '@components';
 import { Marker } from 'react-native-maps';
@@ -31,8 +32,8 @@ import {bindActionCreators} from 'redux';
 import {ActionCreators} from '@actions';
 
 import * as utils from '@lib/utils';
-
-const { width } = Dimensions.get('window');
+import * as constants from '@src/constants';
+import { PROFILE_URL } from '@src/config';
 
 const mapPin = __DEV__?require('@images/map-pin-debug.png'):require('@images/map-pin.png');
 
@@ -46,8 +47,18 @@ class HTMListingMap extends Component < {} > {
     constructor(props) {
         super(props);
         this.state = {
-            htmMerchant:null,
+            htm:null,
             loading: true,
+            showFilter: false,
+            filter: {
+                apply: false,
+                want_to: 0,
+                buy_sell_at_from: 0,
+                buy_sell_at_to: 100,
+                upto_distance: 5000,
+                currency_types: {},
+                onlineOnly: false,
+            }
         };
     }
 
@@ -63,6 +74,7 @@ class HTMListingMap extends Component < {} > {
 
     checkLocationPermission = async () =>{
         try {
+            if(this.props.position) return;
             if(Platform.OS !== 'ios'){
                 this.props.customAction({lockApp:true});
                 const granted = await PermissionsAndroid.request(
@@ -86,6 +98,37 @@ class HTMListingMap extends Component < {} > {
         }
     }
 
+    findNearByHTMs(){
+        let filter = this.state.filter;
+        filter.apply = true;
+        this.setState({filter, showFilter: false},()=>{
+            let _filter = {
+                onlineOnly: filter.onlineOnly,
+                currency_types: Object.values(filter.currency_types)
+                    .map(currency => currency.currency_type),
+            }
+
+            if(filter.buy_sell_at_from > 0){
+                if(filter.want_to == 1 || filter.want_to == 0)
+                    _filter.buy_at_from = filter.buy_sell_at_from;
+                if(filter.want_to == 2 || filter.want_to == 0)
+                _filter.sell_at_from = filter.buy_sell_at_from;
+            }
+
+            if(filter.buy_sell_at_to < 100){
+                if(filter.want_to == 1 || filter.want_to == 0)
+                    _filter.buy_at_to = filter.buy_sell_at_to;
+                if(filter.want_to == 2 || filter.want_to == 0)
+                    _filter.sell_at_to = filter.buy_sell_at_to;
+            }
+
+            if(filter.upto_distance < 5000)
+                _filter.upto_distance = filter.upto_distance;
+
+            this.props.findNearByHTMs(_filter, true);
+        });
+    }
+
     render() {
         const styles = (this.props.nightMode?require('@styles/nightMode/htm'):require('@styles/htm'));
         return (
@@ -98,6 +141,16 @@ class HTMListingMap extends Component < {} > {
                         </TouchableOpacity>
                     </HeaderLeft>
                     <HeaderTitle>Near by HTM</HeaderTitle>
+                    {this.props.position?<HeaderRight>
+                        <TouchableOpacity
+                            onPress={()=>this.setState({showFilter:!this.state.showFilter})}>
+                            <Icon style={[styles.headerFAIcon,{
+                                    fontSize:28,
+                                    color: this.state.filter.apply?'#E0AE27':'#FFFFFF'
+                                }]}
+                                name='filter'/>
+                        </TouchableOpacity>
+                    </HeaderRight>:null}
                 </Header>
                 {!this.props.position && this.props.location_permission
                     && this.props.location_error_code == 3?
@@ -126,6 +179,7 @@ class HTMListingMap extends Component < {} > {
                                     this.props.getCurrentPosition();
                                 }else{
                                     AndroidOpenSettings.locationSourceSettings();
+                                    this.props.navigation.goBack();
                                     setTimeout(()=>this.props.getCurrentPosition(),2000);
                                 }
                                 setTimeout(()=>this.mount && this.setState({loading: false}),2000);
@@ -143,15 +197,16 @@ class HTMListingMap extends Component < {} > {
                                     Linking.openURL('app-settings:');
                                 else
                                     AndroidOpenSettings.appDetailsSettings();
+                                    this.props.navigation.goBack();
                             }}/>
                     </View>:null
                 }
                 {this.props.position?<MapView
-                    style={{
-                        flex:1,
-                        width:'100%',
-                        marginTop:55,
+                    onPress={()=>{
+                        if(this.state.htm)this.setState({htm:null})
+                        if(this.state.showFilter)this.setState({showFilter:false})
                     }}
+                    style={styles.htmMap}
                     clusterColor = '#E0AE27'
                     clusterTextColor = '#191714'
                     clusterBorderColor = '#191714'
@@ -204,74 +259,277 @@ class HTMListingMap extends Component < {} > {
                         latitudeDelta: 0.0922,
                         longitudeDelta: 0.0421,
                     }}>
-                    {this.props.htmMerchants.map((htmMerchant,index) =>
+                    {this.props.htms.map((htm,index) =>
                         <Marker
-                            key={'_map_pin_'+htmMerchant.latitude+'_'+htmMerchant.longitude}
-                            coordinate={htmMerchant}
-                            onPress={()=>this.setState({htmMerchant})}
+                            key={'_map_pin_'+htm.lat+'_'+htm.long}
+                            coordinate={{
+                                latitude: htm.lat,
+                                longitude: htm.long
+                            }}
+                            onPress={()=>this.setState({htm})}
                             image={mapPin}/>
                     )}
                 </MapView>:null}
-                {this.state.htmMerchant?
-                    <View style={{
-                        width: width-40,
-                        position: 'absolute',
-                        bottom: 20,
-                        backgroundColor: '#FFFFFF',
-                        flexDirection: 'row',
-                        borderRadius: 5,
-                        alignItems: 'center',
-                        padding: 10,
-                    }}>
-                        <Image style={{
-                                width: 50,
-                                height: 50,
-                                borderRadius: 25,
-                            }}
-                            source={{uri: this.state.htmMerchant.profile_pic_url}}/>
-                        <View style={{
-                            marginLeft: 15,
-                            width: width - 180,
-                        }}>
-                            <Text style={{
-                                fontSize: 16,
-                                color: '#333333',
-                            }}>{this.state.htmMerchant.display_name + ' ('+this.state.htmMerchant.distance+' km)'}</Text>
-                            <Text style={{
-                                fontSize: 13,
-                                color: '#666666',
-                            }}>Buying @
-                                <Text style={{
-                                    fontSize: 14,
-                                    color: (this.state.htmMerchant.want_to_buy < 0)?'red':'green'
-                                }}>{' '+utils.getCurrencySymbol(this.props.fiat_currency) + ' ' +
-                                    (this.props.balance.per_value *
-                                    (1+(this.state.htmMerchant.want_to_buy/100))).toFixed(3)}
-                                </Text> / FLASH
+                {this.state.htm?
+                    <TouchableOpacity
+                        onPress={()=>this.props.getHTMDetail(this.state.htm.username,
+                            ()=>this.props.navigation.navigate('HTMDetail', this.state.htm))}
+                        style={styles.htmProfileDetailTab}>
+                        <Image style={styles.htmProfileDetailTabImg}
+                            source={this.state.htm.profile_pic_url?
+                                {uri: PROFILE_URL+this.state.htm.profile_pic_url}:
+                                utils.getCurrencyIcon(constants.CURRENCY_TYPE.FLASH)}/>
+                        <View style={styles.htmProfileDetailTabBox}>
+                            <Text style={styles.htmProfileDetailTabLabel}>
+                                <Text style={{ fontSize: 18, fontWeight: 'bold'}}>
+                                    {this.state.htm.display_name}
+                                </Text>
+                                {' ('+this.state.htm.distance+' '+
+                                (this.props.htmProfile.show_distance_in=='kms'?
+                                'km':'mile')+'(s))'}
                             </Text>
-                            <Text style={{
-                                fontSize: 13,
-                                color: '#666666',
-                            }}>Selling @
-                                <Text style={{
-                                    fontSize: 14,
-                                    color: (this.state.htmMerchant.want_to_sell < 0)?'red':'green'
-                                }}>{'  '+utils.getCurrencySymbol(this.props.fiat_currency) + ' '+
-                                    (this.props.balance.per_value *
-                                    (1+(this.state.htmMerchant.want_to_sell/100))).toFixed(3)}
-                                </Text> / FLASH
+                            <Text style={styles.htmProfileDetailTabCurrency}>
+                                {this.state.htm.currencies.split(',')
+                                .map(currency_type => utils.getCurrencyUnit(Number(currency_type))).join(', ')}
                             </Text>
+                            <View style={styles.htmProfileDetailTabBuySell}>
+                                <Text style={styles.htmProfileDetailTabBuySellText}>
+                                    Buying @
+                                </Text>
+                                <Icon style={[styles.htmProfileDetailTabBuySellIcon,{
+                                    bottom:(this.state.htm.buy_at < 0)?5:-6,
+                                    color: (this.state.htm.buy_at < 0)?'red':'green'}]}
+                                    name={(this.state.htm.buy_at < 0)?'sort-down':'sort-up'}/>
+                                <Text style={[styles.htmProfileDetailTabBuySellValue,{
+                                    color: (this.state.htm.buy_at < 0)?'red':'green'}]}>
+                                    {Math.abs(this.state.htm.buy_at)+' %'}
+                                </Text>
+                            </View>
+                            <View style={styles.htmProfileDetailTabBuySell}>
+                                <Text style={styles.htmProfileDetailTabBuySellText}>
+                                    Selling @
+                                </Text>
+                                <Icon style={[styles.htmProfileDetailTabBuySellIcon,{
+                                    bottom:(this.state.htm.sell_at < 0)?5:-6,
+                                    color: (this.state.htm.sell_at < 0)?'red':'green'}]}
+                                    name={(this.state.htm.sell_at < 0)?'sort-down':'sort-up'}/>
+                                <Text style={[styles.htmProfileDetailTabBuySellValue,{
+                                    color: (this.state.htm.sell_at < 0)?'red':'green'}]}>
+                                    {Math.abs(this.state.htm.sell_at)+' %'}
+                                </Text>
+                            </View>
                         </View>
                         <TouchableOpacity style={{paddingLeft: 5}}
-                            onPress={()=>this.props.navigation.navigate('ChatRoom', this.state.htmMerchant)}>
+                            onPress={()=>this.props.navigation.navigate('ChatRoom', this.state.htm)}>
                             <Icon style={[styles.headerFAIcon,{
                                     fontSize:40,
                                     color: '#333',
                                 }]}
                                 name='comments'/>
                         </TouchableOpacity>
-                    </View>:null
+                    </TouchableOpacity>:null
                 }
+                {this.state.showFilter?<View style={styles.htmFilter}>
+                    <Icon style={styles.htmFilterArrow} name='sort-up'/>
+                    <View style={styles.htmFilterContent}>
+                        <View style={styles.htmFilterRow}>
+                            <View style={{
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                justifyContent: 'space-between'
+                            }}>
+                                <Text style={styles.htmFilterWantToLabel}>I want to?</Text>
+                                <Text style={styles.htmFilterWantToVal}>
+                                  {this.state.filter.buy_sell_at_from == 0 && this.state.filter.buy_sell_at_to == 100? 'All':(
+                                      this.state.filter.buy_sell_at_from > 0 && this.state.filter.buy_sell_at_to == 100? (
+                                          ' ≥ '+ this.state.filter.buy_sell_at_from ) : (
+                                      this.state.filter.buy_sell_at_from == 0 && this.state.filter.buy_sell_at_to < 100? (
+                                          ' ≤ '+ this.state.filter.buy_sell_at_to ) : (
+                                         this.state.filter.buy_sell_at_from + ' - '+ this.state.filter.buy_sell_at_to
+                                  )))+'%'}
+                                </Text>
+                            </View>
+                            <View style={[styles.hr,{marginBottom:10}]}/>
+                            <View style={styles.htmFilterWantTo}>
+                                <TouchableOpacity style={styles.htmFilterWantToValue}
+                                    onPress={()=>{
+                                        let filter = this.state.filter;
+                                        filter.want_to = 0;
+                                        this.setState({filter})
+                                    }}>
+                                    <Icon style={styles.htmFilterWantToValueIcon}
+                                        name={(this.state.filter.want_to !== 0)?"circle-o":"dot-circle-o"} />
+                                    <Text style={styles.htmFilterWantToValueText}>All</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={styles.htmFilterWantToValue}
+                                    onPress={()=>{
+                                        let filter = this.state.filter;
+                                        filter.want_to = 1;
+                                        this.setState({filter})
+                                    }}>
+                                    <Icon style={styles.htmFilterWantToValueIcon}
+                                        name={(this.state.filter.want_to !== 1)?"circle-o":"dot-circle-o"} />
+                                    <Text style={styles.htmFilterWantToValueText}>Buy</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={styles.htmFilterWantToValue}
+                                    onPress={()=>{
+                                        let filter = this.state.filter;
+                                        filter.want_to = 2;
+                                        this.setState({filter})
+                                    }}>
+                                    <Icon style={styles.htmFilterWantToValueIcon}
+                                        name={(this.state.filter.want_to !== 2)?"circle-o":"dot-circle-o"} />
+                                    <Text style={styles.htmFilterWantToValueText}>Sell</Text>
+                                </TouchableOpacity>
+                            </View>
+                            <Slider
+                                containerStyle={styles.htmFilterSliderContainer}
+                                trackStyle={styles.htmFilterSliderTrack}
+                                customMarker={()=><View
+                                    style={styles.htmFilterSliderCustomMarker} />}
+                                min={0}
+                                max={100}
+                                step={1}
+                                values={[this.state.filter.buy_sell_at_from,
+                                    this.state.filter.buy_sell_at_to]}
+                                selectedStyle={styles.htmFilterSliderSelected}
+                                onValuesChange={(v)=>{
+                                    let filter = this.state.filter;
+                                    this.state.filter.buy_sell_at_from = v[0];
+                                    if(v.length > 1)
+                                        this.state.filter.buy_sell_at_to = v[1];
+                                    this.setState({filter});
+                                }}
+                                sliderLength={225} />
+                        </View>
+                        <View style={styles.htmFilterRow}>
+                            <View style={{
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                justifyContent: 'space-between'
+                            }}>
+                                <Text style={styles.htmFilterWantToLabel}>Distance</Text>
+                                <Text style={styles.htmFilterWantToVal}>
+                                    {this.state.filter.upto_distance < 5000?(this.state.filter.upto_distance + ' '+
+                                    (this.props.htmProfile
+                                        .show_distance_in == 'miles'?'Miles':'Kms')):'Anywhere'}
+                                </Text>
+                            </View>
+                            <View style={[styles.hr,{marginBottom:10}]}/>
+                            <Slider
+                            containerStyle={styles.htmFilterSliderContainer}
+                            trackStyle={styles.htmFilterSliderTrack}
+                                customMarker={()=><View
+                                    style={styles.htmFilterSliderCustomMarker} />}
+                                min={5}
+                                max={5000}
+                                step={1}
+                                values={[this.state.filter.upto_distance]}
+                                selectedStyle={styles.htmFilterSliderSelected}
+                                onValuesChange={(v)=>{
+                                    let filter = this.state.filter;
+                                    this.state.filter.upto_distance = v[0];
+                                    this.setState({filter});
+                                }}
+                                sliderLength={225} />
+                        </View>
+                        <View style={styles.htmFilterRow}>
+                            <Text style={styles.htmFilterWantToLabel}>Show only online HTMs</Text>
+                            <View style={[styles.hr,{marginBottom:10}]}/>
+                            <View style={[styles.htmFilterWantTo,{marginBottom:10}]}>
+                                <TouchableOpacity style={styles.htmFilterWantToValue}
+                                    onPress={()=>{
+                                        let filter = this.state.filter;
+                                        filter.onlineOnly = true;
+                                        this.setState({filter})
+                                    }}>
+                                    <Icon style={styles.htmFilterWantToValueIcon}
+                                        name={!this.state.filter.onlineOnly?"circle-o":"dot-circle-o"}/>
+                                    <Text style={styles.htmFilterWantToValueText}>Yes</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity style={styles.htmFilterWantToValue}
+                                    onPress={()=>{
+                                        let filter = this.state.filter;
+                                        filter.onlineOnly = false;
+                                        this.setState({filter})
+                                    }}>
+                                    <Icon style={styles.htmFilterWantToValueIcon}
+                                        name={this.state.filter.onlineOnly?"circle-o":"dot-circle-o"} />
+                                    <Text style={styles.htmFilterWantToValueText}>No</Text>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                        <View style={styles.htmFilterRow}>
+                            <View style={{
+                                flexDirection: 'row',
+                                alignItems: 'center',
+                                justifyContent: 'space-between'
+                            }}>
+                                <Text style={styles.htmFilterWantToLabel}>Currencies</Text>
+                                <Text style={styles.htmFilterWantToVal}>
+                                    {Object.keys(this.state.filter.currency_types)
+                                        .length == 0?'All':''}
+                                </Text>
+                            </View>
+                            <View style={[styles.hr,{marginBottom:10}]}/>
+                            {this.props.balances.map(balance =>
+                                <View key={'_currency_'+balance.currency_type+'_'+balance.amt}
+                                    style={[styles.htmProfile,{marginBottom:2}]}>
+                                    <View style={styles.htmCurrency}>
+                                        <TouchableOpacity onPress={()=>{
+                                            let filter = this.state.filter;
+                                            let currency_types = filter.currency_types;
+                                            if(currency_types[balance.currency_type])
+                                                delete currency_types[balance.currency_type];
+                                            else {
+                                                currency_types[balance.currency_type] = {
+                                                    currency_type: balance.currency_type
+                                                }
+                                            }
+                                            filter.currency_types = currency_types;
+                                            this.setState({filter});
+                                        }}>
+                                            <Icon style={styles.htmCurrencyCheckIcon}
+                                                name={this.state.filter.currency_types[balance.currency_type]?'check-square-o':'square-o'}/>
+                                        </TouchableOpacity>
+                                        <Text style={styles.htmProfileLabel}>
+                                            {utils.getCurrencyName(balance.currency_type)}
+                                        </Text>
+                                    </View>
+                                </View>
+                            )}
+                        </View>
+                        <View style={[styles.htmFilterRow, {
+                            flexDirection: 'row',
+                            alignSelf: 'center',
+                            justifyContent: 'space-between',
+                            width: 180,
+                            marginTop: 10,
+                        }]}>
+                            <Button value={'Reset'}
+                                style={styles.htmFilterBtn}
+                                textstyle={styles.htmFilterBtnText}
+                                onPress={()=>{
+                                    let filter = {
+                                        apply: false,
+                                        want_to: 0,
+                                        buy_sell_at_from: 0,
+                                        buy_sell_at_to: 100,
+                                        upto_distance: 5000,
+                                        currency_types: {},
+                                        onlineOnly: false,
+                                    };
+                                    this.setState({filter});
+                            }}/>
+                            <Button value={'Apply'}
+                                style={[styles.htmFilterBtn,{
+                                    backgroundColor: '#E0AE27',
+                                }]}
+                                textstyle={styles.htmFilterBtnText}
+                                onPress={this.findNearByHTMs.bind(this)}/>
+                        </View>
+                    </View>
+                </View>:null}
                 <Loader show={this.props.loading || this.state.loading} />
             </Container>
         );
@@ -280,11 +538,12 @@ class HTMListingMap extends Component < {} > {
 
 function mapStateToProps({params}) {
     return {
-        loader: params.loading,
+        loading: params.loading,
         nightMode: params.nightMode,
         position: params.position,
-        htmMerchants: params.htmMerchants || [],
-        balance: params.balances[0],
+        htms: params.htms || [],
+        htmProfile: params.htmProfile,
+        balances: params.balances,
         fiat_currency: params.fiat_currency,
         location_permission: params.location_permission || false,
         location_error_code: params.location_error_code || 0

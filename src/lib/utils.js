@@ -22,43 +22,6 @@ export const getLocation = async endpoint => {
   return response.json();
 };
 
-export const getRandomName = async endpoint => {
-  const response = await fetch(endpoint || 'https://randomuser.me/api?results=100&inc=name,picture,email&noinfo');
-  return response.json();
-};
-
-export const randomGeo = (center, radius) => {
-    let y0 = center.latitude;
-    let x0 = center.longitude;
-    let rd = radius / 111300; //about 111300 meters in one degree
-
-    let u = Math.random();
-    let v = Math.random();
-
-    let w = rd * Math.sqrt(u);
-    let t = 2 * Math.PI * v;
-    let x = w * Math.cos(t);
-    let y = w * Math.sin(t);
-
-    let newlat = y + y0;
-    let newlon = x + x0;
-
-    return {
-        latitude: Number(newlat.toFixed(5)),
-        longitude: Number(newlon.toFixed(5)),
-        distance: distance(center.latitude, center.longitude, newlat, newlon).toFixed(2),
-    };
-}
-
-//Calc the distance between 2 coordinates as the crow flies
-export const distance = (lat1, lon1, lat2, lon2) => {
-    let R = 6371000;
-    let a = 0.5 - Math.cos((lat2 - lat1) * Math.PI / 180) / 2
-        + Math.cos(lat1 * Math.PI / 180) * Math.cos(lat2 * Math.PI / 180)
-        * (1 - Math.cos((lon2 - lon1) * Math.PI / 180)) / 2;
-    return R * 2 * Math.asin(Math.sqrt(a)) / 1000;
-}
-
 export const getCurrentPosition=(enableHighAccuracy=true)=>{
     return new Promise((resolve,reject) => {
         navigator.geolocation.getCurrentPosition(

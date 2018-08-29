@@ -69,8 +69,7 @@ export const init = () => {
 
         let htmProfile = await AsyncStorage.getItem('htmProfile');
         if(htmProfile !== null){
-            payload.htmProfile = JSON.parse(htmProfile);
-            dispatch(getCurrentPosition());
+            payload.htmProfile = JSON.parse(htmProfile);            
         }
 
         let fiat_currency = await AsyncStorage.getItem('fiat_currency');
@@ -102,51 +101,6 @@ export const init = () => {
             dispatch(getCoinMarketCapDetail());
         }
         initTimezone();
-    }
-}
-
-export const getCurrentPosition = () => {
-    return (dispatch,getState) => {
-        utils.getCurrentPosition().then(async pos => {
-            let position = {
-                accuracy: pos.coords.accuracy,
-                latitude: pos.coords.latitude,
-                longitude: pos.coords.longitude,
-            }
-            let params = getState().params;
-            htmMerchants = params.htmMerchants;
-            if(!htmMerchants) await utils.getRandomName().then(({results}) => {
-                htmMerchants = results.map((a,i) => ({
-                    _id: i,
-                    email:a.email,
-                    display_name: (a.name.first + ' ' + a.name.last).toLowerCase().trim()
-                        .split(/[.\-_\s]/g).reduce((string, word) => string[0]
-                        .toUpperCase() + string.slice(1) + ' ' + word[0]
-                        .toUpperCase() + word.slice(1)),
-                    profile_pic_url:a.picture.medium,
-                    want_to_buy: Math.floor(Math.random()*30)-10,
-                    want_to_sell: Math.floor(Math.random()*30)-10,
-                    ...utils.randomGeo(position,20000)
-                }))
-            });
-            dispatch({
-                type: types.SET_POSITION,
-                payload:{
-                    location_permission: true,
-                    location_error_code: 0,
-                    position,
-                    htmMerchants
-                }
-            });
-        }).catch(e=>{
-            dispatch({
-                type: types.SET_POSITION,
-                payload:{
-                    location_permission: (e.code > 1),
-                    location_error_code: e.code
-                }
-            });
-        });
     }
 }
 

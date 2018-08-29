@@ -1,7 +1,9 @@
 import {
     StyleSheet,
-    Dimensions
+    Dimensions,
+    Platform
 } from 'react-native';
+import { isIphoneX } from '@lib/utils'
 
 const appStyles = require('./app');
 const myAccountStyles = require('./myAccount');
@@ -279,6 +281,174 @@ const styles = StyleSheet.create({
         fontSize: 18,
         color: "#191714",
         marginBottom: 20,
+    },
+    htmProfileDetailTab:{
+        width: width-40,
+        position: 'absolute',
+        bottom: 20,
+        backgroundColor: '#FFFFFF',
+        flexDirection: 'row',
+        borderRadius: 5,
+        alignItems: 'center',
+        padding: 10,
+    },
+    htmProfileDetailTabImg:{
+        width: 50,
+        height: 50,
+        borderRadius: 25,
+    },
+    htmProfileDetailTabBox:{
+        marginLeft: 15,
+        width: width - 180,
+    },
+    htmProfileDetailTabLabel:{
+        fontSize: 16,
+        color: '#333333',
+    },
+    htmProfileDetailTabCurrency:{
+        fontSize: 14,
+        color: '#333333',
+        fontStyle: 'italic',
+        top: -3,
+    },
+    htmProfileDetailTabBuySell:{
+        flexDirection:'row',
+        alignItems: 'center',
+        height: 20,
+    },
+    htmProfileDetailTabBuySellText:{
+        fontSize: 13,
+        color: '#666666',
+    },
+    htmProfileDetailTabBuySellValue:{
+        fontSize: 15,
+        fontWeight: 'bold'
+    },
+    htmProfileDetailTabBuySellIcon:{
+        fontSize: 20,
+        padding: 5,
+        left:2,
+    },
+    htmDetailBuySell:{
+        marginBottom: 10,
+    },
+    htmDetailBuySellRow:{
+        flexDirection:'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        marginLeft: 35,
+    },
+    htmBuySellText:{
+        fontSize: 16,
+        color: '#333333',
+    },
+    htmMap:{
+        flex:1,
+        width:'100%',
+        ...Platform.select({
+            ios: {
+                marginTop: isIphoneX()?92:77,
+            },
+            android: {
+                marginTop: 55,
+            },
+        }),
+    },
+    htmFilter:{
+        flex:1,
+        padding: 10,
+        position: 'absolute',
+        ...Platform.select({
+            ios: {
+                shadowColor: 'rgba(0,0,0, 0.5)',
+                shadowOffset: { height: 1, width: 0 },
+                shadowOpacity: 0.7,
+                marginTop: isIphoneX()?82:67,
+            },
+            android: {
+                elevation: 10,
+                marginTop: 45,
+            },
+        }),
+        top :0,
+        right: 0,
+        zIndex: 999999
+    },
+    htmFilterArrow:{
+        alignSelf: 'flex-end',
+        color: '#FFF',
+        fontSize: 30,
+        right: 8,
+        top: -13,
+        marginBottom: -32,
+    },
+    htmFilterContent:{
+        backgroundColor: '#FFFFFF',
+        padding: 20,
+        borderRadius: 3,
+    },
+    htmFilterRow:{
+        width: 250,
+    },
+    htmFilterWantTo:{
+        flexDirection: 'row',
+    },
+    htmFilterWantToLabel:{
+        fontSize: 18,
+        color: '#333',
+        marginBottom: 2
+    },
+    htmFilterWantToVal:{
+        fontSize: 16,
+        fontWeight: 'bold',
+        color: '#b98e1b',
+        marginBottom: 2
+    },
+    htmFilterWantToValue:{
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginLeft: 10,
+        marginTop: 5,
+    },
+    htmFilterWantToValueIcon:{
+        fontSize: 16,
+        color: '#4A4A4A'
+    },
+    htmFilterWantToValueText:{
+        fontSize: 15,
+        color: '#4A4A4A',
+        paddingLeft: 5,
+        paddingRight: 15,
+    },
+    htmFilterBtn:{
+        backgroundColor: '#C2C2C2',
+        alignSelf: 'center',
+        borderRadius: 5,
+        paddingHorizontal: 20,
+        paddingVertical: 5,
+    },
+    htmFilterBtnText:{
+        fontSize: 18,
+        color: '#191714',
+    },
+    htmFilterSliderCustomMarker:{
+        marginTop: 2,
+        paddingHorizontal:5,
+        width:20,
+        height:20,
+        borderRadius:10,
+        backgroundColor: '#191714'
+    },
+    htmFilterSliderSelected:{
+        backgroundColor: '#E0AE27',
+    },
+    htmFilterSliderContainer:{
+        height:40,
+        alignSelf: 'center',
+    },
+    htmFilterSliderTrack:{
+        height:5,
+        bottom: 1
     },
 });
 

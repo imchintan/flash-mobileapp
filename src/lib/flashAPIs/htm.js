@@ -233,3 +233,48 @@ export const enableHTMProfile = (auth_version, sessionToken) => {
         });
     });
 }
+
+/**
+ * Find Nearby HTMs
+ * @param  {Number}  auth_version       API authentication version
+ * @param  {String}  sessionToken       User authorization token
+ * @param  {Number}  lat                HTM location latitude
+ * @param  {Number}  long               HTM location longitude
+ * @param  {String}  show_distance_in   Show distance in Miles / Kms
+ * @param  {Object}  filter             HTM filter
+ *   ⮑ @param  {Number}  upto_distance      Cover distance from current location
+ *      @param  {Boolean} onlineOnly         Get only online HTMs (default: false)
+ *      @param  {Number}  buy_at_from        the filter of buying percentage at from
+ *      @param  {Number}  buy_at_to          the filter of buying percentage at to
+ *      @param  {Number}  sell_at_from       the filter of selling percentage at from
+ *      @param  {Number}  sell_at_to         the filter of selling percentage at to
+ *      @param  {Array}   currency_types     Array of currency type like [1,2,3]
+ * @return {Object}                     Return API response
+ */
+export const findNearByHTMs = (auth_version, sessionToken, lat, long,
+    show_distance_in, filter) => {
+    return new Promise((resolve,reject) => {
+        fetch(API_URL+`/nearby-htms`,{
+            method: 'POST',
+            body: JSON.stringify({
+                lat,
+                long,
+                show_distance_in,
+                ...filter,
+                appversion:APP_VERSION,
+                res:RESOURCE,
+            }),
+            headers: {
+               'Content-Type': 'application/json; charset=utf-8',
+               'authorization': sessionToken,
+               'fl_auth_version': auth_version
+            },
+        })
+        .then(res => res.json())
+        .then(json => resolve(json))
+        .catch(e =>{
+            console.log(e);
+            reject('Something went wrong!')
+        });
+    });
+}
