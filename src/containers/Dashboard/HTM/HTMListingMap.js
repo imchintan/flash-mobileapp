@@ -23,7 +23,7 @@ import {
     Slider,
     Loader,
 } from '@components';
-import { Marker } from 'react-native-maps';
+import { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import MapView from 'react-native-map-clustering';
 import AndroidOpenSettings from 'react-native-android-open-settings'
 
@@ -50,12 +50,12 @@ class HTMListingMap extends Component < {} > {
             htm:null,
             loading: true,
             showFilter: false,
-            filter: {
+            filter: this.props.htmFilter?this.props.htmFilter:{
                 apply: false,
                 want_to: 0,
-                buy_sell_at_from: 0,
-                buy_sell_at_to: 100,
-                upto_distance: 5000,
+                buy_sell_at_from: -30,
+                buy_sell_at_to: 30,
+                upto_distance: 1000,
                 currency_types: {},
                 onlineOnly: false,
             }
@@ -91,8 +91,8 @@ class HTMListingMap extends Component < {} > {
             } else {
                 this.props.getCurrentPosition();
             }
-        } catch (err) {
-            console.log(err);
+        } catch (e) {
+            console.log(e);
             this.props.customAction({lockApp:false});
             setTimeout(()=>this.props.customAction({lockApp:false}),500);
         }
@@ -101,32 +101,21 @@ class HTMListingMap extends Component < {} > {
     findNearByHTMs(){
         let filter = this.state.filter;
         filter.apply = true;
-        this.setState({filter, showFilter: false},()=>{
-            let _filter = {
-                onlineOnly: filter.onlineOnly,
-                currency_types: Object.values(filter.currency_types)
-                    .map(currency => currency.currency_type),
-            }
-
-            if(filter.buy_sell_at_from > 0){
-                if(filter.want_to == 1 || filter.want_to == 0)
-                    _filter.buy_at_from = filter.buy_sell_at_from;
-                if(filter.want_to == 2 || filter.want_to == 0)
-                _filter.sell_at_from = filter.buy_sell_at_from;
-            }
-
-            if(filter.buy_sell_at_to < 100){
-                if(filter.want_to == 1 || filter.want_to == 0)
-                    _filter.buy_at_to = filter.buy_sell_at_to;
-                if(filter.want_to == 2 || filter.want_to == 0)
-                    _filter.sell_at_to = filter.buy_sell_at_to;
-            }
-
-            if(filter.upto_distance < 5000)
-                _filter.upto_distance = filter.upto_distance;
-
-            this.props.findNearByHTMs(_filter, true);
-        });
+        this.props.findNearByHTMs(filter, true);
+        this.setState({filter, showFilter: false});
+    }
+    resetFilter(){
+        let filter = {
+            apply: false,
+            want_to: 0,
+            buy_sell_at_from: -30,
+            buy_sell_at_to: 30,
+            upto_distance: 1000,
+            currency_types: {},
+            onlineOnly: false,
+        };
+        this.setState({filter, showFilter: false});
+        this.props.findNearByHTMs(filter, true);
     }
 
     render() {
@@ -162,7 +151,7 @@ class HTMListingMap extends Component < {} > {
                             onPress={()=>{
                                 this.setState({loading: true});
                                 this.props.getCurrentPosition();
-                                setTimeout(()=>this.mount && this.setState({loading: false}),2000);
+                                setTimeout(()=>this.mount && this.setState({loading: false}),3000);
                             }}/>
                     </View>:null
                 }
@@ -180,9 +169,9 @@ class HTMListingMap extends Component < {} > {
                                 }else{
                                     AndroidOpenSettings.locationSourceSettings();
                                     this.props.navigation.goBack();
-                                    setTimeout(()=>this.props.getCurrentPosition(),2000);
+                                    setTimeout(()=>this.props.getCurrentPosition(),1000);
                                 }
-                                setTimeout(()=>this.mount && this.setState({loading: false}),2000);
+                                setTimeout(()=>this.mount && this.setState({loading: false}),3000);
                             }}/>
                     </View>:null
                 }
@@ -211,6 +200,7 @@ class HTMListingMap extends Component < {} > {
                     clusterTextColor = '#191714'
                     clusterBorderColor = '#191714'
                     clusterBorderWidth = {0}
+                    provider={PROVIDER_GOOGLE}
                     customMapStyle={
                         [{"elementType": "geometry","stylers": [{"color": "#212121"}]},
                          {"elementType": "labels.icon","stylers": [{"visibility": "off"}]},
@@ -340,12 +330,12 @@ class HTMListingMap extends Component < {} > {
                             }}>
                                 <Text style={styles.htmFilterWantToLabel}>I want to?</Text>
                                 <Text style={styles.htmFilterWantToVal}>
-                                  {this.state.filter.buy_sell_at_from == 0 && this.state.filter.buy_sell_at_to == 100? 'All':(
-                                      this.state.filter.buy_sell_at_from > 0 && this.state.filter.buy_sell_at_to == 100? (
+                                  {this.state.filter.buy_sell_at_from == -30 && this.state.filter.buy_sell_at_to == 30? 'All':(
+                                      this.state.filter.buy_sell_at_from > -30 && this.state.filter.buy_sell_at_to == 30? (
                                           ' ≥ '+ this.state.filter.buy_sell_at_from ) : (
-                                      this.state.filter.buy_sell_at_from == 0 && this.state.filter.buy_sell_at_to < 100? (
+                                      this.state.filter.buy_sell_at_from == -30 && this.state.filter.buy_sell_at_to < 30? (
                                           ' ≤ '+ this.state.filter.buy_sell_at_to ) : (
-                                         this.state.filter.buy_sell_at_from + ' - '+ this.state.filter.buy_sell_at_to
+                                         this.state.filter.buy_sell_at_from + ' to '+ this.state.filter.buy_sell_at_to
                                   )))+'%'}
                                 </Text>
                             </View>
@@ -387,8 +377,8 @@ class HTMListingMap extends Component < {} > {
                                 trackStyle={styles.htmFilterSliderTrack}
                                 customMarker={()=><View
                                     style={styles.htmFilterSliderCustomMarker} />}
-                                min={0}
-                                max={100}
+                                min={-30}
+                                max={30}
                                 step={1}
                                 values={[this.state.filter.buy_sell_at_from,
                                     this.state.filter.buy_sell_at_to]}
@@ -410,7 +400,7 @@ class HTMListingMap extends Component < {} > {
                             }}>
                                 <Text style={styles.htmFilterWantToLabel}>Distance</Text>
                                 <Text style={styles.htmFilterWantToVal}>
-                                    {this.state.filter.upto_distance < 5000?(this.state.filter.upto_distance + ' '+
+                                    {this.state.filter.upto_distance < 1000?(this.state.filter.upto_distance + ' '+
                                     (this.props.htmProfile
                                         .show_distance_in == 'miles'?'Miles':'Kms')):'Anywhere'}
                                 </Text>
@@ -422,7 +412,7 @@ class HTMListingMap extends Component < {} > {
                                 customMarker={()=><View
                                     style={styles.htmFilterSliderCustomMarker} />}
                                 min={5}
-                                max={5000}
+                                max={1000}
                                 step={1}
                                 values={[this.state.filter.upto_distance]}
                                 selectedStyle={styles.htmFilterSliderSelected}
@@ -509,18 +499,7 @@ class HTMListingMap extends Component < {} > {
                             <Button value={'Reset'}
                                 style={styles.htmFilterBtn}
                                 textstyle={styles.htmFilterBtnText}
-                                onPress={()=>{
-                                    let filter = {
-                                        apply: false,
-                                        want_to: 0,
-                                        buy_sell_at_from: 0,
-                                        buy_sell_at_to: 100,
-                                        upto_distance: 5000,
-                                        currency_types: {},
-                                        onlineOnly: false,
-                                    };
-                                    this.setState({filter});
-                            }}/>
+                                onPress={this.resetFilter.bind(this)}/>
                             <Button value={'Apply'}
                                 style={[styles.htmFilterBtn,{
                                     backgroundColor: '#E0AE27',
@@ -542,6 +521,7 @@ function mapStateToProps({params}) {
         nightMode: params.nightMode,
         position: params.position,
         htms: params.htms || [],
+        htmFilter: params.htmFilter || null,
         htmProfile: params.htmProfile,
         balances: params.balances,
         fiat_currency: params.fiat_currency,

@@ -230,7 +230,6 @@ export const updateHTMLocation = (lat, long) => {
         let params = getState().params;
         apis.updateHTMLocation(params.profile.auth_version,
             params.profile.sessionToken, lat, long).then((d)=>{
-            console.log(d);
             dispatch({ type: types.UPDATE_HTM_LOCATION });
         }).catch(e=>{
             console.log(e);
@@ -249,7 +248,7 @@ export const getCurrentPosition = (update=false) => {
             }
             if(update)
                 dispatch(updateHTMLocation(position.latitude,position.longitude));
-            
+
             dispatch({
                 type: types.SET_POSITION,
                 payload:{
@@ -276,14 +275,42 @@ export const getCurrentPosition = (update=false) => {
 
 export const findNearByHTMs = (filter={}, loading = false) => {
     return (dispatch,getState) => {
-        if(loading) dispatch({ type: types.LOADING_START });
+        let payload = { htms: [] };
+        if(loading) dispatch({
+            type: types.LOADING_START,
+            payload
+        });
         let params = getState().params;
         let position = params.position;
-        let payload = {};
-        if(loading) payload.loading = false;
+        let _filter = {};
+        if(!!filter.apply){
+            _filter.onlineOnly = filter.onlineOnly;
+            _filter.currency_types = Object.values(filter.currency_types)
+                    .map(currency => currency.currency_type);
+
+            if(filter.buy_sell_at_from > -30){
+                if(filter.want_to == 1 || filter.want_to == 0)
+                    _filter.buy_at_from = filter.buy_sell_at_from;
+                if(filter.want_to == 2 || filter.want_to == 0)
+                _filter.sell_at_from = filter.buy_sell_at_from;
+            }
+
+            if(filter.buy_sell_at_to < 30){
+                if(filter.want_to == 1 || filter.want_to == 0)
+                    _filter.buy_at_to = filter.buy_sell_at_to;
+                if(filter.want_to == 2 || filter.want_to == 0)
+                    _filter.sell_at_to = filter.buy_sell_at_to;
+            }
+
+            if(filter.upto_distance < 1000)
+                _filter.upto_distance = filter.upto_distance;
+        }
+
         apis.findNearByHTMs(params.profile.auth_version, params.profile.sessionToken,
             position.latitude, position.longitude, params.htmProfile.show_distance_in,
-            filter).then((d)=>{
+            _filter).then((d)=>{
+            if(typeof filter.apply !== 'undefined')
+                payload.htmFilter = filter;
             if(d.rc == 1){
                 payload.htms = d.htms;
             }
@@ -291,12 +318,11 @@ export const findNearByHTMs = (filter={}, loading = false) => {
                 type: types.FIND_NEAR_BY_HTMS,
                 payload
             });
+            if(loading)setTimeout(()=>dispatch({type: types.LOADING_END}),1000);
         }).catch(e=>{
             console.log(e);
-            dispatch({
-                type: types.FIND_NEAR_BY_HTMS,
-                payload
-            });
+            dispatch({ type: types.FIND_NEAR_BY_HTMS });
+            if(loading)setTimeout(()=>dispatch({type: types.LOADING_END}),1000);
         })
     }
 }
