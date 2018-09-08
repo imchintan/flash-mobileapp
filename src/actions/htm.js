@@ -114,6 +114,8 @@ export const getHTMDetail = (username, cb=null) => {
                     payload: { loading: false }
                 });
             }else{
+                d.htm_profile.isOnline =  (d.htm_profile.last_seen_at >
+                    (new Date().getTime() - (2 * 60 * 1000))); // 2 mints
                 dispatch({
                     type: types.GET_HTM_DETAIL,
                     payload: {
@@ -208,13 +210,19 @@ export const htmLocationThread = (start=0) => {
         if(start == 1){
             if(htmLocationIntRef != null) return;
             dispatch(getCurrentPosition(true));
+            let n = 0;
             htmLocationIntRef = setInterval(()=>{
-                let location_permission = getState().params.location_permission;
-                if(location_permission){
+                let params = getState().params;
+                if(params.location_permission){
                     dispatch({ type: types.GET_HTM_LOCATION });
-                    dispatch(getCurrentPosition(true));
+                    n++;
+                    if(n%5 == 0)
+                        dispatch(getCurrentPosition(true));
+                    else
+                        dispatch(updateHTMLocation(params.position.latitude,
+                            params.position.longitude));
                 }
-            },(2 * 60 * 1000)) // 2 mints
+            },(1 * 60 * 1000)) // every mint
             dispatch({ type: types.START_HTM_LOCATION_THREAD });
         }else{
             if(htmLocationIntRef == null) return;
@@ -312,7 +320,9 @@ export const findNearByHTMs = (filter={}, loading = false) => {
             if(typeof filter.apply !== 'undefined')
                 payload.htmFilter = filter;
             if(d.rc == 1){
-                payload.htms = d.htms;
+                payload.htms = d.htms.map((htm) => ({ ...htm,
+                    isOnline: htm.last_seen_at >
+                    (new Date().getTime() - (2 * 60 * 1000))})); // 2 mints
             }
             dispatch({
                 type: types.FIND_NEAR_BY_HTMS,

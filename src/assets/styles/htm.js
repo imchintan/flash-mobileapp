@@ -302,14 +302,13 @@ const styles = StyleSheet.create({
         width: width - 180,
     },
     htmProfileDetailTabLabel:{
-        fontSize: 16,
+        fontSize: 14,
         color: '#333333',
     },
     htmProfileDetailTabCurrency:{
         fontSize: 14,
         color: '#333333',
-        fontStyle: 'italic',
-        top: -3,
+        marginBottom: 2,
     },
     htmProfileDetailTabBuySell:{
         flexDirection:'row',
@@ -449,6 +448,34 @@ const styles = StyleSheet.create({
     htmFilterSliderTrack:{
         height:5,
         bottom: 1
+    },
+    htmProfileStatusIcon:{
+        fontSize: 12,
+        color: '#00FF00',
+    },
+    htmProfileStatusText:{
+        fontSize: 14,
+        color: '#787878',
+        fontStyle: 'italic',
+    },
+    htmHeaderTitleBox:{
+        paddingHorizontal: 10,
+        justifyContent: 'center',
+        alignItems: 'center',
+        bottom: 1,
+        width: '60%',
+        height:'100%',
+        position: 'absolute',
+        left: '20%'
+    },
+    htmHeaderTitle:{
+        fontSize: 22,
+        fontWeight: '500',
+        color: '#FFFFFF'
+    },
+    htmHeaderSubTitle:{
+        fontSize: 14,
+        color: '#E2E2E2',
     },
 });
 

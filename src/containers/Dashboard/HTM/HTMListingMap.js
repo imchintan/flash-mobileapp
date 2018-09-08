@@ -23,9 +23,10 @@ import {
     Slider,
     Loader,
 } from '@components';
-import { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
+import { Marker } from 'react-native-maps';
 import MapView from 'react-native-map-clustering';
 import AndroidOpenSettings from 'react-native-android-open-settings'
+import moment from 'moment-timezone';
 
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
@@ -35,7 +36,12 @@ import * as utils from '@lib/utils';
 import * as constants from '@src/constants';
 import { PROFILE_URL } from '@src/config';
 
-const mapPin = __DEV__?require('@images/map-pin-debug.png'):require('@images/map-pin.png');
+const mapPin = __DEV__?require('@images/map-pin-debug.png'):
+    require('@images/map-pin.png');
+const mapPinOnline = __DEV__?require('@images/map-pin-online-debug.png'):
+    require('@images/map-pin-online.png');
+const mapPinCurrentLocation = __DEV__?require('@images/current-position-debug.png'):
+    require('@images/current-position.png');
 
 class HTMListingMap extends Component < {} > {
 
@@ -74,7 +80,10 @@ class HTMListingMap extends Component < {} > {
 
     checkLocationPermission = async () =>{
         try {
-            if(this.props.position) return;
+            if(this.props.position){
+                this.props.findNearByHTMs(this.state.filter, true);
+                return;
+            }
             if(Platform.OS !== 'ios'){
                 this.props.customAction({lockApp:true});
                 const granted = await PermissionsAndroid.request(
@@ -119,7 +128,8 @@ class HTMListingMap extends Component < {} > {
     }
 
     render() {
-        const styles = (this.props.nightMode?require('@styles/nightMode/htm'):require('@styles/htm'));
+        const styles = (this.props.nightMode?require('@styles/nightMode/htm'):
+            require('@styles/htm'));
         return (
             <Container>
                 <Header>
@@ -132,7 +142,8 @@ class HTMListingMap extends Component < {} > {
                     <HeaderTitle>Near by HTM</HeaderTitle>
                     {this.props.position?<HeaderRight>
                         <TouchableOpacity
-                            onPress={()=>this.setState({showFilter:!this.state.showFilter})}>
+                            onPress={()=>this.setState({showFilter:!this.state.showFilter,
+                                htm:null})}>
                             <Icon style={[styles.headerFAIcon,{
                                     fontSize:28,
                                     color: this.state.filter.apply?'#E0AE27':'#FFFFFF'
@@ -145,13 +156,15 @@ class HTMListingMap extends Component < {} > {
                     && this.props.location_error_code == 3?
                     <View style={styles.htmMapLocationErrorNote}>
                         <Text style={styles.htmMapLocationErrorNoteText}>
-                            {"We couldn't find your location may be because of poor connectivity"}
+                            {"We couldn't find your location may be "+
+                                "because of poor connectivity"}
                         </Text>
                         <Button value={'Try again'}
                             onPress={()=>{
                                 this.setState({loading: true});
                                 this.props.getCurrentPosition();
-                                setTimeout(()=>this.mount && this.setState({loading: false}),3000);
+                                setTimeout(()=>this.mount &&
+                                    this.setState({loading: false}),3000);
                             }}/>
                     </View>:null
                 }
@@ -171,14 +184,16 @@ class HTMListingMap extends Component < {} > {
                                     this.props.navigation.goBack();
                                     setTimeout(()=>this.props.getCurrentPosition(),1000);
                                 }
-                                setTimeout(()=>this.mount && this.setState({loading: false}),3000);
+                                setTimeout(()=>this.mount &&
+                                    this.setState({loading: false}),3000);
                             }}/>
                     </View>:null
                 }
                 {!this.props.position && !this.props.location_permission?
                     <View style={styles.htmMapLocationErrorNote}>
                         <Text style={styles.htmMapLocationErrorNoteText}>
-                            {"It seems you didn't allow Location permission to FLASH App. please allow it to find nearby HTMs"}
+                            {"It seems you didn't allow Location permission "+
+                                "to FLASH App. please allow it to find nearby HTMs"}
                         </Text>
                         <Button value={'Go to setting'}
                             onPress={()=>{
@@ -200,47 +215,7 @@ class HTMListingMap extends Component < {} > {
                     clusterTextColor = '#191714'
                     clusterBorderColor = '#191714'
                     clusterBorderWidth = {0}
-                    provider={PROVIDER_GOOGLE}
-                    customMapStyle={
-                        [{"elementType": "geometry","stylers": [{"color": "#212121"}]},
-                         {"elementType": "labels.icon","stylers": [{"visibility": "off"}]},
-                         {"elementType": "labels.text.fill","stylers": [{"color": "#757575"}]},
-                         {"elementType": "labels.text.stroke","stylers": [{"color": "#212121"}]},
-                         {"featureType": "administrative",
-                            "elementType": "geometry","stylers": [{"color": "#757575"}]},
-                         {"featureType": "administrative.country",
-                            "elementType": "labels.text.fill","stylers": [{"color": "#9e9e9e"}]},
-                         {"featureType": "administrative.land_parcel","stylers": [{"visibility": "off"}]},
-                         {"featureType": "administrative.locality",
-                            "elementType": "labels.text.fill","stylers": [{"color": "#bdbdbd"}]},
-                         {"featureType": "poi",
-                            "elementType": "labels.text.fill","stylers": [{"color": "#757575"}]},
-                         {"featureType": "poi.park",
-                            "elementType": "geometry","stylers": [{"color": "#181818"}]},
-                         {"featureType": "poi.park",
-                            "elementType": "labels.text.fill","stylers": [{"color": "#616161"}]},
-                         {"featureType": "poi.park",
-                            "elementType": "labels.text.stroke","stylers": [{"color": "#1b1b1b"}]},
-                         {"featureType": "road",
-                            "elementType": "geometry.fill","stylers": [{"color": "#2c2c2c"}]},
-                         {"featureType": "road",
-                            "elementType": "labels.text.fill","stylers": [{"color": "#8a8a8a"}]},
-                         {"featureType": "road.arterial",
-                            "elementType": "geometry","stylers": [{"color": "#373737"}]},
-                         {"featureType": "road.highway",
-                            "elementType": "geometry","stylers": [{"color": "#3c3c3c"}]},
-                         {"featureType": "road.highway.controlled_access",
-                            "elementType": "geometry","stylers": [{"color": "#4e4e4e"}]},
-                         {"featureType": "road.local",
-                            "elementType": "labels.text.fill","stylers": [{"color": "#616161"}]},
-                         {"featureType": "transit",
-                            "elementType": "labels.text.fill","stylers": [{"color": "#757575"}]},
-                         {"featureType": "water",
-                            "elementType": "geometry","stylers": [{"color": "#000000"}]},
-                         {"featureType": "water",
-                            "elementType": "labels.text.fill","stylers": [{"color": "#3d3d3d"}]}]
-                    }
-                    showsUserLocation={true}
+                    customMapStyle={constants.CUSTOM_MAP_STYLE}
                     followsUserLocation={true}
                     showsMyLocationButton={true}
                     region={{
@@ -257,13 +232,22 @@ class HTMListingMap extends Component < {} > {
                                 longitude: htm.long
                             }}
                             onPress={()=>this.setState({htm})}
-                            image={mapPin}/>
+                            image={htm.isOnline?mapPinOnline:mapPin}/>
                     )}
+                    <Marker
+                        key={'_map_pin_current_location'}
+                        currentLocation={true}
+                        coordinate={{
+                            latitude: this.props.position.latitude,
+                            longitude: this.props.position.longitude
+                        }}
+                        image={mapPinCurrentLocation}/>
                 </MapView>:null}
                 {this.state.htm?
                     <TouchableOpacity
                         onPress={()=>this.props.getHTMDetail(this.state.htm.username,
-                            ()=>this.props.navigation.navigate('HTMDetail', this.state.htm))}
+                            ()=>this.setState({htm:null},
+                            ()=>this.props.navigation.navigate('HTMDetail')))}
                         style={styles.htmProfileDetailTab}>
                         <Image style={styles.htmProfileDetailTabImg}
                             source={this.state.htm.profile_pic_url?
@@ -271,16 +255,26 @@ class HTMListingMap extends Component < {} > {
                                 utils.getCurrencyIcon(constants.CURRENCY_TYPE.FLASH)}/>
                         <View style={styles.htmProfileDetailTabBox}>
                             <Text style={styles.htmProfileDetailTabLabel}>
-                                <Text style={{ fontSize: 18, fontWeight: 'bold'}}>
+                                <Text style={{ fontSize: 16, fontWeight: 'bold'}}>
                                     {this.state.htm.display_name}
                                 </Text>
-                                {' ('+this.state.htm.distance+' '+
+                                {' ('+utils.flashNFormatter(this.state.htm.distance,2,100)+' '+
                                 (this.props.htmProfile.show_distance_in=='kms'?
-                                'km':'mile')+'(s))'}
+                                'km':'mile')+(this.state.htm.distance> 0?'s':'')+')'}
+                            </Text>
+                            <Text style={{bottom: 2}}>
+                                {this.state.htm.isOnline?
+                                    <Icon style={styles.htmProfileStatusIcon}
+                                        name={'circle'}/>:null}
+                                <Text style={styles.htmProfileStatusText}>
+                                    {(this.state.htm.isOnline?' online': 'last seen at '
+                                        +moment(this.state.htm.last_seen_at).fromNow())}
+                                </Text>
                             </Text>
                             <Text style={styles.htmProfileDetailTabCurrency}>
                                 {this.state.htm.currencies.split(',')
-                                .map(currency_type => utils.getCurrencyUnit(Number(currency_type))).join(', ')}
+                                .map(currency_type => utils
+                                    .getCurrencyUnit(Number(currency_type))).join(', ')}
                             </Text>
                             <View style={styles.htmProfileDetailTabBuySell}>
                                 <Text style={styles.htmProfileDetailTabBuySellText}>
@@ -310,7 +304,8 @@ class HTMListingMap extends Component < {} > {
                             </View>
                         </View>
                         <TouchableOpacity style={{paddingLeft: 5}}
-                            onPress={()=>this.props.navigation.navigate('ChatRoom', this.state.htm)}>
+                            onPress={()=>this.props.navigation.navigate('ChatRoom',
+                                this.state.htm)}>
                             <Icon style={[styles.headerFAIcon,{
                                     fontSize:40,
                                     color: '#333',
@@ -330,12 +325,16 @@ class HTMListingMap extends Component < {} > {
                             }}>
                                 <Text style={styles.htmFilterWantToLabel}>I want to?</Text>
                                 <Text style={styles.htmFilterWantToVal}>
-                                  {this.state.filter.buy_sell_at_from == -30 && this.state.filter.buy_sell_at_to == 30? 'All':(
-                                      this.state.filter.buy_sell_at_from > -30 && this.state.filter.buy_sell_at_to == 30? (
+                                  {this.state.filter.buy_sell_at_from == -30 &&
+                                      this.state.filter.buy_sell_at_to == 30? 'All':(
+                                      this.state.filter.buy_sell_at_from > -30 &&
+                                      this.state.filter.buy_sell_at_to == 30? (
                                           ' ≥ '+ this.state.filter.buy_sell_at_from ) : (
-                                      this.state.filter.buy_sell_at_from == -30 && this.state.filter.buy_sell_at_to < 30? (
+                                      this.state.filter.buy_sell_at_from == -30 &&
+                                      this.state.filter.buy_sell_at_to < 30? (
                                           ' ≤ '+ this.state.filter.buy_sell_at_to ) : (
-                                         this.state.filter.buy_sell_at_from + ' to '+ this.state.filter.buy_sell_at_to
+                                         this.state.filter.buy_sell_at_from + ' to '+
+                                         this.state.filter.buy_sell_at_to
                                   )))+'%'}
                                 </Text>
                             </View>
@@ -368,7 +367,8 @@ class HTMListingMap extends Component < {} > {
                                         this.setState({filter})
                                     }}>
                                     <Icon style={styles.htmFilterWantToValueIcon}
-                                        name={(this.state.filter.want_to !== 2)?"circle-o":"dot-circle-o"} />
+                                        name={(this.state.filter.want_to !== 2)?
+                                        "circle-o":"dot-circle-o"} />
                                     <Text style={styles.htmFilterWantToValueText}>Sell</Text>
                                 </TouchableOpacity>
                             </View>
@@ -400,15 +400,16 @@ class HTMListingMap extends Component < {} > {
                             }}>
                                 <Text style={styles.htmFilterWantToLabel}>Distance</Text>
                                 <Text style={styles.htmFilterWantToVal}>
-                                    {this.state.filter.upto_distance < 1000?(this.state.filter.upto_distance + ' '+
+                                    {this.state.filter.upto_distance < 1000?
+                                        (this.state.filter.upto_distance + ' '+
                                     (this.props.htmProfile
                                         .show_distance_in == 'miles'?'Miles':'Kms')):'Anywhere'}
                                 </Text>
                             </View>
                             <View style={[styles.hr,{marginBottom:10}]}/>
                             <Slider
-                            containerStyle={styles.htmFilterSliderContainer}
-                            trackStyle={styles.htmFilterSliderTrack}
+                                containerStyle={styles.htmFilterSliderContainer}
+                                trackStyle={styles.htmFilterSliderTrack}
                                 customMarker={()=><View
                                     style={styles.htmFilterSliderCustomMarker} />}
                                 min={5}
@@ -434,7 +435,8 @@ class HTMListingMap extends Component < {} > {
                                         this.setState({filter})
                                     }}>
                                     <Icon style={styles.htmFilterWantToValueIcon}
-                                        name={!this.state.filter.onlineOnly?"circle-o":"dot-circle-o"}/>
+                                        name={!this.state.filter.onlineOnly?
+                                            "circle-o":"dot-circle-o"}/>
                                     <Text style={styles.htmFilterWantToValueText}>Yes</Text>
                                 </TouchableOpacity>
                                 <TouchableOpacity style={styles.htmFilterWantToValue}
@@ -444,7 +446,8 @@ class HTMListingMap extends Component < {} > {
                                         this.setState({filter})
                                     }}>
                                     <Icon style={styles.htmFilterWantToValueIcon}
-                                        name={this.state.filter.onlineOnly?"circle-o":"dot-circle-o"} />
+                                        name={this.state.filter.onlineOnly?
+                                            "circle-o":"dot-circle-o"} />
                                     <Text style={styles.htmFilterWantToValueText}>No</Text>
                                 </TouchableOpacity>
                             </View>
@@ -463,7 +466,8 @@ class HTMListingMap extends Component < {} > {
                             </View>
                             <View style={[styles.hr,{marginBottom:10}]}/>
                             {this.props.balances.map(balance =>
-                                <View key={'_currency_'+balance.currency_type+'_'+balance.amt}
+                                <View key={'_currency_'+balance.currency_type+
+                                    '_'+balance.amt}
                                     style={[styles.htmProfile,{marginBottom:2}]}>
                                     <View style={styles.htmCurrency}>
                                         <TouchableOpacity onPress={()=>{
@@ -480,7 +484,9 @@ class HTMListingMap extends Component < {} > {
                                             this.setState({filter});
                                         }}>
                                             <Icon style={styles.htmCurrencyCheckIcon}
-                                                name={this.state.filter.currency_types[balance.currency_type]?'check-square-o':'square-o'}/>
+                                                name={this.state.filter
+                                                .currency_types[balance.currency_type]?
+                                                'check-square-o':'square-o'}/>
                                         </TouchableOpacity>
                                         <Text style={styles.htmProfileLabel}>
                                             {utils.getCurrencyName(balance.currency_type)}

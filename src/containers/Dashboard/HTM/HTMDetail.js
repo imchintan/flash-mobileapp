@@ -13,11 +13,11 @@
      Content,
      Header,
      HeaderLeft,
-     HeaderTitle,
      Icon,
      Button,
      Text
  } from '@components';
+import moment from 'moment-timezone';
 
  import {connect} from 'react-redux';
  import {bindActionCreators} from 'redux';
@@ -37,7 +37,7 @@ class HTMDetail extends Component < {} > {
     constructor(props) {
         super(props);
         this.state = {
-            htm: this.props.navigation.state.params
+            htm: this.props.htm
         };
     }
 
@@ -52,13 +52,25 @@ class HTMDetail extends Component < {} > {
                                 style={styles.headerBackIcon} name='angle-left'/>
                         </TouchableOpacity>
                     </HeaderLeft>
-                    <HeaderTitle>{this.props.htm.display_name}</HeaderTitle>
+                    <View style={styles.htmHeaderTitleBox}>
+                        <Text numberOfLines={1} style={styles.htmHeaderTitle}>
+                            {this.props.htm.display_name}
+                        </Text>
+                        <Text numberOfLines={1} style={styles.htmHeaderSubTitle}>
+                            {this.props.htm.isOnline?
+                                <Icon style={styles.htmProfileStatusIcon}
+                                    name={'circle'}/>:null}
+                            <Text>
+                                {(this.props.htm.isOnline?' online': 'last seen at '+moment(this.state.htm.last_seen_at).fromNow())}
+                            </Text>
+                        </Text>
+                    </View>
                 </Header>
                 <Content bounces={false} style={styles.content}>
                     <View style={styles.htmProfileDetail}>
                         <Image
                             style={styles.htmProfileImage}
-                            source={this.state.htm.profile_pic_url?
+                            source={this.props.htm.profile_pic_url?
                                 {uri:PROFILE_URL+this.state.htm.profile_pic_url}:
                                 utils.getCurrencyIcon(constants.CURRENCY_TYPE.FLASH)} />
                         <View style={{marginVertical: 15,alignItems: 'center'}}>

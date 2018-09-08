@@ -187,10 +187,10 @@ export const dashToOtherCurrency = (dash,othCur) => {
         .toLocaleString('en',{maximumFractionDigits:8});
 }
 
-export const flashNFormatter = (num, digits) => {
+export const flashNFormatter = (num, digits, minVal = 10000) => {
     if (num == undefined || num === '') return 0.00;
     num = parseFloat(num);
-    if(num <= 10000)
+    if(num <= minVal)
         return localizeFlash(num.toFixed(8),8);
     let si = [
         { value: 1, symbol: "" },

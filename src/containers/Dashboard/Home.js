@@ -141,6 +141,16 @@ class Home extends Component<{}> {
                                 </View>
                             </TouchableOpacity>
                         )}
+                        <Text style={styles.label}>Features</Text>
+                        <View style={styles.hr}/>
+                        <TouchableOpacity style={styles.featuresTab}
+                            onPress={()=>this.props.navigation.navigate('HTM')}>
+                            <View style={styles.adminTabTitle}>
+                                <Icon style={styles.featuresTabTitleIcon} name='globe'/>
+                                <Text style={styles.featuresTabTitleLabel}>HTM</Text>
+                            </View>
+                            <Icon style={styles.featuresTabRightIcon} name='angle-right'/>
+                        </TouchableOpacity>
                         <Text style={styles.label}>Admin</Text>
                         <View style={styles.hr}/>
                         <TouchableOpacity style={styles.adminTab}
@@ -193,14 +203,6 @@ class Home extends Component<{}> {
                             <Text style={styles.adminTabSubTitleLabel}>
                                 {this.props.nightMode?'ON':'OFF'}
                             </Text>
-                        </TouchableOpacity>
-                        <TouchableOpacity style={styles.adminTab}
-                            onPress={()=>this.props.navigation.navigate('HTM')}>
-                            <View style={styles.adminTabTitle}>
-                                <Icon style={styles.adminTabTitleIcon} name='globe'/>
-                                <Text style={styles.adminTabTitleLabel}>HTM</Text>
-                            </View>
-                            <Icon style={styles.adminTabRightIcon} name='angle-right'/>
                         </TouchableOpacity>
                         <TouchableOpacity style={styles.adminTab}
                             onPress={()=>this.props.navigation.navigate('About')}>
