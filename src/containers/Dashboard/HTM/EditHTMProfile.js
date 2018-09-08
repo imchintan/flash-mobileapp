@@ -42,10 +42,9 @@ class EditHTMProfile extends Component < {} > {
 
     constructor(props) {
         super(props);
-        let currency_types =  (this.props.htmProfile && this.props.htmProfile.currencies?
-            Object.assign(...this.props.htmProfile.currencies.map(currency => ({
+        let currency_types =  Object.assign(...this.props.htmProfile.currencies.map(currency => ({
                 [currency.currency_type]: currency
-            }))):{});
+            })));
         this.state = {
             ...this.props.htmProfile,
             currency_types
@@ -93,10 +92,18 @@ class EditHTMProfile extends Component < {} > {
         } else {
             data.sell_at = 0;
         }
-
-        data.currency_types = Object.values(this.state.currency_types);
+        let isValidQty = true;
+        data.currency_types = Object.values(this.state.currency_types)
+        .map(currency_type=>{
+            isValidQty = (isValidQty && currency_type.isValidQty !== false);
+            delete currency_type.isValidQty;
+            return currency_type;
+        });
         if(!data.currency_types.length){
             return Toast.errorTop("Please choose at least one currency!");
+        }
+        if(!isValidQty){
+            return Toast.errorTop("Minimum value alwasy less then Maximum value!");
         }
         data.show_profile_pic = this.state.show_profile_pic;
         data.show_distance_in = this.state.show_distance_in;
@@ -256,6 +263,85 @@ class EditHTMProfile extends Component < {} > {
                 break;
         }
         currency_types[currency_type].sell_at = sell_at;
+        this.setState({currency_types});
+    }
+
+    // 0 - on text change, 1 - on blur
+    minQty(currency_type, value, type=0){
+        let currency_types = this.state.currency_types;
+        let min_qty = currency_types[currency_type].min_qty;
+        let isValidQty = currency_types[currency_type].isValidQty;
+        let maxQtyFocused =  (!!this.refs['_max_qty_'+currency_type] &&
+            this.refs['_max_qty_'+currency_type].isFocused());
+        switch (type) {
+            case 0:
+                value = value.toString().trim();
+                if(value){
+                    let res = Validation.percentage(value,8);
+                    if(!res.success){
+                        break;
+                    }
+                }
+                min_qty = value;
+                break;
+            case 1:
+                if(min_qty){
+                    let res = Validation.percentage(min_qty,8);
+                    if(!res.success){
+                        Toast.errorTop("Invalid input!");
+                        break;
+                    }
+                    min_qty = res.percentage;
+                }
+                let max_qty = currency_types[currency_type].max_qty;
+                isValidQty = (maxQtyFocused || min_qty <= max_qty);
+                if(!isValidQty){
+                    Toast.errorTop("Minimum value alwasy less then Maximum value!");
+                }
+                break;
+            default:
+
+        }
+        currency_types[currency_type].min_qty = min_qty;
+        currency_types[currency_type].isValidQty = isValidQty;
+        this.setState({currency_types});
+    }
+    // 0 - on text change, 1 - on blur
+    maxQty(currency_type, value, type=0){
+        let currency_types = this.state.currency_types;
+        let max_qty = currency_types[currency_type].max_qty;
+        let isValidQty = currency_types[currency_type].isValidQty;
+        switch (type) {
+            case 0:
+                value = value.toString().trim();
+                if(value){
+                    let res = Validation.percentage(value,8);
+                    if(!res.success){
+                        break;
+                    }
+                }
+                max_qty = value;
+                break;
+            case 1:
+                if(max_qty){
+                    let res = Validation.percentage(max_qty,8);
+                    if(!res.success){
+                        Toast.errorTop("Invalid input!");
+                        break;
+                    }
+                    max_qty = res.percentage;
+                }
+                let min_qty = currency_types[currency_type].min_qty;
+                isValidQty = (min_qty <= max_qty);
+                if(!isValidQty){
+                    Toast.errorTop("Minimum value alwasy less then Maximum value!");
+                }
+                break;
+            default:
+
+        }
+        currency_types[currency_type].max_qty = max_qty;
+        currency_types[currency_type].isValidQty = isValidQty;
         this.setState({currency_types});
     }
 
@@ -444,6 +530,8 @@ class EditHTMProfile extends Component < {} > {
                                                 currency_type: balance.currency_type,
                                                 buy_at: this.state.buy_at,
                                                 sell_at: this.state.sell_at,
+                                                min_qty: 0,
+                                                max_qty: 0,
                                             }
                                         }
                                         this.setState({currency_types});
@@ -459,7 +547,7 @@ class EditHTMProfile extends Component < {} > {
                                 <View style={styles.htmCurrencyWantToBuySell}>
                                     <View style={[styles.htmProfile,styles.htmWantToBuySell]}>
                                         <View>
-                                            <Text style={styles.htmCurrencyLabel}>Want to buy at (%)</Text>
+                                            <Text style={styles.htmCurrencyLabel}>Buy at (%)</Text>
                                             <Text style={styles.htmCurrencyNote}>
                                                 Want to buy at % below/above spot/market price
                                             </Text>
@@ -506,7 +594,7 @@ class EditHTMProfile extends Component < {} > {
                                     </View>
                                     <View style={[styles.htmProfile,styles.htmWantToBuySell]}>
                                         <View>
-                                            <Text style={styles.htmCurrencyLabel}>Want to sell at (%)</Text>
+                                            <Text style={styles.htmCurrencyLabel}>Sell at (%)</Text>
                                             <Text style={styles.htmCurrencyNote}>
                                                 Want to sell at % below/above spot/market price
                                             </Text>
@@ -549,6 +637,59 @@ class EditHTMProfile extends Component < {} > {
                                                     fontSize: 17
                                                 }]}>+</Text>
                                             </TouchableOpacity>
+                                        </View>
+                                    </View>
+                                    <View style={styles.htmProfile}>
+                                        <Text style={styles.htmCurrencyLabel}>
+                                            Trade limits
+                                        </Text>
+                                        <Text style={[styles.htmCurrencyNote,{width:'100%'}]}>
+                                            Minimum and Maximum number of
+                                            {' ' + utils.getCurrencyName(balance.currency_type)+ ' '}
+                                            coins (leave 0 for no preference)
+                                        </Text>
+                                        <View style={styles.htmCurrencyBuySellQty}>
+                                            <Text style={styles.htmCurrencyBuySellQtyLabel}>
+                                                Minimum
+                                            </Text>
+                                            <TextInput
+                                                underlineColorAndroid='transparent'
+                                                style={[styles.htmCurrencyBuySellQtyInput,
+                                                    this.state.currency_types[balance.currency_type]
+                                                    .isValidQty === false && {
+                                                        borderWidth: 2,
+                                                        borderColor: '#FF0000'
+                                                    }]}
+                                                keyboardType={'numeric'}
+                                                returnKeyType='next'
+                                                value={this.state
+                                                    .currency_types[balance.currency_type]
+                                                    .min_qty.toString()}
+                                                onBlur={()=>this.minQty(balance.currency_type,0,1)}
+                                                onChangeText={(min_qty)=>this.minQty(balance.currency_type,min_qty)}
+                                                onSubmitEditing={()=>this.refs['_max_qty_'+balance.currency_type].focus()}
+                                            />
+                                        </View>
+                                        <View style={styles.htmCurrencyBuySellQty}>
+                                            <Text style={styles.htmCurrencyBuySellQtyLabel}>
+                                                Maximum
+                                            </Text>
+                                            <TextInput
+                                                ref={'_max_qty_'+balance.currency_type}
+                                                underlineColorAndroid='transparent'
+                                                style={[styles.htmCurrencyBuySellQtyInput,
+                                                    this.state.currency_types[balance.currency_type]
+                                                    .isValidQty === false && {
+                                                        borderWidth: 2,
+                                                        borderColor: '#FF0000'
+                                                    }]}
+                                                keyboardType={'numeric'}
+                                                value={this.state
+                                                    .currency_types[balance.currency_type]
+                                                    .max_qty.toString()}
+                                                onBlur={()=>this.maxQty(balance.currency_type,0,1)}
+                                                onChangeText={(max_qty)=>this.maxQty(balance.currency_type,max_qty)}
+                                            />
                                         </View>
                                     </View>
                                 </View>:null}

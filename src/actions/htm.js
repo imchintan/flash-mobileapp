@@ -216,7 +216,7 @@ export const htmLocationThread = (start=0) => {
                 if(params.location_permission){
                     dispatch({ type: types.GET_HTM_LOCATION });
                     n++;
-                    if(n%5 == 0)
+                    if(n%5 == 0 || !params.position)
                         dispatch(getCurrentPosition(true));
                     else
                         dispatch(updateHTMLocation(params.position.latitude,

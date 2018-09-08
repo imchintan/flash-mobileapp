@@ -94,7 +94,8 @@ const styles = StyleSheet.create({
         fontSize: 14,
         paddingHorizontal: 5,
         marginBottom:2,
-        color: '#333'
+        color: '#666666',
+        fontWeight: 'bold'
     },
     htmCurrencyNote:{
         width: width-240,
@@ -125,6 +126,28 @@ const styles = StyleSheet.create({
         borderColor: '#989898',
         paddingVertical: 2,
     },
+    htmCurrencyBuySellQty:{
+        flexDirection: 'row',
+        justifyContent: 'space-between',
+        alignItems: 'center',
+        marginBottom: 5,
+    },
+    htmCurrencyBuySellQtyLabel:{
+        fontSize: 14,
+        paddingLeft: 20,
+        marginTop: 2,
+        color: '#4A4A4A'
+    },
+    htmCurrencyBuySellQtyInput:{
+        width: 120,
+        fontSize: 14,
+        color: '#4A4A4A',
+        borderWidth: 1,
+        borderRadius: 5,
+        borderColor: '#989898',
+        paddingHorizontal: 10,
+        paddingVertical: 0,
+    },
     htmSwitch:{
         flexDirection: 'row',
         alignItems: 'center',
@@ -135,8 +158,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: '#A1A1A1',
-        // borderWidth: 1,
-        // borderColor: '#A1A1A1',
         width: 50,
         height: 30,
         borderTopLeftRadius: 5,
