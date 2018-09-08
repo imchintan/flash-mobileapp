@@ -61,7 +61,7 @@ class HTMDetail extends Component < {} > {
                                 <Icon style={styles.htmProfileStatusIcon}
                                     name={'circle'}/>:null}
                             <Text>
-                                {(this.props.htm.isOnline?' online': 'last seen at '+moment(this.state.htm.last_seen_at).fromNow())}
+                                {(this.props.htm.isOnline?' online': 'last seen '+moment(this.state.htm.last_seen_at).fromNow())}
                             </Text>
                         </Text>
                     </View>
@@ -108,11 +108,22 @@ class HTMDetail extends Component < {} > {
                             return (<View
                                     style={styles.htmDetailBuySell}
                                     key={'_currency_'+currency.currency_type}>
-                                <View style={styles.htmCurrency}>
-                                    <Icon style={styles.htmCurrencyCheckIcon}
-                                        name='check-square-o'/>
-                                    <Text style={styles.htmProfileLabel}>
-                                        {utils.getCurrencyName(currency.currency_type)}
+                                <View style={{
+                                    flexDirection: 'row',
+                                    justifyContent: 'space-between'
+                                }}>
+                                    <View style={styles.htmCurrency}>
+                                        <Icon style={styles.htmCurrencyCheckIcon}
+                                            name='check-square-o'/>
+                                        <Text style={styles.htmProfileLabel}>
+                                            {utils.getCurrencyName(currency.currency_type)}
+                                        </Text>
+                                    </View>
+                                    <Text style={[styles.htmProfileLabel,{paddingRight:0}]}>
+                                    {
+                                        utils.getCurrencySymbol(this.props.fiat_currency) + ' ' +
+                                        utils.flashNFormatter((balance.per_value).toFixed(3),2)
+                                    }
                                     </Text>
                                 </View>
                                 <View style={styles.htmDetailBuySellRow}>

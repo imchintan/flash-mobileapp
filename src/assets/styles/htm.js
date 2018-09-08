@@ -140,6 +140,7 @@ const styles = StyleSheet.create({
     },
     htmCurrencyBuySellQtyInput:{
         width: 120,
+        height: 28,
         fontSize: 14,
         color: '#4A4A4A',
         borderWidth: 1,
@@ -175,8 +176,17 @@ const styles = StyleSheet.create({
     htmSwitchActive:{
         backgroundColor: '#E0AE27',
         height: 32,
-        top:0.5,
-        elevation: 3,
+        ...Platform.select({
+            ios: {
+                shadowColor: 'rgba(0,0,0, 0.5)',
+                shadowOffset: { height: 1, width: 0 },
+                shadowOpacity: 0.7,
+            },
+            android: {
+                top:0.5,
+                elevation: 3,
+            },
+        }),
     },
     htmSwitchText:{
         color: '#E4E4E4',
@@ -190,28 +200,40 @@ const styles = StyleSheet.create({
         color: '#FFFFFF',
         fontSize: 16,
         fontWeight: 'bold',
-        bottom: 2,
+        ...Platform.select({
+            ios: {},
+            android: {
+                bottom: 2,
+            },
+        }),
     },
     htmSwitchInactiveTextStyle:{
         color: '#FFFFFF',
         fontSize: 16,
         fontWeight: 'bold',
-        bottom: 2,
+        ...Platform.select({
+            ios: {},
+            android: {
+                bottom: 2,
+            },
+        }),
         paddingRight: 18,
     },
     htmChatBadge:{
         position: 'absolute',
-        fontFamily: 'futura-medium',
         backgroundColor: '#E0AE27',
-        color: '#191714',
         borderRadius: 10,
         height: 20,
         paddingVertical: 2,
         width: 20,
-        textAlign: 'center',
-        fontSize: 13,
         top: 0,
         right: 0
+    },
+    htmChatBadgeText:{
+        fontFamily: 'futura-medium',
+        color: '#191714',
+        textAlign: 'center',
+        fontSize: 13,
     },
     htmProfileDetail:{
         width: '100%',
@@ -345,9 +367,15 @@ const styles = StyleSheet.create({
         fontWeight: 'bold'
     },
     htmProfileDetailTabBuySellIcon:{
-        fontSize: 20,
-        padding: 5,
+        fontSize: 22,
+        paddingHorizontal: 5,
         left:2,
+        ...Platform.select({
+            ios: {},
+            android: {
+                paddingTop: 5,
+            },
+        }),
     },
     htmDetailBuySell:{
         marginBottom: 10,

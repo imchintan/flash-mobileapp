@@ -113,6 +113,7 @@ class HTMListingMap extends Component < {} > {
         this.props.findNearByHTMs(filter, true);
         this.setState({filter, showFilter: false});
     }
+
     resetFilter(){
         let filter = {
             apply: false,
@@ -127,9 +128,38 @@ class HTMListingMap extends Component < {} > {
         this.props.findNearByHTMs(filter, true);
     }
 
+    calculateDelta(current, htms) {
+        let minX, maxX, minY, maxY;
+
+        // init first point
+        minX = current.latitude;
+        maxX = current.latitude;
+        minY = current.longitude;
+        maxY = current.longitude;
+
+        // calculate rect
+        if(htms.length > 0){
+            minX = Math.min(minX, htms[0].lat);
+            maxX = Math.max(maxX, htms[0].lat);
+            minY = Math.min(minY, htms[0].long);
+            maxY = Math.max(maxY, htms[0].long);
+        }
+
+        let deltaX = (maxX - minX)*3;
+        let deltaY = (maxY - minY)*3;
+
+        return {
+            latitude: current.latitude,
+            longitude: current.longitude,
+            latitudeDelta: Math.min(Math.max(deltaX,0.0922),50),
+            longitudeDelta:Math.min(Math.max(deltaY,0.0421),50)
+        };
+    }
+
     render() {
         const styles = (this.props.nightMode?require('@styles/nightMode/htm'):
             require('@styles/htm'));
+
         return (
             <Container>
                 <Header>
@@ -218,12 +248,14 @@ class HTMListingMap extends Component < {} > {
                     customMapStyle={constants.CUSTOM_MAP_STYLE}
                     followsUserLocation={true}
                     showsMyLocationButton={true}
-                    region={{
-                        latitude: this.props.position.latitude,
-                        longitude: this.props.position.longitude,
-                        latitudeDelta: 0.0922,
-                        longitudeDelta: 0.0421,
-                    }}>
+                    onRegionChangeComplete={(region)=>{
+                        if(this.state.region === region || Platform.OS !== 'ios') return;
+                        setTimeout(()=>this.setState({region}),100);
+                    }}
+                    initialRegion={this.calculateDelta(this.props.position,
+                        this.props.htms)}
+                    region={this.state.region || this.calculateDelta(this.props.position,
+                        this.props.htms)}>
                     {this.props.htms.map((htm,index) =>
                         <Marker
                             key={'_map_pin_'+htm.lat+'_'+htm.long}
@@ -267,7 +299,7 @@ class HTMListingMap extends Component < {} > {
                                     <Icon style={styles.htmProfileStatusIcon}
                                         name={'circle'}/>:null}
                                 <Text style={styles.htmProfileStatusText}>
-                                    {(this.state.htm.isOnline?' online': 'last seen at '
+                                    {(this.state.htm.isOnline?' online': 'last seen '
                                         +moment(this.state.htm.last_seen_at).fromNow())}
                                 </Text>
                             </Text>
@@ -281,7 +313,7 @@ class HTMListingMap extends Component < {} > {
                                     Buying @
                                 </Text>
                                 <Icon style={[styles.htmProfileDetailTabBuySellIcon,{
-                                    bottom:(this.state.htm.buy_at < 0)?5:-6,
+                                    bottom:(this.state.htm.buy_at < 0)?8:-4,
                                     color: (this.state.htm.buy_at < 0)?'red':'green'}]}
                                     name={(this.state.htm.buy_at < 0)?'sort-down':'sort-up'}/>
                                 <Text style={[styles.htmProfileDetailTabBuySellValue,{
@@ -294,7 +326,7 @@ class HTMListingMap extends Component < {} > {
                                     Selling @
                                 </Text>
                                 <Icon style={[styles.htmProfileDetailTabBuySellIcon,{
-                                    bottom:(this.state.htm.sell_at < 0)?5:-6,
+                                    bottom:(this.state.htm.sell_at < 0)?8:-4,
                                     color: (this.state.htm.sell_at < 0)?'red':'green'}]}
                                     name={(this.state.htm.sell_at < 0)?'sort-down':'sort-up'}/>
                                 <Text style={[styles.htmProfileDetailTabBuySellValue,{

@@ -61,7 +61,9 @@ class HTM extends Component < {} > {
                                     paddingHorizontal: 12
                                 }]}
                                 name='send'/>
-                            <Text style={styles.htmChatBadge}>19</Text>
+                            <View style={styles.htmChatBadge}>
+                                <Text style={styles.htmChatBadgeText}>19</Text>
+                            </View>
                         </TouchableOpacity>
                     </HeaderRight>
                 </Header>

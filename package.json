@@ -1,6 +1,6 @@
 {
   "name": "flash",
-  "version": "1.9.2-rc.1",
+  "version": "1.9.3-rc.1",
   "private": true,
   "scripts": {
     "postinstall": "rn-nodeify --install stream,buffer,events,assert,crypto --hack"
@@ -28,7 +28,7 @@
     "react-native-fa-icons": "^3.0.1",
     "react-native-gifted-chat": "^0.4.3",
     "react-native-keyboard-aware-scroll-view": "^0.5.0",
-    "react-native-map-clustering": "^1.3.0",
+    "react-native-map-clustering": "github:imchintan/react-native-map-clustering",
     "react-native-maps": "^0.21.0",
     "react-native-material-switch": "github:imchintan/react-native-material-switch",
     "react-native-phone-input": "github:imchintan/react-native-phone-input",
