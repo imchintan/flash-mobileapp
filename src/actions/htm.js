@@ -2,8 +2,9 @@ import {
     AsyncStorage
 } from 'react-native';
 import * as types from '@actions/types';
-import apis from '@flashAPIs';
+import * as apis from '@flashAPIs';
 import * as utils from '@lib/utils';
+import * as constants from '@src/constants';
 
 const Toast =  require('@components/Toast');
 
@@ -101,7 +102,8 @@ export const getHTMDetail = (username, cb=null) => {
         dispatch({
             type: types.LOADING_START,
             payload: {
-                htm: null
+                htm: null,
+                exchange: constants.COIN_GECKO_EXCHANGES[0]
             }
         });
         let params = getState().params;

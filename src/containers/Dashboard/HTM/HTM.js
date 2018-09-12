@@ -42,6 +42,10 @@ class HTM extends Component < {} > {
         this.state = {};
     }
 
+    componentDidMount(){
+        this.props.getCoinGeckoExchangeRates();
+    }
+
     render() {
         const styles = (this.props.nightMode?require('@styles/nightMode/htm'):require('@styles/htm'));
         return (

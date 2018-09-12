@@ -1,5 +1,5 @@
 import * as types from '@actions/types'
-import apis from '@flashAPIs'
+import * as apis from '@flashAPIs';
 import { _logout } from '@actions/navigation';
 
 export const updateTransactionReportDate = (date_from,date_to) => {

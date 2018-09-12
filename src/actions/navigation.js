@@ -2,12 +2,12 @@ import {
     AsyncStorage
 } from 'react-native';
 import moment from 'moment-timezone';
-import * as types from '@actions/types';
-import apis from '@flashAPIs';
-import Wallet from '@lib/wallet';
-import * as utils from '@lib/utils';
 import * as constants from '@src/constants';
-import * as send from './send';
+import * as apis from '@flashAPIs';
+import * as send from '@actions/send';
+import * as types from '@actions/types';
+import * as utils from '@lib/utils';
+import Wallet from '@lib/wallet';
 import Premium from 'Premium';
 import secrets from 'secrets.js-grempe';
 import nacl from 'tweetnacl';
@@ -69,7 +69,7 @@ export const init = () => {
 
         let htmProfile = await AsyncStorage.getItem('htmProfile');
         if(htmProfile !== null){
-            payload.htmProfile = JSON.parse(htmProfile);            
+            payload.htmProfile = JSON.parse(htmProfile);
         }
 
         let fiat_currency = await AsyncStorage.getItem('fiat_currency');

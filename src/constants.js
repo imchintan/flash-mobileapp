@@ -653,3 +653,31 @@ export const CUSTOM_MAP_STYLE = [{"elementType": "geometry","stylers": [{"color"
     {"featureType": "water",
         "elementType": "labels.text.fill","stylers": [{"color": "#3d3d3d"}]}
 ]
+
+// Coin Gecko Exchanges
+export const COIN_GECKO_EXCHANGES = [
+    {
+        ID   :'coinmarketcap',
+        NAME :'Coin Market Cap',
+    },
+    {
+        ID   :'bittrex',
+        NAME :'Bittrex',
+    },
+    {
+        ID   :'binance',
+        NAME :'Binance',
+    },
+    {
+        ID   :'bitfinex',
+        NAME :'Bitfinex',
+    },
+    {
+        ID   :'okex',
+        NAME :'OKEx',
+    },
+    {
+        ID   :'kraken',
+        NAME :'Kraken',
+    }
+];

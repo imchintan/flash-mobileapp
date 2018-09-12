@@ -380,6 +380,12 @@ const styles = StyleSheet.create({
     htmDetailBuySell:{
         marginBottom: 10,
     },
+    htmBuySellTradeLimit:{
+        marginLeft: 35,
+        marginTop: 2,
+        fontSize: 14,
+        color: '#4A4A4A',
+    },
     htmDetailBuySellRow:{
         flexDirection:'row',
         alignItems: 'center',
@@ -432,19 +438,28 @@ const styles = StyleSheet.create({
     },
     htmFilterContent:{
         backgroundColor: '#FFFFFF',
-        padding: 20,
+        paddingVertical: 20,
         borderRadius: 3,
     },
     htmFilterRow:{
-        width: 250,
+        width: 280,
     },
     htmFilterWantTo:{
         flexDirection: 'row',
+        paddingHorizontal: 10,
+    },
+    htmFilterWantToTitle:{
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        backgroundColor: '#e2e2e2',
+        paddingHorizontal: 15,
+        paddingVertical: 2,
     },
     htmFilterWantToLabel:{
         fontSize: 18,
-        color: '#333',
-        marginBottom: 2
+        color: '#4A4A4A',
+        fontWeight: 'bold',
     },
     htmFilterWantToVal:{
         fontSize: 16,
@@ -525,6 +540,30 @@ const styles = StyleSheet.create({
     htmHeaderSubTitle:{
         fontSize: 14,
         color: '#E2E2E2',
+    },
+    htmExchangesTab:{
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+        height: 28,
+        backgroundColor: '#E2E2E2',
+        borderRadius: 6,
+        bottom: -8,
+    },
+    htmExchangesTabTitle:{
+        paddingLeft: 10,
+        paddingRight: 5,
+        marginTop:0,
+        borderRightWidth: 2,
+        borderColor: '#dfdfdf'
+    },
+    htmExchangesTabIcon:{
+        backgroundColor: '#666666',
+        fontSize: 26,
+        color: '#FFFFFF',
+        borderTopRightRadius: 6,
+        borderBottomRightRadius: 6,
+        paddingHorizontal: 5,
     },
 });
 

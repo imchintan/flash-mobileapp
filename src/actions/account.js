@@ -1,17 +1,16 @@
 import {
     AsyncStorage
 } from 'react-native';
-import * as types from '@actions/types';
-import apis from '@flashAPIs';
-import * as utils from '@lib/utils';
 import * as constants from '@src/constants';
-import { _logout } from '@actions/navigation';
-import { getActiveWallet } from '@actions/send';
+import * as apis from '@flashAPIs';
+import * as utils from '@lib/utils';
+import * as types from '@actions/types';
 import * as txns from '@actions/transactions';
 import * as reqs from '@actions/request';
 import * as send from '@actions/send';
+import * as htm from '@actions/htm';
 import * as sharing from '@actions/sharing';
-import * as htm from './htm';
+import { _logout } from '@actions/navigation';
 
 export const getBalance = (refresh = false) => {
     return (dispatch,getState) => {
@@ -460,7 +459,7 @@ export const getWalletsByEmail = () => {
                     }
                 });
             }else if(d.results.length > 0){
-                let wallet = getActiveWallet(d.results, params.currency_type);
+                let wallet = send.getActiveWallet(d.results, params.currency_type);
                 if(wallet)
                     dispatch({
                         type: types.GET_WALLET_ADDRESS,

@@ -314,10 +314,10 @@ class HTMListingMap extends Component < {} > {
                                 </Text>
                                 <Icon style={[styles.htmProfileDetailTabBuySellIcon,{
                                     bottom:(this.state.htm.buy_at < 0)?8:-4,
-                                    color: (this.state.htm.buy_at < 0)?'red':'green'}]}
+                                    color: (this.state.htm.buy_at < 0)?'#FF0000':'#00FF00'}]}
                                     name={(this.state.htm.buy_at < 0)?'sort-down':'sort-up'}/>
                                 <Text style={[styles.htmProfileDetailTabBuySellValue,{
-                                    color: (this.state.htm.buy_at < 0)?'red':'green'}]}>
+                                    color: (this.state.htm.buy_at < 0)?'#FF0000':'#00FF00'}]}>
                                     {Math.abs(this.state.htm.buy_at)+' %'}
                                 </Text>
                             </View>
@@ -327,10 +327,10 @@ class HTMListingMap extends Component < {} > {
                                 </Text>
                                 <Icon style={[styles.htmProfileDetailTabBuySellIcon,{
                                     bottom:(this.state.htm.sell_at < 0)?8:-4,
-                                    color: (this.state.htm.sell_at < 0)?'red':'green'}]}
+                                    color: (this.state.htm.sell_at < 0)?'#FF0000':'#00FF00'}]}
                                     name={(this.state.htm.sell_at < 0)?'sort-down':'sort-up'}/>
                                 <Text style={[styles.htmProfileDetailTabBuySellValue,{
-                                    color: (this.state.htm.sell_at < 0)?'red':'green'}]}>
+                                    color: (this.state.htm.sell_at < 0)?'#FF0000':'#00FF00'}]}>
                                     {Math.abs(this.state.htm.sell_at)+' %'}
                                 </Text>
                             </View>
@@ -340,7 +340,7 @@ class HTMListingMap extends Component < {} > {
                                 this.state.htm)}>
                             <Icon style={[styles.headerFAIcon,{
                                     fontSize:40,
-                                    color: '#333',
+                                    color: this.props.nightMode?'#F2F2F2':'#333',
                                 }]}
                                 name='comments'/>
                         </TouchableOpacity>
@@ -350,11 +350,7 @@ class HTMListingMap extends Component < {} > {
                     <Icon style={styles.htmFilterArrow} name='sort-up'/>
                     <View style={styles.htmFilterContent}>
                         <View style={styles.htmFilterRow}>
-                            <View style={{
-                                flexDirection: 'row',
-                                alignItems: 'center',
-                                justifyContent: 'space-between'
-                            }}>
+                            <View style={styles.htmFilterWantToTitle}>
                                 <Text style={styles.htmFilterWantToLabel}>I want to?</Text>
                                 <Text style={styles.htmFilterWantToVal}>
                                   {this.state.filter.buy_sell_at_from == -30 &&
@@ -425,11 +421,7 @@ class HTMListingMap extends Component < {} > {
                                 sliderLength={225} />
                         </View>
                         <View style={styles.htmFilterRow}>
-                            <View style={{
-                                flexDirection: 'row',
-                                alignItems: 'center',
-                                justifyContent: 'space-between'
-                            }}>
+                            <View style={styles.htmFilterWantToTitle}>
                                 <Text style={styles.htmFilterWantToLabel}>Distance</Text>
                                 <Text style={styles.htmFilterWantToVal}>
                                     {this.state.filter.upto_distance < 1000?
@@ -457,7 +449,11 @@ class HTMListingMap extends Component < {} > {
                                 sliderLength={225} />
                         </View>
                         <View style={styles.htmFilterRow}>
-                            <Text style={styles.htmFilterWantToLabel}>Show only online HTMs</Text>
+                            <View style={styles.htmFilterWantToTitle}>
+                                <Text style={styles.htmFilterWantToLabel}>
+                                    Show only online HTMs
+                                </Text>
+                            </View>
                             <View style={[styles.hr,{marginBottom:10}]}/>
                             <View style={[styles.htmFilterWantTo,{marginBottom:10}]}>
                                 <TouchableOpacity style={styles.htmFilterWantToValue}
@@ -485,11 +481,7 @@ class HTMListingMap extends Component < {} > {
                             </View>
                         </View>
                         <View style={styles.htmFilterRow}>
-                            <View style={{
-                                flexDirection: 'row',
-                                alignItems: 'center',
-                                justifyContent: 'space-between'
-                            }}>
+                            <View style={styles.htmFilterWantToTitle}>
                                 <Text style={styles.htmFilterWantToLabel}>Currencies</Text>
                                 <Text style={styles.htmFilterWantToVal}>
                                     {Object.keys(this.state.filter.currency_types)
@@ -500,7 +492,7 @@ class HTMListingMap extends Component < {} > {
                             {this.props.balances.map(balance =>
                                 <View key={'_currency_'+balance.currency_type+
                                     '_'+balance.amt}
-                                    style={[styles.htmProfile,{marginBottom:2}]}>
+                                    style={[styles.htmProfile,{marginBottom:2, marginLeft: 10}]}>
                                     <View style={styles.htmCurrency}>
                                         <TouchableOpacity onPress={()=>{
                                             let filter = this.state.filter;

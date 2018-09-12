@@ -782,7 +782,7 @@ class EditHTMProfile extends Component < {} > {
                                             onPress={()=>{
                                                 this.setState({selectCountry:false, country});
                                             }}>
-                                            <Text style={{fontSize: 16}}>
+                                            <Text style={styles.optionTextStyle}>
                                                 {country}
                                             </Text>
                                         </TouchableOpacity>
