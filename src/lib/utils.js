@@ -22,6 +22,12 @@ export const getLocation = async endpoint => {
   return response.json();
 };
 
+export const FontSize = (size) => {
+    if(width <= 320)
+        size *= 0.85;
+    return size;
+}
+
 export const isIphoneX = () => {
     return (
         // This has to be iOS duh

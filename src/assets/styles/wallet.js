@@ -2,10 +2,12 @@ import {
     StyleSheet,
     Dimensions
 } from 'react-native';
+import { FontSize } from '@lib/utils';
 
 const { width } = Dimensions.get('window');
 const appStyles = require('./app');
 const activityStyles = require('./activity');
+
 const styles = StyleSheet.create({
     walletHeader:{
         paddingHorizontal: 10,
@@ -34,7 +36,7 @@ const styles = StyleSheet.create({
     },
     walletConversionRate:{
         color:'rgba(255,255,255,0.8)',
-        fontSize: 14,
+        fontSize: FontSize(14),
     },
     walletBalanceTab:{
         alignItems: 'flex-end',
@@ -46,7 +48,7 @@ const styles = StyleSheet.create({
     },
     walletBalanceLabel:{
         color:'rgba(255,255,255,0.6)',
-        fontSize: 18,
+        fontSize: FontSize(18),
         marginBottom: -5,
     },
     walletBalanceDetail:{
@@ -56,18 +58,18 @@ const styles = StyleSheet.create({
     },
     walletBalance:{
         color:'rgba(255,255,255,0.9)',
-        fontSize: 18,
+        fontSize: FontSize(18),
         top: 1,
     },
     walletBalanceInFiatCurrency:{
         color:'#FFFFFF',
         fontWeight: '500',
-        fontSize: 25,
+        fontSize: FontSize(25),
     },
     exchangeIcon:{
         marginHorizontal: 8,
         color:'rgba(255,255,255,0.7)',
-        fontSize: 18,
+        fontSize: FontSize(18),
     },
     badge:{
         minWidth:20,

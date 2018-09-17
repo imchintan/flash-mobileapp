@@ -3,6 +3,7 @@ import {
     Dimensions,
     Platform
 } from 'react-native';
+import { FontSize } from '@lib/utils';
 
 const { height, width } = Dimensions.get('window');
 const appStyles = require('./app');
@@ -20,13 +21,13 @@ const styles = StyleSheet.create({
     },
     headerBalance:{
         color: '#EDEDED',
-        fontSize: 24,
+        fontSize: FontSize(24),
         fontWeight: '500',
         marginTop: -7
     },
     headerBalanceLabel:{
         color: '#BDBDBD',
-        fontSize: 16,
+        fontSize: FontSize(16),
     },
     label:{
         fontSize: 18,
@@ -63,11 +64,11 @@ const styles = StyleSheet.create({
     currencyLabel:{
         color:'#FFFFFF',
         fontFamily: 'futura-medium',
-        fontSize: 20,
+        fontSize: FontSize(20),
     },
     walletConversionRate:{
         color:'rgba(255,255,255,0.8)',
-        fontSize: 13,
+        fontSize: FontSize(13),
     },
     walletBalanceDetail:{
         alignItems: 'flex-end',
@@ -75,11 +76,11 @@ const styles = StyleSheet.create({
     walletBalanceInFiatCurrency:{
         color:'#FFFFFF',
         fontWeight: '500',
-        fontSize: 18,
+        fontSize: FontSize(18),
     },
     walletBalance:{
         color:'#FFFFFF',
-        fontSize: 13,
+        fontSize: FontSize(13),
     },
     adminTab:{
         flexDirection: 'row',

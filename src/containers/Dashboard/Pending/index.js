@@ -23,7 +23,7 @@ import {
 import moment from 'moment-timezone';
 import { getDisplayDate } from '@lib/utils';
 import { MOMENT_FORMAT } from '@src/constants';
-import { isIphoneX } from '@lib/utils'
+import { isIphoneX, FontSize } from '@lib/utils'
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -60,7 +60,7 @@ const TabNav = createMaterialTopTabNavigator({
             }),
         },
         labelStyle: {
-            fontSize: 16,
+            fontSize: FontSize(16),
             fontFamily: 'Microsoft Tai Le',
         },
     },
@@ -136,13 +136,13 @@ class PendingTab extends React.Component {
                     }} onPress={this.openCalendar}>
                         <Text style={{
                             textAlign: 'center',
-                            fontSize: 18,
+                            fontSize: FontSize(18),
                             color: '#FFF',
                         }}>
                             <Text>
                                 {getDisplayDate(this.props.date_from)} - {getDisplayDate(this.props.date_to)+'  '}
                             </Text>
-                            <Icon style={{fontSize: 20}} name='calendar'/>
+                            <Icon style={{fontSize: FontSize(20)}} name='calendar'/>
                         </Text>
                     </TouchableOpacity>
                     <HeaderRight>
