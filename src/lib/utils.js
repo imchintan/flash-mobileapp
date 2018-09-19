@@ -39,6 +39,12 @@ export const getCurrentPosition=(enableHighAccuracy=true)=>{
     });
 };
 
+export const FontSize = (size) => {
+    if(width <= 320)
+        size *= 0.85;
+    return size;
+}
+
 export const isIphoneX = () => {
     return (
         // This has to be iOS duh

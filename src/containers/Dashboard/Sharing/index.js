@@ -51,7 +51,7 @@ const TabNav = createMaterialTopTabNavigator({
             }),
         },
         labelStyle: {
-            fontSize: 16,
+            fontSize: utils.FontSize(16),
             fontFamily: 'Microsoft Tai Le',
         },
     },
