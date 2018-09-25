@@ -6,14 +6,14 @@ import * as constants from '@src/constants';
 import * as apis from '@flashAPIs';
 import * as send from '@actions/send';
 import * as types from '@actions/types';
+import * as account from '@actions/account';
 import * as utils from '@lib/utils';
 import Wallet from '@lib/wallet';
 import Premium from 'Premium';
 import secrets from 'secrets.js-grempe';
 import nacl from 'tweetnacl';
 import TouchID from 'react-native-touch-id';
-
-import { getCoinMarketCapDetail, getProfile } from '@actions/account';
+import Chat from '@helpers/chatHelper';
 
 export const init = () => {
     return async (dispatch,getState) => {
@@ -81,7 +81,7 @@ export const init = () => {
 
         if(!user){
             dispatch({ type: types.INIT, payload });
-            dispatch(getCoinMarketCapDetail());
+            dispatch(account.getCoinMarketCapDetail());
         } else {
             payload.profile = JSON.parse(user);
             if(payload.profile.auth_version < 4){
@@ -96,9 +96,9 @@ export const init = () => {
                 type: types.LOGIN_SUCCESS,
                 payload
             });
-            dispatch(getProfile());
+            dispatch(account.getProfile());
             dispatch(getMyWallets(payload.profile));
-            dispatch(getCoinMarketCapDetail());
+            dispatch(account.getCoinMarketCapDetail());
         }
         initTimezone();
     }
@@ -157,7 +157,7 @@ export const login = (email,password) => {
                     dispatch(getMyWallets(d.profile));
                 }
                 if(!d.profile.totp_enabled && d.profile.auth_version > 3){
-                    dispatch(getProfile());
+                    dispatch(account.getProfile());
                 }
             }else{
                 let errorMsg = d.reason;
@@ -213,7 +213,7 @@ export const check2FA = (code) =>{
                     }
                 });
                 dispatch(getMyWallets(profile));
-                dispatch(getProfile());
+                dispatch(account.getProfile());
             }else{
                 dispatch({
                     type: types.VERIFY_2FA_FAILED,
@@ -728,6 +728,7 @@ export const _logout = async(dispatch, clearAll=false) => {
             payload.fiat_currency = parseInt(fiat_currency);
         }
     }
+    Chat.disconnect();
     await AsyncStorage.clear();
     if(!clearAll){
         if(payload.pin !== null && typeof payload.pin !== 'undefined')
@@ -738,7 +739,7 @@ export const _logout = async(dispatch, clearAll=false) => {
             AsyncStorage.setItem('isEnableTouchID', payload.isEnableTouchID.toString());
     }
     dispatch({ type: types.LOGOUT, payload });
-    dispatch(getCoinMarketCapDetail());
+    dispatch(account.getCoinMarketCapDetail());
 }
 
 export const signupSuccess = () => ({

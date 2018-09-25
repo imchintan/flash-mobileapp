@@ -10,3 +10,4 @@ export * from './migrateAccount';
 export * from './payoutCode';
 export * from './sharingCode';
 export * from './htm';
+export * from './chat';

@@ -278,3 +278,44 @@ export const findNearByHTMs = (auth_version, sessionToken, lat, long,
         });
     });
 }
+
+/**
+ * Submit Feedback
+ * @param  {Number} auth_version             API authentication version
+ * @param  {String} sessionToken             User authorization token
+ * @param  {String} feedback_to_username     Feedback for...
+ * @param  {String} channel_id               Channel ID
+ * @param  {Object} data                     Feedback
+ *   ⮑ @param  {Boolean} is_txn_success          Transaction successfull or not
+ *      @param  {Boolean} is_trustworthy          Is this person trust worthy?
+ *      @param  {String} prof_rating              Profile rating
+ *      @param  {String} vfm_rating               Value of money rating
+ *      @param  {String} comments                 Addtional comments
+ * @return {Object}                          Return API response
+ */
+export const submitFeedback = (auth_version, sessionToken, feedback_to_username,
+    channel_id, data) => {
+    return new Promise((resolve,reject) => {
+        fetch(API_URL+'/add-htm-feedback',{
+            method: 'POST',
+            body: JSON.stringify({
+                feedback_to_username,
+                channel_id,
+                ...data,
+                appversion:APP_VERSION,
+                res:RESOURCE,
+            }),
+            headers: {
+               'Content-Type': 'application/json; charset=utf-8',
+               'authorization': sessionToken,
+               'fl_auth_version': auth_version
+            },
+        })
+        .then(res => res.json())
+        .then(json => resolve(json))
+        .catch(e =>{
+            console.log(e);
+            reject('Something went wrong!')
+        });
+    });
+}

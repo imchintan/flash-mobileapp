@@ -336,8 +336,10 @@ class HTMListingMap extends Component < {} > {
                             </View>
                         </View>
                         <TouchableOpacity style={{paddingLeft: 5}}
-                            onPress={()=>this.props.navigation.navigate('ChatRoom',
-                                this.state.htm)}>
+                            onPress={()=>this.props.goToChatRoom(this.state.htm.username,
+                                (feedback)=>this.setState({htm:null},
+                                ()=>this.props.navigation.navigate(feedback?'FeedBack':'ChatRoom')
+                            ))}>
                             <Icon style={[styles.headerFAIcon,{
                                     fontSize:40,
                                     color: this.props.nightMode?'#F2F2F2':'#333',

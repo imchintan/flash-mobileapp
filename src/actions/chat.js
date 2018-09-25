@@ -1,0 +1,356 @@
+import * as types from '@actions/types';
+import * as apis from '@flashAPIs';
+import * as htm from '@actions/htm';
+import _ from 'lodash';
+import { PROFILE_URL } from '@src/config';
+import * as utils from '@lib/utils';
+import * as constants from '@src/constants';
+
+const Toast =  require('@components/Toast');
+
+export const getChatRooms = () => {
+    return (dispatch,getState) => {
+        dispatch({ type: types.LOADING_START });
+        let params = getState().params;
+        apis.getRooms(params.profile.auth_version, params.profile.sessionToken)
+        .then((d)=>{
+            if(d.rc !== 1){
+                Toast.errorTop(d.reason);
+                dispatch({
+                    type: types.GET_CHAT_ROOMS,
+                    payload: { loading: false }
+                });
+            }else{
+                dispatch({
+                    type: types.GET_CHAT_ROOMS,
+                    payload: {
+                        loading: false,
+                        chatRooms: d.rooms
+                    }
+                });
+            }
+        }).catch(e=>{
+            console.log(e);
+            Toast.errorTop(e.message);
+            dispatch({
+                type: types.GET_CHAT_ROOMS,
+                payload: { loading: false }
+            });
+        })
+    }
+}
+
+export const goToChatRoom = (username,cb) => {
+    return (dispatch,getState) => {
+        let params = getState().params;
+        let rooms =  params.chatRooms || [];
+        let room = rooms.filter(r => r.m[0] == username || r.m[1] == username)
+        let chatRoom = room.length == 0?null:room[0];
+        let chatRoomChannel = null;
+        if(chatRoom){
+            let activeChannel = room[0].c.filter(ch=>ch.a || !ch.f
+                || typeof ch.f[params.htmProfile.username] == 'undefined');
+            if(activeChannel.length > 0)
+                chatRoomChannel = activeChannel[0];
+        }
+        let _cb = () =>{
+            dispatch({
+                type: types.GO_TO_CHAT_ROOM,
+                payload: { chatMessages:[], chatRoom, chatRoomChannel }
+            });
+            if(cb)cb((chatRoomChannel && !chatRoomChannel.a));
+        }
+        if(!params.htm || params.htm.username !== username)
+            dispatch(htm.getHTMDetail(username,_cb));
+        else
+            _cb();
+    }
+}
+
+export const selectChatRoom = (username, chatRoom, navigate) => {
+    return (dispatch,getState) => {
+        let params = getState().params;
+        let _cb = () =>{
+            dispatch({
+                type: types.SELECT_CHAT_ROOM,
+                payload: { chatMessages:[], chatRoom, chatRoomChannel:null }
+            });
+            navigate('ChatChannel');
+        }
+        if(!params.htm || params.htm.username !== username)
+            dispatch(htm.getHTMDetail(username,_cb));
+        else _cb();
+    }
+}
+
+export const selectChatRoomChannel = (chatRoomChannel, navigate) => {
+    return (dispatch,getState) => {
+        // let params = getState().params;
+        dispatch({
+            type: types.SELECT_CHAT_ROOM_CHANNEL,
+            payload: { chatMessages:[], chatRoomChannel }
+        });
+        navigate('ChatRoom');
+    }
+}
+
+export const markAsRead = () => {
+    return (dispatch,getState) => {
+        let params = getState().params;
+        if(params.chatRoomChannel) apis.markAsRead(params.profile.auth_version,
+            params.profile.sessionToken, params.chatRoomChannel.id);
+        dispatch({
+            type: types.MARK_AS_READ
+        });
+    }
+}
+
+export const createChannel = (receiver_username,cb=null) => {
+    return (dispatch,getState) => {
+        dispatch({ type: types.LOADING_START });
+        let params = getState().params;
+        apis.createChannel(params.profile.auth_version, params.profile.sessionToken,
+            receiver_username, params.htm.display_name, params.htm.profile_pic_url,
+            params.htmProfile.display_name, params.htmProfile.profile_pic_url).then((d)=>{
+            if(d.rc !== 1){
+                Toast.errorTop(d.reason);
+                dispatch({
+                    type: types.CREATE_CHAT_CHANNEL,
+                    payload: { loading: false }
+                });
+            }else{
+                let chatRooms =  params.chatRooms;
+                let chatRoom = d.room;
+                let chatRoomIdx = chatRooms.findIndex(r => r._id == chatRoom._id);
+                if(chatRoomIdx == -1){
+                    chatRooms.push(chatRoom);
+                }else{
+                    chatRooms[chatRoomIdx] = chatRoom;
+                }
+
+                let chatRoomChannel = chatRoom.c.filter(ch=>ch.a)[0];
+                dispatch({
+                    type: types.CREATE_CHAT_CHANNEL,
+                    payload: {
+                        loading: false,
+                        chatMessages:[],
+                        chatRooms,
+                        chatRoom,
+                        chatRoomChannel
+                    }
+                });
+                if(cb)cb();
+            }
+        }).catch(e=>{
+            console.log(e);
+            Toast.errorTop(e.message);
+            dispatch({
+                type: types.CREATE_CHAT_CHANNEL,
+                payload: { loading: false }
+            });
+        })
+    }
+}
+
+export const getChatMessages = () => {
+    return (dispatch,getState) => {
+        dispatch({ type: types.LOADING_START });
+        let params = getState().params;
+        if(!params.chatRoomChannel)
+            return dispatch({
+                type: types.GET_CHAT_MESSAGES,
+                payload: { loading: false }
+            });
+
+        let chatMessages = (params.chatMessages || []);
+        let limit = 10;
+        let pageNo = Math.floor(chatMessages.length / 10)+1;
+        apis.getChatMessages(params.profile.auth_version, params.profile.sessionToken,
+            params.chatRoomChannel.id, limit, pageNo).then((d)=>{
+            if(d.rc !== 1){
+                Toast.errorTop(d.reason);
+                dispatch({
+                    type: types.GET_CHAT_MESSAGES,
+                    payload: { loading: false }
+                });
+            }else{
+                let htm = {
+                    _id     : params.htm.id,
+                    name    : params.htm.display_name,
+                    avatar  : params.htm.profile_pic_url?(PROFILE_URL + params.htm.profile_pic_url):
+                    utils.getCurrencyIcon(constants.CURRENCY_TYPE.FLASH),
+                };
+                let user = {
+                    _id     : params.htmProfile.id,
+                    name    : params.htmProfile.display_name,
+                }
+                chatMessages = _.sortedUniqBy(_.concat(
+                    d.messages.map(m=>({
+                        _id         : m._id,
+                        createdAt   : m.t,
+                        text        : m.txt,
+                        user        : m.s == params.htm.username?htm:user,
+                    })),
+                    chatMessages
+                ),(msg)=>msg._id);
+                dispatch({
+                    type: types.GET_CHAT_MESSAGES,
+                    payload: {
+                        loading: false,
+                        chatMessages
+                    }
+                });
+            }
+        }).catch(e=>{
+            console.log(e);
+            Toast.errorTop(e.message);
+            dispatch({
+                type: types.GET_CHAT_MESSAGES,
+                payload: { loading: false }
+            });
+        })
+    }
+}
+
+export const sendChatMessage = (txt, lt=null, ln=null) => {
+    return (dispatch,getState) => {
+        let params = getState().params;
+        let chatRoom = params.chatRoom;
+        let chatRoomChannel = params.chatRoomChannel;
+        let cb = () => {
+            let params = getState().params;
+            apis.sendChatMessage(params.profile.auth_version, params.profile.sessionToken,
+                params.chatRoomChannel.id, params.chatRoom._id, txt, lt, ln).then((d)=>{
+                let chatMessages = params.chatMessages;
+                if(d.rc !== 1){
+                    Toast.errorTop(d.reason);
+                }else{
+                    let message = {
+                        _id         : d.message._id,
+                        createdAt   : d.message.t,
+                        text        : d.message.txt,
+                        user        : {
+                            _id     : params.htmProfile.id,
+                            name    : params.htmProfile.display_name,
+                        },
+                    }
+                    chatMessages = _.sortedUniqBy(_.concat([message],params.chatMessages),
+                    (m)=>m._id);
+                }
+                dispatch({
+                    type: types.SEND_CHAT_MESSAGE,
+                    payload: {
+                        chatMessages
+                    }
+                });
+            }).catch(e=>{
+                console.log(e);
+                Toast.errorTop(e.message);
+                dispatch({ type: types.SEND_CHAT_MESSAGE });
+            })
+        }
+        if(!chatRoom || !chatRoomChannel){
+            dispatch(createChannel(params.htm.username,cb))
+        }else {
+            cb();
+        }
+
+    }
+}
+
+export const submitFeedback = (data, cb=null) => {
+    return (dispatch,getState) => {
+        dispatch({ type: types.LOADING_START });
+        let params = getState().params;
+        apis.addFeedback(params.profile.auth_version, params.profile.sessionToken,
+            params.chatRoomChannel.id, data.is_txn_success).then((d)=>{
+            if(d.rc !== 1){
+                Toast.errorTop(d.reason);
+            }else{
+                apis.submitFeedback(params.profile.auth_version, params.profile.sessionToken,
+                    params.htmProfile.username, params.chatRoomChannel.id, data).then((d)=>{
+                    if(d.rc !== 1){
+                        Toast.errorTop(d.reason);
+                    }else{
+                        dispatch({
+                            type: types.SUBMIT_FEEDBACK,
+                            payload: { loading: false }
+                        });
+                        if(cb)cb();
+                    }
+                }).catch(e=>{
+                    console.log(e);
+                    Toast.errorTop(e.message);
+                    dispatch({
+                        type: types.SUBMIT_FEEDBACK,
+                        payload: { loading: false }
+                    });
+                })
+            }
+        }).catch(e=>{
+            console.log(e);
+            Toast.errorTop(e.message);
+            dispatch({
+                type: types.SUBMIT_FEEDBACK,
+                payload: { loading: false }
+            });
+        })
+    }
+}
+
+export const receiveChatMessage = (msg) => {
+    return (dispatch,getState) => {
+        let params = getState().params;
+        let htm = {
+            _id     : params.htm.id,
+            name    : params.htm.display_name,
+            avatar  : params.htm.profile_pic_url?(PROFILE_URL + params.htm.profile_pic_url):
+            utils.getCurrencyIcon(constants.CURRENCY_TYPE.FLASH),
+        };
+        let user = {
+            _id     : params.htmProfile.id,
+            name    : params.htmProfile.display_name,
+        }
+        let message = {
+            _id         : msg._id,
+            createdAt   : msg.t,
+            text        : msg.txt,
+            user        : msg.s == params.htm.username?htm:user,
+        }
+        chatMessages = _.sortedUniqBy(_.concat([message],params.chatMessages),
+            (m)=>m._id);
+        dispatch({
+            type: types.RECEIVE_CHAT_MESSAGE,
+            payload: {
+                chatMessages
+            }
+        });
+    }
+}
+
+export const updateChatRoom = (room) => {
+    return (dispatch,getState) => {
+        let params = getState().params;
+        let payload = {};
+        payload.chatRooms =  params.chatRooms;
+        let chatRoom = room;
+        if(params.chatRoom)
+            payload.chatRoom = chatRoom;
+        if(params.chatRoomChannel){
+            let chatRoomChannelIdx = chatRoom.c.findIndex(ch => ch.id == params.chatRoomChannel.id);
+            if(chatRoomChannelIdx !== -1){
+                payload.chatRoomChannel = chatRoom.c[chatRoomChannelIdx];
+            }
+        }
+        let chatRoomIdx = payload.chatRooms.findIndex(r => r._id == chatRoom._id);
+        if(chatRoomIdx == -1){
+            payload.chatRooms.push(chatRoom);
+        }else{
+            payload.chatRooms[chatRoomIdx] = chatRoom;
+        }
+        dispatch({
+            type: types.UPDATE_CHAT_ROOM,
+            payload
+        });
+    }
+}

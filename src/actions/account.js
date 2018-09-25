@@ -9,8 +9,10 @@ import * as txns from '@actions/transactions';
 import * as reqs from '@actions/request';
 import * as send from '@actions/send';
 import * as htm from '@actions/htm';
+import * as chat from '@actions/chat';
 import * as sharing from '@actions/sharing';
 import { _logout } from '@actions/navigation';
+import Chat from '@helpers/chatHelper';
 
 export const getBalance = (refresh = false) => {
     return (dispatch,getState) => {
@@ -161,7 +163,13 @@ export const getProfile = () => {
                         profile
                     }
                 });
+                Chat.reconnect(params.profile.auth_version, params.profile.sessionToken)
+                .then((con)=>{
+                    Chat.addListener('ru',(d)=>dispatch(chat.updateChatRoom(d)));
+                })
+                .catch(e=>console.log(e))
                 dispatch(htm.getHTMProfile());
+                dispatch(chat.getChatRooms());
             }else if(d.rc == 3){
                 dispatch({
                     type: types.CUSTOM_ACTION,

@@ -14,6 +14,7 @@
      Content,
      Header,
      HeaderLeft,
+     HeaderRight,
      Icon,
      Button,
      Text,
@@ -68,13 +69,27 @@ class HTMDetail extends Component < {} > {
                             </Text>
                         </Text>
                     </View>
+                    <HeaderRight>
+                        <TouchableOpacity onPress={()=>this.props.goToChatRoom(this.state.htm.username,
+                            (feedback)=>this.props.navigation
+                                .navigate(feedback?'FeedBack':'ChatRoom'))}>
+                            <Icon style={[styles.headerFAIcon,{
+                                    fontSize:24,
+                                    paddingHorizontal: 12
+                                }]}
+                                name='comments'/>
+                            {/*<View style={styles.htmChatBadge}>
+                                <Text style={styles.htmChatBadgeText}>19</Text>
+                            </View>*/}
+                        </TouchableOpacity>
+                    </HeaderRight>
                 </Header>
                 <Content bounces={false} style={styles.content}>
                     <View style={styles.htmProfileDetail}>
                         <Image
                             style={styles.htmProfileImage}
                             source={this.props.htm.profile_pic_url?
-                                {uri:PROFILE_URL+this.state.htm.profile_pic_url}:
+                                {uri:PROFILE_URL+this.props.htm.profile_pic_url}:
                                 utils.getCurrencyIcon(constants.CURRENCY_TYPE.FLASH)} />
                         <View style={{marginVertical: 15,alignItems: 'center'}}>
                             {this.props.htm.email?
@@ -118,7 +133,6 @@ class HTMDetail extends Component < {} > {
                         </View>
                         <View style={[styles.hr,{marginBottom:15}]}/>
                         {this.props.htm.currencies.map(currency =>{
-                            console.log(currency);
                             let balIndex = exchangeRates.findIndex(bal=>
                                 bal.currency_type == currency.currency_type);
                             let balance = exchangeRates[balIndex];

@@ -9,7 +9,9 @@ import EditHTMProfile from './EditHTMProfile';
 import HTMListingMap from './HTMListingMap';
 import HTMDetail from './HTMDetail';
 import ChatRoom from './ChatRoom';
+import ChatChannel from './ChatChannel';
 import ChatHistory from './ChatHistory';
+import FeedBack from './FeedBack';
 
 const routes = {
     HTM: {
@@ -30,8 +32,14 @@ const routes = {
     ChatRoom: {
         screen: ChatRoom,
     },
+    ChatChannel: {
+        screen: ChatChannel,
+    },
     ChatHistory: {
         screen: ChatHistory,
+    },
+    FeedBack: {
+        screen: FeedBack,
     },
 };
 

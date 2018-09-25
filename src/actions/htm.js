@@ -276,7 +276,7 @@ export const getCurrentPosition = (update=false) => {
                 type: types.SET_POSITION,
                 payload:{
                     location_permission: (e.code > 1),
-                    location_error_code: e.code
+                    location_error_code: e.code,
                 }
             });
         });
