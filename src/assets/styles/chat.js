@@ -13,11 +13,11 @@ const styles = StyleSheet.create({
         marginTop: 10,
         marginHorizontal: 10,
         padding:10,
-        backgroundColor: '#EFEFEF',
+        backgroundColor: '#EAEAEA',
         borderRadius: 10,
     },
     chatTabUnRead:{
-        backgroundColor: '#F1F1F1',
+        backgroundColor: '#E1E1E1',
     },
     chatProfileIcon:{
         width: 60,
@@ -35,22 +35,22 @@ const styles = StyleSheet.create({
     },
     chatHtmName:{
         width: width - 190,
-        color: '#6A6A6A',
+        color: '#000000',
         fontSize: 16,
-        fontWeight: 'bold',
     },
     chatHtmNameUnread:{
         color: '#000',
+        fontWeight: 'bold',
     },
     chatMsgTime:{
-        color: '#6A6A6A',
+        color: '#000000',
         fontSize: 16,
-        fontWeight: 'bold'
+
     },
     chatMsgText:{
-        color: '#787878',
+        color: '#565656',
         fontWeight: 'normal',
-        fontSize: 13,
+        fontSize: 14,
     },
     chatMsgTextUnread:{
         color: '#454545',
@@ -106,6 +106,34 @@ const styles = StyleSheet.create({
         fontSize: 18,
         fontWeight: 'bold',
         paddingTop: 10
+    },
+    feedBackCurrencyBtn:{
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 5
+    },
+    feedBackCurrencyBtnText:{
+        fontSize: 14,
+        paddingHorizontal: 5,
+        marginBottom:2,
+        color: '#4A4A4A',
+    },
+    feedBackCurrencyBtnIcon:{
+        fontSize: 18,
+        width: 20,
+        paddingRight: 5,
+        color: '#565656'
+    },
+    feedBackCurrencyInput:{
+        fontSize: 14,
+        color: '#4A4A4A',
+        borderRadius: 5,
+        borderWidth: 1,
+        borderColor: '#989898',
+        marginBottom: 10,
+        marginLeft: 25,
+        paddingVertical: 2,
+        paddingHorizontal: 20
     }
 });
 

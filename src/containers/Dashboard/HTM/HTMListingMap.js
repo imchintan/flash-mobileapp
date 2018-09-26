@@ -95,7 +95,11 @@ class HTMListingMap extends Component < {} > {
                 setTimeout(()=>this.props.customAction({
                     lockApp:false,
                     location_permission:(granted === PermissionsAndroid.RESULTS.GRANTED),
-                    location_error_code: 3
+                    location_error_code: 3,
+                    // position: {
+                    //     latitude: 21.185890,
+                    //     longitude: 72.810290,
+                    // }
                 }),500);
             } else {
                 this.props.getCurrentPosition();
@@ -169,7 +173,7 @@ class HTMListingMap extends Component < {} > {
                             style={styles.headerBackIcon} name='angle-left'/>
                         </TouchableOpacity>
                     </HeaderLeft>
-                    <HeaderTitle>Near by HTM</HeaderTitle>
+                    <HeaderTitle>Find Trade</HeaderTitle>
                     {this.props.position?<HeaderRight>
                         <TouchableOpacity
                             onPress={()=>this.setState({showFilter:!this.state.showFilter,

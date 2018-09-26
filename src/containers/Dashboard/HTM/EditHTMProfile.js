@@ -107,7 +107,7 @@ class EditHTMProfile extends Component < {} > {
         }
         data.show_profile_pic = this.state.show_profile_pic;
         data.show_distance_in = this.state.show_distance_in;
-        this.props.updateHTMProfile(data);
+        this.props.updateHTMProfile(data,this.props.navigation.goBack);
     }
 
     // 0 - manually editing, 1 - increase, 2 - decrease, 3 - manually editing on blur

@@ -288,6 +288,7 @@ export const findNearByHTMs = (auth_version, sessionToken, lat, long,
  * @param  {Object} data                     Feedback
  *   ⮑ @param  {Boolean} is_txn_success          Transaction successfull or not
  *      @param  {Boolean} is_trustworthy          Is this person trust worthy?
+ *      @param  {Array} currency_traded           Currency tranded in
  *      @param  {String} prof_rating              Profile rating
  *      @param  {String} vfm_rating               Value of money rating
  *      @param  {String} comments                 Addtional comments

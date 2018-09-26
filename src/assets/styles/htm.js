@@ -565,6 +565,15 @@ const styles = StyleSheet.create({
         borderBottomRightRadius: 6,
         paddingHorizontal: 5,
     },
+    htmProfileRating:{
+        flexDirection: 'row',
+        marginVertical: 5,
+    },
+    htmProfileRatingIcon:{
+        fontSize: 30,
+        color: '#FFB400',
+        marginHorizontal: 5,
+    },
 });
 
 module.exports = {

@@ -42,7 +42,7 @@ export const setupHTMProfile = (data, goBack) => {
     }
 }
 
-export const updateHTMProfile = (data) => {
+export const updateHTMProfile = (data,goBack) => {
     return (dispatch,getState) => {
         dispatch({ type: types.LOADING_START });
         let params = getState().params;
@@ -61,6 +61,7 @@ export const updateHTMProfile = (data) => {
                     payload: { loading: false }
                 });
                 dispatch(getHTMProfile());
+                goBack();
             }
         }).catch(e=>{
             Toast.errorTop(e.message);
@@ -97,12 +98,12 @@ export const getHTMProfile = () => {
     }
 }
 
-export const getHTMDetail = (username, cb=null) => {
+export const getHTMDetail = (username, cb=null, htm=null) => {
     return (dispatch,getState) => {
         dispatch({
             type: types.LOADING_START,
             payload: {
-                htm: null,
+                htm,
                 exchange: constants.COIN_GECKO_EXCHANGES[0]
             }
         });

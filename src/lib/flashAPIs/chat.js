@@ -105,6 +105,48 @@ export const createChannel = (auth_version, sessionToken, receiver_username,
 }
 
 /**
+ * Update Room Member Detaill
+ * @param  {Number} auth_version             API authentication version
+ * @param  {String} sessionToken             User authorization token
+ * @param  {String} r                        Room ID
+ * @param  {String} receiver_username        Reciver user name
+ * @param  {String} receiver_name            Reciver user display name
+ * @param  {String} receiver_dp              Reciver user profile image
+ * @param  {String} sender_name              Sender user display name
+ * @param  {String} sender_dp                Sender user profile image
+ * @return {Object}                          Return API response
+ */
+export const updateRoomMemberDetail = (auth_version, sessionToken, r, receiver_username,
+    receiver_name, receiver_dp, sender_name, sender_dp) => {
+    return new Promise((resolve,reject) => {
+        fetch(CHAT_API_URL+'/update-room-member-detail',{
+            method: 'POST',
+            body: JSON.stringify({
+                r,
+                receiver_username,
+                receiver_name,
+                receiver_dp,
+                sender_name,
+                sender_dp,
+                appversion:APP_VERSION,
+                res:RESOURCE,
+            }),
+            headers: {
+               'Content-Type': 'application/json; charset=utf-8',
+               'authorization': sessionToken,
+               'fl_auth_version': auth_version
+            },
+        })
+        .then(res =>res.json())
+        .then(json => resolve(json))
+        .catch(e =>{
+            console.log(e);
+            reject('Something went wrong!')
+        });
+    });
+}
+
+/**
  * Send Chat Message
  * @param  {Number} auth_version             API authentication version
  * @param  {String} sessionToken             User authorization token

@@ -31,6 +31,7 @@ import {ActionCreators} from '@actions';
 import { PROFILE_URL } from '@src/config';
 import * as utils from '@lib/utils';
 import * as constants from '@src/constants';
+import * as Validation from '@lib/validation';
 
 class FeedBack extends Component < {} > {
 
@@ -45,6 +46,7 @@ class FeedBack extends Component < {} > {
             prof_rating: 0,
             vfm_rating: 0,
             comments: '',
+            currencies_traded: [],
         };
     }
 
@@ -61,6 +63,14 @@ class FeedBack extends Component < {} > {
         if(typeof this.state.is_trustworthy == 'undefined')
             return Toast.errorTop("Please give the answer of requird fields!");
         data.is_trustworthy = this.state.is_trustworthy;
+
+        let currencies_traded = Object.values(this.state.currencies_traded);
+        if(currencies_traded.length > 0){
+            let isValid = currencies_traded.filter(traded => (traded.amount)).length > 0;
+            if(!isValid)
+                return Toast.errorTop("Please enter valid trade amount!");
+            data.currencies_traded = currencies_traded;
+        }
         this.props.submitFeedback(data,()=>{
             const resetAction = StackActions.reset({
                 index: 2,
@@ -72,6 +82,41 @@ class FeedBack extends Component < {} > {
             });
             this.props.navigation.dispatch(resetAction);
         });
+    }
+
+    // 0 - manually editing, 1 - on blur
+    currencyTradedAmount(currency, value, type=0){
+        let traded = this.state.currencies_traded[currency];
+        switch (type) {
+            case 0:
+                value = value.toString().trim();
+                if(value){
+                    let res = Validation.percentage(value,8);
+                    if(!res.success){
+                        break;
+                    }
+                }
+                traded.amount = value;
+                break;
+            case 1:
+                if(traded.amount){
+                    let res1 = Validation.percentage(traded.amount,8);
+                    if(!res1.success){
+                        Toast.errorTop("Please enter valid amount of "
+                            +utils.getCurrencyUnit(currency)+"!");
+                        break;
+                    }
+                    traded.amount = res1.percentage;
+                } else {
+                    traded.amount = null;
+                }
+                break;
+            default:
+                break;
+        }
+        let currencies_traded = this.state.currencies_traded;
+        currencies_traded[currency] = traded;
+        this.setState({currencies_traded});
     }
 
     render() {
@@ -145,6 +190,54 @@ class FeedBack extends Component < {} > {
                                 <Text style={styles.feedBacRadioBtnText}>No</Text>
                             </TouchableOpacity>
                         </View>
+                        <Text style={styles.label}>Currency Traded</Text>
+                        <View style={styles.hr}/>
+                        <View style={[styles.feedBackValueRow,{flexDirection: 'column'}]}>
+                        {this.props.balances.map(balance =>
+                            <View key={'_currency_'+balance.currency_type+
+                                '_'+balance.amt}>
+                                <TouchableOpacity
+                                    style={styles.feedBackCurrencyBtn}
+                                    onPress={()=>{
+                                        let currencies_traded = this.state.currencies_traded;
+                                        if(currencies_traded[balance.currency_type])
+                                            delete currencies_traded[balance.currency_type];
+                                        else {
+                                            currencies_traded[balance.currency_type] = {
+                                                currency: balance.currency_type,
+                                                amount: null,
+                                            }
+                                        }
+                                        this.setState({currencies_traded},
+                                            ()=>!!this.refs["_currencies_traded_"+balance.currency_type]
+                                                && this.refs["_currencies_traded_"+balance.currency_type].focus());
+                                    }}>
+                                    <Icon style={styles.feedBackCurrencyBtnIcon}
+                                        name={this.state.currencies_traded[balance.currency_type]?
+                                        'check-square-o':'square-o'}/>
+                                    <Text style={styles.feedBackCurrencyBtnText}>
+                                        {utils.getCurrencyName(balance.currency_type)}
+                                    </Text>
+                                </TouchableOpacity>
+                                {this.state.currencies_traded[balance.currency_type]?<View>
+                                    <TextInput
+                                        ref={"_currencies_traded_"+balance.currency_type}
+                                        underlineColorAndroid='transparent'
+                                        style={styles.feedBackCurrencyInput}
+                                        placeholder={"Enter amount in "+utils.getCurrencyUnit(balance.currency_type)}
+                                        keyboardType={'numeric'}
+                                        value={this.state
+                                            .currencies_traded[balance.currency_type]
+                                            .amount !== null?this.state
+                                            .currencies_traded[balance.currency_type]
+                                            .amount.toString():''}
+                                        onBlur={()=>this.currencyTradedAmount(balance.currency_type,0,1)}
+                                        onChangeText={(amount)=>this.currencyTradedAmount(balance.currency_type,amount)}
+                                    />
+                                </View>:null}
+                            </View>
+                        )}
+                        </View>
                         <Text style={styles.label}>How professional was the HTM?</Text>
                         <View style={styles.hr}/>
                         <View style={[styles.feedBackValueRow,styles.feedBackRatingBtnGrp]}>
@@ -199,6 +292,7 @@ function mapStateToProps({params}) {
         nightMode: params.nightMode,
         htm: params.htm,
         htmProfile: params.htmProfile,
+        balances: params.balances,
         chatRoom: params.chatRoom,
         chatRoomChannel: params.chatRoomChannel,
     };

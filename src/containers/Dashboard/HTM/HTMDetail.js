@@ -14,7 +14,6 @@
      Content,
      Header,
      HeaderLeft,
-     HeaderRight,
      Icon,
      Button,
      Text,
@@ -69,20 +68,6 @@ class HTMDetail extends Component < {} > {
                             </Text>
                         </Text>
                     </View>
-                    <HeaderRight>
-                        <TouchableOpacity onPress={()=>this.props.goToChatRoom(this.state.htm.username,
-                            (feedback)=>this.props.navigation
-                                .navigate(feedback?'FeedBack':'ChatRoom'))}>
-                            <Icon style={[styles.headerFAIcon,{
-                                    fontSize:24,
-                                    paddingHorizontal: 12
-                                }]}
-                                name='comments'/>
-                            {/*<View style={styles.htmChatBadge}>
-                                <Text style={styles.htmChatBadgeText}>19</Text>
-                            </View>*/}
-                        </TouchableOpacity>
-                    </HeaderRight>
                 </Header>
                 <Content bounces={false} style={styles.content}>
                     <View style={styles.htmProfileDetail}>
@@ -110,18 +95,57 @@ class HTMDetail extends Component < {} > {
                                     {this.props.htm.country || ''}
                                 </Text>
                             </View>
+                            {this.props.htm.total_txns > 0? <View style={{alignItems:'center'}}>
+                                {this.props.htm.avg_rating>0?<View style={styles.htmProfileRating}>
+                                    {([1,2,3,4,5]).map(v=>
+                                        <Icon key={'_start_'+v} style={styles.htmProfileRatingIcon}
+                                            name={this.props.htm.avg_rating>=v?'star':
+                                            (this.props.htm.avg_rating>=(v-0.5)?'star-half-o':'star-o')}/>
+                                    )}
+                                </View>:null}
+                                {this.props.htm.success_txns>0?<Text
+                                    style={styles.htmProfileEmailText}>
+                                    {this.props.htm.success_txns} successful trades (
+                                        {Math.round(this.props.htm.success_txns/this.props.htm.total_txns*100)}
+                                    %)
+                                </Text>:null}
+                                <Text style={styles.htmProfileEmailText}>
+                                    Trusted by {this.props.htm.trusted_by} {this.props.htm.trusted_by>1?
+                                        'traders':'trader'}
+                                </Text>
+                            </View>:null}
                             <Button style={{marginVertical: 10}}
                                 value={'Contact'}
-                                onPress={()=> this.props.navigation
-                                    .navigate('ChatRoom', this.state.htm)} />
+                                onPress={()=>this.props.goToChatRoom(this.state.htm.username,
+                                    (feedback)=>this.props.navigation
+                                        .navigate(feedback?'FeedBack':'ChatRoom'))}/>
                         </View>
                     </View>
+                    {this.props.htm.currencies_traded.length>0?
+                    <View style={[styles.htmProfileContent,{marginBottom: -10}]}>
+                        <Text style={styles.label}>Currencies Traded</Text>
+                        <View style={[styles.hr,{marginBottom:15}]}/>
+                        {this.props.htm.currencies_traded.map((_trade,idx) =>
+                            <View key={'_trade_'+idx}  style={{
+                                flexDirection: 'row',
+                                justifyContent: 'space-between'
+                            }}>
+                                <Text style={styles.htmProfileLabel}>
+                                    {utils.getCurrencyName(_trade.currency)}
+                                </Text>
+                                <Text style={styles.htmBuySellText}>
+                                    {_trade.amount+' '}
+                                    {utils.getCurrencyUnitUpcase(_trade.currency)}
+                                </Text>
+                            </View>
+                        )}
+                    </View>:null}
                     <View style={styles.htmProfileContent}>
                         <View style={{
                             flexDirection: 'row',
                             justifyContent: 'space-between',
                         }}>
-                            <Text style={[styles.label,{}]}>Trading In</Text>
+                            <Text style={styles.label}>Trading In</Text>
                             <TouchableOpacity style={styles.htmExchangesTab}
                                 onPress={()=>this.setState({selectExchange:true})}>
                                 <Text style={[styles.label,styles.htmExchangesTabTitle]}>

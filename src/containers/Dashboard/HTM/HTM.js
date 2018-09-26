@@ -65,9 +65,11 @@ class HTM extends Component < {} > {
                                     paddingHorizontal: 12
                                 }]}
                                 name='send'/>
-                            {/*<View style={styles.htmChatBadge}>
-                                <Text style={styles.htmChatBadgeText}>19</Text>
-                            </View>*/}
+                            {this.props.chatUnreadMsgCount>0?<View style={styles.htmChatBadge}>
+                                <Text style={styles.htmChatBadgeText}>
+                                    {this.props.chatUnreadMsgCount}
+                                </Text>
+                            </View>:null}
                         </TouchableOpacity>
                     </HeaderRight>
                 </Header>
@@ -122,7 +124,7 @@ class HTM extends Component < {} > {
                         },!this.props.htmProfile.is_active && {
                             backgroundColor: '#C2C2C2',
                         }]}
-                        value={'Near by HTM'}
+                        value={'Find Trade'}
                         onPress={()=>{
                             if(!!this.props.htmProfile.is_active)
                                 this.props.navigation.navigate('HTMListingMap')
@@ -159,6 +161,7 @@ function mapStateToProps({params}) {
         nightMode: params.nightMode,
         profile: params.profile,
         htmProfile: params.htmProfile || {},
+        chatUnreadMsgCount: params.chatUnreadMsgCount || 0,
     };
 }
 

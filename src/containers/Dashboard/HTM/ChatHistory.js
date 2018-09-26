@@ -27,7 +27,6 @@ import { PROFILE_URL } from '@src/config';
 import * as utils from '@lib/utils';
 import * as constants from '@src/constants';
 import moment from 'moment-timezone'
-import Chat from '@helpers/chatHelper';
 
 class ChatHistory extends Component < {} > {
 
@@ -42,20 +41,10 @@ class ChatHistory extends Component < {} > {
         };
     }
 
-    componentDidMount() {
-        Chat.addListener('ru',this._chatHandler);
-    }
-
-    componentWillUnmount(){
-        Chat.removeListener('ru',this._chatHandler);
-    }
-
-    _chatHandler=(d)=>{
-        this.setState({refresh:new Date().getTime()})
-    }
-
     render() {
         const styles = (this.props.nightMode?require('@styles/nightMode/chat'):require('@styles/chat'));
+        let chatRooms = (this.props.chatRooms || []);
+        chatRooms.sort((a,b) => a.l.t < b.l.t? 1:-1);
         return (
             <Container>
                 <Header>
@@ -64,10 +53,10 @@ class ChatHistory extends Component < {} > {
                             <Icon onPress={() => this.props.navigation.goBack()} style={styles.headerBackIcon} name='angle-left'/>
                         </TouchableOpacity>
                     </HeaderLeft>
-                    <HeaderTitle>Chat History</HeaderTitle>
+                    <HeaderTitle>Trade History</HeaderTitle>
                 </Header>
                 <Content bounces={false} style={styles.content}>
-                    {!!this.props.chatRooms && this.props.chatRooms.sort((a,b) => a.l.t < b.l.t).map(cr=>{
+                    {chatRooms.map(cr=>{
                         let un = cr.m[0] == this.props.htmProfile.username?cr.m[1]:cr.m[0];
                         let d = {
                             id: cr.l._id,
@@ -82,12 +71,12 @@ class ChatHistory extends Component < {} > {
                                 sameElse: 'DD/MM/YYYY'
                             }),
                             m: cr.l?cr.l.txt:'-',
-                            ur: cr.c[cr.c.length-1].ur?
-                                cr.c[cr.c.length-1].ur[this.props.htmProfile.username]:0
+                            ur: cr.c[cr.c.length-1].uc?
+                                cr.c[cr.c.length-1].uc[this.props.htmProfile.username]:0
                         }
                         return (
                             <TouchableOpacity activeOpacity={0.5}
-                                key={'_n'+d.id}
+                                key={'_n'+d.id+'_'+this.props.chatRoomsLastUpdate}
                                 style={[styles.chatTab, d.ur && styles.chatTabUnRead]}
                                 onPress={()=>this.props
                                     .selectChatRoom(d.un, cr, this.props.navigation.navigate)}>
@@ -122,6 +111,7 @@ function mapStateToProps({params}) {
         nightMode: params.nightMode,
         chatRooms: params.chatRooms,
         htmProfile: params.htmProfile,
+        chatRoomsLastUpdate: params.chatRoomsLastUpdate,
     };
 }
 

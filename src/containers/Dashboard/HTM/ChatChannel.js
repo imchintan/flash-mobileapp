@@ -43,8 +43,11 @@ class ChatChannel extends Component < {} > {
     }
 
     render() {
-        const styles = (this.props.nightMode?require('@styles/nightMode/chat'):require('@styles/chat'));
+        const styles = (this.props.nightMode?
+            require('@styles/nightMode/chat'):require('@styles/chat'));
         const hasActiveChannel = (this.props.chatRoom.c.filter(ch=>ch.a).length > 0);
+        let chatRoomChannels =  this.props.chatRoom.c.filter(ch=>!!ch.l)
+        chatRoomChannels = chatRoomChannels.sort((a,b) => a.id < b.id?1:-1);
         return (
             <Container>
                 <Header>
@@ -55,15 +58,17 @@ class ChatChannel extends Component < {} > {
                     </HeaderLeft>
                     <HeaderTitle>{this.props.htm.display_name}</HeaderTitle>
                     <HeaderRight>
-                        <Image
-                            style={{
-                                width: 40,
-                                height: 40,
-                                borderRadius: 20,
-                            }}
-                            source={this.props.htm.profile_pic_url?
-                                {uri:PROFILE_URL+this.props.htm.profile_pic_url}:
-                                utils.getCurrencyIcon(constants.CURRENCY_TYPE.FLASH)} />
+                        <TouchableOpacity onPress={()=>this.props.navigation.navigate('HTMDetail')}>
+                            <Image
+                                style={{
+                                    width: 40,
+                                    height: 40,
+                                    borderRadius: 20,
+                                }}
+                                source={this.props.htm.profile_pic_url?
+                                    {uri:PROFILE_URL+this.props.htm.profile_pic_url}:
+                                    utils.getCurrencyIcon(constants.CURRENCY_TYPE.FLASH)} />
+                        </TouchableOpacity>
                     </HeaderRight>
                 </Header>
                 <Content style={styles.content}>
@@ -76,7 +81,7 @@ class ChatChannel extends Component < {} > {
                             onPress={()=>this.props.goToChatRoom(this.props.htm.username,
                                 (feedback)=>this.props.navigation.navigate(feedback?'FeedBack':'ChatRoom'))}
                         />:null}
-                        { this.props.chatRoom.c.sort((a,b) => a.id < b.id).map((ch,i)=>{
+                        { chatRoomChannels.map((ch,i)=>{
                             let msg = ch.l?ch.l.txt:'-';
                             let ur = ch.ur?ch.ur[this.props.htmProfile.username]:0;
                             return(

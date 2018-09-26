@@ -103,6 +103,7 @@ android {
         targetSdkVersion 26
         versionCode 19
         versionName "1.9.3"
+        resConfigs "en"
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
@@ -128,6 +129,7 @@ android {
     buildTypes {
         release {
             minifyEnabled enableProguardInReleaseBuilds
+            shrinkResources enableProguardInReleaseBuilds
             proguardFiles getDefaultProguardFile("proguard-android.txt"), "proguard-rules.pro"
             signingConfig signingConfigs.release
         }
@@ -148,21 +150,21 @@ android {
 }
 
 dependencies {
-    compile project(':react-native-android-open-settings')
-    compile(project(':react-native-maps')){
+    implementation project(':react-native-android-open-settings')
+    implementation(project(':react-native-maps')){
         exclude group: 'com.google.android.gms', module: 'play-services-base'
         exclude group: 'com.google.android.gms', module: 'play-services-maps'
     }
-    compile 'com.google.android.gms:play-services-base:+'
-    compile 'com.google.android.gms:play-services-maps:+'
-    compile project(':react-native-camera')
-    compile project(':react-native-touch-id')
-    compile project(':react-native-sound')
-    compile project(':react-native-push-notification')
-    compile project(':react-native-randombytes')
-    compile fileTree(dir: "libs", include: ["*.jar"])
-    compile "com.android.support:appcompat-v7:27.0.3"
-    compile "com.facebook.react:react-native:+"  // From node_modules
+    implementation 'com.google.android.gms:play-services-base:+'
+    implementation 'com.google.android.gms:play-services-maps:+'
+    implementation project(':react-native-camera')
+    implementation project(':react-native-touch-id')
+    implementation project(':react-native-sound')
+    implementation project(':react-native-push-notification')
+    implementation project(':react-native-randombytes')
+    implementation fileTree(dir: "libs", include: ["*.jar"])
+    implementation "com.android.support:appcompat-v7:27.0.3"
+    implementation "com.facebook.react:react-native:+"  // From node_modules
 }
 
 // Run this once to be able to run the application with BUCK

@@ -21,13 +21,17 @@ export const getChatRooms = () => {
                     payload: { loading: false }
                 });
             }else{
+                let chatRooms = d.rooms.filter(room=> !!room.l);
                 dispatch({
                     type: types.GET_CHAT_ROOMS,
                     payload: {
                         loading: false,
-                        chatRooms: d.rooms
+                        chatRooms: chatRooms
                     }
                 });
+                if(chatRooms.length)
+                    dispatch(updateChatRoom(chatRooms[0]));
+
             }
         }).catch(e=>{
             console.log(e);
@@ -76,6 +80,7 @@ export const selectChatRoom = (username, chatRoom, navigate) => {
                 payload: { chatMessages:[], chatRoom, chatRoomChannel:null }
             });
             navigate('ChatChannel');
+            dispatch(updateRoomMemberDetail());
         }
         if(!params.htm || params.htm.username !== username)
             dispatch(htm.getHTMDetail(username,_cb));
@@ -134,7 +139,6 @@ export const createChannel = (receiver_username,cb=null) => {
                     payload: {
                         loading: false,
                         chatMessages:[],
-                        chatRooms,
                         chatRoom,
                         chatRoomChannel
                     }
@@ -152,6 +156,31 @@ export const createChannel = (receiver_username,cb=null) => {
     }
 }
 
+export const updateRoomMemberDetail = () => {
+    return (dispatch,getState) => {
+        dispatch({ type: types.LOADING_START });
+        let params = getState().params;
+        apis.updateRoomMemberDetail(params.profile.auth_version, params.profile.sessionToken,
+            params.chatRoom._id, params.htm.username, params.htm.display_name,
+            params.htm.profile_pic_url, params.htmProfile.display_name,
+            params.htmProfile.profile_pic_url).then((d)=>{
+            if(d.rc !== 1){
+                console.log(d.reason);
+            }
+            dispatch({
+                type: types.UPDATE_CHAT_ROOM_MEMBER_DETAIL,
+                payload: { loading: false }
+            });
+        }).catch(e=>{
+            console.log(e);
+            dispatch({
+                type: types.UPDATE_CHAT_ROOM_MEMBER_DETAIL,
+                payload: { loading: false }
+            });
+        })
+    }
+}
+
 export const getChatMessages = () => {
     return (dispatch,getState) => {
         dispatch({ type: types.LOADING_START });
@@ -163,8 +192,8 @@ export const getChatMessages = () => {
             });
 
         let chatMessages = (params.chatMessages || []);
-        let limit = 10;
-        let pageNo = Math.floor(chatMessages.length / 10)+1;
+        let limit = 20;
+        let pageNo = Math.floor(chatMessages.length / limit)+1;
         apis.getChatMessages(params.profile.auth_version, params.profile.sessionToken,
             params.chatRoomChannel.id, limit, pageNo).then((d)=>{
             if(d.rc !== 1){
@@ -184,15 +213,14 @@ export const getChatMessages = () => {
                     _id     : params.htmProfile.id,
                     name    : params.htmProfile.display_name,
                 }
-                chatMessages = _.sortedUniqBy(_.concat(
+                chatMessages = _.uniqBy(_.concat(chatMessages,
                     d.messages.map(m=>({
                         _id         : m._id,
                         createdAt   : m.t,
                         text        : m.txt,
                         user        : m.s == params.htm.username?htm:user,
-                    })),
-                    chatMessages
-                ),(msg)=>msg._id);
+                }))),'_id');
+                chatMessages.sort((m1,m2)=>m1._id>m2._id?-1:1);
                 dispatch({
                     type: types.GET_CHAT_MESSAGES,
                     payload: {
@@ -268,7 +296,7 @@ export const submitFeedback = (data, cb=null) => {
                 Toast.errorTop(d.reason);
             }else{
                 apis.submitFeedback(params.profile.auth_version, params.profile.sessionToken,
-                    params.htmProfile.username, params.chatRoomChannel.id, data).then((d)=>{
+                    params.htm.username, params.chatRoomChannel.id, data).then((d)=>{
                     if(d.rc !== 1){
                         Toast.errorTop(d.reason);
                     }else{
@@ -276,6 +304,7 @@ export const submitFeedback = (data, cb=null) => {
                             type: types.SUBMIT_FEEDBACK,
                             payload: { loading: false }
                         });
+                        dispatch(htm.getHTMDetail(params.htm.username, null, params.htm));
                         if(cb)cb();
                     }
                 }).catch(e=>{
@@ -330,6 +359,7 @@ export const receiveChatMessage = (msg) => {
 
 export const updateChatRoom = (room) => {
     return (dispatch,getState) => {
+        if(!room.l) return ;
         let params = getState().params;
         let payload = {};
         payload.chatRooms =  params.chatRooms;
@@ -348,6 +378,31 @@ export const updateChatRoom = (room) => {
         }else{
             payload.chatRooms[chatRoomIdx] = chatRoom;
         }
+        payload.chatUnreadMsgCount = params.htmProfile?payload.chatRooms.reduce((a,b)=>{
+            let urA = a || 0;
+            if(isNaN(urA)){
+                urA = a.c.length > 1?a.c.reduce((c,d)=>{
+                    if(!d.uc) return 0;
+                    let urC = c || 0;
+                    if(isNaN(urC)){
+                        urC = c.uc[params.htmProfile.username] || 0;
+                    }
+                    let urD = d.uc[params.htmProfile.username] || 0;
+                    return urC + urD;
+                }):(a.c[0].uc[params.htmProfile.username]||0);
+            }
+            let urB = b.c.length > 1?b.c.reduce((c,d)=>{
+                if(!d.uc) return 0;
+                let urC = c || 0;
+                if(isNaN(urC)){
+                    urC = c.uc[params.htmProfile.username] || 0;
+                }
+                let urD = d.uc[params.htmProfile.username] || 0;
+                return urC + urD;
+            }):(b.c[0].uc?(b.c[0].uc[params.htmProfile.username] || 0):0);
+            return urA + urB;
+        }):0;
+        payload.chatRoomsLastUpdate = new Date().getTime();
         dispatch({
             type: types.UPDATE_CHAT_ROOM,
             payload

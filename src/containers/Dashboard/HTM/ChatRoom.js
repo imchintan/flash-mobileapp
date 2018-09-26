@@ -14,7 +14,8 @@ import {
     HeaderRight,
     HeaderTitle,
     Icon,
-    Text
+    Text,
+    Loader
 } from '@components';
 
 import {connect} from 'react-redux';
@@ -55,7 +56,7 @@ class ChatRoom extends Component < {} > {
     render() {
         const styles = (this.props.nightMode?require('@styles/nightMode/chat'):require('@styles/chat'));
         return (
-            <View style={{flex:1, paddingTop: 60}}>
+            <View style={{flex:1, paddingTop: 55}}>
                 <Header>
                     <HeaderLeft>
                         <TouchableOpacity>
@@ -84,6 +85,11 @@ class ChatRoom extends Component < {} > {
                     </HeaderRight>:null}
                 </Header>
                 <GiftedChat
+                    listViewProps={{
+                        onEndReachedThreshold:10,
+                        onEndReached:()=> !this.props.loading
+                            && this.props.getChatMessages()
+                    }}
                     messages={this.props.chatMessages}
                     onSend={messages => messages.map(message => !!message.text
                             && this.props.sendChatMessage(message.text))}
@@ -95,6 +101,7 @@ class ChatRoom extends Component < {} > {
                         <Text style={styles.closeChat}>
                             This trade is closed!
                         </Text>:null}/>
+            <Loader show={this.props.loading} style={{marginTop:55}} />
             </View>
         );
     }
@@ -102,6 +109,7 @@ class ChatRoom extends Component < {} > {
 
 function mapStateToProps({params}) {
     return {
+        loading: params.loading,
         nightMode: params.nightMode,
         htm: params.htm,
         htmProfile: params.htmProfile,
