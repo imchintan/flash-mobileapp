@@ -8,6 +8,7 @@ import * as messages from './messages';
 import * as migrateAccount from './migrateAccount';
 import * as payoutCode from './payoutCode';
 import * as sharingCode from './sharingCode';
+import * as kwayisi from './kwayisi';
 
 module.exports = {
     ...login,
@@ -20,4 +21,5 @@ module.exports = {
     ...migrateAccount,
     ...payoutCode,
     ...sharingCode,
+    ...kwayisi,
 }
