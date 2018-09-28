@@ -67,7 +67,7 @@ class ChatHistory extends Component < {} > {
                                 nextDay: '[Tomorrow]',
                                 nextWeek: 'dddd',
                                 lastDay: '[Yesterday]',
-                                lastWeek: '[Last] dddd',
+                                lastWeek: 'dddd',
                                 sameElse: 'DD/MM/YYYY'
                             }),
                             m: cr.l?cr.l.txt:'-',

@@ -201,6 +201,7 @@ const styles = StyleSheet.create({
         height:width-170,
         borderWidth: 7,
         borderColor: '#191714',
+        backgroundColor: '#FFF'
     },
     walletAddress:{
         justifyContent: 'center',

@@ -161,241 +161,193 @@ export const COIN_MARKET_CAP_CURRENCY_ID = {
 };
 
 //Fiat currency
-export const FIAT_CURRENCY = {
-    USD: 0,
-    EUR: 1,
-    GBP: 2,
-    JPY: 3,
-    CAD: 4,
-    AUD: 5,
-    CNY: 6,
-    CHF: 7,
-    SEK: 8,
-    NZD: 9,
-    KRW: 10,
-    INR: 11,
-    BRL: 12,
-    CLP: 13,
-    CZK: 14,
-    DKK: 15,
-    HKD: 16,
-    HUF: 17,
-    IDR: 18,
-    ILS: 19,
-    MXN: 20,
-    MYR: 21,
-    NOK: 22,
-    PHP: 23,
-    PKR: 24,
-    PLN: 25,
-    RUB: 26,
-    SGD: 27,
-    THB: 28,
-    TRY: 29,
-    TWD: 30,
-    ZAR: 31
-};
+let fiatCurrency = [
+    {
+        "UNIT":"USD",
+        "NAME":"US Dollar",
+        "SYMBOL":"US$",
+        "COUNTRY":["IO","GU","MH","FM","MP","PW","PR","TC","US","UM","VG","VI","USAF"]
+    },{
+        "UNIT":"EUR",
+        "NAME":"Euro",
+        "SYMBOL":"€",
+        "COUNTRY":["AS","AD","AT","BE","FI","FR","GF","TF","DE","GR","GP",
+            "IE","IT","LU","MQ","YT","MC","NL","PT","RE","WS","SM","SI","ES",
+            "VA","AX","ME","BL","PM"]
+    },{
+        "UNIT":"GBP",
+        "NAME":"British Pound",
+        "SYMBOL":"£",
+        "COUNTRY":["GS","GB","JE","IM","SH"]
+    },{
+        "UNIT":"JPY",
+        "NAME":"Japanese Yen",
+        "SYMBOL":"¥",
+        "COUNTRY":["JP"]
+    },{
+        "UNIT":"CAD",
+        "NAME":"Canadian Dollar",
+        "SYMBOL":"CA$",
+        "COUNTRY":["CA"]
+    },{
+        "UNIT":"AUD",
+        "NAME":"Australian Dollar",
+        "SYMBOL":"AU$",
+        "COUNTRY":["AU","CX","CC","HM","KI","NR","NF","TV"]
+    },{
+        "UNIT":"CNY",
+        "NAME":"Chinese Yuan",
+        "SYMBOL":"CN¥",
+        "COUNTRY":["CN"]
+    },{
+        "UNIT":"CHF",
+        "NAME":"Swiss Franc",
+        "SYMBOL":"CHF",
+        "COUNTRY":["LI","CH"]
+    },{
+        "UNIT":"SEK",
+        "NAME":"Swedish Krona",
+        "SYMBOL":"SEK",
+        "COUNTRY":["SE"]
+    },{
+        "UNIT":"NZD",
+        "NAME":"New Zealand Dollar",
+        "SYMBOL":"NZ$",
+        "COUNTRY":["NZ","CK","NU","PN","TK"]
+    },{
+        "UNIT":"KRW",
+        "NAME":"South Korean Won",
+        "SYMBOL":"KR₩",
+        "COUNTRY":["KR"]
+    },{
+        "UNIT":"INR",
+        "NAME":"Indian Rupee",
+        "SYMBOL":"₹",
+        "COUNTRY":["IN","BT"]
+    },{
+        "UNIT":"AED",
+        "NAME":"UAE Dirham",
+        "SYMBOL":"AED",
+        "COUNTRY":["AE"]
+    },{
+        "UNIT":"BRL",
+        "NAME":"Brazilian Real",
+        "SYMBOL":"R$",
+        "COUNTRY":["BR"]
+    },{
+        "UNIT":"CLP",
+        "NAME":"Chilean Peso",
+        "SYMBOL":"CL$",
+        "COUNTRY":["CL"]
+    },{
+        "UNIT":"CZK",
+        "NAME":"Czech Koruna",
+        "SYMBOL":"Kč",
+        "COUNTRY":["CZ"]
+    },{
+        "UNIT":"DKK",
+        "NAME":"Danish Krone",
+        "SYMBOL":"DKK",
+        "COUNTRY":["DK","FO","GL"]
+    },{
+        "UNIT":"GHS",
+        "NAME":"Ghanaian Cedi",
+        "SYMBOL":"GH₵",
+        "COUNTRY":["GH"]
+    },{
+        "UNIT":"HKD",
+        "NAME":"Hong Kong Dollar",
+        "SYMBOL":"HK$",
+        "COUNTRY":["HK"]
+    },{
+        "UNIT":"HUF",
+        "NAME":"Hungarian Forint",
+        "SYMBOL":"Ft",
+        "COUNTRY":["HU"]
+    },{
+        "UNIT":"IDR",
+        "NAME":"Indonesian Rupiah",
+        "SYMBOL":"Rp",
+        "COUNTRY":["TP","ID"]
+    },{
+        "UNIT":"ILS",
+        "NAME":"Israeli New Shekel",
+        "SYMBOL":"₪",
+        "COUNTRY":["IL"]
+    },{
+        "UNIT":"MXN",
+        "NAME":"Mexican Peso",
+        "SYMBOL":"MX$",
+        "COUNTRY":["MX"]
+    },{
+        "UNIT":"MYR",
+        "NAME":"Malaysian Ringgit",
+        "SYMBOL":"RM",
+        "COUNTRY":["MY"]
+    },{
+        "UNIT":"NGN",
+        "NAME":"Nigerian naira",
+        "SYMBOL":"₦",
+        "COUNTRY":["NG"]
+    },{
+        "UNIT":"NOK",
+        "NAME":"Norwegian Krone",
+        "SYMBOL":"NOK",
+        "COUNTRY":["BV","NO","SJ"]
+    },{
+        "UNIT":"PHP",
+        "NAME":"Philippine Piso",
+        "SYMBOL":"₱",
+        "COUNTRY":["PH"]
+    },{
+        "UNIT":"PKR",
+        "NAME":"Pakistani Rupee",
+        "SYMBOL":"₨",
+        "COUNTRY":["PK"]
+    },{
+        "UNIT":"PLN",
+        "NAME":"Polish Zloty",
+        "SYMBOL":"zł",
+        "COUNTRY":["PL"]
+    },{
+        "UNIT":"RUB",
+        "NAME":"Russian Ruble",
+        "SYMBOL":"₽",
+        "COUNTRY":["RU"]
+    },{
+        "UNIT":"SGD",
+        "NAME":"Singapore Dollar",
+        "SYMBOL":"SG$",
+        "COUNTRY":["SG"]
+    },{
+        "UNIT":"THB",
+        "NAME":"Thai Baht",
+        "SYMBOL":"฿",
+        "COUNTRY":["TH"]
+    },{
+        "UNIT":"TRY",
+        "NAME":"Turkish Lira",
+        "SYMBOL":"₺",
+        "COUNTRY":["TR"]
+    },{
+        "UNIT":"TWD",
+        "NAME":"New Taiwan Dollar",
+        "SYMBOL":"NT$",
+        "COUNTRY":["TW"]
+    },{
+        "UNIT":"ZAR",
+        "NAME":"South African Rand",
+        "SYMBOL":"R",
+        "COUNTRY":["ZA"]
+    }
+]
 
-export const FIAT_CURRENCY_UNIT = {
-    0: 'USD',
-    1: 'EUR',
-    2: 'GBP',
-    3: 'JPY',
-    4: 'CAD',
-    5: 'AUD',
-    6: 'CNY',
-    7: 'CHF',
-    8: 'SEK',
-    9: 'NZD',
-    10: 'KRW',
-    11: 'INR',
-    12: 'BRL',
-    13: 'CLP',
-    14: 'CZK',
-    15: 'DKK',
-    16: 'HKD',
-    17: 'HUF',
-    18: 'IDR',
-    19: 'ILS',
-    20: 'MXN',
-    21: 'MYR',
-    22: 'NOK',
-    23: 'PHP',
-    24: 'PKR',
-    25: 'PLN',
-    26: 'RUB',
-    27: 'SGD',
-    28: 'THB',
-    29: 'TRY',
-    30: 'TWD',
-    31: 'ZAR'
-};
-export const FIAT_CURRENCY_UNIT_BY_COUNTRY = {
-    IO: 'USD',
-    GU: 'USD',
-    MH: 'USD',
-    FM: 'USD',
-    MP: 'USD',
-    PW: 'USD',
-    PR: 'USD',
-    TC: 'USD',
-    US: 'USD',
-    UM: 'USD',
-    VG: 'USD',
-    VI: 'USD',
-    USAF: 'USD',
-    AS: 'EUR',
-    AD: 'EUR',
-    AT: 'EUR',
-    BE: 'EUR',
-    FI: 'EUR',
-    FR: 'EUR',
-    GF: 'EUR',
-    TF: 'EUR',
-    DE: 'EUR',
-    GR: 'EUR',
-    GP: 'EUR',
-    IE: 'EUR',
-    IT: 'EUR',
-    LU: 'EUR',
-    MQ: 'EUR',
-    YT: 'EUR',
-    MC: 'EUR',
-    NL: 'EUR',
-    PT: 'EUR',
-    RE: 'EUR',
-    WS: 'EUR',
-    SM: 'EUR',
-    SI: 'EUR',
-    ES: 'EUR',
-    VA: 'EUR',
-    AX: 'EUR',
-    ME: 'EUR',
-    BL: 'EUR',
-    PM: 'EUR',
-    GS: 'GBP',
-    GB: 'GBP',
-    JE: 'GBP',
-    IM: 'GBP',
-    SH: 'GBP',
-    JP: 'JPY',
-    CA: 'CAD',
-    AU: 'AUD',
-    CX: 'AUD',
-    CC: 'AUD',
-    HM: 'AUD',
-    KI: 'AUD',
-    NR: 'AUD',
-    NF: 'AUD',
-    TV: 'AUD',
-    CN: 'CNY',
-    LI: 'CHF',
-    CH: 'CHF',
-    SE: 'SEK',
-    NZ: 'NZD',
-    CK: 'NZD',
-    NU: 'NZD',
-    PN: 'NZD',
-	TK: 'NZD',
-    KR: 'KRW',
-    IN: 'INR',
-    BT: 'INR',
-    BR: 'BRL',
-    CL: 'CLP',
-    CZ: 'CZK',
-    DK: 'DKK',
-    FO: 'DKK',
-    GL: 'DKK',
-    HK: 'HKD',
-    HU: 'HUF',
-    TP: 'IDR',
-    ID: 'IDR',
-    IL: 'ILS',
-    MX: 'MXN',
-    MY: 'MYR',
-    BV: 'NOK',
-    NO: 'NOK',
-    SJ: 'NOK',
-    PH: 'PHP',
-    PK: 'PKR',
-    PL: 'PLN',
-    RU: 'RUB',
-    SG: 'SGD',
-    TH: 'THB',
-    TR: 'TRY',
-    TW: 'TWD',
-    ZA: 'ZAR'
-};
-
-export const FIAT_CURRENCY_NAME = {
-    0: 'US Dollar',
-    1: 'Euro',
-    2: 'British Pound',
-    3: 'Japanese Yen',
-    4: 'Canadian Dollar',
-    5: 'Australian Dollar',
-    6: 'Chinese Yuan',
-    7: 'Swiss Franc',
-    8: 'Swedish Krona',
-    9: 'New Zealand Dollar',
-    10: 'South Korean Won',
-    11: 'Indian Rupee',
-    12: 'Brazilian Real',
-    13: 'Chilean Peso',
-    14: 'Czech Koruna',
-    15: 'Danish Krone',
-    16: 'Hong Kong Dollar',
-    17: 'Hungarian Forint',
-    18: 'Indonesian Rupiah',
-    19: 'Israeli New Shekel',
-    20: 'Mexican Peso',
-    21: 'Malaysian Ringgit',
-    22: 'Norwegian Krone',
-    23: 'Philippine Piso',
-    24: 'Pakistani Rupee',
-    25: 'Polish Zloty',
-    26: 'Russian Ruble',
-    27: 'Singapore Dollar',
-    28: 'Thai Baht',
-    29: 'Turkish Lira',
-    30: 'New Taiwan Dollar',
-    31: 'South African Rand'
-};
-
-export const FIAT_CURRENCY_SYMBOL = {
-    0: 'US$',   // US Dollar, USD
-    1: '€',     // Euro, EUR
-    2: '£',     // British Pound, GBP
-    3: '¥',     // Japanese Yen, JPY
-    4: 'CA$',   // Canadian Dollar, CAD
-    5: 'AU$',   // Australian Dollar, AUD
-    6: 'CN¥',   // Chinese Yuan, CNY
-    7: 'CHF',   // Swiss Franc, CHF
-    8: 'SEK',   // Swedish Krona, SEK
-    9: 'NZ$',   // New Zealand Dollar, NZD
-    10: 'KR₩',  // South Korean Won, KRW
-    11: '₹',    // Indian Rupee, INR
-    12: 'R$',   // Brazilian Real, BRL
-    13: 'CL$',  // Chilean Peso, CLP
-    14: 'Kč',   // Czech Koruna, CZK
-    15: 'DKK',  // Danish Krone, DKK
-    16: 'HK$',  // Hong Kong Dollar, HKD
-    17: 'Ft',   // Hungarian Forint, HUF
-    18: 'Rp',   // Indonesian Rupiah, IDR
-    19: '₪',    // Israeli New Shekel, ILS
-    20: 'MX$',  // Mexican Peso, MXN
-    21: 'RM',   // Malaysian Ringgit, MYR
-    22: 'NOK',  // Norwegian Krone, NOK
-    23: '₱',    // Philippine Piso, PHP
-    24: '₨',    // Pakistani Rupee, PKR
-    25: 'zł',   // Polish Zloty, PLN
-    26: '₽',    // Russian Ruble, RUB
-    27: 'SG$',  // Singapore Dollar, SGD
-    28: '฿',    // Thai Baht, THB
-    29: '₺',    // Turkish Lira, TRY
-    30: 'NT$',  // New Taiwan Dollar, TWD
-    31: 'R'     // South African Rand, ZAR
-};
+export const FIAT_CURRENCY = Object.assign({},...fiatCurrency.map((f,i)=>({[f.UNIT]:i})));
+export const FIAT_CURRENCY_UNIT = fiatCurrency.map(f=>f.UNIT);
+export const FIAT_CURRENCY_UNIT_BY_COUNTRY = Object.assign({}, ...fiatCurrency
+        .map(f=>Object.assign({},...f.COUNTRY.map(c=>({[c]:f.UNIT})))));
+export const FIAT_CURRENCY_NAME = fiatCurrency.map(f=>f.NAME);
+export const FIAT_CURRENCY_SYMBOL = fiatCurrency.map(f=>f.SYMBOL);
 
 // Sound
 export const SOUND = {
@@ -615,6 +567,7 @@ export const COUNTRY = [
     "Zimbabwe"
 ];
 
+// Google map style
 export const CUSTOM_MAP_STYLE = [{"elementType": "geometry","stylers": [{"color": "#212121"}]},
     {"elementType": "labels.icon","stylers": [{"visibility": "off"}]},
     {"elementType": "labels.text.fill","stylers": [{"color": "#757575"}]},

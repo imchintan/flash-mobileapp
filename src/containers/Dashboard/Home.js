@@ -42,6 +42,7 @@ class Home extends Component<{}> {
     }
 
     componentDidMount(){
+        this.mount = true;
         AppState.addEventListener('change', this._handleAppStateChange.bind(this));
         if(!this.props.pin){
             this.props.navigation.navigate('SetOrUpdatePIN',{update_pin:false});
@@ -57,6 +58,7 @@ class Home extends Component<{}> {
     }
 
     componentWillUnmount(){
+        this.mount = false;
         AppState.removeEventListener('change', this._handleAppStateChange.bind(this));
     }
 
@@ -64,7 +66,7 @@ class Home extends Component<{}> {
         if ((!!this.props.pin && !this.props.lockApp && this.state.appState.match(/inactive|background/) && nextAppState === 'active')){
             this.props.navigation.navigate('Lock');
         }
-        this.setState({appState: nextAppState});
+        this.mount && this.setState({appState: nextAppState});
     }
 
     refreshingHome(){
