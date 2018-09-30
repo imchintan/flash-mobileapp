@@ -1,19 +1,19 @@
 import {
     AsyncStorage
 } from 'react-native';
-import moment from 'moment-timezone';
 import * as types from '@actions/types'
-import apis from '@flashAPIs'
-import Wallet from '@lib/wallet'
+import * as send from '@actions/send'
 import * as utils from '@lib/utils'
 import * as constants from '@src/constants';
-import * as send from './send'
+import apis from '@flashAPIs'
+import Wallet from '@lib/wallet'
+import moment from 'moment-timezone';
 import Premium from 'Premium';
 import secrets from 'secrets.js-grempe';
 import nacl from 'tweetnacl';
 import TouchID from 'react-native-touch-id'
 
-import { getCoinMarketCapDetail, getProfile } from '@actions/account';
+import { getCoinMarketCapDetail, getProfile, changeFiatCurrency } from '@actions/account';
 
 export const init = () => {
     return async (dispatch,getState) => {
@@ -22,7 +22,6 @@ export const init = () => {
             dispatch({ type: types.LOADING_START });
         }
 
-        let location = null;
         TouchID.isSupported().then(async biometryType => {
             // Success code
             if (biometryType !== 'FaceID') {
@@ -43,18 +42,6 @@ export const init = () => {
             console.log(e);
         });
 
-        await utils.getLocation().then(res => {
-            if(res.rc == 1){
-                location = res.info;
-                dispatch({ type: types.SET_LOCATION, location });
-                dispatch({ type: types.SET_PUBLIC_IP, ip: res.info.ip });
-            }else{
-                utils.publicIP().then(ip => {
-                    dispatch({ type: types.SET_PUBLIC_IP, ip });
-                });
-            }
-        });
-
         let payload = {};
 
         let pin = await AsyncStorage.getItem('pin');
@@ -70,8 +57,6 @@ export const init = () => {
         let fiat_currency = await AsyncStorage.getItem('fiat_currency');
         if(fiat_currency){
             payload.fiat_currency = parseInt(fiat_currency);
-        }else if(location && location.country_code){
-            payload.fiat_currency = utils.getFiatCurrencyByCountry(location.country_code);
         }
 
         if(!user){
@@ -93,8 +78,29 @@ export const init = () => {
             });
             dispatch(getProfile());
             dispatch(getMyWallets(payload.profile));
-            dispatch(getCoinMarketCapDetail());
+            dispatch(getCoinMarketCapDetail(true));
         }
+        utils.getLocation().then(res => {
+            if(res.rc == 1){
+                let location = res.info;
+                dispatch({ type: types.SET_LOCATION, location });
+                dispatch({ type: types.SET_PUBLIC_IP, ip: res.info.ip });
+                if(location.country_code && !fiat_currency){
+                    fiat_currency = utils.getFiatCurrencyByCountry(location.country_code);
+                    if(fiat_currency)
+                        dispatch(changeFiatCurrency(fiat_currency));
+                }
+            }else{
+                utils.publicIP().then(ip => {
+                    dispatch({ type: types.SET_PUBLIC_IP, ip });
+                });
+            }
+        }).catch(e=>{
+            console.log(e);
+            utils.publicIP().then(ip => {
+                dispatch({ type: types.SET_PUBLIC_IP, ip });
+            }).catch(e=>console.log(e));
+        });
         initTimezone();
     }
 }
@@ -728,12 +734,11 @@ export const _logout = async(dispatch, clearAll=false) => {
         if(payload.pin !== null && typeof payload.pin !== 'undefined')
             AsyncStorage.setItem('pin', payload.pin);
         if(payload.fiat_currency !== null && typeof payload.fiat_currency !== 'undefined')
-            AsyncStorage.setItem('fiat_currency', payload.fiat_currency);
+            await AsyncStorage.setItem('fiat_currency', payload.fiat_currency.toString());
         if(payload.isEnableTouchID !== null && typeof payload.isEnableTouchID !== 'undefined')
             AsyncStorage.setItem('isEnableTouchID', payload.isEnableTouchID.toString());
     }
     dispatch({ type: types.LOGOUT, payload });
-    dispatch(getCoinMarketCapDetail());
 }
 
 export const signupSuccess = () => ({

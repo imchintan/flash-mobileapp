@@ -170,13 +170,13 @@ class Receive extends Component < {} > {
                         <Text style={styles.requestRowLabel}>QR Code</Text>
                         <View style={styles.hr}/>
                         <View style={styles.qrCodeBox}>
+                            <View style={styles.qrCodeBorder}/>
                             <QRCode
                                 value={constants.CURRENCY_TYPE_QR_PREFIX[this.props.currency_type]+':'+
                                     this.props.wallet_address+'?amount='+this.state.amount}
                                 size={width-190}
                                 bgColor={'#191714'}
                                 fgColor={'#FFFFFF'}/>
-                            <View style={styles.qrCodeBorder}/>
                         </View>
                         <View style={styles.walletAddress}>
                             <Text selectable={true} style={styles.walletAddressText}>

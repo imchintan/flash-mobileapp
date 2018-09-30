@@ -23,7 +23,7 @@ import {
 import moment from 'moment-timezone';
 import { getDisplayDate } from '@lib/utils';
 import * as constants from '@src/constants';
-import { isIphoneX } from '@lib/utils'
+import { isIphoneX, FontSize } from '@lib/utils'
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -64,7 +64,7 @@ const stackNavigatorConfig = {
             width: 140,
         },
         labelStyle: {
-            fontSize: 16,
+            fontSize: FontSize(15),
             marginLeft:0,
             marginRight:0,
         },
@@ -165,13 +165,13 @@ class ActivityTab extends React.Component {
                     }} onPress={this.openCalendar}>
                         <Text style={{
                             textAlign: 'center',
-                            fontSize: 18,
+                            fontSize: FontSize(18),
                             color: '#FFF',
                         }}>
                             <Text>
                                 {getDisplayDate(this.props.date_from)} - {getDisplayDate(this.props.date_to)+'  '}
                             </Text>
-                            <Icon style={{fontSize: 20}} name='calendar'/>
+                            <Icon style={{fontSize: FontSize(20)}} name='calendar'/>
                         </Text>
                     </TouchableOpacity>
                     <HeaderRight>
