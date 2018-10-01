@@ -118,7 +118,7 @@ class SetupHTMProfile extends Component < {} > {
         switch (type) {
             case 0:
                 value = value.toString().trim();
-                if(value && value !== '-'){
+                if(value && value !== '-' && value !== '.' && value !== '-.'){
                     let res = Validation.percentage(value);
                     if(!res.success){
                         break;
@@ -133,7 +133,7 @@ class SetupHTMProfile extends Component < {} > {
                 buy_at = Number((--buy_at).toFixed(2));
                 break;
             case 3:
-                if(buy_at && buy_at !== '-'){
+                if(buy_at && buy_at !== '-' && buy_at !== '.' && buy_at !== '-.'){
                     let res1 = Validation.percentage(buy_at);
                     if(!res1.success){
                         Toast.errorTop("Please enter valid percentage for buy!");
@@ -156,7 +156,7 @@ class SetupHTMProfile extends Component < {} > {
         switch (type) {
             case 0:
                 value = value.toString().trim();
-                if(value && value !== '-'){
+                if(value && value !== '-' && value !== '.' && value !== '-.'){
                     let res = Validation.percentage(value);
                     if(!res.success){
                         break;
@@ -171,7 +171,7 @@ class SetupHTMProfile extends Component < {} > {
                 sell_at = Number((--sell_at).toFixed(2));
                 break;
             case 3:
-                if(sell_at && sell_at !== '-'){
+                if(sell_at && sell_at !== '-' && sell_at !== '.' && sell_at !== '-.'){
                     let res1 = Validation.percentage(sell_at);
                     if(!res1.success){
                         Toast.errorTop("Please enter valid percentage for buy!");
@@ -195,7 +195,7 @@ class SetupHTMProfile extends Component < {} > {
         switch (type) {
             case 0:
                 value = value.toString().trim();
-                if(value && value !== '-'){
+                if(value && value !== '-' && value !== '.' && value !== '-.'){
                     let res = Validation.percentage(value);
                     if(!res.success){
                         break;
@@ -210,7 +210,7 @@ class SetupHTMProfile extends Component < {} > {
                 buy_at = Number((--buy_at).toFixed(2));
                 break;
             case 3:
-                if(buy_at && buy_at !== '-'){
+                if(buy_at && buy_at !== '-' && buy_at !== '.' && buy_at !== '-.'){
                     let res1 = Validation.percentage(buy_at);
                     if(!res1.success){
                         Toast.errorTop("Please enter valid percentage for buy!");
@@ -235,7 +235,7 @@ class SetupHTMProfile extends Component < {} > {
         switch (type) {
             case 0:
                 value = value.toString().trim();
-                if(value && value !== '-'){
+                if(value && value !== '-' && value !== '.' && value !== '-.'){
                     let res = Validation.percentage(value);
                     if(!res.success){
                         break;
@@ -250,7 +250,7 @@ class SetupHTMProfile extends Component < {} > {
                 sell_at = Number((--sell_at).toFixed(2));
                 break;
             case 3:
-                if(sell_at && sell_at !== '-'){
+                if(sell_at && sell_at !== '-' && sell_at !== '.' && sell_at !== '-.'){
                     let res1 = Validation.percentage(sell_at);
                     if(!res1.success){
                         Toast.errorTop("Please enter valid percentage for buy!");
@@ -278,7 +278,7 @@ class SetupHTMProfile extends Component < {} > {
         switch (type) {
             case 0:
                 value = value.toString().trim();
-                if(value){
+                if(value && value !== '.'){
                     let res = Validation.percentage(value,8);
                     if(!res.success){
                         break;
@@ -287,13 +287,15 @@ class SetupHTMProfile extends Component < {} > {
                 min_qty = value;
                 break;
             case 1:
-                if(min_qty){
+                if(min_qty && min_qty !== '.'){
                     let res = Validation.percentage(min_qty,8);
                     if(!res.success){
                         Toast.errorTop("Invalid input!");
                         break;
                     }
                     min_qty = res.percentage;
+                }else{
+                    min_qty = 0;
                 }
                 let max_qty = currency_types[currency_type].max_qty;
                 isValidQty = (maxQtyFocused || min_qty <= max_qty);
@@ -316,7 +318,7 @@ class SetupHTMProfile extends Component < {} > {
         switch (type) {
             case 0:
                 value = value.toString().trim();
-                if(value){
+                if(value && value !== '.'){
                     let res = Validation.percentage(value,8);
                     if(!res.success){
                         break;
@@ -325,13 +327,15 @@ class SetupHTMProfile extends Component < {} > {
                 max_qty = value;
                 break;
             case 1:
-                if(max_qty){
+                if(max_qty && max_qty !== '.'){
                     let res = Validation.percentage(max_qty,8);
                     if(!res.success){
                         Toast.errorTop("Invalid input!");
                         break;
                     }
                     max_qty = res.percentage;
+                }else{
+                    max_qty = 0;
                 }
                 let min_qty = currency_types[currency_type].min_qty;
                 isValidQty = (min_qty <= max_qty);

@@ -115,7 +115,7 @@ class HTMDetail extends Component < {} > {
                                 </Text>
                             </View>:null}
                             <Button style={{marginVertical: 10}}
-                                value={'Contact'}
+                                value={'Contact for Trade'}
                                 onPress={()=>this.props.goToChatRoom(this.state.htm.username,
                                     (feedback)=>this.props.navigation
                                         .navigate(feedback?'FeedBack':'ChatRoom'))}/>

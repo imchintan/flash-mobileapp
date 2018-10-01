@@ -75,11 +75,18 @@ export const selectChatRoom = (username, chatRoom, navigate) => {
     return (dispatch,getState) => {
         let params = getState().params;
         let _cb = () =>{
+            let hasFeedBackRemain = chatRoom.c.filter((ch)=>!ch.f
+                || typeof ch.f[params.htmProfile.username] == 'undefined');
+            let chatRoomChannel = hasFeedBackRemain.length > 0?hasFeedBackRemain[0]:null;
             dispatch({
                 type: types.SELECT_CHAT_ROOM,
-                payload: { chatMessages:[], chatRoom, chatRoomChannel:null }
+                payload: {
+                    chatMessages:[],
+                    chatRoom,
+                    chatRoomChannel
+                }
             });
-            navigate('ChatChannel');
+            navigate(chatRoomChannel?'FeedBack':'ChatChannel');
             dispatch(updateRoomMemberDetail());
         }
         if(!params.htm || params.htm.username !== username)
@@ -297,13 +304,14 @@ export const submitFeedback = (data, cb=null) => {
             }else{
                 apis.submitFeedback(params.profile.auth_version, params.profile.sessionToken,
                     params.htm.username, params.chatRoomChannel.id, data).then((d)=>{
+                    dispatch({
+                        type: types.SUBMIT_FEEDBACK,
+                        payload: { loading: false }
+                    });
                     if(d.rc !== 1){
                         Toast.errorTop(d.reason);
+
                     }else{
-                        dispatch({
-                            type: types.SUBMIT_FEEDBACK,
-                            payload: { loading: false }
-                        });
                         dispatch(htm.getHTMDetail(params.htm.username, null, params.htm));
                         if(cb)cb();
                     }

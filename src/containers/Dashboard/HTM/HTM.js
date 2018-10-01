@@ -90,7 +90,7 @@ class HTM extends Component < {} > {
                                 <Icon style={styles.htmProfileEditIcon} name={'edit'}/>
                             </TouchableOpacity>
                         </View>
-                        <View style={{marginBottom: 10,alignItems: 'center'}}>
+                        <View style={{marginBottom: 15,alignItems: 'center'}}>
                             {this.props.htmProfile.email?
                                 <View style={styles.htmProfileEmail}>
                                     <Icon style={styles.htmProfileEmailIcon}
@@ -109,6 +109,25 @@ class HTM extends Component < {} > {
                                     {this.props.htmProfile.country || ''}
                                 </Text>
                             </View>
+                            {this.props.htmProfile.total_txns > 0? <View style={{alignItems:'center'}}>
+                                {this.props.htmProfile.avg_rating>0?<View style={styles.htmProfileRating}>
+                                    {([1,2,3,4,5]).map(v=>
+                                        <Icon key={'_start_'+v} style={styles.htmProfileRatingIcon}
+                                            name={this.props.htmProfile.avg_rating>=v?'star':
+                                            (this.props.htmProfile.avg_rating>=(v-0.5)?'star-half-o':'star-o')}/>
+                                    )}
+                                </View>:null}
+                                {this.props.htmProfile.success_txns>0?<Text
+                                    style={styles.htmProfileEmailText}>
+                                    {this.props.htmProfile.success_txns} successful trades (
+                                        {Math.round(this.props.htmProfile.success_txns/this.props.htmProfile.total_txns*100)}
+                                    %)
+                                </Text>:null}
+                                <Text style={styles.htmProfileEmailText}>
+                                    Trusted by {this.props.htmProfile.trusted_by} {this.props.htmProfile.trusted_by>1?
+                                        'traders':'trader'}
+                                </Text>
+                            </View>:null}
                         </View>
                     </View>
                     <Text style={styles.htmProfileDetailNote}>

@@ -134,6 +134,27 @@ const styles = StyleSheet.create({
         marginLeft: 25,
         paddingVertical: 2,
         paddingHorizontal: 20
+    },
+    chatChannelIconBox:{
+        backgroundColor: '#FFF',
+        alignItems: 'center',
+        justifyContent: 'center'
+    },
+    chatChannelIcon:{
+        fontSize: 25,
+        color: '#191714'
+    },
+    chatChannelSuccessIcon:{
+        fontSize: 25,
+        color: 'green'
+    },
+    chatChannelPendingIcon:{
+        fontSize: 25,
+        color: '#FFB400'
+    },
+    chatChannelFailedIcon:{
+        fontSize: 25,
+        color: 'red'
     }
 });
 

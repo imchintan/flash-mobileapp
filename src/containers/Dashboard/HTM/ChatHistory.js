@@ -26,7 +26,7 @@ import {ActionCreators} from '@actions';
 import { PROFILE_URL } from '@src/config';
 import * as utils from '@lib/utils';
 import * as constants from '@src/constants';
-import moment from 'moment-timezone'
+import moment from 'moment-timezone';
 
 class ChatHistory extends Component < {} > {
 
@@ -68,7 +68,14 @@ class ChatHistory extends Component < {} > {
                                 nextWeek: 'dddd',
                                 lastDay: '[Yesterday]',
                                 lastWeek: 'dddd',
-                                sameElse: 'DD/MM/YYYY'
+                                sameElse: (now) => {
+                                    now = moment(moment(now).format('01/01/YYYY'))
+                                    if (this.isBefore(now)) {
+                                      return 'DD MMM';
+                                    } else {
+                                      return 'DD MMM, YYYY';
+                                    }
+                                }
                             }),
                             m: cr.l?cr.l.txt:'-',
                             ur: cr.c[cr.c.length-1].uc?

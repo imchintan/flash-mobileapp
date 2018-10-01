@@ -27,6 +27,7 @@ import {ActionCreators} from '@actions';
 import { PROFILE_URL } from '@src/config';
 import * as utils from '@lib/utils';
 import * as constants from '@src/constants';
+import moment from 'moment-timezone'
 
 class ChatChannel extends Component < {} > {
 
@@ -81,34 +82,59 @@ class ChatChannel extends Component < {} > {
                             onPress={()=>this.props.goToChatRoom(this.props.htm.username,
                                 (feedback)=>this.props.navigation.navigate(feedback?'FeedBack':'ChatRoom'))}
                         />:null}
-                        { chatRoomChannels.map((ch,i)=>{
-                            let msg = ch.l?ch.l.txt:'-';
-                            let ur = ch.ur?ch.ur[this.props.htmProfile.username]:0;
-                            return(
-                                <TouchableOpacity
-                                    activeOpacity={ch.a?0.5:1}
-                                    key={'_chat_channel_'+ch.id}
-                                    style={[styles.chatTab,
-                                        {alignItems: 'center'},
-                                        ch.a && styles.chatTabUnRead]}
-                                    onPress={()=>this.props
-                                        .selectChatRoomChannel(ch, this.props.navigation.navigate)}>
-                                    <View style={styles.chatMsgBox}>
-                                        <Text style={[styles.chatHtmName, ch.a
-                                            && styles.chatHtmNameUnread]}>{ch.name}</Text>
-                                        <Text style={[styles.chatMsgText,
-                                            {marginRight: 15},
-                                            ur && styles.chatMsgTextUnread]}
-                                            numberOfLines={1}>{msg}</Text>
-                                    </View>
-                                    <Icon style={{
-                                        color: ch.a?'#00FF00':'#E2E2E2',
-                                        right: 10,
-                                    }} name={'circle'}/>
-                                </TouchableOpacity>
-                            )
-                        })}
                     </View>
+                    { chatRoomChannels.map((ch,i)=>{
+                        let msg = ch.l.txt?ch.l.txt:'-';
+                        let ur = ch.ur?ch.ur[this.props.htmProfile.username]:0;
+                        let time = moment(ch.l.t).calendar(null, {
+                            sameDay: 'h:mm A',
+                            nextDay: '[Tomorrow]',
+                            nextWeek: 'dddd',
+                            lastDay: '[Yesterday]',
+                            lastWeek: 'dddd',
+                            sameElse: (now) => {
+                                now = moment(moment(now).format('01/01/YYYY'))
+                                if (this.isBefore(now)) {
+                                  return 'DD MMM';
+                                } else {
+                                  return 'DD MMM, YYYY';
+                                }
+                            }
+                        })
+                        return (
+                            <TouchableOpacity
+                               activeOpacity={ch.a?0.5:1}
+                               key={'_chat_channel_'+ch.id}
+                               style={[styles.chatTab,
+                                   {alignItems: 'center'},
+                                   ur && styles.chatTabUnRead]}
+                               onPress={()=>this.props
+                                   .selectChatRoomChannel(ch, this.props.navigation.navigate)}>
+                                <View style={[styles.chatProfileIcon,styles.chatChannelIconBox]}>
+                                    <Icon style={!ch.f?styles.chatChannelIcon:(
+                                        ch.f[this.props.htmProfile.username] === true?
+                                        styles.chatChannelSuccessIcon:(
+                                        ch.f[this.props.htmProfile.username] === false?
+                                        styles.chatChannelFailedIcon:styles.chatChannelPendingIcon))}
+                                    name={!ch.f?'exchange':(ch.f[this.props.htmProfile.username] ===true?
+                                        'thumbs-up':(ch.f[this.props.htmProfile.username] ===false?
+                                            'thumbs-down':'exclamation-triangle'))}/>
+                                </View>
+                                <View style={styles.chatMsgBox}>
+                                    <View style={styles.chatMsgDetailBox}>
+                                        <Text style={[styles.chatHtmName, ch.a
+                                            && styles.chatHtmNameUnread]}
+                                            numberOfLines={1}>{ch.name}</Text>
+                                        <Text style={[styles.chatMsgTime,
+                                            ur && styles.chatHtmNameUnread]}>{time}</Text>
+                                    </View>
+                                    <Text style={[styles.chatMsgText,
+                                        ur && styles.chatMsgTextUnread]}
+                                        numberOfLines={2}>{msg}</Text>
+                                </View>
+                            </TouchableOpacity>
+                        )
+                    })}
                 </Content>
             </Container>
         );
