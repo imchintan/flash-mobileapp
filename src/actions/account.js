@@ -170,7 +170,7 @@ export const getProfile = () => {
                 })
                 .catch(e=>console.log(e))
                 dispatch(htm.getHTMProfile());
-                dispatch(chat.getChatRooms());
+                // dispatch(chat.getChatRooms());
             }else if(d.rc == 3){
                 dispatch({
                     type: types.CUSTOM_ACTION,

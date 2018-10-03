@@ -7,7 +7,8 @@ import {
     View,
     TouchableOpacity,
     TextInput,
-    Image
+    Image,
+    BackHandler
 } from 'react-native';
 import {
     Container,
@@ -48,6 +49,18 @@ class FeedBack extends Component < {} > {
             comments: '',
             currencies_traded: [],
         };
+    }
+
+    componentDidMount(){
+        BackHandler.addEventListener('hardwareBackPress', this.backHandler.bind(this));
+    }
+
+    componentWillUnmount(){
+        BackHandler.removeEventListener('hardwareBackPress', this.backHandler.bind(this));
+    }
+
+    backHandler(){
+        return this.props.forceFeedBack;
     }
 
     submit(){
@@ -126,11 +139,11 @@ class FeedBack extends Component < {} > {
         return (
             <Container>
                 <Header>
-                    <HeaderLeft>
+                    {!this.props.forceFeedBack?<HeaderLeft>
                         <TouchableOpacity>
                             <Icon onPress={() => this.props.navigation.goBack()} style={styles.headerBackIcon} name='angle-left'/>
                         </TouchableOpacity>
-                    </HeaderLeft>
+                    </HeaderLeft>:null}
                     <HeaderTitle>Feedback</HeaderTitle>
                     <HeaderRight>
                         <Image
@@ -147,7 +160,8 @@ class FeedBack extends Component < {} > {
                 <Content style={styles.content}>
                     <View style={{marginHorizontal: 20}}>
                         <Text style={styles.feedbackNote}>
-                            Please provide your valuable feedback for trade with
+                            Please provide your valuable feedback for trade
+                            <Text style={{fontWeight:'bold'}}> #{this.props.chatRoomChannel.name}</Text> with
                             <Text style={{fontWeight:'bold'}}> {this.props.htm.display_name} </Text>
                         </Text>
                         <Text style={styles.label}>
@@ -301,6 +315,7 @@ function mapStateToProps({params}) {
         balances: params.balances,
         chatRoom: params.chatRoom,
         chatRoomChannel: params.chatRoomChannel,
+        forceFeedBack: params.forceFeedBack || false,
     };
 }
 

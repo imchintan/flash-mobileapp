@@ -53,6 +53,7 @@ class Home extends Component<{}> {
         }else{
             this.props.customAction({isNewSession:false});
             constants.SOUND.SUCCESS.play();
+            this.props.getChatRooms();
         }
         this.refreshingHome();
     }

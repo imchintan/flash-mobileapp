@@ -81,6 +81,7 @@ class Lock extends Component<{}> {
         TouchID.authenticate(null, optionalConfigObject).then(success => {
             this.props.navigation.goBack();
             setTimeout(()=>this.props.customAction({lockApp:false}),500);
+            setTimeout(this.props.getChatRooms,100);
         }).catch(error => {
             if(error.details == 'failed')
                 this.touchID();
@@ -103,6 +104,7 @@ class Lock extends Component<{}> {
         }
         this.props.navigation.goBack();
         this.props.customAction({lockApp:false});
+        setTimeout(this.props.getChatRooms,100);
     }
 
     removePIN(){

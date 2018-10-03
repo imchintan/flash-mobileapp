@@ -3,6 +3,11 @@
  */
 import React from 'react';
 import { createStackNavigator } from 'react-navigation';
+
+import { connect } from 'react-redux';
+import { bindActionCreators } from 'redux';
+import { ActionCreators } from '@actions';
+
 import HTM from './HTM';
 import SetupHTMProfile from './SetupHTMProfile';
 import EditHTMProfile from './EditHTMProfile';
@@ -55,11 +60,27 @@ const HTMNavigation = createStackNavigator(routes,routeConfig);
 
 const EnhancedComponent = class extends React.Component {
 
+    componentDidMount(){
+        this.props.customAction({
+            HTMNavigation:this.refs.HTMNavigation._navigation
+        });
+    }
+
     render() {
         return(
-            <HTMNavigation screenProps={{rootNavigation:this.props.navigation}}/>
+            <HTMNavigation ref='HTMNavigation' screenProps={{rootNavigation:this.props.navigation}}/>
         )
     }
 }
 
-export default EnhancedComponent;
+function mapStateToProps({params}) {
+    return {
+        isLoggedIn: params.isLoggedIn,
+    };
+}
+
+function mapDispatchToProps(dispatch) {
+    return bindActionCreators(ActionCreators, dispatch);
+}
+
+export default connect(mapStateToProps, mapDispatchToProps)(EnhancedComponent)

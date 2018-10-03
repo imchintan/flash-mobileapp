@@ -8,9 +8,11 @@ import {
 import {
     createStackNavigator
 } from 'react-navigation';
+
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ActionCreators } from '@actions';
+
 import Home from './Home';
 import Wallet from './Wallet';
 import Profile from './Profile';
@@ -105,7 +107,9 @@ const EnhancedComponent = class extends React.Component {
         this.state = {};
     }
     componentDidMount(){
-
+        this.props.customAction({
+            DashboardNavigation:this.refs.dashboard._navigation
+        });
         if(!this.coinmarketcapValue)
             this.coinmarketcapValue = setInterval(this.props.getCoinMarketCapDetail, 60000);
 
@@ -137,7 +141,7 @@ const EnhancedComponent = class extends React.Component {
 
     render() {
         return(
-            <Dashboard />
+            <Dashboard  ref={'dashboard'}/>
         )
     }
 }

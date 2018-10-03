@@ -29,9 +29,10 @@ export const getChatRooms = () => {
                         chatRooms: chatRooms
                     }
                 });
-                if(chatRooms.length)
+                if(chatRooms.length){
                     dispatch(updateChatRoom(chatRooms[0]));
-
+                    dispatch(checkTradingFeedBack());
+                }
             }
         }).catch(e=>{
             console.log(e);
@@ -73,6 +74,45 @@ export const goToChatRoom = (username,cb) => {
             dispatch(htm.getHTMDetail(username,_cb));
         else
             _cb();
+    }
+}
+
+export const checkTradingFeedBack = () => {
+    return (dispatch,getState) => {
+        let params = getState().params;
+        let chatRooms = params.chatRooms || [];
+        let hasFeedBackRemainChatRooms = chatRooms.filter((chatRoom)=>{
+            let feedBackRemains = chatRoom.c.filter((ch)=>!ch.a && (!ch.f
+                || typeof ch.f[params.htmProfile.username] == 'undefined'));
+            return feedBackRemains.length
+        });
+        if(hasFeedBackRemainChatRooms.length == 0) return;
+        let chatRoom = hasFeedBackRemainChatRooms[0];
+        let username = (chatRoom.m[0] == params.profile.username)?
+            chatRoom.m[1]:chatRoom.m[0];
+        params.DashboardNavigation.navigate('HTM');
+        let _cb = () =>{
+            params = getState().params;
+            let hasFeedBackRemain = chatRoom.c.filter((ch)=>!ch.a && (!ch.f
+                || typeof ch.f[params.htmProfile.username] == 'undefined'));
+            let chatRoomChannel = hasFeedBackRemain.length > 0?hasFeedBackRemain[0]:null;
+            if(!chatRoomChannel) return ;
+            dispatch({
+                type: types.CHECK_TRADING_FEEDBACK,
+                payload: {
+                    chatMessages:[],
+                    isLoadAllPreviousMesages: false,
+                    chatRoom,
+                    chatRoomChannel,
+                    forceFeedBack: true
+                }
+            });
+            dispatch(updateRoomMemberDetail());
+            params.HTMNavigation.navigate('FeedBack');
+        }
+        if(!params.htm || params.htm.username !== username)
+            dispatch(htm.getHTMDetail(username,_cb));
+        else _cb();
     }
 }
 
@@ -320,7 +360,10 @@ export const submitFeedback = (data, cb=null) => {
                     params.htm.username, params.chatRoomChannel.id, data).then((d)=>{
                     dispatch({
                         type: types.SUBMIT_FEEDBACK,
-                        payload: { loading: false }
+                        payload: {
+                            loading: false,
+                            forceFeedBack: (d.rc !== 1 && params.forceFeedBack)
+                        }
                     });
                     if(d.rc !== 1){
                         Toast.errorTop(d.reason);
@@ -328,6 +371,7 @@ export const submitFeedback = (data, cb=null) => {
                     }else{
                         dispatch(htm.getHTMDetail(params.htm.username, null, params.htm));
                         if(cb)cb();
+                        dispatch(checkTradingFeedBack());
                     }
                 }).catch(e=>{
                     console.log(e);
