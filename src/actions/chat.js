@@ -60,7 +60,12 @@ export const goToChatRoom = (username,cb) => {
         let _cb = () =>{
             dispatch({
                 type: types.GO_TO_CHAT_ROOM,
-                payload: { chatMessages:[], chatRoom, chatRoomChannel }
+                payload: {
+                    chatMessages:[],
+                    chatRoom,
+                    chatRoomChannel,
+                    isLoadAllPreviousMesages:false
+                }
             });
             if(cb)cb((chatRoomChannel && !chatRoomChannel.a));
         }
@@ -75,13 +80,14 @@ export const selectChatRoom = (username, chatRoom, navigate) => {
     return (dispatch,getState) => {
         let params = getState().params;
         let _cb = () =>{
-            let hasFeedBackRemain = chatRoom.c.filter((ch)=>!ch.f
-                || typeof ch.f[params.htmProfile.username] == 'undefined');
+            let hasFeedBackRemain = chatRoom.c.filter((ch)=>!ch.a && (!ch.f
+                || typeof ch.f[params.htmProfile.username] == 'undefined'));
             let chatRoomChannel = hasFeedBackRemain.length > 0?hasFeedBackRemain[0]:null;
             dispatch({
                 type: types.SELECT_CHAT_ROOM,
                 payload: {
                     chatMessages:[],
+                    isLoadAllPreviousMesages: false,
                     chatRoom,
                     chatRoomChannel
                 }
@@ -100,7 +106,11 @@ export const selectChatRoomChannel = (chatRoomChannel, navigate) => {
         // let params = getState().params;
         dispatch({
             type: types.SELECT_CHAT_ROOM_CHANNEL,
-            payload: { chatMessages:[], chatRoomChannel }
+            payload: {
+                isLoadAllPreviousMesages:false,
+                chatMessages:[],
+                chatRoomChannel
+            }
         });
         navigate('ChatRoom');
     }
@@ -145,6 +155,7 @@ export const createChannel = (receiver_username,cb=null) => {
                     type: types.CREATE_CHAT_CHANNEL,
                     payload: {
                         loading: false,
+                        isLoadAllPreviousMesages: false,
                         chatMessages:[],
                         chatRoom,
                         chatRoomChannel
@@ -190,15 +201,17 @@ export const updateRoomMemberDetail = () => {
 
 export const getChatMessages = () => {
     return (dispatch,getState) => {
-        dispatch({ type: types.LOADING_START });
+
         let params = getState().params;
         if(!params.chatRoomChannel)
             return dispatch({
                 type: types.GET_CHAT_MESSAGES,
                 payload: { loading: false }
             });
-
         let chatMessages = (params.chatMessages || []);
+        let isLoadAllPreviousMesages = (params.isLoadAllPreviousMesages || false);
+        if(isLoadAllPreviousMesages) return;
+        dispatch({ type: types.LOADING_START });
         let limit = 20;
         let pageNo = Math.floor(chatMessages.length / limit)+1;
         apis.getChatMessages(params.profile.auth_version, params.profile.sessionToken,
@@ -232,7 +245,8 @@ export const getChatMessages = () => {
                     type: types.GET_CHAT_MESSAGES,
                     payload: {
                         loading: false,
-                        chatMessages
+                        chatMessages,
+                        isLoadAllPreviousMesages: (d.messages.length % limit !== 0)
                     }
                 });
             }

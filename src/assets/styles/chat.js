@@ -33,8 +33,13 @@ const styles = StyleSheet.create({
         justifyContent: 'space-between',
         marginBottom: 2,
     },
+    chatHtmNameBox:{
+        width: width - 210,
+        flexDirection:'row',
+        alignItems: 'center'
+    },
     chatHtmName:{
-        width: width - 190,
+        width: width - 225,
         color: '#000000',
         fontSize: 16,
     },
@@ -96,6 +101,7 @@ const styles = StyleSheet.create({
         color: '#4A4A4A'
     },
     feedbackNote:{
+        textAlign: 'center',
         fontSize: 15,
         marginTop: 20
     },
@@ -155,6 +161,48 @@ const styles = StyleSheet.create({
     chatChannelFailedIcon:{
         fontSize: 25,
         color: 'red'
+    },
+    chatStatusIcon:{
+        fontSize: 14,
+        color: '#C2C2C2',
+        marginRight: 5,
+    },
+    chatOnlineStatusIcon:{
+        color: '#00DD00',
+    },
+    chatHeaderTitleBox:{
+        paddingHorizontal: 10,
+        justifyContent: 'center',
+        alignItems: 'center',
+        bottom: 1,
+        width: '60%',
+        height:'100%',
+        position: 'absolute',
+        left: '20%'
+    },
+    chatHeaderTitle:{
+        fontSize: 22,
+        fontWeight: '500',
+        color: '#FFFFFF'
+    },
+    chatHeaderSubTitle:{
+        fontSize: 14,
+        color: '#E2E2E2',
+    },
+    chatProfileStatusIcon:{
+        fontSize: 12,
+        color: '#00FF00',
+    },
+    chatSystemMessage:{
+        textAlign: 'center',
+        alignSelf: 'center',
+        backgroundColor: '#FFF3D1',
+        padding: 10,
+        borderRadius: 5,
+        marginHorizontal: 30,
+        marginVertical: 20,
+        fontSize: 14,
+        color: '#565656',
     }
 });
 

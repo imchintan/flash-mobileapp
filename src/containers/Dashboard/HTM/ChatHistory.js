@@ -61,6 +61,7 @@ class ChatHistory extends Component < {} > {
                         let d = {
                             id: cr.l._id,
                             un,
+                            os: (cr.os && cr.os[un]),
                             ...cr.ud[un],
                             t: moment(cr.l.t).calendar(null, {
                                 sameDay: 'h:mm A',
@@ -68,12 +69,12 @@ class ChatHistory extends Component < {} > {
                                 nextWeek: 'dddd',
                                 lastDay: '[Yesterday]',
                                 lastWeek: 'dddd',
-                                sameElse: (now) => {
-                                    now = moment(moment(now).format('01/01/YYYY'))
+                                sameElse: function(now){
+                                    now = moment(moment(now).format('01/01/YYYY'),moment.ISO_8601);
                                     if (this.isBefore(now)) {
-                                      return 'DD MMM';
-                                    } else {
                                       return 'DD MMM, YYYY';
+                                    } else {
+                                      return 'DD MMM';
                                     }
                                 }
                             }),
@@ -92,9 +93,14 @@ class ChatHistory extends Component < {} > {
                                     utils.getCurrencyIcon(constants.CURRENCY_TYPE.FLASH)} />
                                 <View style={styles.chatMsgBox}>
                                     <View style={styles.chatMsgDetailBox}>
-                                        <Text style={[styles.chatHtmName,
-                                            d.ur && styles.chatHtmNameUnread]}
-                                            numberOfLines={1}>{d.n}</Text>
+                                        <View style={styles.chatHtmNameBox}>
+                                            <Icon style={[styles.chatStatusIcon,
+                                                d.os && styles.chatOnlineStatusIcon]}
+                                                name={'circle'}/>
+                                            <Text style={[styles.chatHtmName,
+                                                d.ur && styles.chatHtmNameUnread]}
+                                                numberOfLines={1}>{d.n}</Text>
+                                        </View>
                                         <Text style={[styles.chatMsgTime,
                                             d.ur && styles.chatHtmNameUnread]}>{d.t}</Text>
                                     </View>

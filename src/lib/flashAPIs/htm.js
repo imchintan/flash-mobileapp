@@ -320,3 +320,127 @@ export const submitFeedback = (auth_version, sessionToken, feedback_to_username,
         });
     });
 }
+
+/**
+ * Add Favorite HTM
+ * @param  {Number} auth_version             API authentication version
+ * @param  {String} sessionToken             User authorization token
+ * @param  {String} favorite_username        Favorite HTM username
+ * @return {Object}                          Return API response
+ */
+export const addFavoriteHTM = (auth_version, sessionToken, favorite_username) => {
+    return new Promise((resolve,reject) => {
+        fetch(API_URL+'/add-favorite-htm',{
+            method: 'POST',
+            body: JSON.stringify({
+                favorite_username,
+                appversion:APP_VERSION,
+                res:RESOURCE,
+            }),
+            headers: {
+               'Content-Type': 'application/json; charset=utf-8',
+               'authorization': sessionToken,
+               'fl_auth_version': auth_version
+            },
+        })
+        .then(res => res.json())
+        .then(json => resolve(json))
+        .catch(e =>{
+            console.log(e);
+            reject('Something went wrong!')
+        });
+    });
+}
+
+/**
+ * Delete Favorite HTM
+ * @param  {Number} auth_version             API authentication version
+ * @param  {String} sessionToken             User authorization token
+ * @param  {String} favorite_username        Favorite HTM username
+ * @return {Object}                          Return API response
+ */
+export const removeFavoriteHTM = (auth_version, sessionToken, favorite_username) => {
+    return new Promise((resolve,reject) => {
+        fetch(API_URL+'/remove-favorite-htm',{
+            method: 'POST',
+            body: JSON.stringify({
+                favorite_username,
+                appversion:APP_VERSION,
+                res:RESOURCE,
+            }),
+            headers: {
+               'Content-Type': 'application/json; charset=utf-8',
+               'authorization': sessionToken,
+               'fl_auth_version': auth_version
+            },
+        })
+        .then(res => res.json())
+        .then(json => resolve(json))
+        .catch(e =>{
+            console.log(e);
+            reject('Something went wrong!')
+        });
+    });
+}
+
+/**
+ * Get Favorite HTMs
+ * @param  {Number} auth_version             API authentication version
+ * @param  {String} sessionToken             User authorization token
+ * @return {Object}                          Return API response
+ */
+export const getFavoriteHTMs = (auth_version, sessionToken) => {
+    return new Promise((resolve,reject) => {
+        let params=utils.buildURLQuery({
+            res         :RESOURCE,
+            appversion  :APP_VERSION,
+        });
+        fetch(API_URL+`/get-favorite-htms?${params}`,{
+            method: 'GET',
+            body: null,
+            headers: {
+               'Content-Type': 'application/json; charset=utf-8',
+               'authorization': sessionToken,
+               'fl_auth_version': auth_version
+            },
+        })
+        .then(res => res.json())
+        .then(json => resolve(json))
+        .catch(e =>{
+            console.log(e);
+            reject('Something went wrong!')
+        });
+    });
+}
+
+/**
+ * Get HTM Feedbacks
+ * @param  {Number} auth_version             API authentication version
+ * @param  {String} sessionToken             User authorization token
+ * @param  {String} username                 HTM profile username
+ * @return {Object}                          Return API response
+ */
+export const getHTMFeedbacks = (auth_version, sessionToken, username) => {
+    return new Promise((resolve,reject) => {
+        let params=utils.buildURLQuery({
+            username,
+            res         :RESOURCE,
+            appversion  :APP_VERSION,
+        });
+        fetch(API_URL+`/get-htm-feedbacks?${params}`,{
+            method: 'GET',
+            body: null,
+            headers: {
+               'Content-Type': 'application/json; charset=utf-8',
+               'authorization': sessionToken,
+               'fl_auth_version': auth_version
+            },
+        })
+        .then(res => res.json())
+        .then(json => resolve(json))
+        .catch(e =>{
+            console.log(e);
+            reject('Something went wrong!')
+        });
+    });
+}

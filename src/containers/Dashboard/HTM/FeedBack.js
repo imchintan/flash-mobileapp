@@ -147,8 +147,8 @@ class FeedBack extends Component < {} > {
                 <Content style={styles.content}>
                     <View style={{marginHorizontal: 20}}>
                         <Text style={styles.feedbackNote}>
-                            Lorem Ipsum is simply <Text style={{fontWeight:'bold'}}> {this.props.htm.display_name} </Text> of the
-                            printing industry. Lorem Ipsum has been dummy text.
+                            Please provide your valuable feedback for trade with
+                            <Text style={{fontWeight:'bold'}}> {this.props.htm.display_name} </Text>
                         </Text>
                         <Text style={styles.label}>
                             Was trading successful?

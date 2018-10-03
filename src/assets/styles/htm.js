@@ -278,12 +278,19 @@ const styles = StyleSheet.create({
         fontSize: 18,
         color: '#c2c2c2'
     },
+    htmProfileDetailTitle:{
+        fontSize: 20,
+        textAlign: 'center',
+        fontWeight: 'bold',
+        color: '#4A4A4A',
+        marginTop: 30,
+    },
     htmProfileDetailNote:{
         fontSize: 15,
         textAlign: 'center',
-        fontStyle: 'italic',
         color: '#4A4A4A',
         margin: 30,
+        marginTop: 20,
     },
     htmProfileSetup:{
         position: 'absolute',
@@ -294,6 +301,14 @@ const styles = StyleSheet.create({
         top: 0,
         alignItems: 'center',
         justifyContent: 'center'
+    },
+    htmProfileSetupTitle:{
+        fontSize: 20,
+        fontWeight: 'bold',
+        color: '#E2E2E2',
+        textAlign: 'center',
+        marginHorizontal: 30,
+        marginBottom: 30,
     },
     htmProfileSetupNote:{
         fontSize: 16,
@@ -334,6 +349,15 @@ const styles = StyleSheet.create({
         borderRadius: 5,
         alignItems: 'center',
         padding: 10,
+    },
+    htmDetailTab:{
+        width: width-40,
+        backgroundColor: '#EFEFEF',
+        flexDirection: 'row',
+        borderRadius: 5,
+        alignItems: 'center',
+        padding: 10,
+        marginBottom: 10,
     },
     htmProfileDetailTabImg:{
         width: 50,
@@ -573,6 +597,59 @@ const styles = StyleSheet.create({
         fontSize: 30,
         color: '#FFB400',
         marginHorizontal: 5,
+    },
+    htmRiskWarningText:{
+        marginHorizontal: 15,
+        fontSize: 11,
+        fontStyle: 'italic',
+        color: '#9B9B9B',
+        textAlign: 'center',
+    },
+    htmFeedbackContent:{
+        flex:1,
+        padding: 15,
+    },
+    htmFeedback:{
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#E9E9E9',
+        borderRadius: 5,
+        marginHorizontal: 5,
+        marginBottom: 10,
+        padding: 10
+    },
+    htmFeedbackStatus:{
+        height: 50,
+        width: 50,
+        borderRadius: 25,
+        marginTop: 2,
+        alignSelf: 'flex-start',
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#FFFFFF',
+        borderWidth: 2,
+        borderColor: '#191714'
+    },
+    htmFeedbackStatusIcon:{
+        fontSize: 25,
+    },
+    htmFeedbackDetail:{
+        marginLeft: 10,
+    },
+    htmFeedbackRating:{
+        flexDirection: 'row',
+    },
+    htmFeedbackComment:{
+        width: width - 115,
+        paddingTop: 5,
+        fontSize: 15,
+        color: '#333'
+    },
+    htmFeedbackTime:{
+        paddingTop: 5,
+        fontSize: 13,
+        fontStyle: 'italic',
+        color: '#787878',
     },
 });
 

@@ -17,7 +17,7 @@ import {
     connect
 } from 'react-redux';
 import {
-    createReduxBoundAddListener,
+    reduxifyNavigator,
     createReactNavigationReduxMiddleware,
 } from 'react-navigation-redux-helpers';
 import PushNotification from 'react-native-push-notification';
@@ -36,37 +36,10 @@ const middleware = createReactNavigationReduxMiddleware(
   "root",
   state => state.nav,
 );
-const addListener = createReduxBoundAddListener("root");
-
-class App extends React.Component {
-
-    componentDidMount(){
-        PushNotification.checkPermissions((res)=>{
-            if(!res.alert){
-                PushNotificationIOS.requestPermissions(['alert', 'badge', 'sound'])
-            }
-        });
-
-    }
-    render() {
-        return (
-            <View style={{flex:1}}>
-                <StatusBar
-                    backgroundColor="#000000"
-                    barStyle="light-content"
-                  />
-                <AppNavigator navigation={{
-                    dispatch: this.props.dispatch,
-                    state: this.props.nav,
-                    addListener,
-                }} />
-            </View>
-        );
-    }
-}
+const App = reduxifyNavigator(AppNavigator, "root");
 
 const mapStateToProps = (state) => ({
-    nav: state.nav
+    state: state.nav
 });
 
 const AppWithNavigationState = connect(mapStateToProps)(App);
@@ -77,11 +50,27 @@ const store = createStore(
 );
 
 class Root extends React.Component {
+
+    componentDidMount(){
+        PushNotification.checkPermissions((res)=>{
+            if(!res.alert){
+                PushNotificationIOS.requestPermissions(['alert', 'badge', 'sound'])
+            }
+        });
+
+    }
+
     render() {
         return (
-            <Provider store={store}>
-                <AppWithNavigationState />
-            </Provider>
+            <View style={{flex:1}}>
+                <StatusBar
+                    backgroundColor="#000000"
+                    barStyle="light-content"
+                  />
+                <Provider store={store}>
+                    <AppWithNavigationState ref={'appNav'} />
+                </Provider>
+            </View>
         );
     }
 }

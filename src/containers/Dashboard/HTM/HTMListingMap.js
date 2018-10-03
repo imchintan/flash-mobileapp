@@ -96,10 +96,6 @@ class HTMListingMap extends Component < {} > {
                     lockApp:false,
                     location_permission:(granted === PermissionsAndroid.RESULTS.GRANTED),
                     location_error_code: 3,
-                    // position: {
-                    //     latitude: 21.185890,
-                    //     longitude: 72.810290,
-                    // }
                 }),500);
             } else {
                 this.props.getCurrentPosition();

@@ -23,7 +23,7 @@ import {
 import moment from 'moment-timezone';
 import { getDisplayDate } from '@lib/utils';
 import { MOMENT_FORMAT } from '@src/constants';
-import { isIphoneX, FontSize } from '@lib/utils'
+import { isIphoneX, FontSize } from '@lib/utils';
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';

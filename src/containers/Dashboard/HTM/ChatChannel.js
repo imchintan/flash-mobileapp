@@ -14,11 +14,11 @@ import {
     Header,
     HeaderLeft,
     HeaderRight,
-    HeaderTitle,
     Icon,
     Button,
     Text
 } from '@components';
+import moment from 'moment-timezone'
 
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
@@ -27,7 +27,6 @@ import {ActionCreators} from '@actions';
 import { PROFILE_URL } from '@src/config';
 import * as utils from '@lib/utils';
 import * as constants from '@src/constants';
-import moment from 'moment-timezone'
 
 class ChatChannel extends Component < {} > {
 
@@ -46,6 +45,9 @@ class ChatChannel extends Component < {} > {
     render() {
         const styles = (this.props.nightMode?
             require('@styles/nightMode/chat'):require('@styles/chat'));
+        const un = this.props.chatRoom.m[0] == this.props.htmProfile.username?
+            this.props.chatRoom.m[1]:this.props.chatRoom.m[0];
+        const os = (this.props.chatRoom.os && this.props.chatRoom.os[un]);
         const hasActiveChannel = (this.props.chatRoom.c.filter(ch=>ch.a).length > 0);
         let chatRoomChannels =  this.props.chatRoom.c.filter(ch=>!!ch.l)
         chatRoomChannels = chatRoomChannels.sort((a,b) => a.id < b.id?1:-1);
@@ -57,7 +59,19 @@ class ChatChannel extends Component < {} > {
                             <Icon onPress={() => this.props.navigation.goBack()} style={styles.headerBackIcon} name='angle-left'/>
                         </TouchableOpacity>
                     </HeaderLeft>
-                    <HeaderTitle>{this.props.htm.display_name}</HeaderTitle>
+                    <View style={styles.chatHeaderTitleBox}>
+                        <Text numberOfLines={1} style={styles.chatHeaderTitle}>
+                            {this.props.htm.display_name}
+                        </Text>
+                        <Text numberOfLines={1} style={styles.chatHeaderSubTitle}>
+                            {this.props.htm.isOnline || os?
+                                <Icon style={styles.chatProfileStatusIcon}
+                                    name={'circle'}/>:null}
+                            <Text>
+                                {(this.props.htm.isOnline || os?' online': 'last seen '+moment(this.props.htm.last_seen_at).fromNow())}
+                            </Text>
+                        </Text>
+                    </View>
                     <HeaderRight>
                         <TouchableOpacity onPress={()=>this.props.navigation.navigate('HTMDetail')}>
                             <Image
@@ -92,12 +106,12 @@ class ChatChannel extends Component < {} > {
                             nextWeek: 'dddd',
                             lastDay: '[Yesterday]',
                             lastWeek: 'dddd',
-                            sameElse: (now) => {
-                                now = moment(moment(now).format('01/01/YYYY'))
+                            sameElse: function(now){
+                                now = moment(moment(now).format('01/01/YYYY'),moment.ISO_8601)
                                 if (this.isBefore(now)) {
-                                  return 'DD MMM';
-                                } else {
                                   return 'DD MMM, YYYY';
+                                } else {
+                                  return 'DD MMM';
                                 }
                             }
                         })
@@ -124,7 +138,7 @@ class ChatChannel extends Component < {} > {
                                     <View style={styles.chatMsgDetailBox}>
                                         <Text style={[styles.chatHtmName, ch.a
                                             && styles.chatHtmNameUnread]}
-                                            numberOfLines={1}>{ch.name}</Text>
+                                            numberOfLines={1}>Trade #{ch.name}</Text>
                                         <Text style={[styles.chatMsgTime,
                                             ur && styles.chatHtmNameUnread]}>{time}</Text>
                                     </View>

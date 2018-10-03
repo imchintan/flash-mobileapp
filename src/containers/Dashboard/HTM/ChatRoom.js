@@ -12,11 +12,11 @@ import {
     Header,
     HeaderLeft,
     HeaderRight,
-    HeaderTitle,
     Icon,
     Text,
     Loader
 } from '@components';
+import moment from 'moment-timezone'
 
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
@@ -55,6 +55,9 @@ class ChatRoom extends Component < {} > {
 
     render() {
         const styles = (this.props.nightMode?require('@styles/nightMode/chat'):require('@styles/chat'));
+        const un = this.props.chatRoom.m[0] == this.props.htmProfile.username?
+            this.props.chatRoom.m[1]:this.props.chatRoom.m[0];
+        const os = (this.props.chatRoom.os && this.props.chatRoom.os[un]);
         return (
             <View style={{flex:1, paddingTop: 55}}>
                 <Header>
@@ -64,18 +67,30 @@ class ChatRoom extends Component < {} > {
                                 style={styles.headerBackIcon} name='angle-left'/>
                         </TouchableOpacity>
                     </HeaderLeft>
-                    <HeaderTitle>{this.props.htm.display_name}</HeaderTitle>
+                    <View style={styles.chatHeaderTitleBox}>
+                        <Text numberOfLines={1} style={styles.chatHeaderTitle}>
+                            {this.props.htm.display_name}
+                        </Text>
+                        <Text numberOfLines={1} style={styles.chatHeaderSubTitle}>
+                            {this.props.htm.isOnline || os?
+                                <Icon style={styles.chatProfileStatusIcon}
+                                    name={'circle'}/>:null}
+                            <Text>
+                                {(this.props.htm.isOnline || os?' online': 'last seen '+moment(this.props.htm.last_seen_at).fromNow())}
+                            </Text>
+                        </Text>
+                    </View>
                     {this.props.chatRoomChannel && (!this.props.chatRoomChannel.f ||
                         typeof this.props.chatRoomChannel.f[this.props.htmProfile.username] == 'undefined')?
                     <HeaderRight>
                         <TouchableOpacity>
                             <Icon onPress={() => {
                                 Alert.alert(
-                                    this.props.chatRoomChannel.name,
+                                    'Trade #'+this.props.chatRoomChannel.name,
                                     'Are you done with this trade?',
                                     [
                                         {text: 'YES', onPress: () => this.props.navigation.navigate('FeedBack')},
-                                        {text: 'NO', onPress: () => console.log('Cancel Pressed'), style: 'cancel'},
+                                        {text: 'NO', style: 'cancel'},
                                     ],
                                     { cancelable: false }
                                 )
@@ -90,12 +105,24 @@ class ChatRoom extends Component < {} > {
                         onEndReached:()=> !this.props.loading
                             && this.props.getChatMessages()
                     }}
-                    messages={this.props.chatMessages}
+                    messages={[
+                        ...this.props.chatMessages,
+                        {
+                            _id: 1,
+                            text: 'We strongly recommended to meet at safe public places like cafeteria before you trade with trader.',
+                            system: true,
+                        }
+                    ]}
                     onSend={messages => messages.map(message => !!message.text
                             && this.props.sendChatMessage(message.text))}
                     user={{
                       _id: this.props.htmProfile.id,
                     }}
+                    renderSystemMessage={({currentMessage})=>
+                        <Text style={styles.chatSystemMessage}>
+                            {currentMessage.text}
+                        </Text>
+                    }
                     renderInputToolbar={(this.props.chatRoomChannel &&
                         !this.props.chatRoomChannel.a)?()=>
                         <Text style={styles.closeChat}>

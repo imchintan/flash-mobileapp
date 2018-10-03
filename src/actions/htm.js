@@ -119,13 +119,17 @@ export const getHTMDetail = (username, cb=null, htm=null) => {
             }else{
                 d.htm_profile.isOnline =  (d.htm_profile.last_seen_at >
                     (new Date().getTime() - (2 * 60 * 1000))); // 2 mints
+                d.htm_profile.isFavorite = ((params.favorite_htms || [])
+                    .findIndex(htm=>htm.username == d.htm_profile.username) != -1)
                 dispatch({
                     type: types.GET_HTM_DETAIL,
                     payload: {
                         loading: false,
-                        htm: d.htm_profile
+                        htm: d.htm_profile,
+                        htm_feedbacks: []
                     }
                 });
+                dispatch(getHTMFeedbacks());
                 if(cb)cb();
             }
         }).catch(e=>{
@@ -336,6 +340,145 @@ export const findNearByHTMs = (filter={}, loading = false) => {
             console.log(e);
             dispatch({ type: types.FIND_NEAR_BY_HTMS });
             if(loading)setTimeout(()=>dispatch({type: types.LOADING_END}),1000);
+        })
+    }
+}
+
+export const addFavoriteHTM = () => {
+    return (dispatch,getState) => {
+        dispatch({ type: types.LOADING_START });
+        let params = getState().params;
+        apis.addFavoriteHTM(params.profile.auth_version,
+            params.profile.sessionToken, params.htm.username).then((d)=>{
+            if(d.rc !== 1){
+                Toast.errorTop(d.reason);
+                dispatch({
+                    type: types.ADD_FAVORITE_HTM,
+                    payload: { loading: false }
+                });
+            }else{
+                Toast.successTop("Successfully added to favorite list.");
+                let favorite_htms = [params.htm].concat(params.favorite_htms || []);
+                let htm = params.htm;
+                htm.isFavorite = true;
+                dispatch({
+                    type: types.ADD_FAVORITE_HTM,
+                    payload: {
+                        htm,
+                        favorite_htms,
+                        loading: false
+                    }
+                });
+                dispatch(getHTMProfile());
+            }
+        }).catch(e=>{
+            Toast.errorTop(e.message);
+            dispatch({
+                type: types.ADD_FAVORITE_HTM,
+                payload: { loading: false }
+            });
+        })
+    }
+}
+
+export const removeFavoriteHTM = () => {
+    return (dispatch,getState) => {
+        dispatch({ type: types.LOADING_START });
+        let params = getState().params;
+        apis.removeFavoriteHTM(params.profile.auth_version,
+            params.profile.sessionToken, params.htm.username).then((d)=>{
+            if(d.rc !== 1){
+                Toast.errorTop(d.reason);
+                dispatch({
+                    type: types.REMOVE_FAVORITE_HTM,
+                    payload: { loading: false }
+                });
+            }else{
+                Toast.successTop("Successfully removed from favorite list.");
+                let favorite_htms = (params.favorite_htms || [])
+                    .filter(htm=>params.htm.username !== htm.username);
+                let htm = params.htm;
+                htm.isFavorite = false;
+                dispatch({
+                    type: types.REMOVE_FAVORITE_HTM,
+                    payload: {
+                        htm,
+                        favorite_htms,
+                        loading: false
+                    }
+                });
+                dispatch(getHTMProfile());
+            }
+        }).catch(e=>{
+            Toast.errorTop(e.message);
+            dispatch({
+                type: types.REMOVE_FAVORITE_HTM,
+                payload: { loading: false }
+            });
+        })
+    }
+}
+
+export const getFavoriteHTMs = () => {
+    return (dispatch,getState) => {
+        dispatch({ type: types.LOADING_START });
+        let params = getState().params;
+        apis.getFavoriteHTMs(params.profile.auth_version, params.profile.sessionToken)
+            .then((d)=>{
+            if(d.rc !== 1){
+                Toast.errorTop(d.reason);
+                dispatch({
+                    type: types.GET_FAVORITE_HTMS,
+                    payload: { loading: false }
+                });
+            }else{
+                dispatch({
+                    type: types.GET_FAVORITE_HTMS,
+                    payload: {
+                        favorite_htms:d.htms,
+                        loading: false
+                    }
+                });
+                dispatch(getHTMProfile());
+            }
+        }).catch(e=>{
+            Toast.errorTop(e.message);
+            dispatch({
+                type: types.GET_FAVORITE_HTMS,
+                payload: { loading: false }
+            });
+        })
+    }
+}
+
+export const getHTMFeedbacks = () => {
+    return (dispatch,getState) => {
+        dispatch({ type: types.LOADING_START });
+        let params = getState().params;
+        apis.getHTMFeedbacks(params.profile.auth_version,
+            params.profile.sessionToken, params.htm.username).then((d)=>{
+            if(d.rc !== 1){
+                Toast.errorTop(d.reason);
+                dispatch({
+                    type: types.GET_HTM_FEEDBACKS,
+                    payload: { loading: false }
+                });
+            }else{
+                dispatch({
+                    type: types.GET_HTM_FEEDBACKS,
+                    payload: {
+                        htm_feedbacks: d.feedbacks,
+                        loading: false
+                    }
+                });
+                dispatch(getHTMProfile());
+            }
+        }).catch(e=>{
+            Toast.errorTop(e.message);
+            dispatch({
+                type: types.GET_HTM_FEEDBACKS,
+                payload: { loading: false }
+            });
         })
     }
 }

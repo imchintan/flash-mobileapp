@@ -19,8 +19,10 @@ import {
     Button,
     Toast,
     Loader,
+    Footer,
     Text
 } from '@components';
+import moment from 'moment-timezone';
 
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
@@ -44,6 +46,7 @@ class HTM extends Component < {} > {
 
     componentDidMount(){
         this.props.getCoinGeckoExchangeRates();
+        this.props.getFavoriteHTMs();
     }
 
     render() {
@@ -73,7 +76,7 @@ class HTM extends Component < {} > {
                         </TouchableOpacity>
                     </HeaderRight>
                 </Header>
-                <Content bounces={false} style={styles.content}>
+                <Content bounces={false} hasFooter={true} style={styles.content}>
                     <View style={styles.htmProfileDetail}>
                         <Image
                             style={styles.htmProfileImage}
@@ -130,12 +133,11 @@ class HTM extends Component < {} > {
                             </View>:null}
                         </View>
                     </View>
+                    <Text style={styles.htmProfileDetailTitle}>
+                        Welcome to HTM!
+                    </Text>
                     <Text style={styles.htmProfileDetailNote}>
-                        {"Lorem Ipsum is simply dummy text of the printing and "+
-                            "typesetting industry. Lorem Ipsum has been the industry's "+
-                            "standard dummy text ever, when an unknown "+
-                            "printer took a galley of type it to make "+
-                            "a type specimen book."}
+                        {"A way to find cryptocurrency traders around the globe..."}
                     </Text>
                     <Button
                         style={[{
@@ -150,12 +152,92 @@ class HTM extends Component < {} > {
                             else
                                 return Toast.showTop("Please enable your HTM profile!");
                         }} />
+                    {this.props.favorite_htms.length > 0?
+                    <View style={{marginHorizontal: 20}}>
+                        <Text style={styles.label}>Favorite Trades</Text>
+                        <View style={styles.hr}/>
+                        {this.props.favorite_htms.map((htm)=>
+                            <TouchableOpacity
+                                key={'_htm_'+htm.username}
+                                onPress={()=>this.props.getHTMDetail(htm.username,
+                                    ()=>this.setState({htm:null},
+                                    ()=>this.props.navigation.navigate('HTMDetail')))}
+                                style={styles.htmDetailTab}>
+                                <Image style={styles.htmProfileDetailTabImg}
+                                    source={htm.profile_pic_url?
+                                        {uri: PROFILE_URL+htm.profile_pic_url}:
+                                        utils.getCurrencyIcon(constants.CURRENCY_TYPE.FLASH)}/>
+                                <View style={styles.htmProfileDetailTabBox}>
+                                    <Text style={styles.htmProfileDetailTabLabel}>
+                                        <Text style={{ fontSize: 16, fontWeight: 'bold'}}>
+                                            {htm.display_name}
+                                        </Text>
+                                    </Text>
+                                    <Text style={{bottom: 2}}>
+                                        {htm.isOnline?
+                                            <Icon style={styles.htmProfileStatusIcon}
+                                                name={'circle'}/>:null}
+                                        <Text style={styles.htmProfileStatusText}>
+                                            {(htm.isOnline?' online': 'last seen '
+                                                +moment(htm.last_seen_at).fromNow())}
+                                        </Text>
+                                    </Text>
+                                    <View style={styles.htmProfileDetailTabBuySell}>
+                                        <Text style={styles.htmProfileDetailTabBuySellText}>
+                                            Buying @
+                                        </Text>
+                                        <Icon style={[styles.htmProfileDetailTabBuySellIcon,{
+                                            bottom:(htm.buy_at < 0)?8:-4,
+                                            color: (htm.buy_at < 0)?'#FF0000':'#00FF00'}]}
+                                            name={(htm.buy_at < 0)?'sort-down':'sort-up'}/>
+                                        <Text style={[styles.htmProfileDetailTabBuySellValue,{
+                                            color: (htm.buy_at < 0)?'#FF0000':'#00FF00'}]}>
+                                            {Math.abs(htm.buy_at)+' %'}
+                                        </Text>
+                                    </View>
+                                    <View style={styles.htmProfileDetailTabBuySell}>
+                                        <Text style={styles.htmProfileDetailTabBuySellText}>
+                                            Selling @
+                                        </Text>
+                                        <Icon style={[styles.htmProfileDetailTabBuySellIcon,{
+                                            bottom:(htm.sell_at < 0)?8:-4,
+                                            color: (htm.sell_at < 0)?'#FF0000':'#00FF00'}]}
+                                            name={(htm.sell_at < 0)?'sort-down':'sort-up'}/>
+                                        <Text style={[styles.htmProfileDetailTabBuySellValue,{
+                                            color: (htm.sell_at < 0)?'#FF0000':'#00FF00'}]}>
+                                            {Math.abs(htm.sell_at)+' %'}
+                                        </Text>
+                                    </View>
+                                </View>
+                                <TouchableOpacity style={{paddingLeft: 5}}
+                                    onPress={()=>this.props.goToChatRoom(htm.username,
+                                        (feedback)=>this.setState({htm:null},
+                                        ()=>this.props.navigation.navigate(feedback?'FeedBack':'ChatRoom')
+                                    ))}>
+                                    <Icon style={[styles.headerFAIcon,{
+                                            fontSize:40,
+                                            color: this.props.nightMode?'#F2F2F2':'#333',
+                                        }]}
+                                        name='comments'/>
+                                </TouchableOpacity>
+                            </TouchableOpacity>
+                        )}
+                    </View>:null}
                 </Content>
+                <Footer>
+                    <Text style={styles.htmRiskWarningText}>
+                        {"It’s always advised to trade with Traders after"+
+                        " meeting face to face. FLASH is not responsible"+
+                        " of any fraud/scam happened by Traders."}
+                    </Text>
+                </Footer>
                 {!this.props.loading && !this.props.htmProfile.is_active?
                     <View style={styles.htmProfileSetup}>
+                        <Text style={styles.htmProfileSetupTitle}>
+                            Welcome to HTM!
+                        </Text>
                         <Text style={styles.htmProfileSetupNote}>
-                            {"Lorem Ipsum has been the industry's standard "+
-                            "dummy text ever since the 1500s"}
+                            {"A way to find cryptocurrency traders around the globe..."}
                         </Text>
                         <Button
                             value={this.props.htmProfile.display_name?
@@ -181,6 +263,7 @@ function mapStateToProps({params}) {
         profile: params.profile,
         htmProfile: params.htmProfile || {},
         chatUnreadMsgCount: params.chatUnreadMsgCount || 0,
+        favorite_htms: params.favorite_htms || [],
     };
 }
 
