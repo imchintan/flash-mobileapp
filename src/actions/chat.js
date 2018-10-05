@@ -1,3 +1,6 @@
+import {
+    AsyncStorage
+} from 'react-native';
 import * as types from '@actions/types';
 import * as apis from '@flashAPIs';
 import * as htm from '@actions/htm';
@@ -5,6 +8,7 @@ import _ from 'lodash';
 import { PROFILE_URL } from '@src/config';
 import * as utils from '@lib/utils';
 import * as constants from '@src/constants';
+import notifcationHelper from '@helpers/notifcationHelper';
 
 const Toast =  require('@components/Toast');
 
@@ -32,6 +36,7 @@ export const getChatRooms = () => {
                 if(chatRooms.length){
                     dispatch(updateChatRoom(chatRooms[0]));
                     dispatch(checkTradingFeedBack());
+                    setTimeout(()=>notifcationHelper.chatAction(),1000);
                 }
             }
         }).catch(e=>{
@@ -65,6 +70,7 @@ export const goToChatRoom = (username,cb) => {
                     chatMessages:[],
                     chatRoom,
                     chatRoomChannel,
+                    chatNotification: null,
                     isLoadAllPreviousMesages:false
                 }
             });
@@ -90,7 +96,8 @@ export const checkTradingFeedBack = () => {
         let chatRoom = hasFeedBackRemainChatRooms[0];
         let username = (chatRoom.m[0] == params.profile.username)?
             chatRoom.m[1]:chatRoom.m[0];
-        params.DashboardNavigation.navigate('HTM');
+        if(!params.HTMNavigation)
+            params.DashboardNavigation.navigate('HTM');
         let _cb = () =>{
             params = getState().params;
             let hasFeedBackRemain = chatRoom.c.filter((ch)=>!ch.a && (!ch.f
@@ -239,7 +246,7 @@ export const updateRoomMemberDetail = () => {
     }
 }
 
-export const getChatMessages = () => {
+export const getChatMessages = (refresh=false) => {
     return (dispatch,getState) => {
 
         let params = getState().params;
@@ -250,10 +257,10 @@ export const getChatMessages = () => {
             });
         let chatMessages = (params.chatMessages || []);
         let isLoadAllPreviousMesages = (params.isLoadAllPreviousMesages || false);
-        if(isLoadAllPreviousMesages) return;
+        if(!refresh && isLoadAllPreviousMesages) return;
         dispatch({ type: types.LOADING_START });
-        let limit = 20;
-        let pageNo = Math.floor(chatMessages.length / limit)+1;
+        let limit = 50;
+        let pageNo = (refresh)?1:Math.floor(chatMessages.length / limit)+1;
         apis.getChatMessages(params.profile.auth_version, params.profile.sessionToken,
             params.chatRoomChannel.id, limit, pageNo).then((d)=>{
             if(d.rc !== 1){
@@ -367,10 +374,9 @@ export const submitFeedback = (data, cb=null) => {
                     });
                     if(d.rc !== 1){
                         Toast.errorTop(d.reason);
-
                     }else{
                         dispatch(htm.getHTMDetail(params.htm.username, null, params.htm));
-                        if(cb)cb();
+                        if(cb)cb(params.forceFeedBack);
                         dispatch(checkTradingFeedBack());
                     }
                 }).catch(e=>{
@@ -396,6 +402,8 @@ export const submitFeedback = (data, cb=null) => {
 export const receiveChatMessage = (msg) => {
     return (dispatch,getState) => {
         let params = getState().params;
+        if(params.chatRoomChannel && params.chatRoomChannel.id !== msg.c)
+            return ;
         let htm = {
             _id     : params.htm.id,
             name    : params.htm.display_name,
@@ -429,6 +437,7 @@ export const updateChatRoom = (room) => {
         let params = getState().params;
         let payload = {};
         payload.chatRooms =  params.chatRooms;
+        if(!payload.chatRooms) return;
         let chatRoom = room;
         if(params.chatRoom)
             payload.chatRoom = chatRoom;
@@ -473,5 +482,25 @@ export const updateChatRoom = (room) => {
             type: types.UPDATE_CHAT_ROOM,
             payload
         });
+    }
+}
+
+export const savePushToken = () => {
+    return async (dispatch,getState) => {
+        let params = getState().params;
+        let fcmToken = await AsyncStorage.getItem('fcmToken');
+        if(!fcmToken) return;
+        let profile = params.isLoggedIn?params.profile:{
+            auth_version: 4,
+            sessionToken: null
+        };
+        apis.savePushToken(profile.auth_version, profile.sessionToken, fcmToken)
+        .then((d)=>{
+            dispatch({ type: types.SAVE_PUSH_TOKEN });
+        })
+        .catch(e=>{
+            console.log(e);
+            dispatch({ type: types.SAVE_PUSH_TOKEN });
+        })
     }
 }

@@ -36,6 +36,12 @@ class Reviews extends Component < {} > {
             <FlatList
                 style={styles.htmFeedbackContent}
                 data={this.props.feedbacks}
+                ListEmptyComponent={<Text style={{
+                    textAlign: 'center',
+                    marginTop: 100,
+                    fontSize: 20}}>
+                    No Feedback yet!
+                </Text>}
                 keyExtractor={(item, index) => '_feedback_'+index+'_'+item.id}
                 renderItem = {({item}) => {
                     if(!item.comments && item.prof_rating == 0

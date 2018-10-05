@@ -1,3 +1,4 @@
+import { Platform } from 'react-native';
 import { CHAT_API_URL, RESOURCE, APP_VERSION } from '@src/config';
 import * as utils from '@lib/utils';
 
@@ -236,6 +237,38 @@ export const addFeedback = (auth_version, sessionToken, c, f) => {
             body: JSON.stringify({
                 c,
                 f,
+                appversion:APP_VERSION,
+                res:RESOURCE,
+            }),
+            headers: {
+               'Content-Type': 'application/json; charset=utf-8',
+               'authorization': sessionToken,
+               'fl_auth_version': auth_version
+            },
+        })
+        .then(res =>res.json())
+        .then(json => resolve(json))
+        .catch(e =>{
+            console.log(e);
+            reject('Something went wrong!')
+        });
+    });
+}
+
+/**
+ * Save Push Token
+ * @param  {Number} auth_version             API authentication version
+ * @param  {String} sessionToken             User authorization token
+ * @param  {String} token                    Push notification token
+ * @return {Object}                          Return API response
+ */
+export const savePushToken = (auth_version, sessionToken, t ) => {
+    return new Promise((resolve,reject) => {
+        fetch(CHAT_API_URL+'/save-push-token',{
+            method: 'POST',
+            body: JSON.stringify({
+                t,
+                o:Platform.OS,
                 appversion:APP_VERSION,
                 res:RESOURCE,
             }),

@@ -46,6 +46,12 @@ class ChatRoom extends Component < {} > {
 
     componentWillUnmount(){
         Chat.removeListener('nm',this._chatHandler);
+        global.store.dispatch({
+            type: 'RESET_CHAT_OBJECT',
+            payload: {
+                chatRoomChannel: null
+            }
+        })
     }
 
     _chatHandler=(d)=>{
@@ -55,9 +61,8 @@ class ChatRoom extends Component < {} > {
 
     render() {
         const styles = (this.props.nightMode?require('@styles/nightMode/chat'):require('@styles/chat'));
-        const un = this.props.chatRoom.m[0] == this.props.htmProfile.username?
-            this.props.chatRoom.m[1]:this.props.chatRoom.m[0];
-        const os = (this.props.chatRoom.os && this.props.chatRoom.os[un]);
+        const un = this.props.htm.username;
+        const os = this.props.chatRoom?(this.props.chatRoom.os && this.props.chatRoom.os[un]):false;
         return (
             <View style={{flex:1, paddingTop: 55}}>
                 <Header>
@@ -109,7 +114,7 @@ class ChatRoom extends Component < {} > {
                         ...this.props.chatMessages,
                         {
                             _id: 1,
-                            text: 'We strongly recommended to meet at safe public places like cafeteria before you trade with trader.',
+                            text: 'It is strongly recommended to meet at safe public places like cafeteria before you trade with trader.',
                             system: true,
                         }
                     ]}

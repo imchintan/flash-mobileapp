@@ -86,7 +86,8 @@ class FeedBack extends Component < {} > {
             }
             data.vfm_rating = this.state.vfm_rating;
         }
-        this.props.submitFeedback(data,()=>{
+        this.props.submitFeedback(data,(goBack=false)=>{
+            if(goBack) return this.props.navigation.goBack();
             const resetAction = StackActions.reset({
                 index: 2,
                 actions: [

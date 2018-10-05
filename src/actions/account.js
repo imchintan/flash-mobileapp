@@ -14,6 +14,20 @@ import * as sharing from '@actions/sharing';
 import * as exchanges from '@actions/exchanges';
 import { _logout } from '@actions/navigation';
 import Chat from '@helpers/chatHelper';
+import notifcationHelper from '@helpers/notifcationHelper';
+
+export const preAction = () => {
+    return (dispatch,getState) => {
+        dispatch(chat.getChatMessages(true));
+    }
+}
+
+export const postAction = () => {
+    return (dispatch,getState) => {
+        dispatch(chat.getChatRooms());
+        notifcationHelper.chatAction();
+    }
+}
 
 export const getBalance = (refresh = false) => {
     return (dispatch,getState) => {
@@ -166,10 +180,13 @@ export const getProfile = () => {
                 });
                 Chat.reconnect(params.profile.auth_version, params.profile.sessionToken)
                 .then((con)=>{
-                    Chat.addListener('ru',(d)=>dispatch(chat.updateChatRoom(d)));
+                    Chat.addListener('ru',(d)=>{
+                        dispatch(chat.updateChatRoom(d))
+                    });
                 })
                 .catch(e=>console.log(e))
                 dispatch(htm.getHTMProfile());
+                dispatch(chat.savePushToken());
                 // dispatch(chat.getChatRooms());
             }else if(d.rc == 3){
                 dispatch({

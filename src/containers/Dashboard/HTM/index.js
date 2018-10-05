@@ -65,6 +65,11 @@ const EnhancedComponent = class extends React.Component {
             HTMNavigation:this.refs.HTMNavigation._navigation
         });
     }
+    componentWillUnmount(){
+        this.props.customAction({
+            HTMNavigation:null
+        });
+    }
 
     render() {
         return(

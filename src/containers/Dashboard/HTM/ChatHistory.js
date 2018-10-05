@@ -16,6 +16,8 @@ import {
     HeaderTitle,
     Icon,
     Text,
+    Toast,
+    Button,
     Loader
 } from '@components';
 
@@ -56,7 +58,7 @@ class ChatHistory extends Component < {} > {
                     <HeaderTitle>Trade History</HeaderTitle>
                 </Header>
                 <Content bounces={false} style={styles.content}>
-                    {chatRooms.map(cr=>{
+                    {chatRooms.length > 0?chatRooms.map(cr=>{
                         let un = cr.m[0] == this.props.htmProfile.username?cr.m[1]:cr.m[0];
                         let d = {
                             id: cr.l._id,
@@ -110,7 +112,24 @@ class ChatHistory extends Component < {} > {
                                 </View>
                             </TouchableOpacity>
                         )}
-                    )}
+                    ):<View style={{ alignItems: 'center', marginTop: 100}}>
+                        <Text style={{ fontSize: 20, marginBottom: 30}}>
+                            No Trade initiated yet!
+                        </Text>
+                        <Button
+                            style={[{
+                                marginBottom: 20,
+                            },!this.props.htmProfile.is_active && {
+                                backgroundColor: '#C2C2C2',
+                            }]}
+                            value={'Find Trade'}
+                            onPress={()=>{
+                                if(!!this.props.htmProfile.is_active)
+                                    this.props.navigation.navigate('HTMListingMap')
+                                else
+                                    return Toast.showTop("Please enable your HTM profile!");
+                            }} />
+                    </View>}
                 </Content>
                 <Loader show={this.props.loading} />
             </Container>

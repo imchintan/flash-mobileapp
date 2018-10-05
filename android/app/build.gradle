@@ -155,13 +155,20 @@ dependencies {
         exclude group: 'com.google.android.gms', module: 'play-services-base'
         exclude group: 'com.google.android.gms', module: 'play-services-maps'
     }
-    implementation 'com.google.android.gms:play-services-base:+'
-    implementation 'com.google.android.gms:play-services-maps:+'
+    implementation 'com.google.android.gms:play-services-base:15.0.1'
+    implementation 'com.google.android.gms:play-services-maps:15.0.1'
     implementation project(':react-native-camera')
     implementation project(':react-native-touch-id')
     implementation project(':react-native-sound')
     implementation project(':react-native-push-notification')
     implementation project(':react-native-randombytes')
+    implementation (project(':react-native-firebase')) {
+       transitive = false
+    }
+    implementation "com.google.firebase:firebase-core:16.0.1"
+    implementation "com.google.firebase:firebase-messaging:17.1.0"
+
+    implementation "me.leolin:ShortcutBadger:1.1.21@aar"
     implementation fileTree(dir: "libs", include: ["*.jar"])
     implementation "com.android.support:appcompat-v7:27.0.3"
     implementation "com.facebook.react:react-native:+"  // From node_modules
@@ -173,3 +180,5 @@ task copyDownloadableDepsToLibs(type: Copy) {
     from configurations.compile
     into 'libs'
 }
+
+apply plugin: 'com.google.gms.google-services'

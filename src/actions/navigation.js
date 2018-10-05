@@ -7,6 +7,7 @@ import * as apis from '@flashAPIs';
 import * as send from '@actions/send';
 import * as types from '@actions/types';
 import * as account from '@actions/account';
+import * as chat from '@actions/chat';
 import * as utils from '@lib/utils';
 import Wallet from '@lib/wallet';
 import Premium from 'Premium';
@@ -67,6 +68,7 @@ export const init = () => {
         if(!user){
             dispatch({ type: types.INIT, payload });
             dispatch(account.getCoinMarketCapDetail());
+            dispatch(chat.savePushToken());
         } else {
             payload.profile = JSON.parse(user);
             if(payload.profile.auth_version < 4){
@@ -734,6 +736,8 @@ export const _logout = async(dispatch, clearAll=false) => {
             payload.fiat_currency = parseInt(fiat_currency);
         }
     }
+    let fcmToken = await AsyncStorage.getItem('fcmToken');
+    let notification_permission = await AsyncStorage.getItem('notification_permission');
     Chat.disconnect();
     await AsyncStorage.clear();
     if(!clearAll){
@@ -743,6 +747,11 @@ export const _logout = async(dispatch, clearAll=false) => {
             await AsyncStorage.setItem('fiat_currency', payload.fiat_currency.toString());
         if(payload.isEnableTouchID !== null && typeof payload.isEnableTouchID !== 'undefined')
             AsyncStorage.setItem('isEnableTouchID', payload.isEnableTouchID.toString());
+    }
+    if(fcmToken) AsyncStorage.setItem('fcmToken', fcmToken);
+    if(notification_permission !== null){
+        AsyncStorage.setItem('notification_permission', notification_permission);
+        payload.notification_permission = (notification_permission == 'true');
     }
     dispatch({ type: types.LOGOUT, payload });
 }

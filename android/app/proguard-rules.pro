@@ -81,3 +81,6 @@
 
 -keep class com.samsung.android.sdk.** { *; }
 -dontwarn com.samsung.android.sdk.**
+
+-keep class io.invertase.firebase.** { *; }
+-dontwarn io.invertase.firebase.**

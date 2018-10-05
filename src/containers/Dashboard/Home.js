@@ -67,6 +67,9 @@ class Home extends Component<{}> {
         if ((!!this.props.pin && !this.props.lockApp && this.state.appState.match(/inactive|background/) && nextAppState === 'active')){
             this.props.navigation.navigate('Lock');
         }
+        if(this.state.appState.match(/inactive|background/) && nextAppState === 'active'){
+            this.props.preAction();
+        }
         this.mount && this.setState({appState: nextAppState});
     }
 
