@@ -98,7 +98,7 @@ class ChatChannel extends Component < {} > {
                         />:null}
                     </View>
                     { chatRoomChannels.map((ch,i)=>{
-                        let msg = ch.l.txt?ch.l.txt:'-';
+                        let msg = ch.l.txt?ch.l.text:'-';
                         let ur = ch.ur?ch.ur[this.props.htmProfile.username]:0;
                         let time = moment(ch.l.t).calendar(null, {
                             sameDay: 'h:mm A',

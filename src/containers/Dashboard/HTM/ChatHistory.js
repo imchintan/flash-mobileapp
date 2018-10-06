@@ -80,7 +80,7 @@ class ChatHistory extends Component < {} > {
                                     }
                                 }
                             }),
-                            m: cr.l?cr.l.txt:'-',
+                            m: cr.l?cr.l.text:'-',
                             ur: cr.c[cr.c.length-1].uc?
                                 cr.c[cr.c.length-1].uc[this.props.htmProfile.username]:0
                         }

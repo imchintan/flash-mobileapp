@@ -5,10 +5,11 @@ import * as types from '@actions/types';
 import * as apis from '@flashAPIs';
 import * as htm from '@actions/htm';
 import _ from 'lodash';
-import { PROFILE_URL } from '@src/config';
+import { PROFILE_URL, APP_SECRET } from '@src/config';
 import * as utils from '@lib/utils';
 import * as constants from '@src/constants';
 import notifcationHelper from '@helpers/notifcationHelper';
+import CryptoJS from "react-native-crypto-js";
 
 const Toast =  require('@components/Toast');
 
@@ -25,7 +26,8 @@ export const getChatRooms = () => {
                     payload: { loading: false }
                 });
             }else{
-                let chatRooms = d.rooms.filter(room=> !!room.l);
+                let chatRooms = d.rooms.filter(room=> !!room.l)
+                    .map(chatRoom => decryptChatRoomMSG(chatRoom));
                 dispatch({
                     type: types.GET_CHAT_ROOMS,
                     payload: {
@@ -281,12 +283,17 @@ export const getChatMessages = (refresh=false) => {
                     name    : params.htmProfile.display_name,
                 }
                 chatMessages = _.uniqBy(_.concat(chatMessages,
-                    d.messages.map(m=>({
-                        _id         : m._id,
-                        createdAt   : m.t,
-                        text        : m.txt,
-                        user        : m.s == params.htm.username?htm:user,
-                }))),'_id');
+                    d.messages.map(m=>{
+                        let decryptedMsg = JSON.parse(CryptoJS.AES
+                            .decrypt(m.txt, APP_SECRET+m.c).toString(CryptoJS.enc.Utf8))
+                        return ({
+                            _id         : m._id,
+                            createdAt   : m.t,
+                            text        : decryptedMsg.text || null,
+                            location    : decryptedMsg.location || null,
+                            user        : m.s == params.htm.username?htm:user,
+                        });
+                })),'_id');
                 chatMessages.sort((m1,m2)=>m1._id>m2._id?-1:1);
                 dispatch({
                     type: types.GET_CHAT_MESSAGES,
@@ -308,15 +315,18 @@ export const getChatMessages = (refresh=false) => {
     }
 }
 
-export const sendChatMessage = (txt, lt=null, ln=null) => {
+export const sendChatMessage = (text=null, location=null) => {
     return (dispatch,getState) => {
         let params = getState().params;
         let chatRoom = params.chatRoom;
         let chatRoomChannel = params.chatRoomChannel;
         let cb = () => {
             let params = getState().params;
+            let chatRoomChannel = params.chatRoomChannel;
+            let encryptedMsg = CryptoJS.AES.encrypt(JSON.stringify({text,location}),
+                APP_SECRET+chatRoomChannel.id).toString();
             apis.sendChatMessage(params.profile.auth_version, params.profile.sessionToken,
-                params.chatRoomChannel.id, params.chatRoom._id, txt, lt, ln).then((d)=>{
+                params.chatRoomChannel.id, params.chatRoom._id, encryptedMsg).then((d)=>{
                 let chatMessages = params.chatMessages;
                 if(d.rc !== 1){
                     Toast.errorTop(d.reason);
@@ -324,7 +334,8 @@ export const sendChatMessage = (txt, lt=null, ln=null) => {
                     let message = {
                         _id         : d.message._id,
                         createdAt   : d.message.t,
-                        text        : d.message.txt,
+                        text        : text,
+                        location    : location,
                         user        : {
                             _id     : params.htmProfile.id,
                             name    : params.htmProfile.display_name,
@@ -350,7 +361,6 @@ export const sendChatMessage = (txt, lt=null, ln=null) => {
         }else {
             cb();
         }
-
     }
 }
 
@@ -414,10 +424,14 @@ export const receiveChatMessage = (msg) => {
             _id     : params.htmProfile.id,
             name    : params.htmProfile.display_name,
         }
+        let decryptedMsg = JSON.parse(CryptoJS.AES
+            .decrypt(msg.txt, APP_SECRET+msg.c).toString(CryptoJS.enc.Utf8))
+
         let message = {
             _id         : msg._id,
             createdAt   : msg.t,
-            text        : msg.txt,
+            text        : decryptedMsg.text || null,
+            location    : decryptedMsg.location || null,
             user        : msg.s == params.htm.username?htm:user,
         }
         chatMessages = _.sortedUniqBy(_.concat([message],params.chatMessages),
@@ -438,7 +452,7 @@ export const updateChatRoom = (room) => {
         let payload = {};
         payload.chatRooms =  params.chatRooms;
         if(!payload.chatRooms) return;
-        let chatRoom = room;
+        let chatRoom = decryptChatRoomMSG(room);
         if(params.chatRoom)
             payload.chatRoom = chatRoom;
         if(params.chatRoomChannel){
@@ -503,4 +517,23 @@ export const savePushToken = () => {
             dispatch({ type: types.SAVE_PUSH_TOKEN });
         })
     }
+}
+
+export const decryptChatRoomMSG = (chatRoom) => {
+    chatRoom.l = decryptMSG(chatRoom.l);
+    let channels = chatRoom.c.filter(c=> !!c.l).map(ch=>{
+        ch.l = decryptMSG(ch.l)
+        return ch;
+    })
+    chatRoom.c = channels;
+    return chatRoom;
+}
+
+export const decryptMSG = (msg) => {
+    let decryptedMsg = JSON.parse(CryptoJS.AES
+        .decrypt(msg.txt, APP_SECRET+msg.c)
+        .toString(CryptoJS.enc.Utf8));
+    msg.text = decryptedMsg.text;
+    msg.location = decryptedMsg.location;
+    return msg;
 }

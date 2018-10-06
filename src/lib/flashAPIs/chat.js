@@ -153,12 +153,14 @@ export const updateRoomMemberDetail = (auth_version, sessionToken, r, receiver_u
  * @param  {String} sessionToken             User authorization token
  * @param  {String} c                        Channel ID
  * @param  {String} r                        Room ID
- * @param  {String} txt                      Text message
- * @param  {String} lt                       Location latitude
- * @param  {String} ln                       Location longitude
+ * @param  {String} txt                      Encrypted message object
+ *   ⮑ @param  {String} text                Text message
+ *      @param  {String} location            Location Object
+ *        ⮑ @param  {Number} latitude       latitude
+ *           @param  {Number} longitude      longitude
  * @return {Object}                          Return API response
  */
-export const sendChatMessage = (auth_version, sessionToken, c, r, txt, lt=null, ln=null) => {
+export const sendChatMessage = (auth_version, sessionToken, c, r, txt) => {
     return new Promise((resolve,reject) => {
         fetch(CHAT_API_URL+'/send-message',{
             method: 'POST',
@@ -166,8 +168,6 @@ export const sendChatMessage = (auth_version, sessionToken, c, r, txt, lt=null, 
                 c,
                 r,
                 txt,
-                lt,
-                ln,
                 appversion:APP_VERSION,
                 res:RESOURCE,
             }),
