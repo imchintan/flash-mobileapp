@@ -63,11 +63,8 @@ class HTM extends Component < {} > {
                     <HeaderTitle>HTM</HeaderTitle>
                     <HeaderRight>
                         <TouchableOpacity onPress={()=>this.props.navigation.navigate('ChatHistory')}>
-                            <Icon style={[styles.headerFAIcon,{
-                                    fontSize:24,
-                                    paddingHorizontal: 12
-                                }]}
-                                name='send'/>
+                            <Icon style={styles.headerFAIcon}
+                                name='comments'/>
                             {this.props.chatUnreadMsgCount>0?<View style={styles.htmChatBadge}>
                                 <Text style={styles.htmChatBadgeText}>
                                     {this.props.chatUnreadMsgCount}
@@ -142,6 +139,8 @@ class HTM extends Component < {} > {
                     <Button
                         style={[{
                             marginBottom: 20,
+                            width: 180,
+                            alignItems: 'center'
                         },!this.props.htmProfile.is_active && {
                             backgroundColor: '#C2C2C2',
                         }]}
@@ -152,6 +151,16 @@ class HTM extends Component < {} > {
                             else
                                 return Toast.showTop("Please enable your HTM profile!");
                         }} />
+                    <Button
+                        style={[{
+                            marginBottom: 20,
+                            width: 180,
+                            alignItems: 'center'
+                        },!this.props.htmProfile.is_active && {
+                            backgroundColor: '#C2C2C2',
+                        }]}
+                        value={'Trade History'}
+                        onPress={()=>this.props.navigation.navigate('ChatHistory')} />
                     {this.props.favorite_htms.length > 0?
                     <View style={{marginHorizontal: 20}}>
                         <Text style={styles.label}>Favorite Trades</Text>

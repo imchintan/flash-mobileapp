@@ -607,14 +607,13 @@ const styles = StyleSheet.create({
     },
     htmFeedbackContent:{
         flex:1,
-        padding: 15,
+        paddingVertical: 15,
     },
     htmFeedback:{
         flexDirection: 'row',
         alignItems: 'center',
         backgroundColor: '#E9E9E9',
         borderRadius: 5,
-        marginHorizontal: 5,
         marginBottom: 10,
         padding: 10
     },
@@ -650,6 +649,24 @@ const styles = StyleSheet.create({
         fontSize: 13,
         fontStyle: 'italic',
         color: '#787878',
+    },
+    tradeReviewFilter:{
+        flexDirection: 'row',
+        marginBottom: 10
+    },
+    tradeReviewFilterBtn:{
+        flexDirection: 'row',
+        marginLeft: 15,
+        alignItems: 'center'
+    },
+    tradeReviewFilterIcon:{
+        marginRight: 5,
+        fontSize: 16,
+        color: '#4A4A4A'
+    },
+    tradeReviewFilterText:{
+        fontSize: 15,
+        color: '#4A4A4A'
     },
 });
 

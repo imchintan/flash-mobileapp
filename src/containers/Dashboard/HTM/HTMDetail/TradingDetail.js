@@ -30,7 +30,6 @@ class TradingDetail extends Component < {} > {
     constructor(props) {
         super(props);
         this.state = {
-            htm: this.props.htm
         };
     }
     render() {

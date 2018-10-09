@@ -131,8 +131,8 @@ class ChatChannel extends Component < {} > {
                                         ch.f[this.props.htmProfile.username] === false?
                                         styles.chatChannelFailedIcon:styles.chatChannelPendingIcon))}
                                     name={!ch.f?'exchange':(ch.f[this.props.htmProfile.username] ===true?
-                                        'thumbs-up':(ch.f[this.props.htmProfile.username] ===false?
-                                            'thumbs-down':'exclamation-triangle'))}/>
+                                        'check':(ch.f[this.props.htmProfile.username] ===false?
+                                            'exclamation':'exclamation-triangle'))}/>
                                 </View>
                                 <View style={styles.chatMsgBox}>
                                     <View style={styles.chatMsgDetailBox}>

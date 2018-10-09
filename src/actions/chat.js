@@ -412,7 +412,7 @@ export const submitFeedback = (data, cb=null) => {
 export const receiveChatMessage = (msg) => {
     return (dispatch,getState) => {
         let params = getState().params;
-        if(params.chatRoomChannel && params.chatRoomChannel.id !== msg.c)
+        if(!params.chatRoomChannel || params.chatRoomChannel.id !== msg.c)
             return ;
         let htm = {
             _id     : params.htm.id,
@@ -453,12 +453,13 @@ export const updateChatRoom = (room) => {
         payload.chatRooms =  params.chatRooms;
         if(!payload.chatRooms) return;
         let chatRoom = decryptChatRoomMSG(room);
-        if(params.chatRoom)
+        if(params.chatRoom && params.chatRoom._id == chatRoom._id){
             payload.chatRoom = chatRoom;
-        if(params.chatRoomChannel){
-            let chatRoomChannelIdx = chatRoom.c.findIndex(ch => ch.id == params.chatRoomChannel.id);
-            if(chatRoomChannelIdx !== -1){
-                payload.chatRoomChannel = chatRoom.c[chatRoomChannelIdx];
+            if(params.chatRoomChannel){
+                let chatRoomChannelIdx = chatRoom.c.findIndex(ch => ch.id == params.chatRoomChannel.id);
+                if(chatRoomChannelIdx !== -1){
+                    payload.chatRoomChannel = chatRoom.c[chatRoomChannelIdx];
+                }
             }
         }
         let chatRoomIdx = payload.chatRooms.findIndex(r => r._id == chatRoom._id);

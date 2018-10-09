@@ -160,7 +160,7 @@ const styles = StyleSheet.create({
     },
     chatChannelFailedIcon:{
         fontSize: 25,
-        color: 'red'
+        color: '#F80'
     },
     chatStatusIcon:{
         fontSize: 14,
