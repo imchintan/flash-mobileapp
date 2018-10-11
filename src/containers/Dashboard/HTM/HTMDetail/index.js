@@ -87,6 +87,7 @@ class HTMDetail extends Component < {} > {
 
     render() {
         const styles = (this.props.nightMode?require('@styles/nightMode/htm'):require('@styles/htm'));
+        const os = this.props.chatRoom?(this.props.chatRoom.os && this.props.chatRoom.os[this.props.htm.username]):this.props.htm.isOnline;
         return (
             <Container>
                 <Header>
@@ -101,15 +102,21 @@ class HTMDetail extends Component < {} > {
                             {this.props.htm.display_name}
                         </Text>
                         <Text numberOfLines={1} style={styles.htmHeaderSubTitle}>
-                            {this.props.htm.isOnline?
-                                <Icon style={styles.htmProfileStatusIcon}
+                            {os?<Icon style={styles.htmProfileStatusIcon}
                                     name={'circle'}/>:null}
                             <Text>
-                                {(this.props.htm.isOnline?' online': 'last seen '+moment(this.props.htm.last_seen_at).fromNow())}
+                                {(os?' online': 'last seen '+moment(this.props.htm.last_seen_at).fromNow())}
                             </Text>
                         </Text>
                     </View>
                     <HeaderRight>
+                        {typeof this.props.htm.is_trustworthy !== 'undefined' &&
+                            <TouchableOpacity onPress={this.props.htm.is_trustworthy?
+                                this.props.removeTrustedHTM:this.props.addTrustedHTM}>
+                                <Image style={{width: 28, height: 28, marginRight: 2}}
+                                    source={this.props.htm.is_trustworthy == 1?
+                                        require('@images/shield-check-green.png'):require('@images/shield-check-white.png')}/>
+                            </TouchableOpacity>}
                         <TouchableOpacity
                             onPress={this.props.htm.isFavorite?
                                 this.props.removeFavoriteHTM:this.props.addFavoriteHTM}>
@@ -190,6 +197,7 @@ function mapStateToProps({params}) {
         exchange: params.exchange || constants.COIN_GECKO_EXCHANGES[0],
         exchange_rates: params.exchange_rates || null,
         htm: params.htm,
+        chatRoom: params.chatRoom,
     };
 }
 

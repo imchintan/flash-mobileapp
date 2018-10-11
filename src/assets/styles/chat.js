@@ -203,7 +203,28 @@ const styles = StyleSheet.create({
         marginVertical: 20,
         fontSize: 14,
         color: '#565656',
-    }
+    },
+    tradeHistoryFilter:{
+        flexDirection: 'row',
+        // alignSelf: 'center',
+        justifyContent: 'space-between',
+        margin: 15,
+        width: 280
+    },
+    tradeHistoryFilterBtn:{
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    tradeHistoryFilterIcon:{
+        marginRight: 5,
+        fontSize: 16,
+        color: '#4A4A4A'
+    },
+    tradeHistoryFilterText:{
+        fontSize: 15,
+        color: '#4A4A4A',
+        paddingTop: 1
+    },
 });
 
 module.exports = {

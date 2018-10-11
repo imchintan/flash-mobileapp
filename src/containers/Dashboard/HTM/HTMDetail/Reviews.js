@@ -34,32 +34,35 @@ class Reviews extends Component < {} > {
         const styles = (this.props.nightMode?require('@styles/nightMode/htm'):require('@styles/htm'));
         return(
             <View style={styles.htmProfileContent}>
-                <Text style={styles.label}>Trade Reviews</Text>
-                <View style={[styles.hr,{marginBottom:15}]}/>
-                <View style={styles.tradeReviewFilter}>
-                    <TouchableOpacity style={styles.tradeReviewFilterBtn}
-                        onPress={()=>this.setState({filterBy:0})}>
-                        <Icon style={styles.tradeReviewFilterIcon}
-                            name={!this.state.filterBy || this.state.filterBy ==0?
-                                'dot-circle-o':'circle-o'}
-                        />
-                        <Text style={styles.tradeReviewFilterText}>All</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.tradeReviewFilterBtn}
-                        onPress={()=>this.setState({filterBy:1})}>
-                        <Icon style={styles.tradeReviewFilterIcon}
-                            name={this.state.filterBy==1?'dot-circle-o':'circle-o'}
-                        />
-                        <Text style={styles.tradeReviewFilterText}>Successful</Text>
-                    </TouchableOpacity>
-                    <TouchableOpacity style={styles.tradeReviewFilterBtn}
-                        onPress={()=>this.setState({filterBy:2})}>
-                        <Icon style={styles.tradeReviewFilterIcon}
-                            name={this.state.filterBy==2?'dot-circle-o':'circle-o'}
-                        />
-                        <Text style={styles.tradeReviewFilterText}>Unsuccessful</Text>
-                    </TouchableOpacity>
-                </View>
+                {this.props.feedbacks.length > 0 &&
+                <View>
+                    <Text style={styles.label}>Trade Reviews</Text>
+                    <View style={[styles.hr,{marginBottom:15}]}/>
+                    <View style={styles.tradeReviewFilter}>
+                        <TouchableOpacity style={styles.tradeReviewFilterBtn}
+                            onPress={()=>this.setState({filterBy:0})}>
+                            <Icon style={styles.tradeReviewFilterIcon}
+                                name={!this.state.filterBy || this.state.filterBy ==0?
+                                    'dot-circle-o':'circle-o'}
+                            />
+                            <Text style={styles.tradeReviewFilterText}>All</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.tradeReviewFilterBtn}
+                            onPress={()=>this.setState({filterBy:1})}>
+                            <Icon style={styles.tradeReviewFilterIcon}
+                                name={this.state.filterBy==1?'dot-circle-o':'circle-o'}
+                            />
+                            <Text style={styles.tradeReviewFilterText}>Successful</Text>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.tradeReviewFilterBtn}
+                            onPress={()=>this.setState({filterBy:2})}>
+                            <Icon style={styles.tradeReviewFilterIcon}
+                                name={this.state.filterBy==2?'dot-circle-o':'circle-o'}
+                            />
+                            <Text style={styles.tradeReviewFilterText}>Unsuccessful</Text>
+                        </TouchableOpacity>
+                    </View>
+                </View>}
                 <FlatList
                     style={styles.htmFeedbackContent}
                     data={this.props.feedbacks}

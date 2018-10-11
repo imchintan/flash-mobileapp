@@ -444,3 +444,65 @@ export const getHTMFeedbacks = (auth_version, sessionToken, username) => {
         });
     });
 }
+
+/**
+ * Add Trusted HTM
+ * @param  {Number} auth_version             API authentication version
+ * @param  {String} sessionToken             User authorization token
+ * @param  {String} trusted_username         Trusted HTM username
+ * @return {Object}                          Return API response
+ */
+export const addTrustedHTM = (auth_version, sessionToken, trusted_username) => {
+    return new Promise((resolve,reject) => {
+        fetch(API_URL+'/add-trusted-htm',{
+            method: 'POST',
+            body: JSON.stringify({
+                trusted_username,
+                appversion:APP_VERSION,
+                res:RESOURCE,
+            }),
+            headers: {
+               'Content-Type': 'application/json; charset=utf-8',
+               'authorization': sessionToken,
+               'fl_auth_version': auth_version
+            },
+        })
+        .then(res => res.json())
+        .then(json => resolve(json))
+        .catch(e =>{
+            console.log(e);
+            reject('Something went wrong!')
+        });
+    });
+}
+
+/**
+ * Remove Trusted HTM
+ * @param  {Number} auth_version             API authentication version
+ * @param  {String} sessionToken             User authorization token
+ * @param  {String} trusted_username         Trusted HTM username
+ * @return {Object}                          Return API response
+ */
+export const removeTrustedHTM = (auth_version, sessionToken, trusted_username) => {
+    return new Promise((resolve,reject) => {
+        fetch(API_URL+'/remove-trusted-htm',{
+            method: 'POST',
+            body: JSON.stringify({
+                trusted_username,
+                appversion:APP_VERSION,
+                res:RESOURCE,
+            }),
+            headers: {
+               'Content-Type': 'application/json; charset=utf-8',
+               'authorization': sessionToken,
+               'fl_auth_version': auth_version
+            },
+        })
+        .then(res => res.json())
+        .then(json => resolve(json))
+        .catch(e =>{
+            console.log(e);
+            reject('Something went wrong!')
+        });
+    });
+}

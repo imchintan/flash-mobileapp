@@ -668,6 +668,51 @@ const styles = StyleSheet.create({
         fontSize: 15,
         color: '#4A4A4A'
     },
+    tradeCaution:{
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#0002'
+    },
+    tradeCautionBox:{
+        backgroundColor: '#FFF',
+        margin: 20,
+        paddingHorizontal: 20,
+        borderRadius: 5,
+    },
+    tradeCautionHr:{
+        width: width - 80,
+        borderBottomWidth: 1,
+        borderColor: '#989898',
+    },
+    tradeCautionText:{
+        paddingVertical: 10,
+        fontSize: 16,
+        color: '#666666',
+    },
+    tradeCautionDNS:{
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 10,
+        marginLeft: 5
+    },
+    tradeCautionDNSText:{
+        fontSize: 15,
+        color: '#565656'
+    },
+    tradeCautionDNSIcon:{
+        fontSize: 18,
+        color: '#565656'
+    },
+    tradeCautionBtn:{
+        marginVertical: 12,
+        alignSelf: 'center'
+    },
+    tradeCautionBtnText:{
+        fontSize: 17,
+        fontWeight: 'bold',
+        color: '#E0AE27'
+    },
 });
 
 module.exports = {

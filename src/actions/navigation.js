@@ -49,6 +49,11 @@ export const init = () => {
         if(pin){
             payload.pin = pin.toString();
         }
+        
+        let tradeCaution = await AsyncStorage.getItem('tradeCaution');
+        if(tradeCaution){
+            payload.tradeCaution = true;
+        }
 
         let nightMode = await AsyncStorage.getItem('nightMode');
         if(nightMode !== null){

@@ -77,11 +77,10 @@ class ChatRoom extends Component < {} > {
                             {this.props.htm.display_name}
                         </Text>
                         <Text numberOfLines={1} style={styles.chatHeaderSubTitle}>
-                            {this.props.htm.isOnline || os?
-                                <Icon style={styles.chatProfileStatusIcon}
+                            {os?<Icon style={styles.chatProfileStatusIcon}
                                     name={'circle'}/>:null}
                             <Text>
-                                {(this.props.htm.isOnline || os?' online': 'last seen '+moment(this.props.htm.last_seen_at).fromNow())}
+                                {(os?' online': 'last seen '+moment(this.props.htm.last_seen_at).fromNow())}
                             </Text>
                         </Text>
                     </View>

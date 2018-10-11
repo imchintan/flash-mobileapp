@@ -89,6 +89,10 @@ export const checkTradingFeedBack = () => {
     return (dispatch,getState) => {
         let params = getState().params;
         let chatRooms = params.chatRooms || [];
+
+        if(!params.htmProfile)
+            return setTimeout(()=>dispatch(checkTradingFeedBack),500);
+
         let hasFeedBackRemainChatRooms = chatRooms.filter((chatRoom)=>{
             let feedBackRemains = chatRoom.c.filter((ch)=>!ch.a && (!ch.f
                 || typeof ch.f[params.htmProfile.username] == 'undefined'));

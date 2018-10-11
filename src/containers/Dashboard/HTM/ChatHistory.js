@@ -58,7 +58,41 @@ class ChatHistory extends Component < {} > {
                     <HeaderTitle>Trade History</HeaderTitle>
                 </Header>
                 <Content bounces={false} style={styles.content}>
+                    {chatRooms.length > 0?
+                    <View style={{marginHorizontal:15}}>
+                        <View style={styles.tradeHistoryFilter}>
+                            <TouchableOpacity style={styles.tradeHistoryFilterBtn}
+                                onPress={()=>this.setState({filterBy:0})}>
+                                <Icon style={styles.tradeHistoryFilterIcon}
+                                    name={!this.state.filterBy || this.state.filterBy ==0?
+                                        'dot-circle-o':'circle-o'}
+                                />
+                                <Text style={styles.tradeHistoryFilterText}>All </Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.tradeHistoryFilterBtn}
+                                onPress={()=>this.setState({filterBy:1})}>
+                                <Icon style={styles.tradeHistoryFilterIcon}
+                                    name={this.state.filterBy==1?'dot-circle-o':'circle-o'}
+                                />
+                                <Text style={styles.tradeHistoryFilterText}>Open trades</Text>
+                            </TouchableOpacity>
+                            <TouchableOpacity style={styles.tradeHistoryFilterBtn}
+                                onPress={()=>this.setState({filterBy:2})}>
+                                <Icon style={styles.tradeHistoryFilterIcon}
+                                    name={this.state.filterBy==2?'dot-circle-o':'circle-o'}
+                                />
+                                <Text style={styles.tradeHistoryFilterText}>Close trades</Text>
+                            </TouchableOpacity>
+                        </View>
+                        <View style={[styles.hr,{marginBottom:15}]}/>
+                    </View>:null}
                     {chatRooms.length > 0?chatRooms.map(cr=>{
+                        let filterBy = (this.state.filterBy || 0);
+                        let hasActiveChannel = (cr.c.filter(ch=>ch.a).length > 0);
+                        if(filterBy == 1 && !hasActiveChannel)
+                            return;
+                        if(filterBy == 2 && hasActiveChannel)
+                            return;
                         let un = cr.m[0] == this.props.htmProfile.username?cr.m[1]:cr.m[0];
                         let d = {
                             id: cr.l._id,

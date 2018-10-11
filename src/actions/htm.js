@@ -121,12 +121,21 @@ export const getHTMDetail = (username, cb=null, htm=null) => {
                     (new Date().getTime() - (2 * 60 * 1000))); // 2 mints
                 d.htm_profile.isFavorite = ((params.favorite_htms || [])
                     .findIndex(htm=>htm.username == d.htm_profile.username) != -1)
+
+                let chatRoom = (params.chatRoom || null);
+                if(params.chatRooms){
+                    let chatRooms = params.chatRooms.filter(ch=> ch.m
+                        && ch.m.includes(d.htm_profile.username));
+                    if(chatRooms.length)
+                        chatRoom = chatRooms[0];
+                }
                 dispatch({
                     type: types.GET_HTM_DETAIL,
                     payload: {
                         loading: false,
                         htm: d.htm_profile,
-                        htm_feedbacks: []
+                        htm_feedbacks: [],
+                        chatRoom
                     }
                 });
                 dispatch(getHTMFeedbacks());
@@ -344,6 +353,75 @@ export const findNearByHTMs = (filter={}, loading = false) => {
     }
 }
 
+export const addTrustedHTM = () => {
+    return (dispatch,getState) => {
+        dispatch({ type: types.LOADING_START });
+        let params = getState().params;
+        apis.addTrustedHTM(params.profile.auth_version,
+            params.profile.sessionToken, params.htm.username).then((d)=>{
+            if(d.rc !== 1){
+                Toast.errorTop(d.reason);
+                dispatch({
+                    type: types.ADD_TRUSTED_HTM,
+                    payload: { loading: false }
+                });
+            }else{
+                Toast.successTop(params.htm.display_name + " marked as trusted!");
+                let htm = params.htm;
+                htm.is_trustworthy = true;
+                dispatch({
+                    type: types.ADD_TRUSTED_HTM,
+                    payload: {
+                        htm,
+                        loading: false
+                    }
+                });
+            }
+        }).catch(e=>{
+            console.log(e);
+            Toast.errorTop(e.message);
+            dispatch({
+                type: types.ADD_TRUSTED_HTM,
+                payload: { loading: false }
+            });
+        })
+    }
+}
+
+export const removeTrustedHTM = () => {
+    return (dispatch,getState) => {
+        dispatch({ type: types.LOADING_START });
+        let params = getState().params;
+        apis.removeTrustedHTM(params.profile.auth_version,
+            params.profile.sessionToken, params.htm.username).then((d)=>{
+            if(d.rc !== 1){
+                Toast.errorTop(d.reason);
+                dispatch({
+                    type: types.REMOVE_TRUSTED_HTM,
+                    payload: { loading: false }
+                });
+            }else{
+                Toast.successTop(params.htm.display_name + " marked as not trusted!");
+                let htm = params.htm;
+                htm.is_trustworthy = false;
+                dispatch({
+                    type: types.REMOVE_TRUSTED_HTM,
+                    payload: {
+                        htm,
+                        loading: false
+                    }
+                });
+            }
+        }).catch(e=>{
+            Toast.errorTop(e.message);
+            dispatch({
+                type: types.REMOVE_TRUSTED_HTM,
+                payload: { loading: false }
+            });
+        })
+    }
+}
+
 export const addFavoriteHTM = () => {
     return (dispatch,getState) => {
         dispatch({ type: types.LOADING_START });
@@ -369,7 +447,6 @@ export const addFavoriteHTM = () => {
                         loading: false
                     }
                 });
-                dispatch(getHTMProfile());
             }
         }).catch(e=>{
             Toast.errorTop(e.message);
@@ -407,7 +484,6 @@ export const removeFavoriteHTM = () => {
                         loading: false
                     }
                 });
-                dispatch(getHTMProfile());
             }
         }).catch(e=>{
             Toast.errorTop(e.message);
@@ -439,7 +515,6 @@ export const getFavoriteHTMs = () => {
                         loading: false
                     }
                 });
-                dispatch(getHTMProfile());
             }
         }).catch(e=>{
             Toast.errorTop(e.message);
@@ -471,7 +546,6 @@ export const getHTMFeedbacks = () => {
                         loading: false
                     }
                 });
-                dispatch(getHTMProfile());
             }
         }).catch(e=>{
             Toast.errorTop(e.message);

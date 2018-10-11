@@ -52,15 +52,17 @@ class FeedBack extends Component < {} > {
     }
 
     componentDidMount(){
+        this.mount = true;
         BackHandler.addEventListener('hardwareBackPress', this.backHandler.bind(this));
     }
 
     componentWillUnmount(){
+        this.mount = false;
         BackHandler.removeEventListener('hardwareBackPress', this.backHandler.bind(this));
     }
 
     backHandler(){
-        return this.props.forceFeedBack;
+        return this.props.forceFeedBack && this.mount;
     }
 
     submit(){
@@ -73,10 +75,6 @@ class FeedBack extends Component < {} > {
         data.is_txn_success = this.state.is_txn_success;
 
         if(this.state.is_txn_success){
-            if(typeof this.state.is_trustworthy == 'undefined')
-                return Toast.errorTop("Please give the answer of requird fields!");
-            data.is_trustworthy = this.state.is_trustworthy;
-
             let currencies_traded = Object.values(this.state.currencies_traded);
             if(currencies_traded.length > 0){
                 let isValid = currencies_traded.filter(traded => (traded.amount)).length > 0;
@@ -187,27 +185,6 @@ class FeedBack extends Component < {} > {
                             </TouchableOpacity>
                         </View>
                         {this.state.is_txn_success === true?<View>
-                            <Text style={styles.label}>
-                                Is trustworthy?
-                                <Text style={styles.mandatoryField}>*</Text>
-                            </Text>
-                            <View style={styles.hr}/>
-                            <View style={styles.feedBackValueRow}>
-                                <TouchableOpacity style={styles.feedBacRadioBtn}
-                                    onPress={()=>this.setState({is_trustworthy:true})}>
-                                    <Icon style={styles.feedBacRadioBtnIcon}
-                                        name={this.state.is_trustworthy !== true?
-                                            "circle-o":"dot-circle-o"}/>
-                                    <Text style={styles.feedBacRadioBtnText}>Yes</Text>
-                                </TouchableOpacity>
-                                <TouchableOpacity style={styles.feedBacRadioBtn}
-                                    onPress={()=>this.setState({is_trustworthy:false})}>
-                                    <Icon style={styles.feedBacRadioBtnIcon}
-                                        name={this.state.is_trustworthy !== false?
-                                            "circle-o":"dot-circle-o"}/>
-                                    <Text style={styles.feedBacRadioBtnText}>No</Text>
-                                </TouchableOpacity>
-                            </View>
                             <Text style={styles.label}>Currency Traded</Text>
                             <View style={styles.hr}/>
                             <View style={[styles.feedBackValueRow,{flexDirection: 'column'}]}>
@@ -311,7 +288,7 @@ function mapStateToProps({params}) {
     return {
         loading: params.loading,
         nightMode: params.nightMode,
-        htm: params.htm,
+        htm: params.htm || {},
         htmProfile: params.htmProfile,
         balances: params.balances,
         chatRoom: params.chatRoom,

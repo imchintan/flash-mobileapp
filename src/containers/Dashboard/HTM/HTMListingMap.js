@@ -9,7 +9,8 @@ import {
     Platform,
     Linking,
     PermissionsAndroid,
-    Image
+    Image,
+    AsyncStorage
 } from 'react-native';
 import {
     Container,
@@ -22,6 +23,7 @@ import {
     Button,
     Slider,
     Loader,
+    Modal
 } from '@components';
 import { Marker } from 'react-native-maps';
 import MapView from 'react-native-map-clustering';
@@ -154,6 +156,15 @@ class HTMListingMap extends Component < {} > {
             latitudeDelta: Math.min(Math.max(deltaX,0.0922),50),
             longitudeDelta:Math.min(Math.max(deltaY,0.0421),50)
         };
+    }
+
+    tradeCaution(){
+        if(this.state.do_not_show){
+            AsyncStorage.setItem('tradeCaution','true');
+        }
+        this.props.customAction({
+            tradeCaution: true
+        });
     }
 
     render() {
@@ -542,6 +553,41 @@ class HTMListingMap extends Component < {} > {
                     </View>
                 </View>:null}
                 <Loader show={this.props.loading || this.state.loading} />
+                <Modal
+                    transparent={true}
+                    visible={!this.props.tradeCaution}
+                    onRequestClose={() => {
+                        return true;
+                }}>
+                    <View style={styles.tradeCaution}>
+                        <View style={styles.tradeCautionBox}>
+                            <Text style={styles.label}>
+                                Caution
+                            </Text>
+                            <View style={styles.tradeCautionHr}/>
+                            <Text style={styles.tradeCautionText}>
+                                Reviews and HTM stats here are all users generated,
+                                FLASH always recommend to stay alert while trading with unknown traders.
+                            </Text>
+                            <TouchableOpacity style={styles.tradeCautionDNS}
+                                onPress={()=>this.setState({do_not_show:!this.state.do_not_show})}>
+                                <Icon style={styles.tradeCautionDNSIcon}
+                                    name={this.state.do_not_show === true?
+                                        'check-square-o':'square-o'}/>
+                                <Text style={styles.tradeCautionDNSText}>
+                                    {"  Do not show again."}
+                                </Text>
+                            </TouchableOpacity>
+                            <View style={styles.tradeCautionHr}/>
+                            <TouchableOpacity style={styles.tradeCautionBtn}
+                                onPress={this.tradeCaution.bind(this)}>
+                                <Text style={styles.tradeCautionBtnText}>
+                                    I UNDERSTAND
+                                </Text>
+                            </TouchableOpacity>
+                        </View>
+                    </View>
+                </Modal>
             </Container>
         );
     }
@@ -558,7 +604,8 @@ function mapStateToProps({params}) {
         balances: params.balances,
         fiat_currency: params.fiat_currency,
         location_permission: params.location_permission || false,
-        location_error_code: params.location_error_code || 0
+        location_error_code: params.location_error_code || 0,
+        tradeCaution: params.tradeCaution || false
     };
 }
 

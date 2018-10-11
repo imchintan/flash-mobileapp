@@ -65,10 +65,18 @@ class Home extends Component<{}> {
 
     _handleAppStateChange(nextAppState){
         if ((!!this.props.pin && !this.props.lockApp && this.state.appState.match(/inactive|background/) && nextAppState === 'active')){
-            this.props.navigation.navigate('Lock');
+            if(!this.props.chatNotification ||
+                (this.state.backgroundStateTime + 1000*10) < new Date().getTime()){
+                this.props.navigation.navigate('Lock');
+            }else{
+                this.props.postAction();
+            }
         }
         if(this.state.appState.match(/inactive|background/) && nextAppState === 'active'){
             this.props.preAction();
+        }
+        if(nextAppState !== 'active'){
+            this.setState({backgroundStateTime: new Date().getTime()});
         }
         this.mount && this.setState({appState: nextAppState});
     }
@@ -281,6 +289,7 @@ function mapStateToProps({params}) {
         lockApp: params.lockApp || false,
         pin: params.pin,
         nightMode: params.nightMode,
+        chatNotification: params.chatNotification || null,
     };
 }
 
