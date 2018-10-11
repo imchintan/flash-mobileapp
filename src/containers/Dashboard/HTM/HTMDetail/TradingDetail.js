@@ -201,7 +201,7 @@ function mapStateToProps({params}) {
         fiat_currency: params.fiat_currency,
         exchange: params.exchange || constants.COIN_GECKO_EXCHANGES[0],
         exchange_rates: params.exchange_rates || null,
-        htm: params.htm,
+        htm: params.htm || {},
     };
 }
 

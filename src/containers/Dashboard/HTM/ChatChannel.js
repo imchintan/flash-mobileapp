@@ -157,7 +157,7 @@ class ChatChannel extends Component < {} > {
 function mapStateToProps({params}) {
     return {
         nightMode: params.nightMode,
-        htm: params.htm,
+        htm: params.htm || {},
         htmProfile: params.htmProfile,
         chatRoom: params.chatRoom,
     };

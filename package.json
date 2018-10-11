@@ -1,6 +1,6 @@
 {
   "name": "flash",
-  "version": "1.9.5-rc.2",
+  "version": "1.9.5-rc.3",
   "private": true,
   "scripts": {
     "postinstall": "rn-nodeify --install stream,buffer,events,assert,crypto --hack"

@@ -168,10 +168,10 @@ class HTMDetail extends Component < {} > {
                                         {Math.round(this.props.htm.success_txns/this.props.htm.total_txns*100)}
                                     %)
                                 </Text>:null}
-                                <Text style={styles.htmProfileEmailText}>
+                                {this.props.htm.trusted_by>0?<Text style={styles.htmProfileEmailText}>
                                     Trusted by {this.props.htm.trusted_by} {this.props.htm.trusted_by>1?
                                         'traders':'trader'}
-                                </Text>
+                                </Text>:null}
                             </View>:null}
                             <Button style={{marginVertical: 10}}
                                 value={'Contact for Trade'}

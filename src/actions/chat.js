@@ -472,6 +472,28 @@ export const updateChatRoom = (room) => {
         }else{
             payload.chatRooms[chatRoomIdx] = chatRoom;
         }
+
+        payload.favorite_htms = (params.favorite_htms || []).map(htm=>{
+            htm.isOnline = false;
+            let chatRooms = payload.chatRooms.filter(ch=> ch.m
+                && ch.m.includes(htm.username));
+            if(chatRooms.length)
+                htm.isOnline = chatRooms[0].os[htm.username];
+            return htm;
+        });
+
+        payload.htms = (params.htms || []).map(htm=>{
+            htm.isOnline = (htm.last_seen_at >
+            (new Date().getTime() - (2 * 60 * 1000))); // 2 mints
+            if(params.chatRooms){
+                let chatRooms = params.chatRooms.filter(ch=> ch.m
+                    && ch.m.includes(htm.username));
+                if(chatRooms.length)
+                    htm.isOnline = chatRooms[0].os[htm.username];
+            }
+            return htm;
+        });
+
         payload.chatUnreadMsgCount = params.htmProfile?payload.chatRooms.reduce((a,b)=>{
             let urA = a || 0;
             if(isNaN(urA)){

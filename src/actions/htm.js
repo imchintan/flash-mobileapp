@@ -336,9 +336,17 @@ export const findNearByHTMs = (filter={}, loading = false) => {
             if(typeof filter.apply !== 'undefined')
                 payload.htmFilter = filter;
             if(d.rc == 1){
-                payload.htms = d.htms.map((htm) => ({ ...htm,
-                    isOnline: htm.last_seen_at >
-                    (new Date().getTime() - (2 * 60 * 1000))})); // 2 mints
+                payload.htms = d.htms.map(htm=>{
+                    htm.isOnline = (htm.last_seen_at >
+                    (new Date().getTime() - (2 * 60 * 1000))); // 2 mints
+                    if(params.chatRooms){
+                        let chatRooms = params.chatRooms.filter(ch=> ch.m
+                            && ch.m.includes(htm.username));
+                        if(chatRooms.length)
+                            htm.isOnline = chatRooms[0].os[htm.username];
+                    }
+                    return htm;
+                });
             }
             dispatch({
                 type: types.FIND_NEAR_BY_HTMS,
@@ -508,10 +516,20 @@ export const getFavoriteHTMs = () => {
                     payload: { loading: false }
                 });
             }else{
+                let favorite_htms = d.htms.map(htm=>{
+                    htm.isOnline = false;
+                    if(params.chatRooms){
+                        let chatRooms = params.chatRooms.filter(ch=> ch.m
+                            && ch.m.includes(htm.username));
+                        if(chatRooms.length)
+                            htm.isOnline = chatRooms[0].os[htm.username];
+                    }
+                    return htm;
+                });
                 dispatch({
                     type: types.GET_FAVORITE_HTMS,
                     payload: {
-                        favorite_htms:d.htms,
+                        favorite_htms,
                         loading: false
                     }
                 });

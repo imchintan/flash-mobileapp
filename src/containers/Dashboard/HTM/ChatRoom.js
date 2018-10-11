@@ -7,6 +7,7 @@ import {
     View,
     Alert,
     TouchableOpacity,
+    Platform
 } from 'react-native';
 import {
     Header,
@@ -63,6 +64,10 @@ class ChatRoom extends Component < {} > {
         const styles = (this.props.nightMode?require('@styles/nightMode/chat'):require('@styles/chat'));
         const un = this.props.htm.username;
         const os = this.props.chatRoom?(this.props.chatRoom.os && this.props.chatRoom.os[un]):false;
+        let textInputProps = {};
+        if(Platform.OS !== 'ios'){
+            textInputProps.value = null;
+        }
         return (
             <View style={{flex:1, paddingTop: 55}}>
                 <Header>
@@ -109,6 +114,7 @@ class ChatRoom extends Component < {} > {
                         onEndReached:()=> !this.props.loading
                             && this.props.getChatMessages()
                     }}
+                    textInputProps={textInputProps}
                     messages={[
                         ...this.props.chatMessages,
                         {
@@ -142,7 +148,7 @@ function mapStateToProps({params}) {
     return {
         loading: params.loading,
         nightMode: params.nightMode,
-        htm: params.htm,
+        htm: params.htm || {},
         htmProfile: params.htmProfile,
         chatRoom: params.chatRoom,
         chatRoomChannel: params.chatRoomChannel,

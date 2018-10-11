@@ -144,7 +144,7 @@ class Reviews extends Component < {} > {
 function mapStateToProps({params}) {
     return {
         nightMode: params.nightMode,
-        htm: params.htm,
+        htm: params.htm || {},
         feedbacks: params.htm_feedbacks || [],
     };
 }
