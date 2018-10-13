@@ -225,6 +225,63 @@ const styles = StyleSheet.create({
         color: '#4A4A4A',
         paddingTop: 1
     },
+    channelFeedback:{
+        margin:20,
+        marginBottom: 0,
+        padding: 15,
+        borderRadius: 10,
+        backgroundColor: '#EFEFEF',
+    },
+    channelFeedbackTitle:{
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+        justifyContent: 'space-between',
+        marginBottom: 10
+    },
+    channelFeedbackTitleIcon:{
+        marginTop: 5,
+        width: 50,
+        height: 50,
+        borderRadius: 25,
+    },
+    channelFeedbackTitleText:{
+        width: width - 135,
+        fontSize: 17,
+        color: '#121212'
+    },
+    channelFeedbackTitleStatus:{
+        width: width - 135,
+        fontSize: 14,
+        color: '#565656',
+        marginBottom: 2,
+    },
+    channelFeedbackTime:{
+        fontSize: 13,
+        color: '#666',
+    },
+    channelFeedbackRating:{
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginVertical: 2,
+    },
+    channelfeedBackRatingIcon:{
+        fontSize: 20,
+        color: '#FFB400',
+        marginLeft: 2,
+    },
+    channelFeedbackComment:{
+        width: width - 135,
+        fontSize: 16,
+        color: '#333',
+
+    },
+    channelFeedbackReadMore:{
+        alignSelf: 'flex-end',
+        fontSize: 16,
+        color: '#05D',
+        marginBottom: 2,
+        backgroundColor: '#EFEFEF'
+    },
 });
 
 module.exports = {

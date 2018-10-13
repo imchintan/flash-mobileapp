@@ -65,8 +65,7 @@ class Home extends Component<{}> {
 
     _handleAppStateChange(nextAppState){
         if ((!!this.props.pin && !this.props.lockApp && this.state.appState.match(/inactive|background/) && nextAppState === 'active')){
-            if(!this.props.chatNotification ||
-                (this.state.backgroundStateTime + 1000*10) < new Date().getTime()){
+            if((this.state.backgroundStateTime + 1000*60) < new Date().getTime()){
                 this.props.navigation.navigate('Lock');
             }else{
                 this.props.postAction();
@@ -190,16 +189,6 @@ class Home extends Component<{}> {
                             </View>
                             <Icon style={styles.adminTabRightIcon} name='angle-right'/>
                         </TouchableOpacity>
-                        {/*
-                        <TouchableOpacity style={styles.adminTab}
-                            onPress={()=>this.props.navigation.navigate('Settings')}>
-                            <View style={styles.adminTabTitle}>
-                                <Icon style={styles.adminTabTitleIcon} name='cog'/>
-                                <Text style={styles.adminTabTitleLabel}>Settings</Text>
-                            </View>
-                            <Icon style={styles.adminTabRightIcon} name='angle-right'/>
-                        </TouchableOpacity>
-                        */}
                         <TouchableOpacity style={styles.adminTab}
                             onPress={()=>this.props.navigation.navigate('SecurityCenter')}>
                             <View style={styles.adminTabTitle}>
@@ -277,11 +266,8 @@ class Home extends Component<{}> {
 
 function mapStateToProps({params}) {
     return {
-        isLoggedIn: params.isLoggedIn,
         profile: params.profile,
         loading: params.balanceLoader || false,
-        errorMsg: params.errorMsg || null,
-        successMsg: params.successMsg || null,
         balances: params.balances,
         fiat_currency: params.fiat_currency,
         total_fiat_balance: params.total_fiat_balance,

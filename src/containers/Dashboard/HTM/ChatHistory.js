@@ -81,7 +81,7 @@ class ChatHistory extends Component < {} > {
                                 <Icon style={styles.tradeHistoryFilterIcon}
                                     name={this.state.filterBy==2?'dot-circle-o':'circle-o'}
                                 />
-                                <Text style={styles.tradeHistoryFilterText}>Close trades</Text>
+                                <Text style={styles.tradeHistoryFilterText}>Closed trades</Text>
                             </TouchableOpacity>
                         </View>
                         <View style={[styles.hr,{marginBottom:15}]}/>

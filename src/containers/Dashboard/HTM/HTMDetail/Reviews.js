@@ -81,16 +81,8 @@ class Reviews extends Component < {} > {
                         if(filterBy == 2 && item.is_txn_success)
                             return ;
 
-                        if(!item.comments && item.prof_rating == 0
-                            && item.vfm_rating == 0)
+                        if(!item.comments && item.prof_rating == 0)
                             return null;
-                        let avg_rating = ((item.prof_rating + item.vfm_rating)/2);
-                        if(item.prof_rating == 0 && item.vfm_rating == 0)
-                            avg_rating = 0;
-                        else if(item.prof_rating == 0)
-                            avg_rating = item.vfm_rating;
-                        else if(item.vfm_rating == 0)
-                            avg_rating = item.prof_rating;
 
                         let time = moment(item.created_ts).calendar(null, {
                             sameDay: '[Today], h:mm A',
@@ -118,12 +110,12 @@ class Reviews extends Component < {} > {
                                         }]} />
                                 </View>
                                 <View style={styles.htmFeedbackDetail}>
-                                    {avg_rating > 0?<View style={styles.htmFeedbackRating}>
+                                    {item.prof_rating > 0?<View style={styles.htmFeedbackRating}>
                                         {([1,2,3,4,5]).map(v=>
                                             <Icon key={'_start_'+v+'_'+item.id}
                                                 style={styles.htmProfileRatingIcon}
-                                                name={avg_rating>=v?'star':
-                                                (avg_rating>=(v-0.5)?'star-half-o':'star-o')}/>
+                                                name={item.prof_rating>=v?'star':
+                                                (item.prof_rating>=(v-0.5)?'star-half-o':'star-o')}/>
                                         )}
                                     </View>:null}
                                     {item.comments?<Text style={styles.htmFeedbackComment}>

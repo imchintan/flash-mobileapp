@@ -37,6 +37,14 @@ const styles = StyleSheet.create({
         fontWeight: "500",
         color: '#565656'
     },
+    htmProfileReview:{
+        borderBottomWidth:1,
+        borderColor: '#E0AE27',
+        fontSize: 18,
+        paddingTop: 5,
+        marginBottom: 7,
+        color: '#E0AE27'
+    },
     htmProfileNote:{
         width: width-200,
         fontSize: 12,
@@ -626,8 +634,6 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         justifyContent: 'center',
         backgroundColor: '#FFFFFF',
-        borderWidth: 2,
-        borderColor: '#191714'
     },
     htmFeedbackStatusIcon:{
         fontSize: 25,
@@ -638,8 +644,14 @@ const styles = StyleSheet.create({
     htmFeedbackRating:{
         flexDirection: 'row',
     },
+    htmFeedbackTitleText:{
+        width: width - 120,
+        marginBottom: 5,
+        fontSize: 17,
+        color: '#121212'
+    },
     htmFeedbackComment:{
-        width: width - 115,
+        width: width - 120,
         paddingTop: 5,
         fontSize: 15,
         color: '#333'

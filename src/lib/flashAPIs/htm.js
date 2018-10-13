@@ -290,7 +290,6 @@ export const findNearByHTMs = (auth_version, sessionToken, lat, long,
  *      @param  {Boolean} is_trustworthy          Is this person trust worthy?
  *      @param  {Array} currency_traded           Currency tranded in
  *      @param  {String} prof_rating              Profile rating
- *      @param  {String} vfm_rating               Value of money rating
  *      @param  {String} comments                 Addtional comments
  * @return {Object}                          Return API response
  */
@@ -306,6 +305,38 @@ export const submitFeedback = (auth_version, sessionToken, feedback_to_username,
                 appversion:APP_VERSION,
                 res:RESOURCE,
             }),
+            headers: {
+               'Content-Type': 'application/json; charset=utf-8',
+               'authorization': sessionToken,
+               'fl_auth_version': auth_version
+            },
+        })
+        .then(res => res.json())
+        .then(json => resolve(json))
+        .catch(e =>{
+            console.log(e);
+            reject('Something went wrong!')
+        });
+    });
+}
+
+/**
+ * Get HTM Channel Feedback
+ * @param  {Number} auth_version             API authentication version
+ * @param  {String} sessionToken             User authorization token
+ * @param  {String} channel_id               Channel Id
+ * @return {Object}                          Return API response
+ */
+export const getHTMChannelFeedback = (auth_version, sessionToken, channel_id) => {
+    return new Promise((resolve,reject) => {
+        let params=utils.buildURLQuery({
+            channel_id,
+            res         :RESOURCE,
+            appversion  :APP_VERSION,
+        });
+        fetch(API_URL+`/get-htm-channel-feedback?${params}`,{
+            method: 'GET',
+            body: null,
             headers: {
                'Content-Type': 'application/json; charset=utf-8',
                'authorization': sessionToken,

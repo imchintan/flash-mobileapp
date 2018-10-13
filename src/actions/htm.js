@@ -343,7 +343,7 @@ export const findNearByHTMs = (filter={}, loading = false) => {
                         let chatRooms = params.chatRooms.filter(ch=> ch.m
                             && ch.m.includes(htm.username));
                         if(chatRooms.length)
-                            htm.isOnline = chatRooms[0].os[htm.username];
+                            htm.isOnline = chatRooms[0].os && chatRooms[0].os[htm.username];
                     }
                     return htm;
                 });
@@ -522,7 +522,7 @@ export const getFavoriteHTMs = () => {
                         let chatRooms = params.chatRooms.filter(ch=> ch.m
                             && ch.m.includes(htm.username));
                         if(chatRooms.length)
-                            htm.isOnline = chatRooms[0].os[htm.username];
+                            htm.isOnline = chatRooms[0].os && chatRooms[0].os[htm.username];
                     }
                     return htm;
                 });
@@ -544,25 +544,28 @@ export const getFavoriteHTMs = () => {
     }
 }
 
-export const getHTMFeedbacks = () => {
+export const getHTMFeedbacks = (htm=true) => {
     return (dispatch,getState) => {
         dispatch({ type: types.LOADING_START });
         let params = getState().params;
         apis.getHTMFeedbacks(params.profile.auth_version,
-            params.profile.sessionToken, params.htm.username).then((d)=>{
+            params.profile.sessionToken, htm?params.htm.username:
+            params.htmProfile.username).then((d)=>{
+            let payload = { loading: false};
             if(d.rc !== 1){
                 Toast.errorTop(d.reason);
                 dispatch({
                     type: types.GET_HTM_FEEDBACKS,
-                    payload: { loading: false }
+                    payload
                 });
             }else{
+                if(htm)
+                    payload.htm_feedbacks = d.feedbacks;
+                else
+                    payload.feedbacks = d.feedbacks;
                 dispatch({
                     type: types.GET_HTM_FEEDBACKS,
-                    payload: {
-                        htm_feedbacks: d.feedbacks,
-                        loading: false
-                    }
+                    payload
                 });
             }
         }).catch(e=>{

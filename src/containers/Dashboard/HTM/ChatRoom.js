@@ -94,7 +94,8 @@ class ChatRoom extends Component < {} > {
                     <HeaderRight>
                         <TouchableOpacity>
                             <Icon onPress={() => {
-                                Alert.alert(
+                                if(!!this.props.chatRoomChannel.f) this.props.navigation.navigate('FeedBack');
+                                else Alert.alert(
                                     'Trade #'+this.props.chatRoomChannel.name,
                                     'Are you done with this trade?',
                                     [
@@ -105,6 +106,14 @@ class ChatRoom extends Component < {} > {
                                 )
                             }}
                                 style={styles.headerFAIcon} name='check'/>
+                        </TouchableOpacity>
+                    </HeaderRight>:null}
+                    {this.props.chatRoomChannel && this.props.chatRoomChannel.f &&
+                        typeof this.props.chatRoomChannel.f[this.props.htmProfile.username] !== 'undefined'?
+                    <HeaderRight>
+                        <TouchableOpacity>
+                            <Icon onPress={() => this.props.navigation.navigate('ViewFeedBacks')}
+                                style={styles.headerFAIcon} name='info-circle'/>
                         </TouchableOpacity>
                     </HeaderRight>:null}
                 </Header>

@@ -24,6 +24,7 @@ import {
     Loader
 } from '@components';
 import { StackActions, NavigationActions } from 'react-navigation';
+import moment from 'moment-timezone';
 
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
@@ -45,7 +46,6 @@ class FeedBack extends Component < {} > {
         super(props);
         this.state = {
             prof_rating: 0,
-            vfm_rating: 0,
             comments: '',
             currencies_traded: [],
         };
@@ -54,6 +54,7 @@ class FeedBack extends Component < {} > {
     componentDidMount(){
         this.mount = true;
         BackHandler.addEventListener('hardwareBackPress', this.backHandler.bind(this));
+        this.props.getHTMChannelFeedback();
     }
 
     componentWillUnmount(){
@@ -71,18 +72,17 @@ class FeedBack extends Component < {} > {
             comments:this.state.comments.trim(),
         };
         if(typeof this.state.is_txn_success == 'undefined')
-            return Toast.errorTop("Please give the answer of requird fields!");
+            return Toast.errorTop("Please give the trading successful or not!");
         data.is_txn_success = this.state.is_txn_success;
 
+        if(this.state.prof_rating == 0)
+            return Toast.errorTop("Please give the overall experience with trader!");
+
         if(this.state.is_txn_success){
-            let currencies_traded = Object.values(this.state.currencies_traded);
+            let currencies_traded = Object.values(this.state.currencies_traded).filter(traded => (traded.amount));
             if(currencies_traded.length > 0){
-                let isValid = currencies_traded.filter(traded => (traded.amount)).length > 0;
-                if(!isValid)
-                    return Toast.errorTop("Please enter valid trade amount!");
                 data.currencies_traded = currencies_traded;
             }
-            data.vfm_rating = this.state.vfm_rating;
         }
         this.props.submitFeedback(data,(goBack=false)=>{
             if(goBack) return this.props.navigation.goBack();
@@ -163,6 +163,69 @@ class FeedBack extends Component < {} > {
                             <Text style={{fontWeight:'bold'}}> #{this.props.chatRoomChannel.name}</Text> with
                             <Text style={{fontWeight:'bold'}}> {this.props.htm.display_name} </Text>
                         </Text>
+                        {this.props.channelFeedbacks.length > 0 && <View>
+                        <Text style={styles.label}>
+                            Feedback Received!
+                        </Text>
+                        <View style={styles.hr}/>
+                        {this.props.channelFeedbacks.map(feedback =>{
+                            let img = this.props.htm.username == feedback.feedback_by_username?(this.props.htm.profile_pic_url? {uri:PROFILE_URL+this.props.htm.profile_pic_url}:
+                            utils.getCurrencyIcon(constants.CURRENCY_TYPE.FLASH)):(this.props.htmProfile.profile_pic_url? {uri:PROFILE_URL+this.props.htmProfile.profile_pic_url}:
+                            utils.getCurrencyIcon(constants.CURRENCY_TYPE.FLASH))
+                            return (
+                                <View key={feedback.channel_id + '_' + feedback.feedback_by_username}
+                                    style={[styles.channelFeedback,{marginHorizontal:0, marginTop: 0}]}>
+                                    <View style={styles.channelFeedbackTitle}>
+                                        <Image style={styles.channelFeedbackTitleIcon}
+                                            source={img} />
+                                        <View>
+                                            <Text style={styles.channelFeedbackTitleText}>
+                                                {this.props.htm.username == feedback.feedback_by_username?
+                                                this.props.htm.display_name:this.props.htmProfile.display_name + ' (You)'}
+                                            </Text>
+                                            <Text style={styles.channelFeedbackTitleStatus}>
+                                                Mentioned trade was {feedback.is_txn_success?'':'not '}successful.
+                                            </Text>
+                                            <View style={styles.channelFeedbackRating}>
+                                                {([1,2,3,4,5]).map(v=>
+                                                    <Icon key={'_start_pro_'+v} style={styles.channelfeedBackRatingIcon}
+                                                        name={feedback.prof_rating>=v?'star':'star-o'}/>
+                                                )}
+                                            </View>
+                                            {feedback.comments && <View>
+                                                <Text style={styles.channelFeedbackComment}>
+                                                    {feedback.comments.length > 100 && !this.state.readMore?
+                                                        feedback.comments.substr(0,100)+'...':feedback.comments}
+                                                    {feedback.comments.length > 100 && <Text style={[styles.channelFeedbackReadMore,
+                                                        !!this.state.readMore && {marginTop: 0, alignSelf: 'flex-start'}]}
+                                                        onPress={()=>this.setState({readMore:!this.state.readMore})}>
+                                                        {!this.state.readMore?'Read more ':' Read less '}
+                                                    </Text>}
+                                                </Text>
+                                            </View>}
+                                            <Text style={styles.channelFeedbackTime}>
+                                                {moment(feedback.created_ts).calendar(null, {
+                                                    sameDay: '[Today], h:mm A',
+                                                    nextDay: '[Tomorrow], h:mm A',
+                                                    nextWeek: 'dddd, h:mm A',
+                                                    lastDay: '[Yesterday], h:mm A',
+                                                    lastWeek: 'dddd, h:mm A',
+                                                    sameElse: function(now){
+                                                        now = moment(moment(now).format('01/01/YYYY'),moment.ISO_8601)
+                                                        if (this.isBefore(now)) {
+                                                          return 'DD MMM, YYYY h:mm A';
+                                                        } else {
+                                                          return 'DD MMM, h:mm A';
+                                                        }
+                                                    }
+                                                })}
+                                            </Text>
+                                        </View>
+                                    </View>
+                                </View>
+                            )}
+                        )}
+                        </View>}
                         <Text style={styles.label}>
                             Was trading successful?
                             <Text style={styles.mandatoryField}>*</Text>
@@ -183,6 +246,21 @@ class FeedBack extends Component < {} > {
                                         "circle-o":"dot-circle-o"}/>
                                 <Text style={styles.feedBacRadioBtnText}>No</Text>
                             </TouchableOpacity>
+                        </View>
+                        <Text style={styles.label}>
+                            Overall experience with Trader
+                            <Text style={styles.mandatoryField}>*</Text>
+                        </Text>
+                        <View style={styles.hr}/>
+                        <View style={[styles.feedBackValueRow,styles.feedBackRatingBtnGrp]}>
+                            {([1,2,3,4,5]).map(v=>
+                                <TouchableOpacity key={'_start_'+v} activeOpacity={0.7}
+                                    style={styles.feedBackRatingBtn}
+                                    onPress={()=>this.setState({prof_rating:v})}>
+                                    <Icon style={styles.feedBackRatingBtnIcon}
+                                        name={this.state.prof_rating>=v?'star':'star-o'}/>
+                                </TouchableOpacity>
+                            )}
                         </View>
                         {this.state.is_txn_success === true?<View>
                             <Text style={styles.label}>Currency Traded</Text>
@@ -234,32 +312,6 @@ class FeedBack extends Component < {} > {
                             )}
                             </View>
                         </View>:null}
-                        <Text style={styles.label}>How professional was the HTM?</Text>
-                        <View style={styles.hr}/>
-                        <View style={[styles.feedBackValueRow,styles.feedBackRatingBtnGrp]}>
-                            {([1,2,3,4,5]).map(v=>
-                                <TouchableOpacity key={'_start_'+v} activeOpacity={0.7}
-                                    style={styles.feedBackRatingBtn}
-                                    onPress={()=>this.setState({prof_rating:v})}>
-                                    <Icon style={styles.feedBackRatingBtnIcon}
-                                        name={this.state.prof_rating>=v?'star':'star-o'}/>
-                                </TouchableOpacity>
-                            )}
-                        </View>
-                        {this.state.is_txn_success === true?<View>
-                            <Text style={styles.label}>How was the value for money?</Text>
-                            <View style={styles.hr}/>
-                            <View style={[styles.feedBackValueRow,styles.feedBackRatingBtnGrp]}>
-                                {([1,2,3,4,5]).map(v=>
-                                    <TouchableOpacity key={'_start_'+v} activeOpacity={0.7}
-                                        style={styles.feedBackRatingBtn}
-                                        onPress={()=>this.setState({vfm_rating:v})}>
-                                        <Icon style={styles.feedBackRatingBtnIcon}
-                                            name={this.state.vfm_rating>=v?'star':'star-o'}/>
-                                    </TouchableOpacity>
-                                )}
-                            </View>
-                        </View>:null}
                         <Text style={styles.label}>Comments</Text>
                         <View style={styles.hr}/>
                         <TextInput
@@ -294,6 +346,7 @@ function mapStateToProps({params}) {
         chatRoom: params.chatRoom,
         chatRoomChannel: params.chatRoomChannel,
         forceFeedBack: params.forceFeedBack || false,
+        channelFeedbacks: params.channelFeedbacks || [],
     };
 }
 

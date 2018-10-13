@@ -73,6 +73,7 @@ export const goToChatRoom = (username,cb) => {
                     chatRoom,
                     chatRoomChannel,
                     chatNotification: null,
+                    channelFeedbacks:null,
                     isLoadAllPreviousMesages:false
                 }
             });
@@ -114,6 +115,7 @@ export const checkTradingFeedBack = () => {
                 type: types.CHECK_TRADING_FEEDBACK,
                 payload: {
                     chatMessages:[],
+                    channelFeedbacks:null,
                     isLoadAllPreviousMesages: false,
                     chatRoom,
                     chatRoomChannel,
@@ -140,6 +142,7 @@ export const selectChatRoom = (username, chatRoom, navigate) => {
                 type: types.SELECT_CHAT_ROOM,
                 payload: {
                     chatMessages:[],
+                    channelFeedbacks:null,
                     isLoadAllPreviousMesages: false,
                     chatRoom,
                     chatRoomChannel
@@ -162,6 +165,7 @@ export const selectChatRoomChannel = (chatRoomChannel, navigate) => {
             payload: {
                 isLoadAllPreviousMesages:false,
                 chatMessages:[],
+                channelFeedbacks:null,
                 chatRoomChannel
             }
         });
@@ -210,6 +214,7 @@ export const createChannel = (receiver_username,cb=null) => {
                         loading: false,
                         isLoadAllPreviousMesages: false,
                         chatMessages:[],
+                        channelFeedbacks:null,
                         chatRoom,
                         chatRoomChannel
                     }
@@ -413,6 +418,43 @@ export const submitFeedback = (data, cb=null) => {
     }
 }
 
+export const getHTMChannelFeedback = (data, cb=null) => {
+    return (dispatch,getState) => {
+        dispatch({ type: types.LOADING_START });
+        let params = getState().params;
+        if(params.channelFeedbacks)
+            return dispatch({
+                type: types.GET_CHANNEL_FEEDBACK,
+                payload: { loading: false }
+            });
+        apis.getHTMChannelFeedback(params.profile.auth_version, params.profile.sessionToken,
+            params.chatRoomChannel.id).then((d)=>{
+            if(d.rc !== 1){
+                Toast.errorTop(d.reason);
+                dispatch({
+                    type: types.GET_CHANNEL_FEEDBACK,
+                    payload: { loading: false }
+                });
+            }else{
+                dispatch({
+                    type: types.GET_CHANNEL_FEEDBACK,
+                    payload: {
+                        loading: false,
+                        channelFeedbacks: d.feedbacks
+                    }
+                });
+            }
+        }).catch(e=>{
+            console.log(e);
+            Toast.errorTop(e.message);
+            dispatch({
+                type: types.GET_CHANNEL_FEEDBACK,
+                payload: { loading: false }
+            });
+        })
+    }
+}
+
 export const receiveChatMessage = (msg) => {
     return (dispatch,getState) => {
         let params = getState().params;
@@ -478,7 +520,7 @@ export const updateChatRoom = (room) => {
             let chatRooms = payload.chatRooms.filter(ch=> ch.m
                 && ch.m.includes(htm.username));
             if(chatRooms.length)
-                htm.isOnline = chatRooms[0].os[htm.username];
+                htm.isOnline = chatRooms[0].os && chatRooms[0].os[htm.username];
             return htm;
         });
 
@@ -489,7 +531,7 @@ export const updateChatRoom = (room) => {
                 let chatRooms = params.chatRooms.filter(ch=> ch.m
                     && ch.m.includes(htm.username));
                 if(chatRooms.length)
-                    htm.isOnline = chatRooms[0].os[htm.username];
+                    htm.isOnline = chatRooms[0].os && chatRooms[0].os[htm.username];
             }
             return htm;
         });

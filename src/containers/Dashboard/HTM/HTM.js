@@ -47,6 +47,7 @@ class HTM extends Component < {} > {
     componentDidMount(){
         this.props.getCoinGeckoExchangeRates();
         this.props.getFavoriteHTMs();
+        this.props.getHTMProfile();
     }
 
     render() {
@@ -110,23 +111,28 @@ class HTM extends Component < {} > {
                                 </Text>
                             </View>
                             {this.props.htmProfile.total_txns > 0? <View style={{alignItems:'center'}}>
-                                {this.props.htmProfile.avg_rating>0?<View style={styles.htmProfileRating}>
+                                <View style={styles.htmProfileRating}>
                                     {([1,2,3,4,5]).map(v=>
                                         <Icon key={'_start_'+v} style={styles.htmProfileRatingIcon}
                                             name={this.props.htmProfile.avg_rating>=v?'star':
                                             (this.props.htmProfile.avg_rating>=(v-0.5)?'star-half-o':'star-o')}/>
                                     )}
-                                </View>:null}
+                                </View>
+                                <Text style={styles.htmProfileReview}
+                                    onPress={()=>this.props.navigation.navigate('HTMReviews')}>
+                                    Reviews
+                                </Text>
                                 {this.props.htmProfile.success_txns>0?<Text
                                     style={styles.htmProfileEmailText}>
                                     {this.props.htmProfile.success_txns} successful trades (
                                         {Math.round(this.props.htmProfile.success_txns/this.props.htmProfile.total_txns*100)}
                                     %)
                                 </Text>:null}
+                                {this.props.htmProfile.trusted_by > 0 &&
                                 <Text style={styles.htmProfileEmailText}>
                                     Trusted by {this.props.htmProfile.trusted_by} {this.props.htmProfile.trusted_by>1?
                                         'traders':'trader'}
-                                </Text>
+                                </Text>}
                             </View>:null}
                         </View>
                     </View>

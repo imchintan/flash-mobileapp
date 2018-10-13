@@ -17,6 +17,8 @@ import ChatRoom from './ChatRoom';
 import ChatChannel from './ChatChannel';
 import ChatHistory from './ChatHistory';
 import FeedBack from './FeedBack';
+import ViewFeedBacks from './ViewFeedBacks';
+import HTMReviews from './HTMReviews';
 
 const routes = {
     HTM: {
@@ -45,6 +47,12 @@ const routes = {
     },
     FeedBack: {
         screen: FeedBack,
+    },
+    ViewFeedBacks: {
+        screen: ViewFeedBacks,
+    },
+    HTMReviews: {
+        screen: HTMReviews,
     },
 };
 
