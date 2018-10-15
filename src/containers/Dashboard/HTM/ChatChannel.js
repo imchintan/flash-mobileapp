@@ -98,7 +98,7 @@ class ChatChannel extends Component < {} > {
                     </View>
                     { chatRoomChannels.map((ch,i)=>{
                         let msg = ch.l.txt?ch.l.text:'-';
-                        let ur = ch.ur?ch.ur[this.props.htmProfile.username]:0;
+                        let ur = ch.uc?ch.uc[this.props.htmProfile.username]:0;
                         let time = moment(ch.l.t).calendar(null, {
                             sameDay: 'h:mm A',
                             nextDay: '[Tomorrow]',
@@ -135,8 +135,8 @@ class ChatChannel extends Component < {} > {
                                 </View>
                                 <View style={styles.chatMsgBox}>
                                     <View style={styles.chatMsgDetailBox}>
-                                        <Text style={[styles.chatHtmName, ch.a
-                                            && styles.chatHtmNameUnread]}
+                                        <Text style={[styles.chatHtmName,
+                                            ur && styles.chatHtmNameUnread]}
                                             numberOfLines={1}>Trade #{ch.name}</Text>
                                         <Text style={[styles.chatMsgTime,
                                             ur && styles.chatHtmNameUnread]}>{time}</Text>

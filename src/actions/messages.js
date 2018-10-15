@@ -44,7 +44,7 @@ export const getMessages = () => {
                     }
                 });
             }
-        }).catch(e=>{})
+        }).catch(e=>console.log(e))
     }
 }
 

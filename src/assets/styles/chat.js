@@ -200,7 +200,7 @@ const styles = StyleSheet.create({
         padding: 10,
         borderRadius: 5,
         marginHorizontal: 30,
-        marginVertical: 20,
+        marginBottom: 10,
         fontSize: 14,
         color: '#565656',
     },
@@ -271,9 +271,14 @@ const styles = StyleSheet.create({
     },
     channelFeedbackComment:{
         width: width - 135,
+        fontSize: 15,
+        color: '#454545',
+    },
+    channelFeedbackCurrency:{
+        width: width - 135,
         fontSize: 16,
-        color: '#333',
-
+        color: '#4A4A4A',
+        marginVertical:5,
     },
     channelFeedbackReadMore:{
         alignSelf: 'flex-end',

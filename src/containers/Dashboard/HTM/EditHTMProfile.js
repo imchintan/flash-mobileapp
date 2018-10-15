@@ -367,7 +367,7 @@ class EditHTMProfile extends Component < {} > {
                         <View style={[styles.hr,{marginBottom:15}]}/>
                         <View style={styles.htmProfile}>
                             <Text style={styles.htmProfileLabel}>
-                                Diplay Name
+                                Display Name
                                 <Text style={styles.mandatoryField}>*</Text>
                             </Text>
                             <View style={styles.htmProfileInputBox}>

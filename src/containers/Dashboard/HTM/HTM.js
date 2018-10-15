@@ -169,7 +169,7 @@ class HTM extends Component < {} > {
                         onPress={()=>this.props.navigation.navigate('ChatHistory')} />
                     {this.props.favorite_htms.length > 0?
                     <View style={{marginHorizontal: 20}}>
-                        <Text style={styles.label}>Favorite Trades</Text>
+                        <Text style={styles.label}>Favorite Traders</Text>
                         <View style={styles.hr}/>
                         {this.props.favorite_htms.map((htm)=>
                             <TouchableOpacity

@@ -7,7 +7,8 @@ import {
     View,
     Alert,
     TouchableOpacity,
-    Platform
+    Platform,
+    BackHandler
 } from 'react-native';
 import {
     Header,
@@ -43,16 +44,23 @@ class ChatRoom extends Component < {} > {
         this.props.getChatMessages();
         this.props.markAsRead();
         Chat.addListener('nm',this._chatHandler);
+        BackHandler.addEventListener('hardwareBackPress', this.backHandler.bind(this));
     }
 
     componentWillUnmount(){
         Chat.removeListener('nm',this._chatHandler);
-        global.store.dispatch({
-            type: 'RESET_CHAT_OBJECT',
-            payload: {
-                chatRoomChannel: null
-            }
-        })
+        BackHandler.removeEventListener('hardwareBackPress', this.backHandler.bind(this));
+        if(!this.props.forceFeedBack)
+            global.store.dispatch({
+                type: 'RESET_CHAT_OBJECT',
+                payload: {
+                    chatRoomChannel: null
+                }
+            })
+    }
+
+    backHandler(){
+        return this.props.navigation.goBack();
     }
 
     _chatHandler=(d)=>{
@@ -73,7 +81,7 @@ class ChatRoom extends Component < {} > {
                 <Header>
                     <HeaderLeft>
                         <TouchableOpacity>
-                            <Icon onPress={() => this.props.navigation.goBack()}
+                            <Icon onPress={this.backHandler.bind(this)}
                                 style={styles.headerBackIcon} name='angle-left'/>
                         </TouchableOpacity>
                     </HeaderLeft>
@@ -89,7 +97,7 @@ class ChatRoom extends Component < {} > {
                             </Text>
                         </Text>
                     </View>
-                    {this.props.chatRoomChannel && (!this.props.chatRoomChannel.f ||
+                    {!this.props.forceFeedBack && this.props.chatRoomChannel && (!this.props.chatRoomChannel.f ||
                         typeof this.props.chatRoomChannel.f[this.props.htmProfile.username] == 'undefined')?
                     <HeaderRight>
                         <TouchableOpacity>
@@ -127,6 +135,11 @@ class ChatRoom extends Component < {} > {
                     messages={[
                         ...this.props.chatMessages,
                         {
+                            _id: 2,
+                            text: '🔒 Messages to this chat are secured with end-to-end encryption.',
+                            system: true,
+                        },
+                        {
                             _id: 1,
                             text: 'It is strongly recommended to meet at safe public places like cafeteria before you trade with trader.',
                             system: true,
@@ -162,6 +175,7 @@ function mapStateToProps({params}) {
         chatRoom: params.chatRoom,
         chatRoomChannel: params.chatRoomChannel,
         chatMessages: params.chatMessages || [],
+        forceFeedBack: params.forceFeedBack || false,
     };
 }
 

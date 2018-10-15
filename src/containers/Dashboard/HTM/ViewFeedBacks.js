@@ -82,6 +82,12 @@ class ViewFeedBacks extends Component < {} > {
                                                     name={feedback.prof_rating>=v?'star':'star-o'}/>
                                             )}
                                         </View>
+                                        {feedback.currencies_traded && feedback.currencies_traded.length > 0 && <Text
+                                            style={styles.channelFeedbackCurrency}>
+                                            <Text style={{color: '#121212'}}>Traded: </Text>
+                                            {feedback.currencies_traded.map(currency=> utils.flashNFormatter(currency.amount,2) +' ' +
+                                            utils.getCurrencyUnitUpcase(currency.currency)).join(', ')}
+                                        </Text>}
                                         {feedback.comments &&
                                         <Text style={styles.channelFeedbackComment}>
                                             {feedback.comments}

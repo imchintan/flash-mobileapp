@@ -74,7 +74,8 @@ export const goToChatRoom = (username,cb) => {
                     chatRoomChannel,
                     chatNotification: null,
                     channelFeedbacks:null,
-                    isLoadAllPreviousMesages:false
+                    isLoadAllPreviousMesages:false,
+                    forceFeedBack: (chatRoomChannel && !chatRoomChannel.a)
                 }
             });
             if(cb)cb((chatRoomChannel && !chatRoomChannel.a));
@@ -115,7 +116,6 @@ export const checkTradingFeedBack = () => {
                 type: types.CHECK_TRADING_FEEDBACK,
                 payload: {
                     chatMessages:[],
-                    channelFeedbacks:null,
                     isLoadAllPreviousMesages: false,
                     chatRoom,
                     chatRoomChannel,
@@ -145,7 +145,8 @@ export const selectChatRoom = (username, chatRoom, navigate) => {
                     channelFeedbacks:null,
                     isLoadAllPreviousMesages: false,
                     chatRoom,
-                    chatRoomChannel
+                    chatRoomChannel,
+                    forceFeedBack: (chatRoomChannel)
                 }
             });
             navigate(chatRoomChannel?'FeedBack':'ChatChannel');
@@ -266,6 +267,9 @@ export const getChatMessages = (refresh=false) => {
                 type: types.GET_CHAT_MESSAGES,
                 payload: { loading: false }
             });
+        if(!params.htm){
+            return setTimeout(()=>dispatch(getChatMessages(refresh)),500);
+        }
         let chatMessages = (params.chatMessages || []);
         let isLoadAllPreviousMesages = (params.isLoadAllPreviousMesages || false);
         if(!refresh && isLoadAllPreviousMesages) return;

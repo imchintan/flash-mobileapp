@@ -145,15 +145,12 @@ class FeedBack extends Component < {} > {
                     </HeaderLeft>:null}
                     <HeaderTitle>Feedback</HeaderTitle>
                     <HeaderRight>
-                        <Image
-                            style={{
-                                width: 40,
-                                height: 40,
-                                borderRadius: 20,
-                            }}
-                            source={this.props.htm.profile_pic_url?
-                                {uri:PROFILE_URL+this.props.htm.profile_pic_url}:
-                                utils.getCurrencyIcon(constants.CURRENCY_TYPE.FLASH)} />
+                        <TouchableOpacity>
+                            <Icon onPress={() =>{
+                                if(!this.props.forceFeedBack) this.props.navigation.goBack();
+                                else this.props.navigation.navigate('ChatRoom');
+                            }} style={styles.headerFAIcon} name='comments'/>
+                        </TouchableOpacity>
                     </HeaderRight>
                 </Header>
                 <Content style={styles.content}>
@@ -192,6 +189,12 @@ class FeedBack extends Component < {} > {
                                                         name={feedback.prof_rating>=v?'star':'star-o'}/>
                                                 )}
                                             </View>
+                                            {feedback.currencies_traded && feedback.currencies_traded.length > 0 && <Text
+                                                style={styles.channelFeedbackCurrency}>
+                                                <Text style={{color: '#121212'}}>Traded: </Text>
+                                                {feedback.currencies_traded.map(currency=> utils.flashNFormatter(currency.amount,2) +' ' +
+                                                utils.getCurrencyUnitUpcase(currency.currency)).join(', ')}
+                                            </Text>}
                                             {feedback.comments && <View>
                                                 <Text style={styles.channelFeedbackComment}>
                                                     {feedback.comments.length > 100 && !this.state.readMore?
@@ -233,7 +236,17 @@ class FeedBack extends Component < {} > {
                         <View style={styles.hr}/>
                         <View style={styles.feedBackValueRow}>
                             <TouchableOpacity style={styles.feedBacRadioBtn}
-                                onPress={()=>this.setState({is_txn_success:true})}>
+                                onPress={()=>{
+                                    let currencies_traded = [];
+                                    if(this.props.channelFeedbacks &&
+                                        this.props.channelFeedbacks[0] &&
+                                        this.props.channelFeedbacks[0].currencies_traded){
+                                        this.props.channelFeedbacks[0].currencies_traded.map(currency => {
+                                            currencies_traded[currency.currency] = currency;
+                                        })
+                                    }
+                                    this.setState({is_txn_success:true, currencies_traded})
+                                }}>
                                 <Icon style={styles.feedBacRadioBtnIcon}
                                     name={this.state.is_txn_success !== true?
                                         "circle-o":"dot-circle-o"}/>
@@ -263,7 +276,7 @@ class FeedBack extends Component < {} > {
                             )}
                         </View>
                         {this.state.is_txn_success === true?<View>
-                            <Text style={styles.label}>Currency Traded</Text>
+                            <Text style={styles.label}>Currency Traded (optional)</Text>
                             <View style={styles.hr}/>
                             <View style={[styles.feedBackValueRow,{flexDirection: 'column'}]}>
                             {this.props.balances.map(balance =>
@@ -312,7 +325,7 @@ class FeedBack extends Component < {} > {
                             )}
                             </View>
                         </View>:null}
-                        <Text style={styles.label}>Comments</Text>
+                        <Text style={styles.label}>Comments (optional)</Text>
                         <View style={styles.hr}/>
                         <TextInput
                             multiline={true}
@@ -344,7 +357,7 @@ function mapStateToProps({params}) {
         htmProfile: params.htmProfile,
         balances: params.balances,
         chatRoom: params.chatRoom,
-        chatRoomChannel: params.chatRoomChannel,
+        chatRoomChannel: params.chatRoomChannel || {},
         forceFeedBack: params.forceFeedBack || false,
         channelFeedbacks: params.channelFeedbacks || [],
     };
