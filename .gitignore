@@ -24,6 +24,7 @@ project.xcworkspace
 ios/flash.xcworkspace
 ios/Pods
 ios/Podfile.lock
+ios/GoogleService-Info.plist
 
 # Android/IntelliJ
 #
@@ -32,6 +33,7 @@ build/
 .gradle
 local.properties
 *.iml
+google-services.json
 
 # node.js
 #
@@ -57,3 +59,8 @@ buck-out/
 
 # Bundle artifact
 *.jsbundle
+
+# env file
+.env
+.env.*
+!.env.sample
