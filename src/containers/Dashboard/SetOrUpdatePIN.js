@@ -7,8 +7,7 @@ import {
     TouchableOpacity,
     Image,
     View,
-    BackHandler,
-    Platform
+    BackHandler
 } from 'react-native';
 import {
     Container,
@@ -138,8 +137,7 @@ class SetOrUpdatePIN extends Component<{}> {
                 </Content>
                 <View style={styles.keypad}>
                     <Text style={styles.pinNote}>
-                        {"Remember this PIN, If you forget it, You won't be able to access your "+
-                            (Platform.OS === 'ios'?'FLASH Wallet':'FLASH app')}
+                        {"Remember this PIN. You will require it for logging into your FLASH mobile app wallet."}
                     </Text>
                     <View style={styles.keypadBox}>
                         <View style={styles.keypadRow}>

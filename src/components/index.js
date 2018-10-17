@@ -11,6 +11,7 @@ import Transaction from './Transaction';
 import Toast from './Toast';
 import TabBarBottom from './TabBarBottom';
 import WalletMenu from './WalletMenu';
+import Rating from './Rating';
 import WalletFooter from './WalletFooter';
 import Icon from 'react-native-fa-icons';
 import Calendar from 'react-native-calendar-select';
@@ -33,6 +34,7 @@ module.exports = {
     Toast,
     WalletMenu,
     WalletFooter,
+    Rating,
     TabBarBottom,
     Icon,
     Calendar,

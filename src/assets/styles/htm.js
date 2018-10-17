@@ -287,6 +287,8 @@ const styles = StyleSheet.create({
         color: '#c2c2c2'
     },
     htmProfileDetailTitle:{
+        alignSelf:'center',
+        width: 280,
         fontSize: 20,
         textAlign: 'center',
         fontWeight: 'bold',

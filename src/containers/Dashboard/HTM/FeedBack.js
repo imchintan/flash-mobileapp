@@ -17,6 +17,7 @@ import {
     HeaderLeft,
     HeaderRight,
     HeaderTitle,
+    // Rating,
     Icon,
     Button,
     Text,
@@ -63,7 +64,9 @@ class FeedBack extends Component < {} > {
     }
 
     backHandler(){
-        return this.props.forceFeedBack && this.mount;
+        if(!(this.props.forceFeedBack && this.mount))
+            this.props.navigation.goBack();
+        return this.mount;
     }
 
     submit(){
@@ -274,6 +277,13 @@ class FeedBack extends Component < {} > {
                                         name={this.state.prof_rating>=v?'star':'star-o'}/>
                                 </TouchableOpacity>
                             )}
+                            {/*<Rating
+                                startingValue={0}
+                                type='custom'
+                                imageSize={40}
+                                ratingColor={'#FFB400'}
+                                onFinishRating={(rating)=>this.setState({prof_rating:rating})}
+                            />*/}
                         </View>
                         {this.state.is_txn_success === true?<View>
                             <Text style={styles.label}>Currency Traded (optional)</Text>

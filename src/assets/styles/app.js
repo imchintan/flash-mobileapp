@@ -48,11 +48,11 @@ module.exports = StyleSheet.create({
         color: '#FFFFFF',
     },
     webViewFP:{
-        marginTop: -20,
+        marginTop: -15,
         width,
     },
     webViewCreateWallet:{
-        marginTop: 10,
+        marginTop: 50,
         width,
     },
     label:{

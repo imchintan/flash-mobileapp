@@ -2,36 +2,36 @@
  * Edit HTM Profile Container
  */
 
- import React, {Component} from 'react';
- import {
-     View,
-     TouchableOpacity,
-     ScrollView,
-     TextInput,
-     Alert,
- } from 'react-native';
- import {
-     Container,
-     Content,
-     Header,
-     HeaderLeft,
-     HeaderTitle,
-     Icon,
-     Modal,
-     Text,
-     Toast,
-     Loader,
-     Button,
-     Switch
- } from '@components';
+import React, {Component} from 'react';
+import {
+    View,
+    TouchableOpacity,
+    ScrollView,
+    TextInput,
+    Alert,
+} from 'react-native';
+import {
+    Container,
+    Content,
+    Header,
+    HeaderLeft,
+    HeaderTitle,
+    Icon,
+    Modal,
+    Text,
+    Toast,
+    Loader,
+    Button,
+    Switch
+} from '@components';
 
- import {connect} from 'react-redux';
- import {bindActionCreators} from 'redux';
- import {ActionCreators} from '@actions';
+import {connect} from 'react-redux';
+import {bindActionCreators} from 'redux';
+import {ActionCreators} from '@actions';
 
- import * as utils from '@lib/utils';
- import * as constants from '@src/constants'
- import * as Validation from '@lib/validation';
+import * as utils from '@lib/utils';
+import * as constants from '@src/constants'
+import * as Validation from '@lib/validation';
 
 class EditHTMProfile extends Component < {} > {
 
@@ -386,6 +386,7 @@ class EditHTMProfile extends Component < {} > {
                             <Text style={styles.htmProfileLabel}>Email</Text>
                             <View style={styles.htmProfileInputBox}>
                                 <TextInput
+                                    editable={!this.props.htmProfile.email}
                                     underlineColorAndroid='transparent'
                                     style={styles.htmProfileInput}
                                     placeholder={'Enter email address'}
@@ -423,7 +424,7 @@ class EditHTMProfile extends Component < {} > {
                                 }} name={'angle-down'} />
                             </TouchableOpacity>
                         </View>
-                        <Text style={[styles.label,{marginTop:10}]}>Trade In</Text>
+                        <Text style={[styles.label,{marginTop:10}]}>Trade Parameters</Text>
                         <View style={[styles.hr,{marginBottom:15}]}/>
                         <View style={[styles.htmProfile,styles.htmWantToBuySell]}>
                             <View>
@@ -516,7 +517,7 @@ class EditHTMProfile extends Component < {} > {
                             </View>
                         </View>
                         <Text style={[styles.label,{marginTop:10}]}>
-                            Currency
+                            Trade Currencies
                             <Text style={styles.mandatoryField}>*</Text>
                         </Text>
                         <View style={[styles.hr,{marginBottom:15}]}/>
@@ -650,7 +651,7 @@ class EditHTMProfile extends Component < {} > {
                                         <Text style={[styles.htmCurrencyNote,{width:'100%'}]}>
                                             Minimum and Maximum number of
                                             {' ' + utils.getCurrencyName(balance.currency_type)+ ' '}
-                                            coins (leave 0 for no preference)
+                                            amount (leave 0 for no preference)
                                         </Text>
                                         <View style={styles.htmCurrencyBuySellQty}>
                                             <Text style={styles.htmCurrencyBuySellQtyLabel}>

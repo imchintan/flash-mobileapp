@@ -48,7 +48,7 @@ class HTMReviews extends Component < {} > {
                 <Header>
                     <HeaderLeft>
                         <TouchableOpacity>
-                            <Icon onPress={()=>this.props.screenProps.rootNavigation.goBack()}
+                            <Icon onPress={()=>this.props.navigation.goBack()}
                                 style={styles.headerBackIcon} name='angle-left' />
                         </TouchableOpacity>
                     </HeaderLeft>

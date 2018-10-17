@@ -562,12 +562,14 @@ class HTMListingMap extends Component < {} > {
                     <View style={styles.tradeCaution}>
                         <View style={styles.tradeCautionBox}>
                             <Text style={styles.label}>
-                                Caution
+                                Warning
                             </Text>
                             <View style={styles.tradeCautionHr}/>
                             <Text style={styles.tradeCautionText}>
-                                Reviews and HTM stats here are all users generated,
-                                FLASH always recommend to stay alert while trading with unknown traders.
+                                {"The user reviews and other HTM stats are all "+
+                                "user provided. So use the information accordingly. "+
+                                "It's recommended to stay alert and use good "+
+                                "judgement while trading with unknown HTM users."}
                             </Text>
                             <TouchableOpacity style={styles.tradeCautionDNS}
                                 onPress={()=>this.setState({do_not_show:!this.state.do_not_show})}>

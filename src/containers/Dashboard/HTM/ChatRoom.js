@@ -41,6 +41,7 @@ class ChatRoom extends Component < {} > {
     }
 
     componentDidMount() {
+        this.mount = true;
         this.props.getChatMessages();
         this.props.markAsRead();
         Chat.addListener('nm',this._chatHandler);
@@ -48,6 +49,7 @@ class ChatRoom extends Component < {} > {
     }
 
     componentWillUnmount(){
+        this.mount = false;
         Chat.removeListener('nm',this._chatHandler);
         BackHandler.removeEventListener('hardwareBackPress', this.backHandler.bind(this));
         if(!this.props.forceFeedBack)
@@ -60,7 +62,9 @@ class ChatRoom extends Component < {} > {
     }
 
     backHandler(){
-        return this.props.navigation.goBack();
+        this.props.navigation.goBack();
+        return this.mount;
+
     }
 
     _chatHandler=(d)=>{
@@ -136,12 +140,12 @@ class ChatRoom extends Component < {} > {
                         ...this.props.chatMessages,
                         {
                             _id: 2,
-                            text: '🔒 Messages to this chat are secured with end-to-end encryption.',
+                            text: "🔒 Messages to this chat are secured with end-to-end encryption.",
                             system: true,
                         },
                         {
                             _id: 1,
-                            text: 'It is strongly recommended to meet at safe public places like cafeteria before you trade with trader.',
+                            text: "It's strongly recommended to trade with an unknown HTM user only after meeting at a safe public place.",
                             system: true,
                         }
                     ]}

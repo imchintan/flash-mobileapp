@@ -160,7 +160,7 @@ class Home extends Component<{}> {
                             onPress={()=>this.props.navigation.navigate('HTM')}>
                             <View style={styles.adminTabTitle}>
                                 <Icon style={styles.featuresTabTitleIcon} name='globe'/>
-                                <Text style={styles.featuresTabTitleLabel}>HTM</Text>
+                                <Text style={styles.featuresTabTitleLabel}>Human Teller Machine (HTM)</Text>
                             </View>
                             <Icon style={styles.featuresTabRightIcon} name='angle-right'/>
                         </TouchableOpacity>

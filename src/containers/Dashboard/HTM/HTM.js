@@ -137,10 +137,10 @@ class HTM extends Component < {} > {
                         </View>
                     </View>
                     <Text style={styles.htmProfileDetailTitle}>
-                        Welcome to HTM!
+                        Welcome to Human Teller Machine (HTM)!
                     </Text>
                     <Text style={styles.htmProfileDetailNote}>
-                        {"A way to find cryptocurrency traders around the globe..."}
+                        {"Find cryptocurrency traders from around the globe."}
                     </Text>
                     <Button
                         style={[{
@@ -150,7 +150,7 @@ class HTM extends Component < {} > {
                         },!this.props.htmProfile.is_active && {
                             backgroundColor: '#C2C2C2',
                         }]}
-                        value={'Find Trade'}
+                        value={'Find a Trader'}
                         onPress={()=>{
                             if(!!this.props.htmProfile.is_active)
                                 this.props.navigation.navigate('HTMListingMap')
@@ -241,9 +241,9 @@ class HTM extends Component < {} > {
                 </Content>
                 <Footer>
                     <Text style={styles.htmRiskWarningText}>
-                        {"It’s always advised to trade with Traders after"+
-                        " meeting face to face. FLASH is not responsible"+
-                        " of any fraud/scam happened by Traders."}
+                        {"It's recommended to trade with a new HTM user only "+
+                         "after meeting in person. FLASH is not responsible for "+
+                         "any fraud by the HTM users."}
                     </Text>
                 </Footer>
                 {!this.props.loading && !this.props.htmProfile.is_active?

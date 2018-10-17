@@ -156,7 +156,7 @@ class ChatHistory extends Component < {} > {
                             },!this.props.htmProfile.is_active && {
                                 backgroundColor: '#C2C2C2',
                             }]}
-                            value={'Find Trade'}
+                            value={'Find a Trader'}
                             onPress={()=>{
                                 if(!!this.props.htmProfile.is_active)
                                     this.props.navigation.navigate('HTMListingMap')
