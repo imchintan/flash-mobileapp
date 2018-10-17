@@ -244,13 +244,6 @@
 			remoteGlobalIDString = 73EEC9391BFE4B1D00D468EB;
 			remoteInfo = RNRandomBytes;
 		};
-		365E38E62168B2CC00C85F87 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = E421ED89C02E46F98D7F910B /* RNRandomBytes.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 163CDE4E2087CAD3001065FB;
-			remoteInfo = "RNRandomBytes-tvOS";
-		};
 		36A63CCB2168B7C900B72DA0 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
 			containerPortal = 9B7D20CE71ED46EA90FDDE6D /* RNFirebase.xcodeproj */;
@@ -692,7 +685,6 @@
 			isa = PBXGroup;
 			children = (
 				3658210D2063791600923838 /* libRNRandomBytes.a */,
-				365E38E72168B2CC00C85F87 /* libRNRandomBytes-tvOS.a */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -1221,13 +1213,6 @@
 			fileType = archive.ar;
 			path = libRNRandomBytes.a;
 			remoteRef = 3658210C2063791600923838 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
-		365E38E72168B2CC00C85F87 /* libRNRandomBytes-tvOS.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = "libRNRandomBytes-tvOS.a";
-			remoteRef = 365E38E62168B2CC00C85F87 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
 		36A63CCC2168B7C900B72DA0 /* libRNFirebase.a */ = {
