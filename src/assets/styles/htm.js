@@ -317,7 +317,7 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#E2E2E2',
         textAlign: 'center',
-        marginHorizontal: 30,
+        width: 280,
         marginBottom: 30,
     },
     htmProfileSetupNote:{

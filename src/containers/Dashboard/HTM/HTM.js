@@ -249,10 +249,10 @@ class HTM extends Component < {} > {
                 {!this.props.loading && !this.props.htmProfile.is_active?
                     <View style={styles.htmProfileSetup}>
                         <Text style={styles.htmProfileSetupTitle}>
-                            Welcome to HTM!
+                            Welcome to Human Teller Machine (HTM)!
                         </Text>
                         <Text style={styles.htmProfileSetupNote}>
-                            {"A way to find cryptocurrency traders around the globe..."}
+                            {"Find cryptocurrency traders from around the globe."}
                         </Text>
                         <Button
                             value={this.props.htmProfile.display_name?

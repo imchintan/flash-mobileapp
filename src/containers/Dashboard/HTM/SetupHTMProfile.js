@@ -425,7 +425,7 @@ class SetupHTMProfile extends Component < {} > {
                                 }} name={'angle-down'} />
                             </TouchableOpacity>
                         </View>
-                        <Text style={[styles.label,{marginTop:10}]}>Trade In</Text>
+                        <Text style={[styles.label,{marginTop:10}]}>Trade Parameters</Text>
                         <View style={[styles.hr,{marginBottom:15}]}/>
                         <View style={[styles.htmProfile,styles.htmWantToBuySell]}>
                             <View>
@@ -518,7 +518,7 @@ class SetupHTMProfile extends Component < {} > {
                             </View>
                         </View>
                         <Text style={[styles.label,{marginTop:10}]}>
-                            Currency
+                            Trade Currencies
                             <Text style={styles.mandatoryField}>*</Text>
                         </Text>
                         <View style={[styles.hr,{marginBottom:15}]}/>
@@ -652,7 +652,7 @@ class SetupHTMProfile extends Component < {} > {
                                         <Text style={[styles.htmCurrencyNote,{width:'100%'}]}>
                                             Minimum and Maximum number of
                                             {' ' + utils.getCurrencyName(balance.currency_type)+ ' '}
-                                            coins (leave 0 for no preference)
+                                            amount (leave 0 for no preference)
                                         </Text>
                                         <View style={styles.htmCurrencyBuySellQty}>
                                             <Text style={styles.htmCurrencyBuySellQtyLabel}>
