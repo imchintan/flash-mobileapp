@@ -43,7 +43,7 @@ class SetupHTMProfile extends Component < {} > {
         super(props);
         this.state = {
             display_name: this.props.profile.display_name,
-            email: '',
+            email: this.props.profile.email,
             sell_at: 0,
             buy_at: 0,
             show_profile_pic: 0,
@@ -386,8 +386,11 @@ class SetupHTMProfile extends Component < {} > {
                         </View>
                         <View style={styles.htmProfile}>
                             <Text style={styles.htmProfileLabel}>Email</Text>
-                            <View style={styles.htmProfileInputBox}>
+                            <View style={[styles.htmProfileInputBox,{
+                                backgroundColor: '#EAEAEA'
+                            }]}>
                                 <TextInput
+                                    editable={false}
                                     underlineColorAndroid='transparent'
                                     style={styles.htmProfileInput}
                                     placeholder={'Enter email address'}

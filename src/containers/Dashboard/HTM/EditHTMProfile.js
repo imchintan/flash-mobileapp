@@ -384,9 +384,11 @@ class EditHTMProfile extends Component < {} > {
                         </View>
                         <View style={styles.htmProfile}>
                             <Text style={styles.htmProfileLabel}>Email</Text>
-                            <View style={styles.htmProfileInputBox}>
+                            <View style={[styles.htmProfileInputBox,{
+                                backgroundColor: '#EAEAEA'
+                            }]}>
                                 <TextInput
-                                    editable={!this.props.htmProfile.email}
+                                    editable={false}
                                     underlineColorAndroid='transparent'
                                     style={styles.htmProfileInput}
                                     placeholder={'Enter email address'}
