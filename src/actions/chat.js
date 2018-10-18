@@ -540,7 +540,7 @@ export const updateChatRoom = (room) => {
             return htm;
         });
 
-        payload.chatUnreadMsgCount = params.htmProfile?payload.chatRooms.reduce((a,b)=>{
+        payload.chatUnreadMsgCount = params.htmProfile?(payload.chatRooms.length > 1?payload.chatRooms.reduce((a,b)=>{
             let urA = a || 0;
             if(isNaN(urA)){
                 urA = a.c.length > 1?a.c.reduce((c,d)=>{
@@ -563,7 +563,15 @@ export const updateChatRoom = (room) => {
                 return urC + urD;
             }):(b.c[0].uc?(b.c[0].uc[params.htmProfile.username] || 0):0);
             return urA + urB;
-        }):0;
+        }):(payload.chatRooms[0].c.length > 1?payload.chatRooms[0].c.reduce((c,d)=>{
+            if(!d.uc) return 0;
+            let urC = c || 0;
+            if(isNaN(urC)){
+                urC = c.uc[params.htmProfile.username] || 0;
+            }
+            let urD = d.uc[params.htmProfile.username] || 0;
+            return urC + urD;
+        }):(payload.chatRooms[0].c[0].uc[params.htmProfile.username]||0))):0;
         payload.chatRoomsLastUpdate = new Date().getTime();
         dispatch({
             type: types.UPDATE_CHAT_ROOM,
