@@ -114,7 +114,7 @@ class ChatHistory extends Component < {} > {
                                     }
                                 }
                             }),
-                            m: cr.l?cr.l.text:'-',
+                            m: cr.l?(cr.l.text?cr.l.text:'📍 Location'):'-',
                             ur: cr.c[cr.c.length-1].uc?
                                 cr.c[cr.c.length-1].uc[this.props.htmProfile.username]:0
                         }

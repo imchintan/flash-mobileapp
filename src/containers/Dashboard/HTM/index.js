@@ -19,6 +19,7 @@ import ChatHistory from './ChatHistory';
 import FeedBack from './FeedBack';
 import ViewFeedBacks from './ViewFeedBacks';
 import HTMReviews from './HTMReviews';
+import ShareLocation from './ShareLocation';
 
 const routes = {
     HTM: {
@@ -54,13 +55,16 @@ const routes = {
     HTMReviews: {
         screen: HTMReviews,
     },
+    ShareLocation: {
+        screen: ShareLocation,
+    },
 };
 
 const routeConfig = {
     initialRouteName: 'HTM',
     headerMode: 'none',
     navigationOptions: {
-     gesturesEnabled: false,
+        gesturesEnabled: false,
    }
 };
 

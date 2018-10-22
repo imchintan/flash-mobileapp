@@ -331,7 +331,7 @@ export const getChatMessages = (refresh=false) => {
     }
 }
 
-export const sendChatMessage = (text=null, location=null) => {
+export const sendChatMessage = (text=null, location=null, _cb=null) => {
     return (dispatch,getState) => {
         let params = getState().params;
         let chatRoom = params.chatRoom;
@@ -346,6 +346,7 @@ export const sendChatMessage = (text=null, location=null) => {
                 let chatMessages = params.chatMessages;
                 if(d.rc !== 1){
                     Toast.errorTop(d.reason);
+                    if(_cb)_cb(false);
                 }else{
                     let message = {
                         _id         : d.message._id,
@@ -359,6 +360,7 @@ export const sendChatMessage = (text=null, location=null) => {
                     }
                     chatMessages = _.sortedUniqBy(_.concat([message],params.chatMessages),
                     (m)=>m._id);
+                    if(_cb)_cb(true);
                 }
                 dispatch({
                     type: types.SEND_CHAT_MESSAGE,
@@ -370,6 +372,7 @@ export const sendChatMessage = (text=null, location=null) => {
                 console.log(e);
                 Toast.errorTop(e.message);
                 dispatch({ type: types.SEND_CHAT_MESSAGE });
+                if(_cb)_cb(false);
             })
         }
         if(!chatRoom || !chatRoomChannel){

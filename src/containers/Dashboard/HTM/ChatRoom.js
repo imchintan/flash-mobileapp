@@ -19,12 +19,13 @@ import {
     Loader
 } from '@components';
 import moment from 'moment-timezone'
+import CustomView from './CustomView';
 
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {ActionCreators} from '@actions';
 
-import { GiftedChat } from 'react-native-gifted-chat'
+import { GiftedChat, Actions } from 'react-native-gifted-chat'
 import Chat from '@helpers/chatHelper';
 
 class ChatRoom extends Component < {} > {
@@ -70,6 +71,29 @@ class ChatRoom extends Component < {} > {
     _chatHandler=(d)=>{
         this.props.receiveChatMessage(d);
         this.props.markAsRead();
+    }
+
+    renderCustomActions(props) {
+        const options = {
+            'Share Location': (props) => {
+                this.props.navigation.navigate('ShareLocation');
+            },
+            'Cancel': () => {},
+        };
+        return (
+            <Actions
+                {...props}
+                options={options}
+            />
+        );
+    }
+
+    renderCustomView(props) {
+        return (
+            <CustomView
+                {...props}
+            />
+        );
     }
 
     render() {
@@ -130,6 +154,8 @@ class ChatRoom extends Component < {} > {
                     </HeaderRight>:null}
                 </Header>
                 <GiftedChat
+                    renderActions={this.renderCustomActions.bind(this)}
+                    renderCustomView={this.renderCustomView.bind(this)}
                     listViewProps={{
                         onEndReachedThreshold:10,
                         onEndReached:()=> !this.props.loading
