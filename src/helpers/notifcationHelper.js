@@ -113,7 +113,7 @@ export default class Notification {
                         }
                     },timeout);
                     cb();
-                }));
+                },params.chatNotification.c));
             } catch (e) {
                 console.log(e);
                 // reject(e)

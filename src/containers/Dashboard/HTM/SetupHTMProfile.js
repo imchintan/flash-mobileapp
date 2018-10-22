@@ -47,6 +47,7 @@ class SetupHTMProfile extends Component < {} > {
             sell_at: 0,
             buy_at: 0,
             show_profile_pic: 0,
+            show_email: 0,
             show_distance_in: 'miles', // Miles/Kms
             currency_types: {}
         };
@@ -107,6 +108,7 @@ class SetupHTMProfile extends Component < {} > {
             return Toast.errorTop("Minimum value alwasy less then Maximum value!");
         }
         data.show_profile_pic = this.state.show_profile_pic;
+        data.show_email = this.state.show_email;
         data.show_distance_in = this.state.show_distance_in;
         data.is_active = 1;
         this.props.setupHTMProfile(data,this.props.navigation.goBack);
@@ -707,7 +709,7 @@ class SetupHTMProfile extends Component < {} > {
                         <Text style={[styles.label,{marginTop:10}]}>Setting</Text>
                         <View style={[styles.hr,{marginBottom:15}]}/>
                         <View style={[styles.htmProfile,styles.htmWantToBuySell]}>
-                            <Text style={[styles.htmProfileLabel,{marginTop:8}]}>
+                            <Text style={styles.htmProfileLabel}>
                                 Show Profile Picture
                             </Text>
                             <Switch
@@ -725,6 +727,26 @@ class SetupHTMProfile extends Component < {} > {
                                 activeBackgroundColor={'#E0AE27'}
                                 inactiveBackgroundColor={'#A1A1A1'}
                                 onChangeState={(show_profile_pic)=>this.setState({show_profile_pic:show_profile_pic?1:0})} />
+                        </View>
+                        <View style={[styles.htmProfile,styles.htmWantToBuySell,{marginTop: -12}]}>
+                            <Text style={styles.htmProfileLabel}>
+                                Show Email Address
+                            </Text>
+                            <Switch
+                                active={(this.state.show_email==1)}
+                                buttonRadius={13}
+                                switchWidth={70}
+                                activeText={'ON'}
+                                activeTextStyle={styles.htmSwitchActiveTextStyle}
+                                inactiveText={'OFF'}
+                                inactiveTextStyle={styles.htmSwitchInactiveTextStyle}
+                                inactiveButtonColor={'#DFDFDF'}
+                                inactiveButtonPressedColor={'#191714'}
+                                activeButtonColor={'#191714'}
+                                activeButtonPressedColor={'#DFDFDF'}
+                                activeBackgroundColor={'#E0AE27'}
+                                inactiveBackgroundColor={'#A1A1A1'}
+                                onChangeState={(show_email)=>this.setState({show_email:show_email?1:0})} />
                         </View>
                         <View style={[styles.htmProfile,styles.htmWantToBuySell,{marginTop: -10}]}>
                             <Text style={[styles.htmProfileLabel,{marginTop:8}]}>
@@ -758,7 +780,6 @@ class SetupHTMProfile extends Component < {} > {
                             value={'Setup Profile'}
                             onPress={this.setupProfile.bind(this)} />
                     </View>
-                    <Loader show={this.props.loading} />
                 </Content>
                 <Modal
                     transparent={true}
@@ -794,6 +815,7 @@ class SetupHTMProfile extends Component < {} > {
                         </View>
                     </View>
                 </Modal>
+                <Loader show={this.props.loading} />
             </Container>
         );
     }

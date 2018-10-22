@@ -52,7 +52,7 @@ export const getChatRooms = () => {
     }
 }
 
-export const goToChatRoom = (username,cb) => {
+export const goToChatRoom = (username,cb, channelId=null) => {
     return (dispatch,getState) => {
         let params = getState().params;
         let rooms =  params.chatRooms || [];
@@ -60,8 +60,11 @@ export const goToChatRoom = (username,cb) => {
         let chatRoom = room.length == 0?null:room[0];
         let chatRoomChannel = null;
         if(chatRoom){
-            let activeChannel = room[0].c.filter(ch=>ch.a || !ch.f
-                || typeof ch.f[params.htmProfile.username] == 'undefined');
+            let activeChannel = chatRoom.c.filter(ch=> (channelId == ch.id) ||
+                (!channelId
+                    && (ch.a || !ch.f ||
+                        typeof ch.f[params.htmProfile.username] == 'undefined')
+                ));
             if(activeChannel.length > 0)
                 chatRoomChannel = activeChannel[0];
         }
@@ -75,10 +78,10 @@ export const goToChatRoom = (username,cb) => {
                     chatNotification: null,
                     channelFeedbacks:null,
                     isLoadAllPreviousMesages:false,
-                    forceFeedBack: (chatRoomChannel && !chatRoomChannel.a)
+                    forceFeedBack: (chatRoomChannel && !chatRoomChannel.a && !channelId)
                 }
             });
-            if(cb)cb((chatRoomChannel && !chatRoomChannel.a));
+            if(cb)cb((chatRoomChannel && !chatRoomChannel.a && !channelId));
         }
         if(!params.htm || params.htm.username !== username)
             dispatch(htm.getHTMDetail(username,_cb));
