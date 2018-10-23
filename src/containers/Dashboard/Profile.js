@@ -4,11 +4,13 @@
 
 import React, { Component } from 'react';
 import {
-  View,
-  TextInput,
-  TouchableOpacity,
-  ScrollView,
-  Modal
+    View,
+    TextInput,
+    TouchableOpacity,
+    ScrollView,
+    Image,
+    Modal,
+    Platform
 } from 'react-native';
 import {
     Container,
@@ -27,9 +29,13 @@ import moment from 'moment-timezone';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ActionCreators } from '@actions';
+import ImagePicker from 'react-native-image-crop-picker';
 import PhoneInput from 'react-native-phone-input'
 import PhoneNumber from 'react-native-phone-input/lib/phoneNumber'
 import Premium from 'Premium';
+import * as utils from '@lib/utils';
+import * as constants from '@src/constants';
+import { PROFILE_URL } from '@src/config';
 
 class MyProfile extends Component<{}> {
 
@@ -56,6 +62,8 @@ class MyProfile extends Component<{}> {
         if(!nextProps.errorMsg && !!this.state.sendVerificationSMS &&
             nextProps.loading === false && this.props.loading !== nextProps.loading){
             this.setState({visibleVerifyInfo:true})
+        }else if(nextProps.profile.profile_pic_url != this.props.profile.profile_pic_url){
+            this.setState({profile_pic_url:null, editImage: false});
         }else if(nextProps.errorMsg && this.state.verifying){
             this.setState({errorMsg:nextProps.errorMsg, verifying: false});
         }else if(this.state.verifying === true && nextProps.successMsg){
@@ -192,6 +200,26 @@ class MyProfile extends Component<{}> {
         },()=>this.props.verifyPhone(this.state.smsCode));
     }
 
+    openImagePicker(camera=false){
+        this.props.customAction({lockApp:true});
+        let picker = camera?ImagePicker.openCamera:ImagePicker.openPicker
+        setTimeout(()=>picker({
+            width: 300,
+            height: 300,
+            mediaType: 'photo',
+            cropping: true
+        }).then(image => {
+            this.setState({
+                profile_pic_url: (Platform.OS === 'ios'?'file://':'')+image.path,
+                editImage: true
+            });
+            setTimeout(()=>this.props.customAction({lockApp:false}),100)
+        }).catch(e=>{
+            console.log(e);
+            setTimeout(()=>this.props.customAction({lockApp:false}),100)
+        }),Platform.OS === 'ios'?800:10);
+    }
+
     render() {
         const styles = (this.props.nightMode?require('@styles/nightMode/myAccount'):
             require('@styles/myAccount'));
@@ -222,6 +250,30 @@ class MyProfile extends Component<{}> {
                 </Header>
                 <Content style={styles.content}>
                     <View style={styles.profile}>
+                        <View style={styles.profileImageBox}>
+                            <Image style={styles.profileImage}
+                                source={this.state.profile_pic_url?{uri:this.state.profile_pic_url}:
+                                (this.props.profile.profile_pic_url?
+                                {uri:PROFILE_URL+this.props.profile.profile_pic_url}:
+                                utils.getCurrencyIcon(constants.CURRENCY_TYPE.FLASH))} />
+                            {!this.state.editImage && <TouchableOpacity
+                                    onPress={()=>this.setState({visibleUploadImage:true})}
+                                    style={styles.profileImageBtn}>
+                                    <Text style={styles.profileImageBtnTxt}>Change Image</Text>
+                                </TouchableOpacity>}
+                            {this.state.editImage && <View style={{flexDirection: 'row'}}>
+                                <TouchableOpacity
+                                    onPress={()=>this.props.uploadProfileImage(this.state.profile_pic_url)}
+                                    style={styles.profileImageBtn}>
+                                    <Text style={styles.profileImageBtnTxt}>Update Image</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    onPress={()=>this.setState({editImage:false,profile_pic_url:null})}
+                                    style={styles.profileCancelBtn}>
+                                    <Text style={styles.profileImageBtnTxt}>Cancel</Text>
+                                </TouchableOpacity>
+                            </View>}
+                        </View>
                         <View style={styles.profileRow}>
                             <View style={styles.profileRowTitle}>
                                 <Text style={styles.profileRowLabel}>Full Name</Text>
@@ -412,6 +464,39 @@ class MyProfile extends Component<{}> {
                             </View>
                         </View>
                     </View>
+                    <Modal
+                        animationType="slide"
+                        transparent={true}
+                        visible={!!this.state.visibleUploadImage}
+                        onRequestClose={()=>this.setState({visibleUploadImage:false})}>
+                        <View style={styles.overlayStyle}>
+                            <View style={[styles.optionContainer,{height:null}]}>
+                                <TouchableOpacity
+                                    onPress={()=>this.setState({visibleUploadImage:false},
+                                    ()=>this.openImagePicker(true))}
+                                    style={styles.optionStyle}>
+                                    <Text style={[styles.optionTextStyle,
+                                        styles.profileImageOptionTxt]}>Take Photo</Text>
+                                </TouchableOpacity>
+                                <TouchableOpacity
+                                    onPress={()=>this.setState({visibleUploadImage:false},
+                                    ()=>this.openImagePicker(false))}
+                                    style={styles.optionStyle}>
+                                    <Text style={[styles.optionTextStyle,
+                                        styles.profileImageOptionTxt]}>Choose from Library</Text>
+                                </TouchableOpacity>
+                            </View>
+                            <View style={styles.cancelContainer}>
+                                <TouchableOpacity onPress={()=>this.setState({visibleUploadImage:false})}>
+                                    <View style={styles.cancelStyle}>
+                                        <Text style={styles.canceTextStyle}>
+                                            Cancel
+                                        </Text>
+                                    </View>
+                                </TouchableOpacity>
+                            </View>
+                        </View>
+                    </Modal>
                     <Modal
                         animationType="slide"
                         transparent={true}

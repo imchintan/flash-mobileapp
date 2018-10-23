@@ -35,6 +35,8 @@
 			</dict>
 		</dict>
 	</dict>
+	<key>NSPhotoLibraryUsageDescription</key>
+	<string>FLASH Wallet needs permission to access your photos so we can easily set your profile picture!</string>
 	<key>NSCameraUsageDescription</key>
 	<string>Coinodes Wallet would like to access your camera to scan wallet QR code.</string>
 	<key>NSFaceIDUsageDescription</key>

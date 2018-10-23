@@ -98,6 +98,7 @@ android {
     buildToolsVersion "27.0.3"
 
     defaultConfig {
+        vectorDrawables.useSupportLibrary = true
         applicationId "com.flash.wallet.android"
         minSdkVersion 16
         targetSdkVersion 26
@@ -148,6 +149,7 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-image-crop-picker')
     compile project(':react-native-camera')
     compile project(':react-native-touch-id')
     compile project(':react-native-sound')
