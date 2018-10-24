@@ -2,8 +2,8 @@
  *  Application configuration
  */
 export const  RESOURCE = 'app';
-export const  APP_MODE = 'DEV'; // DEV , PROD
-export const  APP_VERSION = '1.9.4';
+export const  APP_MODE = 'PROD'; // DEV , PROD
+export const  APP_VERSION = '1.9.5-stage.0';
 
 let appUrl;
 
