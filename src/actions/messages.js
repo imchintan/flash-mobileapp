@@ -2,7 +2,6 @@ import {
     AsyncStorage,
     Platform
 } from 'react-native';
-// import PushNotification from 'react-native-push-notification';
 import firebase from 'react-native-firebase';
 import * as constants from '@src/constants';
 import * as apis from '@flashAPIs';

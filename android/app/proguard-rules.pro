@@ -84,3 +84,7 @@
 
 -keep class io.invertase.firebase.** { *; }
 -dontwarn io.invertase.firebase.**
+
+-dontwarn com.yalantis.ucrop**
+-keep class com.yalantis.ucrop** { *; }
+-keep interface com.yalantis.ucrop** { *; }

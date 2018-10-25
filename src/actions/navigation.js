@@ -728,10 +728,10 @@ export const _logout = async(dispatch, clearAll=false) => {
     dispatch({ type: types.LOADING_START });
     let payload={};
     if(!clearAll){
-        let pin = await AsyncStorage.getItem('pin');
-        if(pin){
-            payload.pin = pin.toString();
-        }
+        // let pin = await AsyncStorage.getItem('pin');
+        // if(pin){
+        //     payload.pin = pin.toString();
+        // }
         let isEnableTouchID = await AsyncStorage.getItem('isEnableTouchID');
         if(isEnableTouchID){
             payload.isEnableTouchID = (isEnableTouchID === 'true');

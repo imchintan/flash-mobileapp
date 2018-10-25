@@ -269,6 +269,54 @@ export const updateProfile = (data) => {
     }
 }
 
+export const uploadProfileImage = (data) => {
+    return (dispatch,getState) => {
+        dispatch({ type: types.LOADING_START });
+        let params = getState().params;
+        apis.uploadProfileImage(params.profile.auth_version, params.profile.sessionToken, data).then((d)=>{
+            if(d.rc == 1){
+                let profile = {...params.profile, profile_pic_url : d.token};
+                AsyncStorage.mergeItem('user',JSON.stringify(profile));
+                dispatch({
+                    type: types.UPDATE_PROFILE,
+                    payload: {
+                        loading:false,
+                        profile
+                    }
+                });
+            }else if(d.rc == 3){
+                dispatch({
+                    type: types.UPDATE_PROFILE,
+                    payload: {
+                        loading:false,
+                        errorMsg:d.reason,
+                    }
+                });
+                constants.SOUND.ERROR.play();
+                setTimeout(()=>_logout(dispatch),500);
+            }else{
+                dispatch({
+                    type: types.UPDATE_PROFILE,
+                    payload: {
+                        errorMsg:d.reason,
+                        loading:false
+                    }
+                });
+                constants.SOUND.ERROR.play();
+            }
+        }).catch(e=>{
+            dispatch({
+                type: types.UPDATE_PROFILE,
+                payload: {
+                    errorMsg: e.message,
+                    loading:false
+                }
+            });
+            constants.SOUND.ERROR.play();
+        })
+    }
+}
+
 export const changePassword = (data) => {
     return (dispatch,getState) => {
         dispatch({ type: types.LOADING_START });

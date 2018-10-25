@@ -1,4 +1,4 @@
-import { API_URL, RESOURCE, APP_VERSION } from '@src/config';
+import { API_URL, RESOURCE, APP_VERSION, PROFILE_URL } from '@src/config';
 
 /**
  * Get user balance
@@ -90,6 +90,43 @@ export const updateProfile = (auth_version, sessionToken='', data={}) => {
             }),
             headers: {
                'Content-Type': 'application/json; charset=utf-8',
+               'authorization': sessionToken,
+               'fl_auth_version': auth_version
+            },
+        })
+        .then(async res =>{
+            let _res = await res.text();
+            if(_res.toLowerCase().indexOf("session") == -1){
+                return JSON.parse(_res);
+            }else{
+                return {rc:3,reason:_res};
+            }
+        })
+        .then(json => resolve(json))
+        .catch(e =>{
+            console.log(e);
+            reject('Something went wrong!')
+        });
+    });
+}
+/**
+ * Update user profile image
+ * @param  {Number} auth_version     [description]
+ * @param  {String} sessionToken     [description]
+ * @param  {String} file             [description]
+ * @return {Promise}                 [description]
+ */
+export const uploadProfileImage = (auth_version, sessionToken='', file) => {
+    return new Promise((resolve,reject) => {
+        let body = new FormData();
+        body.append('avatar',{uri: file, name: 'avatar', filename :'avatar.png', type: 'image/png'});
+        body.append('appversion', APP_VERSION);
+        body.append('res', RESOURCE);
+        fetch(PROFILE_URL+'upload',{
+            method: 'POST',
+            body: body,
+            headers: {
+               'Content-Type': 'multipart/form-data',
                'authorization': sessionToken,
                'fl_auth_version': auth_version
             },

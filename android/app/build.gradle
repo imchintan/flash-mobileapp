@@ -107,6 +107,8 @@ android {
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
+        vectorDrawables.useSupportLibrary = true
+        multiDexEnabled true
     }
     signingConfigs {
        release {
@@ -157,10 +159,10 @@ dependencies {
     }
     implementation 'com.google.android.gms:play-services-base:15.0.1'
     implementation 'com.google.android.gms:play-services-maps:15.0.1'
+    implementation project(':react-native-image-crop-picker')
     implementation project(':react-native-camera')
     implementation project(':react-native-touch-id')
     implementation project(':react-native-sound')
-    implementation project(':react-native-push-notification')
     implementation project(':react-native-randombytes')
     implementation (project(':react-native-firebase')) {
        transitive = false
