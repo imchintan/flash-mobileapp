@@ -25,7 +25,7 @@ import {
     Loader,
     Modal
 } from '@components';
-import { Marker } from 'react-native-maps';
+import { Marker, PROVIDER_GOOGLE } from 'react-native-maps';
 import MapView from 'react-native-map-clustering';
 import AndroidOpenSettings from 'react-native-android-open-settings'
 import moment from 'moment-timezone';
@@ -251,6 +251,7 @@ class HTMListingMap extends Component < {} > {
                         if(this.state.htm)this.setState({htm:null})
                         if(this.state.showFilter)this.setState({showFilter:false})
                     }}
+                    provider={PROVIDER_GOOGLE}
                     style={styles.htmMap}
                     clusterColor = '#E0AE27'
                     clusterTextColor = '#191714'
@@ -259,10 +260,6 @@ class HTMListingMap extends Component < {} > {
                     customMapStyle={constants.CUSTOM_MAP_STYLE}
                     followsUserLocation={true}
                     showsMyLocationButton={true}
-                    onRegionChangeComplete={(region)=>{
-                        if(this.state.region === region || Platform.OS !== 'ios') return;
-                        setTimeout(()=>this.setState({region}),100);
-                    }}
                     initialRegion={this.calculateDelta(this.props.position,
                         this.props.htms)}
                     region={this.state.region || this.calculateDelta(this.props.position,

@@ -53,7 +53,6 @@
 		9D159E689EB2B96D5A4A25FD /* libPods-flash.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A383EB7595B1D1CBF0C19BEF /* libPods-flash.a */; };
 		ADBDB9381DFEBF1600ED6528 /* libRCTBlob.a in Frameworks */ = {isa = PBXBuildFile; fileRef = ADBDB9271DFEBF0700ED6528 /* libRCTBlob.a */; };
 		D0E3293DA8E343B7A8A15D5D /* libRNRandomBytes.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 81E137C887D840399E5181AA /* libRNRandomBytes.a */; };
-		D2F3574D1B934FBAA6E839D4 /* libAirMaps.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 923DCA66F2454EC79F82A6D8 /* libAirMaps.a */; };
 		EAFD9F9764B04ECF80316555 /* libRNCamera.a in Frameworks */ = {isa = PBXBuildFile; fileRef = 98C90E92F3D4486580FB1EB9 /* libRNCamera.a */; };
 /* End PBXBuildFile section */
 
@@ -239,13 +238,6 @@
 			proxyType = 2;
 			remoteGlobalIDString = 19825A1E1BD4A89800EE0337;
 			remoteInfo = RNSound;
-		};
-		3651C2BD21382BD500C7C469 /* PBXContainerItemProxy */ = {
-			isa = PBXContainerItemProxy;
-			containerPortal = DDFE35C19DC94427B4029489 /* AirMaps.xcodeproj */;
-			proxyType = 2;
-			remoteGlobalIDString = 11FA5C511C4A1296003AC2EE;
-			remoteInfo = AirMaps;
 		};
 		3658210C2063791600923838 /* PBXContainerItemProxy */ = {
 			isa = PBXContainerItemProxy;
@@ -466,7 +458,6 @@
 		ADBDB91F1DFEBF0600ED6528 /* RCTBlob.xcodeproj */ = {isa = PBXFileReference; lastKnownFileType = "wrapper.pb-project"; name = RCTBlob.xcodeproj; path = "../node_modules/react-native/Libraries/Blob/RCTBlob.xcodeproj"; sourceTree = "<group>"; };
 		B0CC479424504CF7C5076815 /* Pods-flash.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-flash.debug.xcconfig"; path = "Pods/Target Support Files/Pods-flash/Pods-flash.debug.xcconfig"; sourceTree = "<group>"; };
 		C606EC71E9B62370998E26EA /* Pods-flashTests.debug.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-flashTests.debug.xcconfig"; path = "Pods/Target Support Files/Pods-flashTests/Pods-flashTests.debug.xcconfig"; sourceTree = "<group>"; };
-		DDFE35C19DC94427B4029489 /* AirMaps.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = AirMaps.xcodeproj; path = "../node_modules/react-native-maps/lib/ios/AirMaps.xcodeproj"; sourceTree = "<group>"; };
 		E421ED89C02E46F98D7F910B /* RNRandomBytes.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNRandomBytes.xcodeproj; path = "../node_modules/react-native-randombytes/RNRandomBytes.xcodeproj"; sourceTree = "<group>"; };
 		ED6E6636310225AEB58C15BE /* Pods-flashTests.release.xcconfig */ = {isa = PBXFileReference; includeInIndex = 1; lastKnownFileType = text.xcconfig; name = "Pods-flashTests.release.xcconfig"; path = "Pods/Target Support Files/Pods-flashTests/Pods-flashTests.release.xcconfig"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
@@ -503,7 +494,6 @@
 				46C48F8A47CC41BDA11F8B36 /* libRNSound.a in Frameworks */,
 				772A6CF96F10474CBF9E08CD /* libTouchID.a in Frameworks */,
 				EAFD9F9764B04ECF80316555 /* libRNCamera.a in Frameworks */,
-				D2F3574D1B934FBAA6E839D4 /* libAirMaps.a in Frameworks */,
 				9D159E689EB2B96D5A4A25FD /* libPods-flash.a in Frameworks */,
 				64BC041010AC4EA88E17D51A /* libRNFirebase.a in Frameworks */,
 			);
@@ -710,14 +700,6 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		3651C2BA21382BD500C7C469 /* Products */ = {
-			isa = PBXGroup;
-			children = (
-				3651C2BE21382BD500C7C469 /* libAirMaps.a */,
-			);
-			name = Products;
-			sourceTree = "<group>";
-		};
 		365821092063791600923838 /* Products */ = {
 			isa = PBXGroup;
 			children = (
@@ -813,7 +795,6 @@
 				8C98C07780D449F5BE31D53A /* RNSound.xcodeproj */,
 				2DB572E17BDA442A88E5DBC5 /* TouchID.xcodeproj */,
 				4FF55EFFE57E482D846133E5 /* RNCamera.xcodeproj */,
-				DDFE35C19DC94427B4029489 /* AirMaps.xcodeproj */,
 				9B7D20CE71ED46EA90FDDE6D /* RNFirebase.xcodeproj */,
 			);
 			name = Libraries;
@@ -899,6 +880,7 @@
 				13B07F8E1A680F5B00A75B9A /* Resources */,
 				00DD1BFF1BD5951E006B06BC /* Bundle React Native code and images */,
 				360CA3292181BF4400D511A2 /* Embed Frameworks */,
+				67D1BB0906023ED7D2BD7B56 /* [CP] Copy Pods Resources */,
 			);
 			buildRules = (
 			);
@@ -993,10 +975,6 @@
 			productRefGroup = 83CBBA001A601CBA00E9B192 /* Products */;
 			projectDirPath = "";
 			projectReferences = (
-				{
-					ProductGroup = 3651C2BA21382BD500C7C469 /* Products */;
-					ProjectRef = DDFE35C19DC94427B4029489 /* AirMaps.xcodeproj */;
-				},
 				{
 					ProductGroup = 360CA2EF2181BF3600D511A2 /* Products */;
 					ProjectRef = 360CA2EE2181BF3600D511A2 /* imageCropPicker.xcodeproj */;
@@ -1253,13 +1231,6 @@
 			remoteRef = 363EF23220CA52A5006473B4 /* PBXContainerItemProxy */;
 			sourceTree = BUILT_PRODUCTS_DIR;
 		};
-		3651C2BE21382BD500C7C469 /* libAirMaps.a */ = {
-			isa = PBXReferenceProxy;
-			fileType = archive.ar;
-			path = libAirMaps.a;
-			remoteRef = 3651C2BD21382BD500C7C469 /* PBXContainerItemProxy */;
-			sourceTree = BUILT_PRODUCTS_DIR;
-		};
 		3658210D2063791600923838 /* libRNRandomBytes.a */ = {
 			isa = PBXReferenceProxy;
 			fileType = archive.ar;
@@ -1478,6 +1449,24 @@
 			shellPath = /bin/sh;
 			shellScript = "export NODE_BINARY=node\n../node_modules/react-native/scripts/react-native-xcode.sh";
 		};
+		67D1BB0906023ED7D2BD7B56 /* [CP] Copy Pods Resources */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+				"${SRCROOT}/Pods/Target Support Files/Pods-flash/Pods-flash-resources.sh",
+				"${PODS_ROOT}/GoogleMaps/Maps/Frameworks/GoogleMaps.framework/Resources/GoogleMaps.bundle",
+			);
+			name = "[CP] Copy Pods Resources";
+			outputPaths = (
+				"${TARGET_BUILD_DIR}/${UNLOCALIZED_RESOURCES_FOLDER_PATH}/GoogleMaps.bundle",
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "\"${SRCROOT}/Pods/Target Support Files/Pods-flash/Pods-flash-resources.sh\"\n";
+			showEnvVarsInLog = 0;
+		};
 		A768EB2C95781A4F53DCE30A /* [CP] Check Pods Manifest.lock */ = {
 			isa = PBXShellScriptBuildPhase;
 			buildActionMask = 2147483647;
@@ -1676,7 +1665,6 @@
 					"$(SRCROOT)/../node_modules/react-native-sound/RNSound",
 					"$(SRCROOT)/../node_modules/react-native-touch-id",
 					"$(SRCROOT)/../node_modules/react-native-camera/ios/**",
-					"$(SRCROOT)/../node_modules/react-native-maps/lib/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-firebase/ios/RNFirebase/**",
 				);
 				INFOPLIST_FILE = flash/Info.plist;
@@ -1708,7 +1696,6 @@
 					"$(SRCROOT)/../node_modules/react-native-sound/RNSound",
 					"$(SRCROOT)/../node_modules/react-native-touch-id",
 					"$(SRCROOT)/../node_modules/react-native-camera/ios/**",
-					"$(SRCROOT)/../node_modules/react-native-maps/lib/ios/**",
 					"$(SRCROOT)/../node_modules/react-native-firebase/ios/RNFirebase/**",
 				);
 				INFOPLIST_FILE = flash/Info.plist;
