@@ -23,7 +23,6 @@ DerivedData
 project.xcworkspace
 ios/flash.xcworkspace
 ios/Pods
-ios/Podfile.lock
 ios/GoogleService-Info.plist
 
 # Android/IntelliJ
