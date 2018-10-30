@@ -8,7 +8,8 @@ import {
     Image,
     TextInput,
     Platform,
-    TouchableOpacity
+    TouchableOpacity,
+    WebView
 } from 'react-native';
 import {
     Container,
@@ -16,6 +17,7 @@ import {
     Button,
     Text,
     Loader,
+    Modal,
     Toast
 } from '@components';
 import { connect } from 'react-redux';
@@ -26,6 +28,18 @@ import * as Validation from '@lib/validation';
 const styles = require("@styles/login");
 
 TextInput.defaultProps.placeholderTextColor = '#7D7D7D';
+
+// fix https://github.com/facebook/react-native/issues/10865
+const patchPostMessageJsCode = `(${String(function() {
+    var originalPostMessage = window.postMessage
+    var patchedPostMessage = function(message, targetOrigin, transfer) {
+        originalPostMessage(message, targetOrigin, transfer)
+    }
+    patchedPostMessage.toString = function() {
+        return String(Object.hasOwnProperty).replace('hasOwnProperty', 'postMessage')
+    }
+    window.postMessage = patchedPostMessage
+})})();`
 
 class Login extends Component<{}> {
 
@@ -40,6 +54,11 @@ class Login extends Component<{}> {
 
     componentDidMount(){
         this.props.init()
+        this.mount = true;
+    }
+
+    componentWillUnmount(){
+        this.mount = false;
     }
 
     componentWillReceiveProps(nextProps){
@@ -50,7 +69,6 @@ class Login extends Component<{}> {
     }
 
     login=()=>{
-
         let res = Validation.email(this.state.email)
         if(!res.success){
             Toast.errorTop(res.message);
@@ -61,7 +79,21 @@ class Login extends Component<{}> {
             Toast.errorTop('Password is required!');
             return false;
         }
-        this.props.login(this.state.email, this.state.password);
+
+        this.setState({viewCaptcha: true, loading: true},()=>
+            setTimeout(()=> this.mount && this.state.viewCaptcha &&
+                this.setState({viewCaptcha: false, loading: false},
+                () => Toast.errorTop('Something went wrong, Please try again!')),1000 * 30));
+
+    }
+
+    doLogin(g_recaptcha_response){
+        this.setState({viewCaptcha: false, loading: false});
+        if(!g_recaptcha_response){
+            Toast.errorTop('Please verify that you are not a robot!');
+            return false;
+        }
+        this.props.login(this.state.email, this.state.password, g_recaptcha_response);
     }
 
     render() {
@@ -115,6 +147,31 @@ class Login extends Component<{}> {
                         </TouchableOpacity>
                     </View>
                 </Content>
+                <Modal
+                    transparent={true}
+                    animationType="slide"
+                    visible={!!this.state.viewCaptcha}
+                    onRequestClose={()=>this.setState({viewCaptcha:false})}>
+                    <WebView
+                        javaScriptEnabled
+                        automaticallyAdjustContentInsets
+                        injectedJavaScript={patchPostMessageJsCode}
+                        onLoadEnd={()=>{
+                            setTimeout(()=> this.mount && this.state.viewCaptcha &&
+                                this.setState({viewCaptcha: false, loading: false},
+                                () => Toast.errorTop('Something went wrong, Please try again!')),1000 * 10);
+                        }}
+                        onError={(e)=>{
+                            console.log(e);
+                            this.setState({viewCaptcha:false});
+                            Toast.errorTop('Something went wrong!');
+                        }}
+                        style={{backgroundColor: '#0009'}}
+                        source={{uri:'https://wallet.flashcoin.io/recaptcha.html?'+new Date().getTime()}}
+                        onMessage={e => this.doLogin(e.nativeEvent.data)}
+                    />
+                    <Loader show={this.state.loading} />
+                </Modal>
                 <Loader show={this.props.loading} />
             </Container>
         );
