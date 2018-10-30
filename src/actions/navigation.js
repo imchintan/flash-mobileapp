@@ -139,10 +139,10 @@ export const forgotPassword = (email) => {
     }
 }
 
-export const login = (email,password) => {
+export const login = (email, password, g_recaptcha_response) => {
     return (dispatch,getState) => {
         dispatch({ type: types.LOADING_START });
-        apis.login(email,password).then((d)=>{
+        apis.login(email, password, g_recaptcha_response).then((d)=>{
             if(d.rc == 1){
                 dispatch({
                     type: d.profile.auth_version < 4?types.MIGRATE_ACCOUNT:((!d.profile.totp_enabled)?types.LOGIN_SUCCESS:types.VERIFY_2FA),
@@ -171,7 +171,7 @@ export const login = (email,password) => {
                         errorMsg = 'Email or password is not correct. This is your '+attmpt_count+
                         ' failed attempt. After 5 failed attempts, your account will be locked.';
 
-                    }else{
+                    }else if(d.status !== 'RECAPTCHA_NOT_VERIFIED'){
                         errorMsg = 'Email or password is not correct';
                     }
                 }
