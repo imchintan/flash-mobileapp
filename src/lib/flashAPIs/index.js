@@ -12,3 +12,4 @@ export * from './chat';
 export * from './kwayisi';
 export * from './coinmarketcap';
 export * from './coingecko';
+export * from './advertisement';

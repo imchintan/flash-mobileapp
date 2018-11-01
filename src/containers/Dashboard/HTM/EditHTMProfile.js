@@ -47,6 +47,7 @@ class EditHTMProfile extends Component < {} > {
             })));
         this.state = {
             ...this.props.htmProfile,
+            email:  this.props.profile.email,
             currency_types
         };
     }
@@ -839,6 +840,7 @@ function mapStateToProps({params}) {
         loading: params.loading || false,
         nightMode: params.nightMode,
         htmProfile: params.htmProfile,
+        profile: params.profile,
         balances: params.balances,
     };
 }

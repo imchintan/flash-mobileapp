@@ -20,6 +20,9 @@ import FeedBack from './FeedBack';
 import ViewFeedBacks from './ViewFeedBacks';
 import HTMReviews from './HTMReviews';
 import ShareLocation from './ShareLocation';
+import HTMAds from './Advertisement';
+import HTMCreateAd from './Advertisement/CreateAd';
+import HTMEditAd from './Advertisement/EditAd';
 
 const routes = {
     HTM: {
@@ -57,6 +60,15 @@ const routes = {
     },
     ShareLocation: {
         screen: ShareLocation,
+    },
+    HTMAds: {
+        screen: HTMAds,
+    },
+    HTMCreateAd: {
+        screen: HTMCreateAd,
+    },
+    HTMEditAd: {
+        screen: HTMEditAd,
     },
 };
 

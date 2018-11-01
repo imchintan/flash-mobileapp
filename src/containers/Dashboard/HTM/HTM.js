@@ -167,6 +167,16 @@ class HTM extends Component < {} > {
                         }]}
                         value={'Trade History'}
                         onPress={()=>this.props.navigation.navigate('ChatHistory')} />
+                    <Button
+                        style={[{
+                            marginBottom: 20,
+                            width: 180,
+                            alignItems: 'center'
+                        },!this.props.htmProfile.is_active && {
+                            backgroundColor: '#C2C2C2',
+                        }]}
+                        value={'Trade Ads'}
+                        onPress={()=>this.props.navigation.navigate('HTMAds')} />
                     {this.props.favorite_htms.length > 0?
                     <View style={{marginHorizontal: 20}}>
                         <Text style={styles.label}>Favorite Traders</Text>

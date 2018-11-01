@@ -5,6 +5,7 @@ import * as types from '@actions/types';
 import * as apis from '@flashAPIs';
 import * as utils from '@lib/utils';
 import * as constants from '@src/constants';
+import _ from 'lodash';
 
 const Toast =  require('@components/Toast');
 
@@ -572,6 +573,212 @@ export const getHTMFeedbacks = (htm=true) => {
             Toast.errorTop(e.message);
             dispatch({
                 type: types.GET_HTM_FEEDBACKS,
+                payload: { loading: false }
+            });
+        })
+    }
+}
+
+//************* Advertisement *********//
+
+export const addHTMAd = (data, goBack) => {
+    return (dispatch,getState) => {
+        dispatch({ type: types.LOADING_START });
+        let params = getState().params;
+        apis.addHTMAd(params.profile.auth_version,
+            params.profile.sessionToken, data).then((d)=>{
+            if(d.rc !== 1){
+                Toast.errorTop(d.reason);
+                dispatch({
+                    type: types.ADD_HTM_TRADE_AD,
+                    payload: { loading: false }
+                });
+            }else{
+                Toast.successTop("Your trade ad created succesfully.")
+                dispatch({
+                    type: types.ADD_HTM_TRADE_AD,
+                    payload: {
+                        loading: false,
+                        htmAdCreateOrEdit: false,
+                    }
+                });
+                dispatch(getHTMAds());
+                goBack();
+            }
+        }).catch(e=>{
+            Toast.errorTop(e.message);
+            dispatch({
+                type: types.ADD_HTM_TRADE_AD,
+                payload: { loading: false }
+            });
+        })
+    }
+}
+
+export const editHTMAd = (ad, cb) => {
+    return (dispatch,getState) => {
+        dispatch({
+            type: types.EDIT_HTM_TRADE_AD,
+            payload: {
+                htmAd: ad,
+                htmAdCreateOrEdit: true,
+            }
+        });
+        cb();
+    }
+}
+
+export const updateHTMAd = (id, data, goBack) => {
+    return (dispatch,getState) => {
+        dispatch({ type: types.LOADING_START });
+        let params = getState().params;
+        apis.updateHTMAd(params.profile.auth_version,
+            params.profile.sessionToken, id, data).then((d)=>{
+            if(d.rc !== 1){
+                Toast.errorTop(d.reason);
+                dispatch({
+                    type: types.UPADTE_HTM_TRADE_AD,
+                    payload: { loading: false }
+                });
+            }else{
+                Toast.successTop("Your trade ad updated succesfully.")
+                dispatch({
+                    type: types.UPADTE_HTM_TRADE_AD,
+                    payload: {
+                        loading: false,
+                        htmAdCreateOrEdit: false,
+                    }
+                });
+                dispatch(getHTMAds(0,true));
+                goBack();
+            }
+        }).catch(e=>{
+            Toast.errorTop(e.message);
+            dispatch({
+                type: types.UPADTE_HTM_TRADE_AD,
+                payload: { loading: false }
+            });
+        })
+    }
+}
+
+export const deleteHTMAd = (id, goBack) => {
+    return (dispatch,getState) => {
+        dispatch({ type: types.LOADING_START });
+        let params = getState().params;
+        apis.deleteHTMAd(params.profile.auth_version,
+            params.profile.sessionToken, id).then((d)=>{
+            if(d.rc !== 1){
+                Toast.errorTop(d.reason);
+                dispatch({
+                    type: types.REMOVE_HTM_TRADE_AD,
+                    payload: { loading: false }
+                });
+            }else{
+                Toast.successTop("Your trade ad removed succesfully.")
+                dispatch({
+                    type: types.REMOVE_HTM_TRADE_AD,
+                    payload: {
+                        loading: false,
+                        htmAdCreateOrEdit: false,
+                    }
+                });
+                dispatch(getHTMAds(0,true));
+                goBack();
+            }
+        }).catch(e=>{
+            Toast.errorTop(e.message);
+            dispatch({
+                type: types.REMOVE_HTM_TRADE_AD,
+                payload: { loading: false }
+            });
+        })
+    }
+}
+
+export const getHTMAds = (start=0,reset=false) => {
+    return (dispatch,getState) => {
+        dispatch({ type: types.LOADING_START });
+        let params = getState().params;
+        let htmMyAdsReq = (params.htmMyAdsReq !== false || reset);
+        if(!htmMyAdsReq) return ;
+        let htmMyAds = reset?[]:params.htmMyAds;
+        apis.getHTMAds(params.profile.auth_version, params.profile.sessionToken,start)
+            .then((d)=>{
+            if(d.rc !== 1){
+                Toast.errorTop(d.reason);
+                dispatch({
+                    type: types.MY_HTM_TRADE_ADS,
+                    payload: { loading: false }
+                });
+            }else{
+                htmMyAds = _.uniqBy(_.concat(htmMyAds || [],d.htm_ads),'id');
+                htmMyAds.sort((ad1,ad2)=>ad1.id>ad2.id?-1:1);
+                dispatch({
+                    type: types.MY_HTM_TRADE_ADS,
+                    payload: {
+                        htmMyAds,
+                        htmMyAdsReq: (d.htm_ads.length > 0),
+                        loading: false,
+                    }
+                });
+            }
+        }).catch(e=>{
+            Toast.errorTop(e.message);
+            dispatch({
+                type: types.MY_HTM_TRADE_ADS,
+                payload: { loading: false }
+            });
+        })
+    }
+}
+
+export const findHTMAdsFilterApply = (filter) => {
+    return (dispatch,getState) => {
+        dispatch({
+            type: types.FIND_HTM_TRADE_ADS_FILTER_APPLY,
+            payload:{ htmAdsFilter: filter }
+        });
+        dispatch(findHTMAds(0,true));
+    }
+}
+
+export const findHTMAds = (start=0,reset=false) => {
+    return (dispatch,getState) => {
+        dispatch({ type: types.LOADING_START });
+        let params = getState().params;
+        let filter = params.htmAdsFilter || {};
+        let htmAdsReq = (params.htmAdsReq !== false || reset);
+        if(!htmAdsReq) return ;
+        let htmAds = reset?[]:params.htmAds;
+        let _filter = {
+            buy:  filter.buy?filter.buy.currency_type:0,
+            sell:  filter.sell?filter.sell.currency_type:0,
+        }
+        apis.findHTMAds(params.profile.auth_version, params.profile.sessionToken, _filter)
+            .then((d)=>{
+            if(d.rc !== 1){
+                Toast.errorTop(d.reason);
+                dispatch({
+                    type: types.FIND_HTM_TRADE_ADS,
+                    payload: { loading: false }
+                });
+            }else{
+                htmAds = _.uniqBy(_.concat(htmAds || [],d.htm_ads),'id');
+                htmAds.sort((ad1,ad2)=>ad1.id>ad2.id?-1:1);
+                dispatch({
+                    type: types.FIND_HTM_TRADE_ADS,
+                    payload: {
+                        htmAds,
+                        htmAdsReq: (d.htm_ads.length > 0),
+                        loading: false,
+                    }
+                });
+            }
+        }).catch(e=>{
+            Toast.errorTop(e.message);
+            dispatch({
+                type: types.FIND_HTM_TRADE_ADS,
                 payload: { loading: false }
             });
         })

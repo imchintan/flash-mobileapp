@@ -476,7 +476,7 @@ const styles = StyleSheet.create({
         borderRadius: 3,
     },
     htmFilterRow:{
-        width: 280,
+        flexDirection: 'row',
     },
     htmFilterWantTo:{
         flexDirection: 'row',
@@ -546,6 +546,29 @@ const styles = StyleSheet.create({
     htmFilterSliderTrack:{
         height:5,
         bottom: 1
+    },
+    htmAdDetail:{
+        marginTop: 10,
+        alignSelf: 'center',
+    },
+    htmAdDetailBox:{
+        backgroundColor: '#E9E9E9',
+        borderRadius: 10,
+        padding: 15,
+        margin: 10,
+    },
+    htmAdDetailLabel:{
+        width: 120,
+        fontSize: 16,
+        color: '#333',
+        fontWeight: '500',
+        paddingTop: 5
+    },
+    htmAdDetailValue:{
+        width: width - 190,
+        fontSize: 14,
+        color: '#565656',
+        paddingTop: 5
     },
     htmProfileStatusIcon:{
         fontSize: 12,
@@ -726,6 +749,139 @@ const styles = StyleSheet.create({
         fontSize: 17,
         fontWeight: 'bold',
         color: '#E0AE27'
+    },
+
+    htmAdFilterBtn:{
+        position:'absolute',
+        top: Platform.OS === 'ios'?5:0,
+        right: 10
+    },
+    htmAdFilterBtnText:{
+        fontSize: 40,
+        color: '#E1E1E1'
+    },
+    htmAdFilterTitle:{
+        width: 250,
+        fontSize: 25,
+        fontFamily: 'futura-medium',
+        paddingVertical: 15,
+        textAlign: 'center',
+        alignSelf: 'center',
+        color: '#333'
+    },
+    htmAdFilterSubTitle:{
+        marginTop: -17,
+        marginBottom: 7,
+        width: 250,
+        fontSize: 15,
+        textAlign: 'center',
+        alignSelf: 'center',
+        color: '#565656',
+        fontStyle: 'italic'
+    },
+    htmAdFilterLabel:{
+        marginLeft: 5,
+        marginVertical: 5,
+    },
+
+    htmAdsLabel:{
+        marginBottom: 5,
+    },
+    htmAdsOptional:{
+        fontSize: 15,
+    },
+    htmAdList: {
+        backgroundColor: '#FCFCFC',
+    },
+    htmAdTab:{
+        flexDirection: 'row',
+        alignItems: 'center',
+        backgroundColor: '#ECECEC',
+        marginHorizontal: 10,
+        marginTop: 10,
+        borderRadius: 5,
+        padding: 10,
+    },
+    htmAdUserImage:{
+        width: 50,
+        height: 50,
+        borderRadius: 25,
+        marginRight:10,
+    },
+    htmAdTabDetail:{
+        flexDirection: 'row',
+    },
+    htmAdUserTitle:{
+        width: width-240,
+        flexDirection: 'row',
+        alignItems: 'center',
+    },
+    htmAdStatusIcon:{
+        fontSize: 14,
+        color: '#C2C2C2',
+        marginRight: 5,
+    },
+    htmAdOnlineStatus:{
+        color: '#00DD00',
+    },
+    htmAdUserName:{
+        width: width-260,
+        fontSize: 17,
+        color: '#333',
+        fontWeight: '500'
+    },
+    htmAdConversion:{
+        width: width-260,
+        fontSize: 14,
+        color: '#4A4A4A',
+    },
+    htmAdConversionLimits:{
+        width: width-240,
+        fontSize: 13,
+        color: '#787878',
+        paddingTop: 2,
+    },
+    htmAdPriceDetail:{
+        width: 130,
+        paddingLeft: 5,
+        alignItems: 'flex-end'
+    },
+    htmAdPriceTitle:{
+        fontSize: 15,
+        color: '#121212',
+        marginTop: 5
+    },
+    htmAdPriceValue:{
+        fontSize: 14,
+        color: '#787878',
+        paddingTop: 2,
+        textAlign: 'right'
+    },
+    htmAdsHr:{
+        width: width-30,
+        borderBottomWidth: 1,
+        borderColor: '#9F9F9F',
+        margin: 15,
+        marginBottom: 5
+    },
+    htmAdEmailIcon:{
+        top: 2,
+        paddingRight: 5,
+        fontSize: 16,
+        color: '#565656'
+    },
+    htmAdEmailText:{
+        fontSize: 18,
+        color: '#565656'
+    },
+    htmAdRating:{
+        flexDirection: 'row',
+        marginVertical: 5,
+    },
+    htmAdRatingIcon:{
+        fontSize: 30,
+        color: '#FFB400',
+        marginHorizontal: 5,
     },
 });
 
