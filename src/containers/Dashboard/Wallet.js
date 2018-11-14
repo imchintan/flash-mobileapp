@@ -45,7 +45,7 @@ class Wallet extends Component<{}> {
 
     componentDidMount(){
         this.props.getBalanceV2(this.props.currency_type);
-        this.props.getCoinMarketCapDetail();
+        this.props.getFiatCurrencyRate();
     }
 
     render() {

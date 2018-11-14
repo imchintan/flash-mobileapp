@@ -9,6 +9,8 @@ import * as migrateAccount from './migrateAccount';
 import * as payoutCode from './payoutCode';
 import * as sharingCode from './sharingCode';
 import * as kwayisi from './kwayisi';
+import * as coingecko from './coingecko';
+import * as utils from './utils';
 
 module.exports = {
     ...login,
@@ -22,4 +24,6 @@ module.exports = {
     ...payoutCode,
     ...sharingCode,
     ...kwayisi,
+    ...coingecko,
+    ...utils,
 }

@@ -57,7 +57,7 @@ export const getBalance = (refresh = false) => {
                         + ' '+ utils.getCurrencyUnitUpcase( params.currency_type)):null
                     }
                 });
-                dispatch(getCoinMarketCapDetail());
+                dispatch(getFiatCurrencyRate());
             }
         }).catch(e=>{
             dispatch({
@@ -162,6 +162,7 @@ export const getProfile = () => {
                         profile
                     }
                 });
+                dispatch(getFiatCurrencyRate());
             }else if(d.rc == 3){
                 dispatch({
                     type: types.CUSTOM_ACTION,
@@ -579,7 +580,8 @@ export const isValidEmailForWallet = (email, profile, currency_type) => {
 
 export const changeFiatCurrency = (fiat_currency) =>{
     return (dispatch,getState) => {
-        let balances = getState().params.balances
+        let params = getState().params;
+        let balances = params.balances
             .map((bal)=>({...bal,per_value:0,amt2:0}))
         dispatch({
             type: types.CHANGE_CURRENCY,
@@ -592,7 +594,7 @@ export const changeFiatCurrency = (fiat_currency) =>{
             }
         });
         AsyncStorage.setItem('fiat_currency',fiat_currency.toString());
-        dispatch(getCoinMarketCapDetail(true));
+        if(params.profile) dispatch(getFiatCurrencyRate(true));
     }
 }
 
@@ -689,7 +691,7 @@ export const refreshingHome = (refresh=true) =>{
     }
 }
 
-export const getCoinMarketCapDetail = (loading=false) =>{
+export const getFiatCurrencyRate = (loading=false) =>{
     return (dispatch,getState) => {
         if(loading)
             dispatch({
@@ -705,14 +707,9 @@ export const getCoinMarketCapDetail = (loading=false) =>{
                         type: types.CUSTOM_ACTION,
                         payload: {balanceLoader:true}
                     })
-                await apis.getCoinMarketCapDetail(bal.currency_type, _fiat_currency).then((d)=>{
+                await apis.getFiatCurrencyRate(constants.COIN_GECKO_CURRENCY_IDS[bal.currency_type]).then((d)=>{
                     if(!d) return;
-                    let per_value = 0;
-                    if(d.quotes &&
-                        d.quotes[constants.FIAT_CURRENCY_UNIT[_fiat_currency]] &&
-                        d.quotes[constants.FIAT_CURRENCY_UNIT[_fiat_currency]].price){
-                        per_value = Number(d.quotes[constants.FIAT_CURRENCY_UNIT[_fiat_currency]].price.toFixed(3));
-                    }
+                    let per_value = d.toFixed(3);
                     if(_fiat_currency !== params.fiat_currency){
                         per_value *= (params.fiat_per_usd || 0)
                     }
@@ -748,19 +745,8 @@ export const getCoinMarketCapDetail = (loading=false) =>{
                     })
             });
         }
-        let fiat_currency = getState().params.fiat_currency;
-        let _fiat_currency = fiat_currency;
-        switch (fiat_currency) {
-            case constants.FIAT_CURRENCY.GHS:
-            case constants.FIAT_CURRENCY.NGN:
-            case constants.FIAT_CURRENCY.AED:
-                _fiat_currency = constants.FIAT_CURRENCY.USD;
-                dispatch(exchanges.getFiatExchangeRates(()=>cb(_fiat_currency)));
-                break;
-            default:
-                cb(_fiat_currency);
-                break;
-        }
+        let _fiat_currency = constants.FIAT_CURRENCY.USD;
+        dispatch(exchanges.getFiatExchangeRates(()=>cb(_fiat_currency)));
     }
 }
 

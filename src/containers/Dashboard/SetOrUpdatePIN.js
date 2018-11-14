@@ -95,7 +95,7 @@ class SetOrUpdatePIN extends Component<{}> {
                         NavigationActions.navigate({ routeName: 'Home' })
                     ],
                 });
-                setTimeout(()=>this.props.navigation.dispatch(resetAction),100);
+                setTimeout(()=>this.props.navigation.dispatch(resetAction),500);
             }
         }
     }

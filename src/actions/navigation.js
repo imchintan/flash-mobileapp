@@ -13,7 +13,7 @@ import secrets from 'secrets.js-grempe';
 import nacl from 'tweetnacl';
 import TouchID from 'react-native-touch-id'
 
-import { getCoinMarketCapDetail, getProfile, changeFiatCurrency } from '@actions/account';
+import { getFiatCurrencyRate, getProfile, changeFiatCurrency } from '@actions/account';
 
 export const init = () => {
     return async (dispatch,getState) => {
@@ -61,7 +61,6 @@ export const init = () => {
 
         if(!user){
             dispatch({ type: types.INIT, payload });
-            dispatch(getCoinMarketCapDetail());
         } else {
             payload.profile = JSON.parse(user);
             if(payload.profile.auth_version < 4){
@@ -78,7 +77,7 @@ export const init = () => {
             });
             dispatch(getProfile());
             dispatch(getMyWallets(payload.profile));
-            dispatch(getCoinMarketCapDetail(true));
+            dispatch(getFiatCurrencyRate(true));
         }
         utils.getLocation().then(res => {
             if(res.rc == 1){

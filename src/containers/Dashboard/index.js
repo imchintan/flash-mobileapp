@@ -103,7 +103,7 @@ const EnhancedComponent = class extends React.Component {
     componentDidMount(){
 
         if(!this.coinmarketcapValue)
-            this.coinmarketcapValue = setInterval(this.props.getCoinMarketCapDetail, 60000);
+            this.coinmarketcapValue = setInterval(this.props.getFiatCurrencyRate, 60000);
 
         if(!this.getMessages)
             this.getMessages = setInterval(this.props.getMessages, 10000);

@@ -127,6 +127,14 @@ export const CURRENCY_TYPE_UNIT = {
     5: 'ETH',
 };
 
+export const COIN_GECKO_CURRENCY_IDS = {
+    1: 'flash',
+    2: 'bitcoin',
+    3: 'litecoin',
+    4: 'dash',
+    5: 'ethereum',
+};
+
 export const CURRENCY_TYPE_UNIT_UPCASE = {
     1: 'FLASH',
     2: 'BTC',
