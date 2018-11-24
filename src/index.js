@@ -77,6 +77,10 @@ const store = createStore(
 );
 
 class Root extends React.Component {
+    componentDidMount(){
+        global.store = store;
+    }
+
     render() {
         return (
             <Provider store={store}>

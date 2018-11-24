@@ -11,6 +11,7 @@ import * as sharingCode from './sharingCode';
 import * as kwayisi from './kwayisi';
 import * as coingecko from './coingecko';
 import * as utils from './utils';
+import * as wagering from './wagering';
 
 module.exports = {
     ...login,
@@ -26,4 +27,5 @@ module.exports = {
     ...kwayisi,
     ...coingecko,
     ...utils,
+    ...wagering,
 }

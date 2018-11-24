@@ -709,11 +709,12 @@ export const getFiatCurrencyRate = (loading=false) =>{
                     })
                 await apis.getFiatCurrencyRate(constants.COIN_GECKO_CURRENCY_IDS[bal.currency_type]).then((d)=>{
                     if(!d) return;
+                    params = getState().params;
                     let per_value = d.toFixed(3);
                     if(_fiat_currency !== params.fiat_currency){
                         per_value *= (params.fiat_per_usd || 0)
                     }
-                    let balances = getState().params.balances;
+                    let balances = params.balances;
                     let idx  =  balances.findIndex(b => b.currency_type === bal.currency_type);
                     let balance = (params.currency_type == bal.currency_type)?
                         params.balance:balances[idx].amt;
@@ -745,8 +746,12 @@ export const getFiatCurrencyRate = (loading=false) =>{
                     })
             });
         }
+        let fiat_currency = getState().params.fiat_currency;
         let _fiat_currency = constants.FIAT_CURRENCY.USD;
-        dispatch(exchanges.getFiatExchangeRates(()=>cb(_fiat_currency)));
+        if(fiat_currency !== constants.FIAT_CURRENCY.USD)
+            dispatch(exchanges.getFiatExchangeRates(()=>cb(_fiat_currency)));
+        else
+            cb(fiat_currency);
     }
 }
 

@@ -364,3 +364,19 @@ export const SOUND = {
     RECEIVE: new Sound(require('@sounds/receive.mp3'), (error) => error && console.log('failed to load the sound', error)),
     SEND: new Sound(require('@sounds/send.mp3'), (error) => error && console.log('failed to load the sound', error)),
 }
+
+// Wagering Oracle Event status
+export const ORACLE_EVENT = {
+    ACTIVE_WAITING_FOR_RESULT: 0,
+    WINNER_DECLARED: 1,
+    TIED: 2,
+    CANCELLED_OR_ABANDONED: 3
+}
+
+export const ORACLE_EVENT_WAGER = {
+    ACTIVE_WAITING_FOR_RESULT: 0,
+    WON: 1,
+    LOST: 2,
+    TIED: 3,
+    CANCELLED_OR_ABANDONED: 4
+}

@@ -54,7 +54,7 @@ class Home extends Component<{}> {
             this.props.customAction({isNewSession:false});
             constants.SOUND.SUCCESS.play();
         }
-        this.refreshingHome();
+        setTimeout(this.refreshingHome.bind(this),100);
     }
 
     componentWillUnmount(){
@@ -64,7 +64,12 @@ class Home extends Component<{}> {
 
     _handleAppStateChange(nextAppState){
         if ((!!this.props.pin && !this.props.lockApp && this.state.appState.match(/inactive|background/) && nextAppState === 'active')){
-            this.props.navigation.navigate('Lock');
+            if((this.state.backgroundStateTime + 1000*60) < new Date().getTime()){
+                this.props.navigation.navigate('Lock');
+            }
+        }
+        if(nextAppState !== 'active'){
+            this.setState({backgroundStateTime: new Date().getTime()});
         }
         this.mount && this.setState({appState: nextAppState});
     }
@@ -143,6 +148,16 @@ class Home extends Component<{}> {
                                 </View>
                             </TouchableOpacity>
                         )}
+                        <Text style={styles.label}>Features</Text>
+                        <View style={styles.hr}/>
+                        <TouchableOpacity style={styles.featuresTab}
+                            onPress={()=>this.props.navigation.navigate('Wagering')}>
+                            <View style={styles.adminTabTitle}>
+                                <Icon style={styles.featuresTabTitleIcon} name='cubes'/>
+                                <Text style={styles.featuresTabTitleLabel}>Wagering</Text>
+                            </View>
+                            <Icon style={styles.featuresTabRightIcon} name='angle-right'/>
+                        </TouchableOpacity>
                         <Text style={styles.label}>Admin</Text>
                         <View style={styles.hr}/>
                         <TouchableOpacity style={styles.adminTab}
@@ -168,16 +183,6 @@ class Home extends Component<{}> {
                             </View>
                             <Icon style={styles.adminTabRightIcon} name='angle-right'/>
                         </TouchableOpacity>
-                        {/*
-                        <TouchableOpacity style={styles.adminTab}
-                            onPress={()=>this.props.navigation.navigate('Settings')}>
-                            <View style={styles.adminTabTitle}>
-                                <Icon style={styles.adminTabTitleIcon} name='cog'/>
-                                <Text style={styles.adminTabTitleLabel}>Settings</Text>
-                            </View>
-                            <Icon style={styles.adminTabRightIcon} name='angle-right'/>
-                        </TouchableOpacity>
-                        */}
                         <TouchableOpacity style={styles.adminTab}
                             onPress={()=>this.props.navigation.navigate('SecurityCenter')}>
                             <View style={styles.adminTabTitle}>

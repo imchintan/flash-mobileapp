@@ -82,6 +82,39 @@ const styles = StyleSheet.create({
         color:'#FFFFFF',
         fontSize: FontSize(13),
     },
+    featuresTab:{
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        padding: 10,
+        width: '100%',
+        height: 45,
+        borderRadius: 5,
+        backgroundColor: '#443e36',
+        marginBottom: 10,
+    },
+    featuresTabTitleIcon:{
+        width: 26,
+        textAlign: 'center',
+        fontSize: 22,
+        color: '#E2E2E2',
+        marginRight: 6,
+    },
+    featuresTabTitleLabel:{
+        fontSize: 17,
+        color: '#E2E2E2',
+        fontFamily: 'futura-medium',
+    },
+    featuresTabRightIcon:{
+        ...Platform.select({
+            ios: {
+                height: 40,
+                bottom: 1
+            },
+        }),
+        fontSize: 40,
+        color: '#929292',
+    },
     adminTab:{
         flexDirection: 'row',
         alignItems: 'center',

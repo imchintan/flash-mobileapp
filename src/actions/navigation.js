@@ -71,6 +71,10 @@ export const init = () => {
             if(last_message_datetime){
                 payload.last_message_datetime = Number(last_message_datetime);
             }
+            let oracleProfile = await AsyncStorage.getItem('oracleProfile');
+            if(oracleProfile){
+                payload.oracleProfile = Number(oracleProfile);
+            }
             dispatch({
                 type: types.LOGIN_SUCCESS,
                 payload
