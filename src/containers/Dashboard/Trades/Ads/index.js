@@ -29,12 +29,12 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ActionCreators } from '@actions';
 
-import HTMAds from './Ads';
-import HTMMyAds from './MyAds';
+import Ads from './Ads';
+import MyAds from './MyAds';
 
 const TabNav = createMaterialTopTabNavigator({
-    'Trade Ads': { screen: HTMAds },
-    'My Ads': { screen: HTMMyAds },
+    'Trade Ads': { screen: Ads },
+    'My Ads': { screen: MyAds },
 },{
     navigationOptions: ({ navigation, screenProps }) => ({
     }),
@@ -68,7 +68,7 @@ const TabNav = createMaterialTopTabNavigator({
     swipeEnabled: true,
 });
 
-class HTMAdTab extends React.Component {
+class AdsTab extends React.Component {
 
     static navigationOptions = {
         gesturesEnabled: true,
@@ -107,7 +107,7 @@ class HTMAdTab extends React.Component {
                             <Icon style={styles.headerBackIcon} name='angle-left'/>
                         </TouchableOpacity>
                     </HeaderLeft>
-                    <HeaderTitle>HTM Ads</HeaderTitle>
+                    <HeaderTitle>Online Trades</HeaderTitle>
                     <HeaderRight>
                         <TouchableOpacity
                             onPress={()=>this.setState({showFilter:!this.state.showFilter,
@@ -281,4 +281,4 @@ function mapDispatchToProps(dispatch) {
     return bindActionCreators(ActionCreators, dispatch);
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(HTMAdTab);
+export default connect(mapStateToProps, mapDispatchToProps)(AdsTab);

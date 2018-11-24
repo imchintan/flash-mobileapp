@@ -52,7 +52,7 @@ export const getChatRooms = () => {
     }
 }
 
-export const goToChatRoom = (username,cb, channelId=null) => {
+export const goToChatRoom = (username, cb, channelId=null) => {
     return (dispatch,getState) => {
         let params = getState().params;
         let rooms =  params.chatRooms || [];
@@ -107,8 +107,8 @@ export const checkTradingFeedBack = () => {
         let chatRoom = hasFeedBackRemainChatRooms[0];
         let username = (chatRoom.m[0] == params.profile.username)?
             chatRoom.m[1]:chatRoom.m[0];
-        if(!params.HTMNavigation)
-            params.DashboardNavigation.navigate('HTM');
+        if(!params.TradesNavigation)
+            params.DashboardNavigation.navigate('Trades');
         let _cb = () =>{
             params = getState().params;
             let hasFeedBackRemain = chatRoom.c.filter((ch)=>!ch.a && (!ch.f
@@ -126,7 +126,7 @@ export const checkTradingFeedBack = () => {
                 }
             });
             dispatch(updateRoomMemberDetail());
-            params.HTMNavigation.navigate('FeedBack');
+            params.TradesNavigation.navigate('FeedBack');
         }
         if(!params.htm || params.htm.username !== username)
             dispatch(htm.getHTMDetail(username,_cb));

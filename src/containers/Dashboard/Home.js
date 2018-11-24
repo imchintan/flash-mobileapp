@@ -157,10 +157,10 @@ class Home extends Component<{}> {
                         <Text style={styles.label}>Features</Text>
                         <View style={styles.hr}/>
                         <TouchableOpacity style={styles.featuresTab}
-                            onPress={()=>this.props.navigation.navigate('HTM')}>
+                            onPress={()=>this.props.navigation.navigate('Trades')}>
                             <View style={styles.adminTabTitle}>
                                 <Icon style={styles.featuresTabTitleIcon} name='globe'/>
-                                <Text style={styles.featuresTabTitleLabel}>Human Teller Machine (HTM)</Text>
+                                <Text style={styles.featuresTabTitleLabel}>Trades</Text>
                             </View>
                             <Icon style={styles.featuresTabRightIcon} name='angle-right'/>
                         </TouchableOpacity>

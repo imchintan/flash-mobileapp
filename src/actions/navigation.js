@@ -49,7 +49,7 @@ export const init = () => {
         if(pin){
             payload.pin = pin.toString();
         }
-        
+
         let tradeCaution = await AsyncStorage.getItem('tradeCaution');
         if(tradeCaution){
             payload.tradeCaution = true;
@@ -95,8 +95,8 @@ export const init = () => {
         utils.getLocation().then(res => {
             if(res.rc == 1){
                 let location = res.info;
-                dispatch({ type: types.SET_LOCATION, location });
-                dispatch({ type: types.SET_PUBLIC_IP, ip: res.info.ip });
+                dispatch({ type: types.SET_LOCATION, payload: { location } });
+                dispatch({ type: types.SET_PUBLIC_IP, payload: { ip: res.info.ip } });
                 if(location.country_code && !fiat_currency){
                     fiat_currency = utils.getFiatCurrencyByCountry(location.country_code);
                     if(fiat_currency)
@@ -104,7 +104,7 @@ export const init = () => {
                 }
             }else{
                 utils.publicIP().then(ip => {
-                    dispatch({ type: types.SET_PUBLIC_IP, ip });
+                    dispatch({ type: types.SET_PUBLIC_IP, payload: { ip }});
                 });
             }
         }).catch(e=>{

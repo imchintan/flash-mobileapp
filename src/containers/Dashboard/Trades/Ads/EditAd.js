@@ -31,7 +31,7 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {ActionCreators} from '@actions';
 
-class HTMEditAd extends Component < {} > {
+class EditAd extends Component < {} > {
 
     static navigationOptions = {
         header: null,
@@ -474,4 +474,4 @@ function mapDispatchToProps(dispatch) {
     return bindActionCreators(ActionCreators, dispatch);
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(HTMEditAd);
+export default connect(mapStateToProps, mapDispatchToProps)(EditAd);

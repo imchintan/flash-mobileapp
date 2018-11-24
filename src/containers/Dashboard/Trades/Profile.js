@@ -32,7 +32,7 @@ import { PROFILE_URL } from '@src/config';
 import * as constants from '@src/constants';
 import * as utils from '@lib/utils';
 
-class HTM extends Component < {} > {
+class Profile extends Component < {} > {
 
     static navigationOptions = {
         header: null,
@@ -61,7 +61,7 @@ class HTM extends Component < {} > {
                                 style={styles.headerBackIcon} name='angle-left' />
                         </TouchableOpacity>
                     </HeaderLeft>
-                    <HeaderTitle>HTM</HeaderTitle>
+                    <HeaderTitle>Trades</HeaderTitle>
                     <HeaderRight>
                         <TouchableOpacity onPress={()=>this.props.navigation.navigate('ChatHistory')}>
                             <Icon style={styles.headerFAIcon}
@@ -87,7 +87,7 @@ class HTM extends Component < {} > {
                                 {this.props.htmProfile.display_name ||
                                 this.props.profile.display_name}</Text>
                             <TouchableOpacity onPress={()=>this.props
-                                .navigation.navigate('EditHTMProfile')}>
+                                .navigation.navigate('EditProfile')}>
                                 <Icon style={styles.htmProfileEditIcon} name={'edit'}/>
                             </TouchableOpacity>
                         </View>
@@ -119,7 +119,7 @@ class HTM extends Component < {} > {
                                     )}
                                 </View>
                                 <Text style={styles.htmProfileReview}
-                                    onPress={()=>this.props.navigation.navigate('HTMReviews')}>
+                                    onPress={()=>this.props.navigation.navigate('Reviews')}>
                                     Reviews
                                 </Text>
                                 {this.props.htmProfile.success_txns>0?<Text
@@ -137,7 +137,7 @@ class HTM extends Component < {} > {
                         </View>
                     </View>
                     <Text style={styles.htmProfileDetailTitle}>
-                        Welcome to Human Teller Machine (HTM)!
+                        Welcome to Trades!
                     </Text>
                     <Text style={styles.htmProfileDetailNote}>
                         {"Find cryptocurrency traders from around the globe."}
@@ -145,38 +145,38 @@ class HTM extends Component < {} > {
                     <Button
                         style={[{
                             marginBottom: 20,
-                            width: 180,
+                            width: 230,
                             alignItems: 'center'
                         },!this.props.htmProfile.is_active && {
                             backgroundColor: '#C2C2C2',
                         }]}
-                        value={'Find a Trader'}
+                        value={'Find a Local Trade'}
                         onPress={()=>{
                             if(!!this.props.htmProfile.is_active)
-                                this.props.navigation.navigate('HTMListingMap')
+                                this.props.navigation.navigate('FindTrades')
                             else
-                                return Toast.showTop("Please enable your HTM profile!");
+                                return Toast.showTop("Please enable your Trade Profile!");
                         }} />
                     <Button
                         style={[{
                             marginBottom: 20,
-                            width: 180,
+                            width: 230,
+                            alignItems: 'center'
+                        },!this.props.htmProfile.is_active && {
+                            backgroundColor: '#C2C2C2',
+                        }]}
+                        value={'Online Trades'}
+                        onPress={()=>this.props.navigation.navigate('Ads')} />
+                    <Button
+                        style={[{
+                            marginBottom: 20,
+                            width: 230,
                             alignItems: 'center'
                         },!this.props.htmProfile.is_active && {
                             backgroundColor: '#C2C2C2',
                         }]}
                         value={'Trade History'}
                         onPress={()=>this.props.navigation.navigate('ChatHistory')} />
-                    <Button
-                        style={[{
-                            marginBottom: 20,
-                            width: 180,
-                            alignItems: 'center'
-                        },!this.props.htmProfile.is_active && {
-                            backgroundColor: '#C2C2C2',
-                        }]}
-                        value={'Trade Ads'}
-                        onPress={()=>this.props.navigation.navigate('HTMAds')} />
                     {this.props.favorite_htms.length > 0?
                     <View style={{marginHorizontal: 20}}>
                         <Text style={styles.label}>Favorite Traders</Text>
@@ -186,7 +186,7 @@ class HTM extends Component < {} > {
                                 key={'_htm_'+htm.username}
                                 onPress={()=>this.props.getHTMDetail(htm.username,
                                     ()=>this.setState({htm:null},
-                                    ()=>this.props.navigation.navigate('HTMDetail')))}
+                                    ()=>this.props.navigation.navigate('TradeDetail')))}
                                 style={styles.htmDetailTab}>
                                 <Image style={styles.htmProfileDetailTabImg}
                                     source={htm.profile_pic_url?
@@ -251,27 +251,27 @@ class HTM extends Component < {} > {
                 </Content>
                 <Footer>
                     <Text style={styles.htmRiskWarningText}>
-                        {"It's recommended to trade with a new HTM user only "+
+                        {"It's recommended to trade with a new trade user only "+
                          "after meeting in person. FLASH is not responsible for "+
-                         "any fraud by the HTM users."}
+                         "any fraud by the trade users."}
                     </Text>
                 </Footer>
                 {!this.props.loading && !this.props.htmProfile.is_active?
                     <View style={styles.htmProfileSetup}>
                         <Text style={styles.htmProfileSetupTitle}>
-                            Welcome to Human Teller Machine (HTM)!
+                            Welcome to Trades!
                         </Text>
                         <Text style={styles.htmProfileSetupNote}>
                             {"Find cryptocurrency traders from around the globe."}
                         </Text>
                         <Button
                             value={this.props.htmProfile.display_name?
-                                'Activate HTM Profile':'Setup HTM Profile'}
+                                'Activate HTM Profile':'Setup Trade Profile'}
                             onPress={()=>{
                                 if(this.props.htmProfile.display_name)
                                     this.props.enableHTMProfile();
                                 else
-                                    this.props.navigation.navigate('SetupHTMProfile');
+                                    this.props.navigation.navigate('SetupProfile');
                             }} />
                     </View>:null
                 }
@@ -296,4 +296,4 @@ function mapDispatchToProps(dispatch) {
     return bindActionCreators(ActionCreators, dispatch);
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(HTM);
+export default connect(mapStateToProps, mapDispatchToProps)(Profile);

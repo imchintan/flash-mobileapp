@@ -45,12 +45,19 @@ class ShareLocation extends Component < {} > {
         super(props);
         this.state = {
             loading: true,
+            setLocation: (this.props.navigation.state.params.setLocation)
         };
     }
 
     componentDidMount(){
         this.mount = true;
-        this.checkLocationPermission();
+        if(this.state.setLocation && this.props.location && this.props.location.latitude){
+            this.setState({
+                location: this.props.location,
+            });
+        } else {
+            this.checkLocationPermission();
+        }
         setTimeout(()=>this.mount &&
             this.setState({loading:false}),200);
 
@@ -108,9 +115,9 @@ class ShareLocation extends Component < {} > {
                             style={styles.headerBackIcon} name='angle-left'/>
                         </TouchableOpacity>
                     </HeaderLeft>
-                    <HeaderTitle>Share Location</HeaderTitle>
+                    <HeaderTitle>{this.state.setLocation?'':'Share '}Location</HeaderTitle>
                 </Header>
-                {!this.props.position && this.props.location_permission
+                {!this.props.position && !this.state.location && this.props.location_permission
                     && this.props.location_error_code == 3?
                     <View style={styles.htmMapLocationErrorNote}>
                         <Text style={styles.htmMapLocationErrorNoteText}>
@@ -126,7 +133,7 @@ class ShareLocation extends Component < {} > {
                             }}/>
                     </View>:null
                 }
-                {!this.props.position && this.props.location_permission
+                {!this.props.position && !this.state.location && this.props.location_permission
                     && this.props.location_error_code == 2?
                     <View style={styles.htmMapLocationErrorNote}>
                         <Text style={styles.htmMapLocationErrorNoteText}>
@@ -147,7 +154,7 @@ class ShareLocation extends Component < {} > {
                             }}/>
                     </View>:null
                 }
-                {!this.props.position && !this.props.location_permission?
+                {!this.props.position && !this.state.location && !this.props.location_permission?
                     <View style={styles.htmMapLocationErrorNote}>
                         <Text style={styles.htmMapLocationErrorNoteText}>
                             {"It seems you didn't allow Location permission "+
@@ -163,10 +170,10 @@ class ShareLocation extends Component < {} > {
                             }}/>
                     </View>:null
                 }
-                {this.props.position?<MapView
+                {this.props.position || this.state.location?<MapView
                     style={styles.htmMap}
                     onMapReady={()=>Toast.showTop("Hold and move PIN to share other than your current location",{
-                        duration: 10000
+                        duration: this.state.setLocation?5000:10000
                     })}
                     clusterColor = '#E0AE27'
                     clusterTextColor = '#191714'
@@ -175,20 +182,18 @@ class ShareLocation extends Component < {} > {
                     customMapStyle={constants.CUSTOM_MAP_STYLE}
                     showsUserLocation={true}
                     followsUserLocation={true}
-                    showsMyLocationButton={true}
                     onRegionChangeComplete={(region)=>{
-                        if(this.state.region === region || Platform.OS !== 'ios') return;
+                        if(this.state.region === region) return;
                         setTimeout(()=>this.setState({region}),100);
                     }}
+
                     initialRegion={{
-                        latitude: this.props.position.latitude,
-                        longitude: this.props.position.longitude,
+                        ...(this.props.position || this.state.location),
                         latitudeDelta: 0.0922,
                         longitudeDelta: 0.0421,
                     }}
                     region={this.state.region || {
-                        latitude: this.props.position.latitude,
-                        longitude: this.props.position.longitude,
+                        ...(this.props.position || this.state.location),
                         latitudeDelta: 0.0922,
                         longitudeDelta: 0.0421,
                     }}>
@@ -197,28 +202,36 @@ class ShareLocation extends Component < {} > {
                         onDragEnd={(e)=>this.setState({location:e.nativeEvent.coordinate})}
                         key={'_map_pin_current_location'}
                         coordinate={{
-                            latitude: this.props.position.latitude,
-                            longitude: this.props.position.longitude
+                            ...(this.props.position || this.state.location)
                         }}
                         image={mapPin}/>
                 </MapView>:null}
-                {this.props.position && <Button
+                {(this.props.position || this.state.location) && <Button
                     onPress={()=>{
                         this.setState({loading:true});
-                        let cb = (success)=>{
-                            if(success) this.backHandler();
-                            else this.setState({loading:false});
-                        };
-                        if(this.state.location)
-                            this.props.sendChatMessage(null,this.state.location,cb)
-                        else
-                            this.props.sendChatMessage(null,{
-                                latitude: this.props.position.latitude,
-                                longitude: this.props.position.longitude
-                            },cb)
+                        if(!this.state.setLocation){
+                            let cb = (success)=>{
+                                if(success) this.backHandler();
+                                else this.setState({loading:false});
+                            };
+                            if(this.state.location)
+                                this.props.sendChatMessage(null,this.state.location,cb)
+                            else
+                                this.props.sendChatMessage(null,{
+                                    latitude: this.props.position.latitude,
+                                    longitude: this.props.position.longitude
+                                },cb)
+                        }else{
+                            this.props.navigation.state
+                                .params.setLocation({
+                                    lat: this.state.location.latitude,
+                                    long: this.state.location.longitude
+                                })
+                            this.backHandler();
+                        }
                     }}
                     style={{position: 'absolute', bottom: 20}}
-                    value={'Share Location'}/>}
+                    value={this.state.setLocation?'Set Location':'Share Location'}/>}
                 <Loader show={this.props.loading || this.state.loading} />
             </Container>
         )
@@ -230,6 +243,7 @@ function mapStateToProps({params}) {
         loading: params.loading,
         nightMode: params.nightMode,
         position: params.position,
+        location: params.location,
         location_permission: params.location_permission || false,
         location_error_code: params.location_error_code || 0,
     };

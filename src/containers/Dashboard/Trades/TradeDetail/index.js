@@ -72,7 +72,7 @@ const TabNav = createMaterialTopTabNavigator({
     swipeEnabled: false,
 });
 
-class HTMDetail extends Component < {} > {
+class TradeDetail extends Component < {} > {
 
     static navigationOptions = {
         header: null,
@@ -205,4 +205,4 @@ function mapDispatchToProps(dispatch) {
     return bindActionCreators(ActionCreators, dispatch);
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(HTMDetail);
+export default connect(mapStateToProps, mapDispatchToProps)(TradeDetail);

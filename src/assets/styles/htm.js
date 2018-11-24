@@ -753,8 +753,8 @@ const styles = StyleSheet.create({
 
     htmAdFilterBtn:{
         position:'absolute',
-        top: Platform.OS === 'ios'?5:0,
-        right: 10
+        top: Platform.OS === 'ios'?10:0,
+        right: 15
     },
     htmAdFilterBtnText:{
         fontSize: 40,
@@ -777,7 +777,6 @@ const styles = StyleSheet.create({
         textAlign: 'center',
         alignSelf: 'center',
         color: '#565656',
-        fontStyle: 'italic'
     },
     htmAdFilterLabel:{
         marginLeft: 5,
@@ -826,12 +825,12 @@ const styles = StyleSheet.create({
     },
     htmAdUserName:{
         width: width-260,
-        fontSize: 17,
+        fontSize: 16,
         color: '#333',
         fontWeight: '500'
     },
     htmAdConversion:{
-        width: width-260,
+        width: width-110,
         fontSize: 14,
         color: '#4A4A4A',
     },
@@ -882,6 +881,19 @@ const styles = StyleSheet.create({
         fontSize: 30,
         color: '#FFB400',
         marginHorizontal: 5,
+    },
+    htmProfileFixLocationText:{
+        marginLeft: 5,
+        fontSize: 13,
+        color: '#454545'
+    },
+    htmProfileFixLocationBtn:{
+        borderBottomWidth: 1,
+        borderColor: '#0645AD'
+    },
+    htmProfileFixLocationBtnText:{
+        fontSize: 18,
+        color: '#0645AD'
     },
 });
 

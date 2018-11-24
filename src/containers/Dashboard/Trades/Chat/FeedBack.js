@@ -92,7 +92,7 @@ class FeedBack extends Component < {} > {
             const resetAction = StackActions.reset({
                 index: 2,
                 actions: [
-                    NavigationActions.navigate({ routeName: 'HTM' }),
+                    NavigationActions.navigate({ routeName: 'Profile' }),
                     NavigationActions.navigate({ routeName: 'ChatHistory' }),
                     NavigationActions.navigate({ routeName: 'ChatChannel' })
                 ],

@@ -65,7 +65,6 @@ class ChatRoom extends Component < {} > {
     backHandler(){
         this.props.navigation.goBack();
         return this.mount;
-
     }
 
     _chatHandler=(d)=>{

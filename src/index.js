@@ -28,7 +28,7 @@ import reducer from '@reducers';
 import notifcationHelper from '@helpers/notifcationHelper';
 
 import firebase from 'react-native-firebase';
-import type { RemoteMessage, NotificationOpen } from 'react-native-firebase';
+import type { RemoteMessage } from 'react-native-firebase';
 
 import * as config from './config';
 console.log(config);
@@ -102,12 +102,8 @@ class Root extends React.Component {
             // Create the channel
             FCMNotification.android.createChannel(channel);
         }
-        FCMNotification.getInitialNotification((notificationOpen: NotificationOpen) => {
-            if(notificationOpen){
-                console.log('getInitialNotification', notificationOpen.notification);
-                notifcationHelper.actionHandler(notificationOpen.notification);
-            }
-        });
+        FCMNotification.getInitialNotification().then(notifcation =>
+            notifcation && notifcationHelper.actionHandler(notifcation));
         FCMNotification.onNotificationOpened(notifcationHelper.actionHandler);
 
         FCMNotification.onNotification(notifcationHelper.foregroundNotificationHandler);

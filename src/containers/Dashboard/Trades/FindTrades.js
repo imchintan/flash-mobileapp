@@ -1,5 +1,5 @@
 /**
- * Merchant Listing Map Container
+ * Find Trades in Map Container
  */
 
 import React, {Component} from 'react';
@@ -45,7 +45,7 @@ const mapPinOnline = __DEV__?require('@images/map-pin-online-debug.png'):
 const mapPinCurrentLocation = __DEV__?require('@images/current-position-debug.png'):
     require('@images/current-position.png');
 
-class HTMListingMap extends Component < {} > {
+class FindTrades extends Component < {} > {
 
     static navigationOptions = {
         header: null,
@@ -54,7 +54,14 @@ class HTMListingMap extends Component < {} > {
 
     constructor(props) {
         super(props);
+        let location = this.props.htmProfile.show_on_map == 1 &&
+        this.props.htmProfile.show_live_location ==1? null: (
+            this.props.location && this.props.location.latitude?{
+                latitude:this.props.location.latitude,
+                longitude:this.props.location.longitude,
+        }:null)
         this.state = {
+            location,
             htm:null,
             loading: true,
             showFilter: false,
@@ -72,7 +79,11 @@ class HTMListingMap extends Component < {} > {
 
     componentDidMount(){
         this.mount = true;
-        this.checkLocationPermission();
+        if(this.props.htmProfile.show_on_map == 1 &&
+            this.props.htmProfile.show_live_location == 1)
+            this.checkLocationPermission();
+        else if(this.state.location)
+            this.props.findNearByHTMs(this.state.filter, true);
         setTimeout(()=>this.mount &&
             this.setState({loading:false}),200);
     }
@@ -170,6 +181,25 @@ class HTMListingMap extends Component < {} > {
     render() {
         const styles = (this.props.nightMode?require('@styles/nightMode/htm'):
             require('@styles/htm'));
+        let markers = [];
+        if(this.props.position || this.state.location){
+            markers = this.props.htms.map((htm,index) =>
+                <Marker
+                    key={'_map_pin_'+htm.lat+'_'+htm.long}
+                    coordinate={{
+                        latitude: htm.lat,
+                        longitude: htm.long
+                    }}
+                    onPress={()=>this.setState({htm})}
+                    image={htm.isOnline?mapPinOnline:mapPin}/>
+            );
+            if(this.props.position)
+                markers.push(<Marker
+                    key={'_map_pin_current_location'}
+                    currentLocation={true}
+                    coordinate={this.props.position}
+                    image={mapPinCurrentLocation}/>);
+        }
 
         return (
             <Container>
@@ -181,7 +211,7 @@ class HTMListingMap extends Component < {} > {
                         </TouchableOpacity>
                     </HeaderLeft>
                     <HeaderTitle>Find Trade</HeaderTitle>
-                    {this.props.position?<HeaderRight>
+                    {this.props.position || this.state.location?<HeaderRight>
                         <TouchableOpacity
                             onPress={()=>this.setState({showFilter:!this.state.showFilter,
                                 htm:null})}>
@@ -193,7 +223,7 @@ class HTMListingMap extends Component < {} > {
                         </TouchableOpacity>
                     </HeaderRight>:null}
                 </Header>
-                {!this.props.position && this.props.location_permission
+                {!this.props.position && !this.state.location && this.props.location_permission
                     && this.props.location_error_code == 3?
                     <View style={styles.htmMapLocationErrorNote}>
                         <Text style={styles.htmMapLocationErrorNoteText}>
@@ -209,7 +239,7 @@ class HTMListingMap extends Component < {} > {
                             }}/>
                     </View>:null
                 }
-                {!this.props.position && this.props.location_permission
+                {!this.props.position && !this.state.location && this.props.location_permission
                     && this.props.location_error_code == 2?
                     <View style={styles.htmMapLocationErrorNote}>
                         <Text style={styles.htmMapLocationErrorNoteText}>
@@ -230,7 +260,7 @@ class HTMListingMap extends Component < {} > {
                             }}/>
                     </View>:null
                 }
-                {!this.props.position && !this.props.location_permission?
+                {!this.props.position && !this.state.location && !this.props.location_permission?
                     <View style={styles.htmMapLocationErrorNote}>
                         <Text style={styles.htmMapLocationErrorNoteText}>
                             {"It seems you didn't allow Location permission "+
@@ -246,7 +276,7 @@ class HTMListingMap extends Component < {} > {
                             }}/>
                     </View>:null
                 }
-                {this.props.position?<MapView
+                {this.props.position || this.state.location?<MapView
                     onPress={()=>{
                         if(this.state.htm)this.setState({htm:null})
                         if(this.state.showFilter)this.setState({showFilter:false})
@@ -260,34 +290,19 @@ class HTMListingMap extends Component < {} > {
                     customMapStyle={constants.CUSTOM_MAP_STYLE}
                     followsUserLocation={true}
                     showsMyLocationButton={true}
-                    initialRegion={this.calculateDelta(this.props.position,
+                    initialRegion={this.calculateDelta(
+                        this.props.position || this.state.location,
                         this.props.htms)}
-                    region={this.state.region || this.calculateDelta(this.props.position,
+                    region={this.state.region || this.calculateDelta(
+                        this.props.position || this.state.location,
                         this.props.htms)}>
-                    {this.props.htms.map((htm,index) =>
-                        <Marker
-                            key={'_map_pin_'+htm.lat+'_'+htm.long}
-                            coordinate={{
-                                latitude: htm.lat,
-                                longitude: htm.long
-                            }}
-                            onPress={()=>this.setState({htm})}
-                            image={htm.isOnline?mapPinOnline:mapPin}/>
-                    )}
-                    <Marker
-                        key={'_map_pin_current_location'}
-                        currentLocation={true}
-                        coordinate={{
-                            latitude: this.props.position.latitude,
-                            longitude: this.props.position.longitude
-                        }}
-                        image={mapPinCurrentLocation}/>
+                    {markers}
                 </MapView>:null}
                 {this.state.htm?
                     <TouchableOpacity
                         onPress={()=>this.props.getHTMDetail(this.state.htm.username,
                             ()=>this.setState({htm:null},
-                            ()=>this.props.navigation.navigate('HTMDetail')))}
+                            ()=>this.props.navigation.navigate('TradeDetail')))}
                         style={styles.htmProfileDetailTab}>
                         <Image style={styles.htmProfileDetailTabImg}
                             source={this.state.htm.profile_pic_url?
@@ -596,7 +611,8 @@ function mapStateToProps({params}) {
     return {
         loading: params.loading,
         nightMode: params.nightMode,
-        position: params.position,
+        position: params.position || null,
+        location: params.location || null,
         htms: params.htms || [],
         htmFilter: params.htmFilter || null,
         htmProfile: params.htmProfile,
@@ -612,4 +628,4 @@ function mapDispatchToProps(dispatch) {
     return bindActionCreators(ActionCreators, dispatch);
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(HTMListingMap);
+export default connect(mapStateToProps, mapDispatchToProps)(FindTrades);

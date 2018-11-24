@@ -27,7 +27,7 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {ActionCreators} from '@actions';
 
-class HTMAds extends Component < {} > {
+class Ads extends Component < {} > {
 
     static navigationOptions = {
         header: null,
@@ -88,33 +88,35 @@ class HTMAds extends Component < {} > {
                                     source={item.profile_pic_url?
                                     {uri:PROFILE_URL+item.profile_pic_url}:
                                     utils.getCurrencyIcon(constants.CURRENCY_TYPE.FLASH)} />
-                                <View style={styles.htmAdTabDetail}>
-                                    <View>
-                                        <View style={styles.htmAdUserTitle}>
-                                            <Icon style={[styles.htmAdStatusIcon,
-                                                item.is_online && styles.htmAdOnlineStatus]}
-                                                name={'circle'}/>
-                                            <Text style={styles.htmAdUserName}>
-                                                {item.display_name}
+                                <View>
+                                    <View style={styles.htmAdTabDetail}>
+                                        <View>
+                                            <View style={styles.htmAdUserTitle}>
+                                                <Icon style={[styles.htmAdStatusIcon,
+                                                    item.is_online && styles.htmAdOnlineStatus]}
+                                                    name={'circle'}/>
+                                                <Text style={styles.htmAdUserName}>
+                                                    {item.display_name}
+                                                </Text>
+                                            </View>
+                                            <Text style={styles.htmAdConversionLimits}>
+                                                {trade_limit}
                                             </Text>
                                         </View>
-                                        <Text style={styles.htmAdConversion}>
-                                            {utils.getCurrencyUnitUpcase(item.buy) + ' / ' +
-                                            utils.getCurrencyUnitUpcase(item.sell)}
-                                        </Text>
-                                        <Text style={styles.htmAdConversionLimits}>
-                                            {trade_limit}
-                                        </Text>
+                                        <View style={styles.htmAdPriceDetail}>
+                                            <Text style={styles.htmAdPriceTitle}>
+                                                Price / {utils.getCurrencyUnitUpcase(item.buy)}
+                                            </Text>
+                                            <Text style={styles.htmAdPriceValue}>{
+                                                utils.flashNFormatter(price_per,2) + ' ' +
+                                                utils.getCurrencyUnitUpcase(item.sell)}
+                                            </Text>
+                                        </View>
                                     </View>
-                                    <View style={styles.htmAdPriceDetail}>
-                                        <Text style={styles.htmAdPriceTitle}>
-                                            Price / {utils.getCurrencyUnitUpcase(item.buy)}
-                                        </Text>
-                                        <Text style={styles.htmAdPriceValue}>{
-                                            utils.flashNFormatter(price_per,2) + ' ' +
-                                            utils.getCurrencyUnitUpcase(item.sell)}
-                                        </Text>
-                                    </View>
+                                    <Text style={styles.htmAdConversion}>
+                                        Want to sell {utils.getCurrencyUnitUpcase(item.buy) + ' against ' +
+                                        utils.getCurrencyUnitUpcase(item.sell)}
+                                    </Text>
                                 </View>
                             </TouchableOpacity>
                         );
@@ -133,10 +135,6 @@ class HTMAds extends Component < {} > {
                 <Modal transparent={false} animationType="slide"
                     onRequestClose={() => this.setState({htmAd:{}})}
                     visible={!!this.state.htmAd.username}>
-                    <TouchableOpacity style={styles.htmAdFilterBtn}
-                        onPress={()=>this.setState({htmAd:{}})}>
-                        <Text style={styles.htmAdFilterBtnText}>x</Text>
-                    </TouchableOpacity>
                     <ScrollView
                         showsVerticalScrollIndicator={false}
                         bounces={false}
@@ -150,10 +148,11 @@ class HTMAds extends Component < {} > {
                             {this.props.htm.display_name}
                         </Text>
                         <Text numberOfLines={1} style={styles.htmAdFilterSubTitle}>
-                            {this.props.htm.isOnline?<Icon style={styles.htmProfileStatusIcon}
+                            {this.state.htmAd.is_online?<Icon style={styles.htmProfileStatusIcon}
                                     name={'circle'}/>:null}
-                            <Text>
-                                {(this.props.htm.isOnline?' online': 'last seen '+moment(this.props.htm.last_seen_at).fromNow())}
+                            <Text style={{fontStyle: 'italic'}}>
+                                {(this.state.htmAd.is_online?' online':
+                                'last seen '+moment(this.props.htm.last_seen_at).fromNow())}
                             </Text>
                         </Text>
                         <View style={{marginBottom: 10,alignItems: 'center'}}>
@@ -196,6 +195,15 @@ class HTMAds extends Component < {} > {
                             </View>:null}
                         </View>
                         <View style={styles.htmAdDetailBox}>
+                            <Text style={[styles.htmAdConversion,{
+                                fontSize: 16,
+                                color:'#333',
+                                paddingBottom: 5,
+                                textAlign: 'center'
+                            }]}>
+                                Want to sell {utils.getCurrencyUnitUpcase(this.state.htmAd.buy) + ' against ' +
+                                utils.getCurrencyUnitUpcase(this.state.htmAd.sell)}
+                            </Text>
                             <View style={styles.htmFilterRow}>
                                 <Text style={styles.htmAdDetailLabel}>Price</Text>
                                 <Text style={styles.htmAdDetailValue}>{
@@ -222,12 +230,16 @@ class HTMAds extends Component < {} > {
                                     .navigate(feedback?'FeedBack':'ChatRoom')))}/>
                         <TouchableOpacity style={styles.htmActiveDeactiveLink}
                             onPress={()=>this.setState({htmAd:{}},()=>this.props.screenProps
-                                .navigate('HTMDetail'))}>
+                                .navigate('TradeDetail'))}>
                             <Text style={styles.htmActiveDeactiveLinkText}>
                                 View Trader Profile
                             </Text>
                         </TouchableOpacity>
                     </ScrollView>
+                    <TouchableOpacity style={styles.htmAdFilterBtn}
+                        onPress={()=>this.setState({htmAd:{}})}>
+                        <Text style={styles.htmAdFilterBtnText}>x</Text>
+                    </TouchableOpacity>
                 </Modal>
             </View>
         )
@@ -248,4 +260,4 @@ function mapDispatchToProps(dispatch) {
     return bindActionCreators(ActionCreators, dispatch);
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(HTMAds);
+export default connect(mapStateToProps, mapDispatchToProps)(Ads);

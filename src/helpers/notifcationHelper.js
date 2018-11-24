@@ -22,8 +22,6 @@ export default class Notification {
             try {
                 if(!notification) throw "Notification not found!";
                 if(!global.store) throw "Store not found!";
-                let params = global.store.getState().params;
-                if(!params.isLoggedIn) throw "User not found!";
                 let data = notification.data;
                 if(!data || Object.values(data).length == 0) throw "Data not found!";
                 switch (data.k) {
@@ -94,16 +92,17 @@ export default class Notification {
                 if(!params.isLoggedIn) throw "User not found!";
                 if(!params.chatNotification)throw "Chat data not found!";
 
-                global.store.dispatch(chatActions.goToChatRoom(params.chatNotification.s,(feedback)=>{
-                    if(feedback)return;
-                    if(!params.HTMNavigation) params.DashboardNavigation.navigate('HTM');
+                let goToRoom = () => global.store.dispatch(chatActions.goToChatRoom(params.chatNotification.s,(feedback)=>{
+                    if(feedback === true)return;
+                    params = global.store.getState().params;
+                    if(!params.TradesNavigation) params.DashboardNavigation.navigate('Trades');
                     let cntCB = 0;
                     let timeout = 100;
                     let cb = () => setTimeout(()=>{
                         cntCB++;
                         params = global.store.getState().params;
-                        if(params.HTMNavigation)
-                            return params.HTMNavigation.navigate('ChatRoom');
+                        if(params.TradesNavigation)
+                            return params.TradesNavigation.navigate('ChatRoom');
 
                         if(cntCB <= 5){
                             cb();
@@ -114,6 +113,23 @@ export default class Notification {
                     },timeout);
                     cb();
                 },params.chatNotification.c));
+                let n=0;
+                let _cb = () => {
+                    params = global.store.getState().params;
+                    if(!params.chatRooms || params.chatRooms.length == 0){
+                        n++;
+                        if(n == 5){
+                            goToRoom();
+                        }else if(n > 2){
+                            setTimeout(_cb,500);
+                        }else{
+                            setTimeout(_cb,100);
+                        }
+                    } else {
+                        goToRoom();
+                    }
+                }
+                _cb();
             } catch (e) {
                 console.log(e);
                 // reject(e)

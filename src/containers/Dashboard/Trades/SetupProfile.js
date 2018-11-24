@@ -1,5 +1,5 @@
 /**
- * Edit HTM Profile Container
+ * Setup Trade Profile Container
  */
 
 import React, {Component} from 'react';
@@ -8,7 +8,6 @@ import {
     TouchableOpacity,
     ScrollView,
     TextInput,
-    Alert,
 } from 'react-native';
 import {
     Container,
@@ -33,7 +32,7 @@ import * as utils from '@lib/utils';
 import * as constants from '@src/constants'
 import * as Validation from '@lib/validation';
 
-class EditHTMProfile extends Component < {} > {
+class SetupHTMProfile extends Component < {} > {
 
     static navigationOptions = {
         header: null,
@@ -42,24 +41,28 @@ class EditHTMProfile extends Component < {} > {
 
     constructor(props) {
         super(props);
-        let currency_types =  Object.assign(...this.props.htmProfile.currencies.map(currency => ({
-                [currency.currency_type]: currency
-            })));
         this.state = {
-            ...this.props.htmProfile,
-            email:  this.props.profile.email,
-            currency_types
+            display_name: this.props.profile.display_name,
+            email: this.props.profile.email,
+            sell_at: 0,
+            buy_at: 0,
+            show_profile_pic: 0,
+            show_email: 0,
+            show_on_map: 0,
+            show_live_location: 1,
+            show_distance_in: 'miles', // Miles/Kms
+            currency_types: {}
         };
     }
 
-    saveProfile(){
+    setupProfile(){
         let data = {};
         if(!this.state.display_name.trim()){
             return Toast.errorTop("Display name is required!");
         }
         data.display_name = this.state.display_name.trim();
 
-        data.email = this.state.email?this.state.email.trim():null;
+        data.email = this.state.email.trim();
         if(data.email){
             let res = Validation.email(data.email);
             if(!res.success){
@@ -73,43 +76,54 @@ class EditHTMProfile extends Component < {} > {
             return Toast.errorTop("Please select country!");
         }
         data.country = this.state.country;
-
-        if(this.state.buy_at){
-            res = Validation.percentage(this.state.buy_at);
-            if(!res.success){
-                return Toast.errorTop("Please enter valid percentage for buy!");
-            }
-            data.buy_at = res.percentage;
-        } else {
-            data.buy_at = 0;
-        }
-
-        if(this.state.buy_at){
-            res = Validation.percentage(this.state.sell_at);
-            if(!res.success){
-                return Toast.errorTop("Please enter valid percentage for sell!");
-            }
-            data.sell_at = res.percentage;
-        } else {
-            data.sell_at = 0;
-        }
-        let isValidQty = true;
-        data.currency_types = Object.values(this.state.currency_types)
-        .map(currency_type=>{
-            isValidQty = (isValidQty && currency_type.isValidQty !== false);
-            delete currency_type.isValidQty;
-            return currency_type;
-        });
-        if(!data.currency_types.length){
-            return Toast.errorTop("Please choose at least one currency!");
-        }
-        if(!isValidQty){
-            return Toast.errorTop("Minimum value alwasy less then Maximum value!");
-        }
         data.show_profile_pic = this.state.show_profile_pic;
         data.show_email = this.state.show_email;
-        data.show_distance_in = this.state.show_distance_in;
-        this.props.updateHTMProfile(data,this.props.navigation.goBack);
+        data.show_on_map = this.state.show_on_map;
+        if(data.show_on_map == 1){
+            if(this.state.buy_at){
+                res = Validation.percentage(this.state.buy_at);
+                if(!res.success){
+                    return Toast.errorTop("Please enter valid percentage for buy!");
+                }
+                data.buy_at = res.percentage;
+            } else {
+                data.buy_at = 0;
+            }
+
+            if(this.state.buy_at){
+                res = Validation.percentage(this.state.sell_at);
+                if(!res.success){
+                    return Toast.errorTop("Please enter valid percentage for sell!");
+                }
+                data.sell_at = res.percentage;
+            } else {
+                data.sell_at = 0;
+            }
+            let isValidQty = true;
+            data.currency_types = Object.values(this.state.currency_types)
+                .map(currency_type=>{
+                    isValidQty = (isValidQty && currency_type.isValidQty !== false);
+                    delete currency_type.isValidQty;
+                    return currency_type;
+                });
+            if(!data.currency_types.length){
+                return Toast.errorTop("Please choose at least one currency!");
+            }
+            if(!isValidQty){
+                return Toast.errorTop("Minimum value alwasy less then Maximum value!");
+            }
+            data.show_distance_in = this.state.show_distance_in;
+            data.show_live_location = this.state.show_live_location;
+            if(data.show_live_location == 0){
+                if(!this.state.lat)
+                    return Toast.errorTop("Please set fix location!");
+            
+                data.lat = this.state.lat;
+                data.long = this.state.long;
+            }
+        }
+        data.is_active = 1;
+        this.props.setupHTMProfile(data,this.props.navigation.goBack);
     }
 
     // 0 - manually editing, 1 - increase, 2 - decrease, 3 - manually editing on blur
@@ -361,7 +375,7 @@ class EditHTMProfile extends Component < {} > {
                             <Icon onPress={() => this.props.navigation.goBack()} style={styles.headerBackIcon} name='angle-left'/>
                         </TouchableOpacity>
                     </HeaderLeft>
-                    <HeaderTitle>Edit HTM Profile</HeaderTitle>
+                    <HeaderTitle>Setup HTM Profile</HeaderTitle>
                 </Header>
                 <Content bounces={false} style={styles.content}>
                     <View style={styles.htmProfileContent}>
@@ -428,6 +442,67 @@ class EditHTMProfile extends Component < {} > {
                                 }} name={'angle-down'} />
                             </TouchableOpacity>
                         </View>
+                        <View style={[styles.htmProfile,styles.htmWantToBuySell]}>
+                            <Text style={styles.htmProfileLabel}>
+                                Show Profile Picture
+                            </Text>
+                            <Switch
+                                active={(this.state.show_profile_pic==1)}
+                                buttonRadius={13}
+                                switchWidth={70}
+                                activeText={'ON'}
+                                activeTextStyle={styles.htmSwitchActiveTextStyle}
+                                inactiveText={'OFF'}
+                                inactiveTextStyle={styles.htmSwitchInactiveTextStyle}
+                                inactiveButtonColor={'#DFDFDF'}
+                                inactiveButtonPressedColor={'#191714'}
+                                activeButtonColor={'#191714'}
+                                activeButtonPressedColor={'#DFDFDF'}
+                                activeBackgroundColor={'#E0AE27'}
+                                inactiveBackgroundColor={'#A1A1A1'}
+                                onChangeState={(show_profile_pic)=>this.setState({show_profile_pic:show_profile_pic?1:0})} />
+                        </View>
+                        <View style={[styles.htmProfile,styles.htmWantToBuySell,{marginTop: -12}]}>
+                            <Text style={styles.htmProfileLabel}>
+                                Show Email Address
+                            </Text>
+                            <Switch
+                                active={(this.state.show_email==1)}
+                                buttonRadius={13}
+                                switchWidth={70}
+                                activeText={'ON'}
+                                activeTextStyle={styles.htmSwitchActiveTextStyle}
+                                inactiveText={'OFF'}
+                                inactiveTextStyle={styles.htmSwitchInactiveTextStyle}
+                                inactiveButtonColor={'#DFDFDF'}
+                                inactiveButtonPressedColor={'#191714'}
+                                activeButtonColor={'#191714'}
+                                activeButtonPressedColor={'#DFDFDF'}
+                                activeBackgroundColor={'#E0AE27'}
+                                inactiveBackgroundColor={'#A1A1A1'}
+                                onChangeState={(show_email)=>this.setState({show_email:show_email?1:0})} />
+                        </View>
+                        <View style={[styles.htmProfile,styles.htmWantToBuySell,{marginTop: -12}]}>
+                            <Text style={styles.htmProfileLabel}>
+                                Show Me on Map
+                            </Text>
+                            <Switch
+                                active={(this.state.show_on_map==1)}
+                                buttonRadius={13}
+                                switchWidth={70}
+                                activeText={'ON'}
+                                activeTextStyle={styles.htmSwitchActiveTextStyle}
+                                inactiveText={'OFF'}
+                                inactiveTextStyle={styles.htmSwitchInactiveTextStyle}
+                                inactiveButtonColor={'#DFDFDF'}
+                                inactiveButtonPressedColor={'#191714'}
+                                activeButtonColor={'#191714'}
+                                activeButtonPressedColor={'#DFDFDF'}
+                                activeBackgroundColor={'#E0AE27'}
+                                inactiveBackgroundColor={'#A1A1A1'}
+                                onChangeState={(show_on_map)=>this.setState({show_on_map:show_on_map?1:0})} />
+                        </View>
+                        {this.state.show_on_map==1 && <View>
                         <Text style={[styles.label,{marginTop:10}]}>Trade Parameters</Text>
                         <View style={[styles.hr,{marginBottom:15}]}/>
                         <View style={[styles.htmProfile,styles.htmWantToBuySell]}>
@@ -704,49 +779,9 @@ class EditHTMProfile extends Component < {} > {
                                 </View>:null}
                             </View>
                         )}
-                        <Text style={[styles.label,{marginTop:10}]}>Setting</Text>
+                        <Text style={[styles.label,{marginTop:10}]}>Map Setting</Text>
                         <View style={[styles.hr,{marginBottom:15}]}/>
-                        <View style={[styles.htmProfile,styles.htmWantToBuySell]}>
-                            <Text style={styles.htmProfileLabel}>
-                                Show Profile Picture
-                            </Text>
-                            <Switch
-                                active={(this.state.show_profile_pic==1)}
-                                buttonRadius={13}
-                                switchWidth={70}
-                                activeText={'ON'}
-                                activeTextStyle={styles.htmSwitchActiveTextStyle}
-                                inactiveText={'OFF'}
-                                inactiveTextStyle={styles.htmSwitchInactiveTextStyle}
-                                inactiveButtonColor={'#DFDFDF'}
-                                inactiveButtonPressedColor={'#191714'}
-                                activeButtonColor={'#191714'}
-                                activeButtonPressedColor={'#DFDFDF'}
-                                activeBackgroundColor={'#E0AE27'}
-                                inactiveBackgroundColor={'#A1A1A1'}
-                                onChangeState={(show_profile_pic)=>this.setState({show_profile_pic:show_profile_pic?1:0})} />
-                        </View>
-                        <View style={[styles.htmProfile,styles.htmWantToBuySell,{marginTop: -12}]}>
-                            <Text style={styles.htmProfileLabel}>
-                                Show Email Address
-                            </Text>
-                            <Switch
-                                active={(this.state.show_email==1)}
-                                buttonRadius={13}
-                                switchWidth={70}
-                                activeText={'ON'}
-                                activeTextStyle={styles.htmSwitchActiveTextStyle}
-                                inactiveText={'OFF'}
-                                inactiveTextStyle={styles.htmSwitchInactiveTextStyle}
-                                inactiveButtonColor={'#DFDFDF'}
-                                inactiveButtonPressedColor={'#191714'}
-                                activeButtonColor={'#191714'}
-                                activeButtonPressedColor={'#DFDFDF'}
-                                activeBackgroundColor={'#E0AE27'}
-                                inactiveBackgroundColor={'#A1A1A1'}
-                                onChangeState={(show_email)=>this.setState({show_email:show_email?1:0})} />
-                        </View>
-                        <View style={[styles.htmProfile,styles.htmWantToBuySell,{marginTop: -10}]}>
+                        <View style={[styles.htmProfile,styles.htmWantToBuySell,{marginTop: -8}]}>
                             <Text style={[styles.htmProfileLabel,{marginTop:8}]}>
                                 Show Distance in
                             </Text>
@@ -771,28 +806,51 @@ class EditHTMProfile extends Component < {} > {
                                 </TouchableOpacity>
                             </View>
                         </View>
+                        <View style={[styles.htmProfile,styles.htmWantToBuySell,{marginTop: -10}]}>
+                            <Text style={styles.htmProfileLabel}>
+                                Show Live Location
+                            </Text>
+                            <Switch
+                                active={(this.state.show_live_location==1)}
+                                buttonRadius={13}
+                                switchWidth={70}
+                                activeText={'ON'}
+                                activeTextStyle={styles.htmSwitchActiveTextStyle}
+                                inactiveText={'OFF'}
+                                inactiveTextStyle={styles.htmSwitchInactiveTextStyle}
+                                inactiveButtonColor={'#DFDFDF'}
+                                inactiveButtonPressedColor={'#191714'}
+                                activeButtonColor={'#191714'}
+                                activeButtonPressedColor={'#DFDFDF'}
+                                activeBackgroundColor={'#E0AE27'}
+                                inactiveBackgroundColor={'#A1A1A1'}
+                                onChangeState={(show_live_location)=>this.setState({show_live_location:show_live_location?1:0})} />
+                        </View>
+                        {this.state.show_live_location==0 &&
+                        <View style={[styles.htmProfile,styles.htmWantToBuySell,{marginTop: -12}]}>
+                            <View>
+                                <Text style={styles.htmProfileLabel}>
+                                    Fix Location
+                                </Text>
+                                <Text style={styles.htmProfileFixLocationText}>
+                                    {this.state.lat?`(${this.state.lat}, ${this.state.long})`:''}
+                                </Text>
+                            </View>
+                            <TouchableOpacity style={styles.htmProfileFixLocationBtn} onPress={()=>this.props.navigation.navigate('ShareLocation',{
+                                setLocation:(location) => this.setState({...location})
+                            })}>
+                                <Text style={styles.htmProfileFixLocationBtnText}>
+                                    SET
+                                </Text>
+                            </TouchableOpacity>
+                        </View>}
+                        </View>}
                         <Button
                             style={{
-                                marginVertical: 10,
+                                marginVertical: 20,
                             }}
-                            value={'Save Profile'}
-                            onPress={this.saveProfile.bind(this)} />
-                        <TouchableOpacity style={styles.htmActiveDeactiveLink}
-                            onPress={()=>{
-                                Alert.alert(
-                                  'Deactivate HTM Profile',
-                                  'Are you sure, you want to deactivate HTM profile?',
-                                  [
-                                    {text: 'Cancel', style: 'cancel'},
-                                    {text: 'OK', onPress: () => this.props
-                                        .disableHTMProfile(this.props.navigation.goBack)},
-                                  ],
-                                )
-                            }}>
-                            <Text style={styles.htmActiveDeactiveLinkText}>
-                                Deactivate HTM Profile
-                            </Text>
-                        </TouchableOpacity>
+                            value={'Setup Profile'}
+                            onPress={this.setupProfile.bind(this)} />
                     </View>
                 </Content>
                 <Modal
@@ -837,9 +895,8 @@ class EditHTMProfile extends Component < {} > {
 
 function mapStateToProps({params}) {
     return {
-        loading: params.loading || false,
+        loading: params.loading,
         nightMode: params.nightMode,
-        htmProfile: params.htmProfile,
         profile: params.profile,
         balances: params.balances,
     };
@@ -849,4 +906,4 @@ function mapDispatchToProps(dispatch) {
     return bindActionCreators(ActionCreators, dispatch);
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(EditHTMProfile);
+export default connect(mapStateToProps, mapDispatchToProps)(SetupHTMProfile);

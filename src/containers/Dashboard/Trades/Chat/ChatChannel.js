@@ -72,7 +72,7 @@ class ChatChannel extends Component < {} > {
                         </Text>
                     </View>
                     <HeaderRight>
-                        <TouchableOpacity onPress={()=>this.props.navigation.navigate('HTMDetail')}>
+                        <TouchableOpacity onPress={()=>this.props.navigation.navigate('TradeDetail')}>
                             <Image
                                 style={{
                                     width: 40,

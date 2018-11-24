@@ -29,7 +29,9 @@ export const setupHTMProfile = (data, goBack) => {
                     type: types.SETUP_HTM_PROFILE,
                     payload: { loading: false }
                 });
-                dispatch(getCurrentPosition());
+                if(data.show_on_map == 1 && data.show_live_location == 1){
+                    dispatch(getCurrentPosition());
+                }
                 dispatch(getHTMProfile());
                 goBack();
             }
@@ -226,15 +228,25 @@ export const htmLocationThread = (start=0) => {
     return (dispatch,getState) => {
         if(start == 1){
             if(htmLocationIntRef != null) return;
-            dispatch(getCurrentPosition(true));
+            let parmas = getState().params;
+            if(parmas.htmProfile && parmas.htmProfile.show_on_map == 1 &&
+                parmas.htmProfile.show_live_location == 1){
+                dispatch(getCurrentPosition(true));
+            }
             let n = 0;
             htmLocationIntRef = setInterval(()=>{
-                let params = getState().params;
+                params = getState().params;
                 if(params.location_permission){
                     dispatch({ type: types.GET_HTM_LOCATION });
                     n++;
-                    if(n%5 == 0 || !params.position)
-                        dispatch(getCurrentPosition(true));
+                    if(n%5 == 0 || !params.position){
+                        if(parmas.htmProfile && parmas.htmProfile.show_on_map == 1 &&
+                            parmas.htmProfile.show_live_location == 1)
+                                dispatch(getCurrentPosition(true));
+                        if(params.location && params.location.latitude)
+                            dispatch(updateHTMLocation(params.location.latitude,
+                                params.location.longitude));
+                    }
                     else
                         dispatch(updateHTMLocation(params.position.latitude,
                             params.position.longitude));
@@ -306,7 +318,7 @@ export const findNearByHTMs = (filter={}, loading = false) => {
             payload
         });
         let params = getState().params;
-        let position = params.position;
+        let position = params.position || params.location;
         let _filter = {};
         if(!!filter.apply){
             _filter.onlineOnly = filter.onlineOnly;

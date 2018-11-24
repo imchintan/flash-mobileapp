@@ -23,7 +23,7 @@ import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {ActionCreators} from '@actions';
 
-class HTMMyAds extends Component < {} > {
+class MyAds extends Component < {} > {
 
     static navigationOptions = {
         header: null,
@@ -50,7 +50,7 @@ class HTMMyAds extends Component < {} > {
                         this.props.customAction({
                             htmAdCreateOrEdit: true
                         })
-                        this.props.screenProps.navigate('HTMCreateAd')
+                        this.props.screenProps.navigate('CreateAd')
                     }}/>
                 <View style={[styles.htmAdsHr,{margin:15}]}/>
                 <FlatList
@@ -69,40 +69,44 @@ class HTMMyAds extends Component < {} > {
                     onEndReached={()=>!this.props.htmAdCreateOrEdit && this.props.getHTMAds(this.props.htmMyAds.length)}
                     renderItem={({item, index})=>{
                         let price_per = (this.props.screenProps.getPricePer(item.buy,item.sell) * (1+item.margin/100)).toFixed(8);
+                        let trade_limit = item.max > 0?
+                            ('Limits: ' + utils.flashNFormatter(item.min,2) +
+                            ' - ' + utils.flashNFormatter(item.max,2) +
+                            ' ' + utils.getCurrencyUnitUpcase(item.sell)):(item.min > 0?
+                            ('At least ' + utils.flashNFormatter(item.min,2) +
+                            ' ' + utils.getCurrencyUnitUpcase(item.sell)):
+                            'No limits');
                         return(
                             <TouchableOpacity activeOpacity={0.5}
-                                onPress={()=>this.props.editHTMAd(item,()=>this.props.screenProps.navigate('HTMEditAd'))}
+                                onPress={()=>this.props.editHTMAd(item,()=>this.props.screenProps.navigate('EditAd'))}
                                 style={styles.htmAdTab}>
                                 <Image style={styles.htmAdUserImage} source={this.props.htmProfile.profile_pic_url?
                                     {uri:PROFILE_URL+this.props.htmProfile.profile_pic_url}:
                                     utils.getCurrencyIcon(constants.CURRENCY_TYPE.FLASH)} />
-                                <View style={styles.htmAdTabDetail}>
-                                    <View>
-                                        <Text style={styles.htmAdUserName}>
-                                            {this.props.htmProfile.display_name}
-                                        </Text>
-                                        <Text style={styles.htmAdConversion}>
-                                            {utils.getCurrencyUnitUpcase(item.buy) + ' / ' +
-                                            utils.getCurrencyUnitUpcase(item.sell)}
-                                        </Text>
-                                        <Text style={styles.htmAdConversionLimits}>{ item.max > 0?
-                                            ('Limits: ' + utils.flashNFormatter(item.min,2) +
-                                            ' - ' + utils.flashNFormatter(item.max,2) +
-                                            ' ' + utils.getCurrencyUnitUpcase(item.sell)):(item.min > 0?
-                                            ('At least ' + utils.flashNFormatter(item.min,2) +
-                                            ' ' + utils.getCurrencyUnitUpcase(item.sell)):
-                                            'No Limits')}
-                                        </Text>
+                                <View>
+                                    <View style={styles.htmAdTabDetail}>
+                                        <View>
+                                            <Text style={styles.htmAdUserName}>
+                                                {this.props.htmProfile.display_name}
+                                            </Text>
+                                            <Text style={styles.htmAdConversionLimits}>
+                                                {trade_limit}
+                                            </Text>
+                                        </View>
+                                        <View style={styles.htmAdPriceDetail}>
+                                            <Text style={styles.htmAdPriceTitle}>
+                                                Price / {utils.getCurrencyUnitUpcase(item.buy)}
+                                            </Text>
+                                            <Text style={styles.htmAdPriceValue}>{
+                                                utils.flashNFormatter(price_per,2) + ' ' +
+                                                utils.getCurrencyUnitUpcase(item.sell)}
+                                            </Text>
+                                        </View>
                                     </View>
-                                    <View style={styles.htmAdPriceDetail}>
-                                        <Text style={styles.htmAdPriceTitle}>
-                                            Price / {utils.getCurrencyUnitUpcase(item.buy)}
-                                        </Text>
-                                        <Text style={styles.htmAdPriceValue}>{
-                                            utils.flashNFormatter(price_per,2) + ' ' +
-                                            utils.getCurrencyUnitUpcase(item.sell)}
-                                        </Text>
-                                    </View>
+                                    <Text style={styles.htmAdConversion}>
+                                        Want to sell {utils.getCurrencyUnitUpcase(item.buy) + ' against ' +
+                                        utils.getCurrencyUnitUpcase(item.sell)}
+                                    </Text>
                                 </View>
                             </TouchableOpacity>
                         );
@@ -137,4 +141,4 @@ function mapDispatchToProps(dispatch) {
     return bindActionCreators(ActionCreators, dispatch);
 }
 
-export default connect(mapStateToProps, mapDispatchToProps)(HTMMyAds);
+export default connect(mapStateToProps, mapDispatchToProps)(MyAds);
