@@ -3,7 +3,7 @@
  */
 export const  RESOURCE = 'app';
 export const  APP_MODE = 'DEV'; // DEV , PROD
-export const  APP_VERSION = '1.9.6-stage.3';
+export const  APP_VERSION = '1.9.6-rc.3';
 
 let appUrl;
 

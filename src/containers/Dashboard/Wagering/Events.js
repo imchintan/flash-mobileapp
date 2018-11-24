@@ -7,6 +7,7 @@ import {
     View,
     TouchableOpacity,
     FlatList,
+    RefreshControl,
     ImageBackground,
     Image
 } from 'react-native';
@@ -49,6 +50,13 @@ class Events extends Component<{}> {
         return (
             <View style={styles.content}>
                 <FlatList
+                    refreshControl={
+                        <RefreshControl
+                            colors={['#191714']}
+                            tintColor='#191714'
+                            refreshing={false}
+                            onRefresh={()=>this.props.getOracleEvents()}/>
+                    }
                     showsVerticalScrollIndicator={false}
                     data={this.props.oracleEvents}
                     keyExtractor={(event, index) => (index+'_'+event.id)}
@@ -80,7 +88,7 @@ class Events extends Component<{}> {
                                         {item.p1} vs {item.p2}
                                     </Text>
                                     <Text numberOfLines={1} style={styles.eventTabCreatedBy}>
-                                        {item.company_name}
+                                        By {item.company_name}
                                     </Text>
                                     <Text numberOfLines={1} style={styles.eventTabTotalBid}>
                                         Odds: {odds.p1}:{odds.p2}

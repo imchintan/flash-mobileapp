@@ -6,6 +6,7 @@ import React, { Component } from 'react';
 import {
     View,
     ImageBackground,
+    RefreshControl,
     Image,
     TouchableOpacity,
     FlatList,
@@ -54,7 +55,17 @@ class WageringProfile extends Component<{}> {
             require('@styles/nightMode/wagering'):require('@styles/wagering'));
         return (
             <Container>
-                <Content bounces={false} hasHeader={false}>
+                <Content bounces={false} hasHeader={false}
+                    refreshControl={
+                        <RefreshControl
+                            colors={['#191714']}
+                            tintColor='#191714'
+                            refreshing={false}
+                            onRefresh={()=>{
+                                this.props.getOracleProfile();
+                                this.props.getMyOracleEvents(true);
+                            }}/>
+                }>
                     <View style={styles.oracleProfileDetail}>
                         <Image
                             style={styles.oracleProfileImage}
@@ -89,7 +100,7 @@ class WageringProfile extends Component<{}> {
                         onPress={()=>this.props.screenProps.navigate('CreateEvent')}
                         value='Create Event'/>
                     <View style={{paddingHorizontal:20}}>
-                        <Text style={styles.label}>Created Events</Text>
+                        <Text style={styles.label}>Your Events</Text>
                         <View style={styles.hr}/>
                     </View>
                     <FlatList
@@ -166,7 +177,7 @@ class WageringProfile extends Component<{}> {
                         ListEmptyComponent={()=>
                             <View>
                                 <Text style={styles.eventListEmpty}>
-                                    There are no event created yet.
+                                    There is no event created yet.
                                 </Text>
                             </View>
                         }

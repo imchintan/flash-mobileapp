@@ -7,6 +7,7 @@ import {
     BackHandler,
     View,
     Image,
+    RefreshControl,
     TouchableOpacity,
     DatePickerAndroid,
     TimePickerAndroid,
@@ -76,7 +77,7 @@ class EventDetail extends Component<{}> {
 
     componentDidMount(){
         this.isMount = true;
-        this.props.getOracleEvent(this.props.oracleEvent.id);
+        this.props.getOracleEvent();
         BackHandler.addEventListener('hardwareBackPress', this.backHandler.bind(this));
         this.refreshTime = setInterval(()=>this.setState({refreshing:new Date().getTime()}),1000);
     }
@@ -125,16 +126,16 @@ class EventDetail extends Component<{}> {
 
     addOracleWager(){
         let amt = utils.toOrginalNumber(this.state.amount);
-        // let minLimit = this.props.oracleEvent.min || 100;
-        // if(amt < minLimit)
-        //     return Toast.errorTop("Amount must be greater than min limit.");
+        let minLimit = this.props.oracleEvent.min || 100;
+        if(amt < minLimit)
+            return Toast.errorTop("Amount must be greater than min limit.");
 
         if(this.props.oracleEvent.max !== 0 && amt > this.props.oracleEvent.max)
             return Toast.errorTop("Amount must be less than max limit.");
 
-        // if(utils.flashToSatoshi(amt) > this.props.balance){
-        //     return Toast.errorTop("You do not have enough fee to make this payment");
-        // }
+        if(utils.flashToSatoshi(amt) > this.props.balance){
+            return Toast.errorTop("You don’t have enough FLASH to wager.");
+        }
 
         if(!this.props.decryptedWallet){
             if(!this.state.password)
@@ -144,8 +145,9 @@ class EventDetail extends Component<{}> {
         }
 
         this.props.addOracleWager(this.props.oracleEvent.id,
-            this.props.oracleEvent.receiver_address, this.state.p,
-            amt, this.backHandler.bind(this));
+            this.props.oracleEvent.receiver_address, this.state.p, this.state.amount);
+
+        setTimeout(()=>this.setState({p:null,amount:0}),1000);
 
     }
 
@@ -184,10 +186,8 @@ class EventDetail extends Component<{}> {
         if(!this.state.cancel_reason || !this.state.cancel_reason.trim()){
             return Toast.errorTop("Please specify cancellation reason!");
         }
-        this.props.declareOracleEventResult(this.props.oracleEvent.id, 3, null,
-            this.state.cancel_reason,
-            this.backHandler.bind(this)
-        )
+        this.props.declareOracleEventResult(this.props.oracleEvent.id, 3,
+            null, this.state.cancel_reason);
     }
 
     updateEvent(){
@@ -206,7 +206,7 @@ class EventDetail extends Component<{}> {
         }
         data.ends_on_ts = this.state.ends_on_ts;
         data.description = this.state.description || '';
-        this.props.updateOracleEvent(this.props.oracleEvent.id,data,this.backHandler.bind(this));
+        this.props.updateOracleEvent(this.props.oracleEvent.id,data);
     }
 
     render() {
@@ -233,13 +233,20 @@ class EventDetail extends Component<{}> {
                         </TouchableOpacity>
                     </HeaderRight>}
                 </Header>
-                <Content>
+                <Content
+                    refreshControl={
+                        <RefreshControl
+                            colors={['#191714']}
+                            tintColor='#191714'
+                            refreshing={false}
+                            onRefresh={()=>this.props.getOracleEvent()}/>
+                    }>
                     <View style={styles.eventDetail}>
                         <View style={styles.eventDetailTitle}>
                             {this.props.oracleEvent.event_pic_url && <Image
                                 style={[styles.eventTabImage,{marginRight: 7}]}
                                 source={{uri:APP_URL+'event/'+this.props.oracleEvent.event_pic_url}}/>}
-                            <Text style={styles.eventDetailTitleText}>
+                            <Text style={[styles.eventDetailTitleText, this.props.oracleEvent.event_pic_url && styles.eventDetailTitleTextWithImg]}>
                                 {this.props.oracleEvent.event_name}
                             </Text>
                         </View>
@@ -303,7 +310,8 @@ class EventDetail extends Component<{}> {
                                     {odds.p2}
                                 </Text>
                             </View>
-                            {this.props.oracleEvent.username !== this.props.profile.username &&
+                            {this.props.oracleEvent.username !== this.props.profile.username && expire &&
+                                this.props.oracleEvent.status == constants.ORACLE_EVENT.ACTIVE_WAITING_FOR_RESULT &&
                             <View style={styles.eventPlayerDetailRow}>
                                 <Text style={styles.eventPlayerDetailLabel} />
                                 <View style={styles.eventPlayerJoin}>
@@ -327,12 +335,12 @@ class EventDetail extends Component<{}> {
                                 <Text style={styles.eventPlayerDetailLabel} />
                                 <Text style={this.props.oracleEvent.winner == this.props.oracleEvent.p1?
                                     styles.eventPlayerDetailWon:styles.eventPlayerDetailLoss}>
-                                    {this.props.oracleEvent.winner == this.props.oracleEvent.p1?'WON':'LOSS'}
+                                    {this.props.oracleEvent.winner == this.props.oracleEvent.p1?'WON':'LOST'}
                                 </Text>
                                 <Text style={styles.eventPlayerDetailVs} />
                                 <Text style={this.props.oracleEvent.winner == this.props.oracleEvent.p2?
                                     styles.eventPlayerDetailWon:styles.eventPlayerDetailLoss}>
-                                    {this.props.oracleEvent.winner == this.props.oracleEvent.p2?'WON':'LOSS'}
+                                    {this.props.oracleEvent.winner == this.props.oracleEvent.p2?'WON':'LOST'}
                                 </Text>
                             </View>}
                         </View>
@@ -344,12 +352,32 @@ class EventDetail extends Component<{}> {
                             <View style={styles.hr}/>
                             {this.props.oracleEvent.wagers.map((wager,i) =>
                                 <View key={'_my_vager_'+i} style={styles.eventMyWagerRow}>
-                                    <Text style={styles.eventMyWagerPlayer}>
-                                        {i+1}. {wager.p}
-                                    </Text>
+                                    <View style={{flexDirection:'row'}}>
+                                        <Text style={styles.eventMyWagerPlayer}>
+                                            {i+1}.
+                                        </Text>
+                                        <View style={{marginLeft:5}}>
+                                            <Text style={styles.eventMyWagerPlayer}>
+                                                {wager.p}
+                                            </Text>
+                                            <Text style={styles.eventMyWagerVol}>
+                                                {utils.flashNFormatter(wager.amount,2)} FLASH
+                                            </Text>
+                                        </View>
+                                    </View>
+                                    {wager.result !== constants.ORACLE_EVENT_WAGER.WON &&
+                                        wager.result !== constants.ORACLE_EVENT_WAGER.LOST &&
                                     <Text style={styles.eventMyWagerVol}>
+                                        -
+                                    </Text>}
+                                    {wager.result == constants.ORACLE_EVENT_WAGER.WON &&
+                                    <Text style={styles.eventMyWagerVolWon}>
+                                        {utils.flashNFormatter(wager.amount_won,2)} FLASH
+                                    </Text>}
+                                    {wager.result == constants.ORACLE_EVENT_WAGER.LOST &&
+                                    <Text style={styles.eventMyWagerVolLost}>
                                         {utils.flashNFormatter(wager.amount,2)} FLASH
-                                    </Text>
+                                    </Text>}
                                 </View>
                             )}
                         </View>}
@@ -403,14 +431,18 @@ class EventDetail extends Component<{}> {
                         this.props.oracleEvent.status == constants.ORACLE_EVENT.ACTIVE_WAITING_FOR_RESULT?
                             '#0080ff':(
                         this.props.oracleEvent.status == constants.ORACLE_EVENT.WINNER_DECLARED?
-                            '#0D0': (
+                            (this.props.oracleEvent.username !== this.props.profile.username &&
+                                this.props.oracleEvent.result_amount < 0?'#d33':'#0D0'): (
                         this.props.oracleEvent.status == constants.ORACLE_EVENT.TIED?
                             '#FFA500':'#d33'))}]}>
                     <Text style={styles.eventExpiredText}>
                     {this.props.oracleEvent.status == constants.ORACLE_EVENT.ACTIVE_WAITING_FOR_RESULT?
                         'Waiting for result!':(
                     this.props.oracleEvent.status == constants.ORACLE_EVENT.WINNER_DECLARED?
-                        this.props.oracleEvent.winner+' won!': (
+                        (this.props.oracleEvent.username === this.props.profile.username?
+                            this.props.oracleEvent.winner+' won!': `You ${this.props.oracleEvent
+                                .result_amount > 0 ? 'won':'lost'} ${utils.flashNFormatter(Math
+                                .abs(this.props.oracleEvent.result_amount),2)} FLASH`) : (
                     this.props.oracleEvent.status == constants.ORACLE_EVENT.TIED?
                         'Tie!': 'Event is canelled'
                     ))}

@@ -276,6 +276,9 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#333',
     },
+    eventDetailTitleTextWithImg:{
+        width: width - 100
+    },
     eventDetailCreatedBy:{
         marginTop: 2,
         fontSize: 20,
@@ -449,15 +452,24 @@ const styles = StyleSheet.create({
     },
     eventMyWagerRow:{
         flexDirection: 'row',
-        justifyContent: 'space-between'
+        justifyContent: 'space-between',
+        marginBottom: 7,
     },
     eventMyWagerPlayer:{
-        fontSize: 14,
-        color: '#6A6A6A'
+        fontSize: 15,
+        color: '#333'
     },
     eventMyWagerVol:{
-        fontSize: 14,
-        color: '#333',
+        fontSize: 13,
+        color: '#666',
+    },
+    eventMyWagerVolWon:{
+        fontSize: 13,
+        color: '#0D0',
+    },
+    eventMyWagerVolLost:{
+        fontSize: 13,
+        color: '#D33',
     },
     headerBtnText:{
         fontSize: 17,
@@ -511,7 +523,54 @@ const styles = StyleSheet.create({
         fontSize: 17,
         color: '#F33',
         fontStyle: 'italic'
-    }
+    },
+
+    legalDisclaimer:{
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#0002'
+    },
+    legalDisclaimerBox:{
+        backgroundColor: '#FFF',
+        margin: 20,
+        paddingHorizontal: 20,
+        borderRadius: 5,
+    },
+    legalDisclaimerHr:{
+        width: width - 80,
+        borderBottomWidth: 1,
+        borderColor: '#989898',
+    },
+    legalDisclaimerText:{
+        paddingVertical: 10,
+        fontSize: 16,
+        color: '#666666',
+    },
+    legalDisclaimerDNS:{
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 10,
+        marginLeft: 5
+    },
+    legalDisclaimerDNSText:{
+        fontSize: 15,
+        color: '#565656'
+    },
+    legalDisclaimerDNSIcon:{
+        fontSize: 18,
+        color: '#565656'
+    },
+    legalDisclaimerBtn:{
+        marginVertical: 12,
+        alignSelf: 'center'
+    },
+    legalDisclaimerBtnText:{
+        fontSize: 17,
+        fontWeight: 'bold',
+        color: '#E0AE27'
+    },
+
 });
 
 module.exports = {

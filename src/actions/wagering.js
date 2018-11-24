@@ -39,6 +39,7 @@ export const wageringInit = () => {
                 payout_sharing_fee: 0,
             }
         });
+        account.getBalance();
     }
 }
 
@@ -72,11 +73,12 @@ export const getOracleEvents = () => {
     }
 }
 
-export const getOracleEvent = (id) => {
+export const getOracleEvent = () => {
     return (dispatch,getState) => {
         dispatch({ type: types.LOADING_START });
         let params = getState().params;
-        apis.getOracleEvent(params.profile.auth_version, params.profile.sessionToken, id)
+        let oracleEvent = params.oracleEvent;
+        apis.getOracleEvent(params.profile.auth_version, params.profile.sessionToken, oracleEvent.id)
             .then((d)=>{
             if(d.rc !== 1){
                 dispatch({
@@ -87,7 +89,10 @@ export const getOracleEvent = (id) => {
                 dispatch({
                     type: types.GET_ORACLE_EVENT,
                     payload: {
-                        oracleEvent: d.event,
+                        oracleEvent: {
+                            ...oracleEvent,
+                            ...d.event
+                        },
                         loading: false
                     }
                 });
@@ -287,7 +292,7 @@ export const addOracleEvent = (data, goBack) => {
     }
 }
 
-export const updateOracleEvent = (id, data, goBack) => {
+export const updateOracleEvent = (id, data) => {
     return (dispatch,getState) => {
         dispatch({ type: types.LOADING_START });
         let params = getState().params;
@@ -306,7 +311,7 @@ export const updateOracleEvent = (id, data, goBack) => {
                     payload: { loading: false }
                 });
                 dispatch(getMyOracleEvents());
-                goBack();
+                dispatch(getOracleEvent());
             }
         }).catch(e=>{
             Toast.errorTop(e.message);
@@ -318,14 +323,17 @@ export const updateOracleEvent = (id, data, goBack) => {
     }
 }
 
-export const getMyOracleEvents = () => {
+export const getMyOracleEvents = (refresh=false) => {
     return (dispatch,getState) => {
+        if(refresh) dispatch({ type: types.LOADING_START });
         let params = getState().params;
+        let payload = refresh?{loading:false}:{}
         apis.getMyOracleEvents(params.profile.auth_version, params.profile.sessionToken)
             .then((d)=>{
             if(d.rc !== 1){
                 dispatch({
                     type: types.GET_MY_ORACLE_EVENTS,
+                    payload
                 });
             }else{
                 let myOracleEvents =  d.events;
@@ -351,23 +359,23 @@ export const getMyOracleEvents = () => {
                     }
 
                 })
+                payload.myOracleEvents = myOracleEvents;
                 dispatch({
                     type: types.GET_MY_ORACLE_EVENTS,
-                    payload: {
-                        myOracleEvents
-                    }
+                    payload
                 });
             }
         }).catch(e=>{
             console.log(e);
             dispatch({
-                type: types.GET_MY_ORACLE_EVENTS
+                type: types.GET_MY_ORACLE_EVENTS,
+                payload
             });
         })
     }
 }
 
-export const declareOracleEventResult = (id, result, winner, cancel_reason, goBack) => {
+export const declareOracleEventResult = (id, result, winner, cancel_reason) => {
     return (dispatch,getState) => {
         dispatch({ type: types.LOADING_START });
         let params = getState().params;
@@ -392,7 +400,7 @@ export const declareOracleEventResult = (id, result, winner, cancel_reason, goBa
                     payload: { loading: false }
                 });
                 dispatch(getMyOracleEvents());
-                goBack();
+                dispatch(getOracleEvent());
             }
         }).catch(e=>{
             Toast.errorTop(e.message);
@@ -404,14 +412,17 @@ export const declareOracleEventResult = (id, result, winner, cancel_reason, goBa
     }
 }
 
-export const getMyActiveOracleEvents = () => {
+export const getMyActiveOracleEvents = (refresh=false) => {
     return (dispatch,getState) => {
+        if(refresh) dispatch({ type: types.LOADING_START });
         let params = getState().params;
+        let payload = refresh?{loading:false}:{};
         apis.getMyActiveOracleEvents(params.profile.auth_version, params.profile.sessionToken)
             .then((d)=>{
             if(d.rc !== 1){
                 dispatch({
-                    type: types.GET_MY_ACTIVE_ORACLE_EVENTS
+                    type: types.GET_MY_ACTIVE_ORACLE_EVENTS,
+                    payload
                 });
             }else{
                 let activeOracleEvents =  d.events;
@@ -432,28 +443,32 @@ export const getMyActiveOracleEvents = () => {
                         }
                     } else if(e1.status == constants.ORACLE_EVENT.CANCELLED_OR_ABANDONED){
                         return 1;
+                    } else if(e2.status == constants.ORACLE_EVENT.CANCELLED_OR_ABANDONED){
+                        return -1;
+                    } else if(e1.status !== constants.ORACLE_EVENT.ACTIVE_WAITING_FOR_RESULT){
+                        return 1;
                     } else {
                         return -1;
                     }
 
                 })
+                payload.activeOracleEvents = activeOracleEvents;
                 dispatch({
                     type: types.GET_MY_ACTIVE_ORACLE_EVENTS,
-                    payload: {
-                        activeOracleEvents
-                    }
+                    payload
                 });
             }
         }).catch(e=>{
             console.log(e);
             dispatch({
-                type: types.GET_MY_ACTIVE_ORACLE_EVENTS
+                type: types.GET_MY_ACTIVE_ORACLE_EVENTS,
+                payload
             });
         })
     }
 }
 
-export const addOracleWager = (event_id, receiver_address, p, amount, cb) => {
+export const addOracleWager = (event_id, receiver_address, p, amount) => {
     return (dispatch,getState) => {
         dispatch({ type: types.LOADING_START });
         let params = getState().params;
@@ -472,10 +487,11 @@ export const addOracleWager = (event_id, receiver_address, p, amount, cb) => {
                     if(d.rc !== 1){
                         Toast.errorTop(d.reason)
                     }else{
-                        dispatch(getWagerEvents());
+                        dispatch(getOracleEvent());
+                        dispatch(getMyActiveOracleEvents());
+                        dispatch(getOracleEvents());
                         dispatch(account.getBalance(true));
                         Toast.successTop("Wager added successfully.")
-                        if(cb) cb();
                     }
                 }).catch(e=>{
                     console.log(e);

@@ -125,12 +125,12 @@ export const declareWinner = (self,styles) => <Modal transparent={false} animati
             `Are you sure, you want to declare won ${self.props.oracleEvent.p1}?`,
             [
                 {text: 'Cancel', style: 'cancel'},
-                {text: 'OK', onPress: () => self.setState({declareWiner:false},()=>self.props.declareOracleEventResult(
-                    self.props.oracleEvent.id,
-                    1,
-                    self.props.oracleEvent.p1,
-                    null,
-                    self.backHandler.bind(self)
+                {text: 'OK', onPress: () => self.setState({declareWiner:false},
+                    ()=>self.props.declareOracleEventResult(
+                        self.props.oracleEvent.id,
+                        1,
+                        self.props.oracleEvent.p1,
+                        null
                 ))},
             ],
         )}
@@ -142,12 +142,12 @@ export const declareWinner = (self,styles) => <Modal transparent={false} animati
             `Are you sure, you want to declare won ${self.props.oracleEvent.p2}?`,
             [
                 {text: 'Cancel', style: 'cancel'},
-                {text: 'OK', onPress: () => self.setState({declareWiner:false},()=>self.props.declareOracleEventResult(
-                    self.props.oracleEvent.id,
-                    1,
-                    self.props.oracleEvent.p2,
-                    null,
-                    self.backHandler.bind(self)
+                {text: 'OK', onPress: () => self.setState({declareWiner:false},
+                    ()=>self.props.declareOracleEventResult(
+                        self.props.oracleEvent.id,
+                        1,
+                        self.props.oracleEvent.p2,
+                        null
                 ))},
             ],
         )}
@@ -159,12 +159,12 @@ export const declareWinner = (self,styles) => <Modal transparent={false} animati
             `Are you sure, you want to declare tide event?`,
             [
                 {text: 'Cancel', style: 'cancel'},
-                {text: 'OK', onPress: () => self.setState({declareWiner:false},()=>self.props.declareOracleEventResult(
-                    self.props.oracleEvent.id,
-                    2,
-                    null,
-                    null,
-                    self.backHandler.bind(self)
+                {text: 'OK', onPress: () => self.setState({declareWiner:false},
+                    ()=>self.props.declareOracleEventResult(
+                        self.props.oracleEvent.id,
+                        2,
+                        null,
+                        null
                 ))},
             ],
         )}

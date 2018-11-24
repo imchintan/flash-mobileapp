@@ -7,6 +7,7 @@ import {
     View,
     TouchableOpacity,
     FlatList,
+    RefreshControl,
     Image,
     ImageBackground,
 } from 'react-native';
@@ -52,6 +53,13 @@ class MyEvents extends Component<{}> {
                 <FlatList
                     showsVerticalScrollIndicator={false}
                     data={this.props.activeOracleEvents}
+                    refreshControl={
+                        <RefreshControl
+                            colors={['#191714']}
+                            tintColor='#191714'
+                            refreshing={false}
+                            onRefresh={()=>this.props.getMyActiveOracleEvents(true)}/>
+                    }
                     keyExtractor={(event, index) => (index+'_'+event.id)}
                     renderItem={({item, index})=>{
                         let expiry = utils.getExpierTime(item.expires_on_ts);
@@ -79,6 +87,9 @@ class MyEvents extends Component<{}> {
                                     <Text numberOfLines={1} style={styles.eventTabPlayers}>
                                         {item.p1} vs {item.p2}
                                     </Text>
+                                    <Text numberOfLines={1} style={styles.eventTabCreatedBy}>
+                                        By {item.company_name}
+                                    </Text>
                                     <Text numberOfLines={1} style={styles.eventTabTotalBid}>
                                         Odds: {odds.p1}:{odds.p2}
                                     </Text>
@@ -104,14 +115,16 @@ class MyEvents extends Component<{}> {
                                     <Text style={item.status == constants.ORACLE_EVENT.ACTIVE_WAITING_FOR_RESULT?
                                             styles.eventTabResultWaiting:(
                                         item.status == constants.ORACLE_EVENT.WINNER_DECLARED?
-                                            styles.eventTabResultDeclare: (
+                                            (item.result_amount > 0 ? styles.eventTabResultDeclare:
+                                            styles.eventTabEventExpired) : (
                                         item.status == constants.ORACLE_EVENT.TIED?
                                             styles.eventTabResultTied:styles.eventTabResultCancelled
                                     ))}>
                                         {item.status == constants.ORACLE_EVENT.ACTIVE_WAITING_FOR_RESULT?
                                             'Waiting for result!':(
                                         item.status == constants.ORACLE_EVENT.WINNER_DECLARED?
-                                            item.winner+' won!': (
+                                        `You ${item.result_amount > 0 ?'won':'lost'} ${utils
+                                        .flashNFormatter(Math.abs(item.result_amount),2)} FLASH`: (
                                         item.status == constants.ORACLE_EVENT.TIED?
                                             'Tie!': 'Event is canelled!'
                                         ))}

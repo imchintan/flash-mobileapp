@@ -49,6 +49,11 @@ export const init = () => {
             payload.pin = pin.toString();
         }
 
+        let wagerLegalDisclaimer = await AsyncStorage.getItem('wagerLegalDisclaimer');
+        if(wagerLegalDisclaimer){
+            payload.wagerLegalDisclaimer = true;
+        }
+
         let nightMode = await AsyncStorage.getItem('nightMode');
         if(nightMode !== null){
             payload.nightMode = (nightMode == 'true');

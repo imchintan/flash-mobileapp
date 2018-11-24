@@ -7,6 +7,7 @@ import {
     View,
     Platform,
     TouchableOpacity,
+    AsyncStorage
 } from 'react-native';
 import {
     createMaterialTopTabNavigator,
@@ -27,6 +28,7 @@ import { ActionCreators } from '@actions';
 import Events from './Events';
 import MyEvents from './MyEvents';
 import Profile from './Profile/index';
+import * as wm from './WageringModal';
 
 const TabNav = createMaterialTopTabNavigator({
     'Events': { screen: Events },
@@ -80,6 +82,15 @@ class Wagering extends React.Component {
         this.props.wageringInit();
     }
 
+    legalDisclaimer(){
+        if(this.state.do_not_show){
+            AsyncStorage.setItem('wagerLegalDisclaimer','true');
+        }
+        this.props.customAction({
+            wagerLegalDisclaimer: true
+        });
+    }
+
     render() {
         const styles = (this.props.nightMode?require('@styles/nightMode/wagering'):require('@styles/wagering'));
         return (
@@ -104,6 +115,7 @@ class Wagering extends React.Component {
                     <HeaderTitle>Wagering</HeaderTitle>
                 </Header>
                 <TabNav screenProps={{navigate:this.props.navigation.navigate}}/>
+                {wm.legalDisclaimer(this,styles)}
                 <Loader style={{
                     ...Platform.select({
                         ios: {
@@ -123,6 +135,7 @@ function mapStateToProps({params}) {
     return {
         loading: params.loading,
         nightMode: params.nightMode,
+        wagerLegalDisclaimer: params.wagerLegalDisclaimer || false
     };
 }
 
