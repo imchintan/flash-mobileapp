@@ -425,6 +425,12 @@ const styles = StyleSheet.create({
         borderRadius: 10,
         backgroundColor: '#E9E9E9',
     },
+    walletBalanceRowBox:{
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        width: '100%'
+    },
     walletBalanceLabel:{
         color:'#787878',
         fontSize: FontSize(18),
@@ -570,6 +576,12 @@ const styles = StyleSheet.create({
         fontWeight: 'bold',
         color: '#E0AE27'
     },
+    wagerTxnFeeText:{
+        fontSize: 14,
+        color: '#666',
+        alignSelf: 'center',
+        marginTop: 5,
+    }
 
 });
 

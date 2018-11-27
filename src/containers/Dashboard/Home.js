@@ -5,6 +5,7 @@
 import React, { Component } from 'react';
 import {
     View,
+    Alert,
     Image,
     ScrollView,
     AppState,
@@ -151,7 +152,17 @@ class Home extends Component<{}> {
                         <Text style={styles.label}>Features</Text>
                         <View style={styles.hr}/>
                         <TouchableOpacity style={styles.featuresTab}
-                            onPress={()=>this.props.navigation.navigate('Wagering')}>
+                            onPress={()=>{
+                                if(this.props.location.country_code !== 'US')
+                                    return this.props.navigation.navigate('Wagering');
+                                Alert.alert(
+                                    'Not Available!',
+                                    'Wagering feature is currently not available in your country.',
+                                    [
+                                        {text: 'OK'},
+                                    ],
+                                )
+                            }}>
                             <View style={styles.adminTabTitle}>
                                 <Icon style={styles.featuresTabTitleIcon} name='cubes'/>
                                 <Text style={styles.featuresTabTitleLabel}>Wagering</Text>
@@ -269,6 +280,7 @@ function mapStateToProps({params}) {
         fiat_currency: params.fiat_currency,
         total_fiat_balance: params.total_fiat_balance,
         isNewSession: params.isNewSession || false,
+        location: params.location || {},
         lockApp: params.lockApp || false,
         pin: params.pin,
         nightMode: params.nightMode,

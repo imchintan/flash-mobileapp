@@ -10,9 +10,6 @@ import {
     TextInput,
     Platform,
     TouchableOpacity,
-    DatePickerAndroid,
-    TimePickerAndroid,
-    // DatePickerIOS
 } from 'react-native';
 import {
     Container,
@@ -27,13 +24,14 @@ import {
     Toast,
     Loader
 } from '@components';
-import moment from 'moment-timezone';
 import ImagePicker from 'react-native-image-crop-picker';
 import * as Validation from '@lib/validation';
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ActionCreators } from '@actions';
+
+import * as em from './EventModal';
 
 class CreateEvent extends Component<{}> {
 
@@ -65,38 +63,6 @@ class CreateEvent extends Component<{}> {
     backHandler(){
         this.props.navigation.goBack();
         return this.isMount;
-    }
-
-    async dateAndTimePicker(key){
-        try{
-            let date = new Date(this.state[key]);
-            let dateRes = await DatePickerAndroid.open({
-                // mode: 'spinner',
-                date: date,
-                minDate: new Date()
-            });
-            if (dateRes.action !== DatePickerAndroid.dismissedAction) {
-                let timerRes = await TimePickerAndroid.open({
-                    // mode: 'spinner',
-                    hour: date.getHours(),
-                    minute: date.getMinutes(),
-                    is24Hour: false, // Will display '2 PM'
-                });
-                if (timerRes.action !== TimePickerAndroid.dismissedAction) {
-                    let dateStr = `${dateRes.year}-${(dateRes.month+1) < 10?
-                     ('0'+(dateRes.month+1)):(dateRes.month+1)}-${dateRes.day < 10 ?
-                    ('0'+dateRes.day):dateRes.day}`;
-                    dateStr += ` ${timerRes.hour < 10 ? ('0'+timerRes.hour):timerRes.hour}:
-                    ${timerRes.minute < 10 ?('0'+timerRes.minute):timerRes.minute}`;
-                    let state = {};
-                    state[key] = new Date(moment(dateStr)).getTime();
-                    state[`display_${key}`] = moment(dateStr).format('MMM DD, YYYY hh:mm A');
-                    this.setState(state);
-                }
-            }
-        }catch(e){
-            console.log(e);
-        }
     }
 
     openImagePicker(camera=false){
@@ -149,8 +115,11 @@ class CreateEvent extends Component<{}> {
             return Toast.errorTop("Please enter valid fees!");
         }
         data.fees = res.percentage;
-        if(data.fee_type == 1 && data.fees > 10){
-            return Toast.errorTop("Fee Percentage can not be more than 10%.");
+        if(data.fee_type == 1 && data.fees > 99){
+            return Toast.errorTop("Fee Percentage can not be more than 99%.");
+        }
+        if(data.fee_type == 1 && data.fees < 2){
+            return Toast.errorTop("Fee Percentage can not be less than 2%.");
         }
         if(data.fee_type == 0 && data.fees > 1000){
             return Toast.errorTop("Fees can not be more than 1000 FLASH.");
@@ -352,12 +321,12 @@ class CreateEvent extends Component<{}> {
                         </View>
                         <View style={styles.oracleProfile}>
                             <Text style={styles.oracleProfileLabel}>
-                                Expire Datetime
+                                Wagering End Time
                                 <Text style={styles.mandatoryField}>*</Text>
                             </Text>
                             <TouchableOpacity
                                 activeOpacity={0.7}
-                                onPress={()=>this.dateAndTimePicker('expires_on_ts')}
+                                onPress={()=>em.dateAndTimePicker(this,'expires_on_ts')}
                                 style={styles.oracleProfileInputBox}>
                                 <TextInput
                                     editable={false}
@@ -378,12 +347,12 @@ class CreateEvent extends Component<{}> {
                         </View>
                         <View style={styles.oracleProfile}>
                             <Text style={styles.oracleProfileLabel}>
-                                End Datetime
+                                Result Declaration time
                                 <Text style={styles.mandatoryField}>*</Text>
                             </Text>
                             <TouchableOpacity
                                 activeOpacity={0.7}
-                                onPress={()=>this.dateAndTimePicker('ends_on_ts')}
+                                onPress={()=>em.dateAndTimePicker(this,'ends_on_ts')}
                                 style={styles.oracleProfileInputBox}>
                                 <TextInput
                                     editable={false}
@@ -480,6 +449,7 @@ class CreateEvent extends Component<{}> {
                             onPress={this.createEvent.bind(this)} />
                     </View>
                 </Content>
+                {em.dateAndTimePickerIOS(this)}
                 <Modal
                     animationType="slide"
                     transparent={true}

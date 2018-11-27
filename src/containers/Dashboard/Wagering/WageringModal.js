@@ -9,6 +9,9 @@ import {
     Modal
 } from '@components';
 
+import * as utils from '@lib/utils';
+import * as constants from '@src/constants';
+
 /**
  * Legal Disclaimer for oracle event
  */
@@ -24,7 +27,7 @@ export const legalDisclaimer = (self,styles) => <Modal transparent={true}
                 {"Personal wagering is legal in many areas, "+
                 "please check local regulations before proceeding. "+
                 "Never wager more than you can afford to lose. "+
-                "Wagers are subject to a fee of up to 10%."}
+                "Wagers are subject to oracle fee."}
             </Text>
             <TouchableOpacity style={styles.legalDisclaimerDNS}
                 onPress={()=>self.setState({do_not_show:!self.state.do_not_show})}>
@@ -45,3 +48,37 @@ export const legalDisclaimer = (self,styles) => <Modal transparent={true}
         </View>
     </View>
 </Modal>
+
+/**
+ * balance header component
+ */
+export const balanceHeader = (self,styles) => <View style={[styles.walletBalanceTab,{
+    backgroundColor: '#191714',
+    paddingHorizontal: 15,
+    paddingVertical: 7,
+    marginHorizontal: 0,
+    borderRadius: 0,
+}]}>
+    <View style={styles.walletBalanceRowBox}>
+        <Text style={[styles.walletBalanceLabel,{
+            color:'rgba(255,255,255,0.6)'
+        }]}>Balance</Text>
+        <Text style={[styles.walletBalance,{
+            color:'rgba(255,255,255,0.9)'
+        }]}>{utils.flashNFormatter((self.props.currency_type == constants.CURRENCY_TYPE.FLASH?
+                utils.satoshiToFlash(self.props.balance).toFixed(10):self.props.balance),2)+
+            ' '+utils.getCurrencyUnitUpcase(self.props.currency_type)}
+        </Text>
+    </View>
+    <View style={styles.walletBalanceRowBox}>
+        <Text style={[styles.walletBalanceLabel,{
+            color:'rgba(255,255,255,0.6)'
+        }]}>Staked Balance</Text>
+        <Text style={[styles.walletBalance,{
+            color:'rgba(255,255,255,0.9)'
+        }]}>{utils.flashNFormatter((self.props.currency_type == constants.CURRENCY_TYPE.FLASH?
+                utils.satoshiToFlash(self.props.sbalance).toFixed(10):self.props.sbalance),2)+
+            ' '+utils.getCurrencyUnitUpcase(self.props.currency_type)}
+        </Text>
+    </View>
+</View>

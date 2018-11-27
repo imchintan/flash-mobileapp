@@ -19,7 +19,7 @@ import {
     Icon,
     Loader,
 } from '@components';
-import { isIphoneX, FontSize } from '@lib/utils';
+import * as utils from '@lib/utils';
 
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
@@ -28,12 +28,12 @@ import { ActionCreators } from '@actions';
 import Events from './Events';
 import MyEvents from './MyEvents';
 import Profile from './Profile/index';
-import * as wm from './WageringModal';
+// import * as wm from './WageringModal';
 
 const TabNav = createMaterialTopTabNavigator({
     'Events': { screen: Events },
     'My Events': { screen: MyEvents },
-    'My Profile': { screen: Profile },
+    'Oracle Profile': { screen: Profile },
 },{
     navigationOptions: ({ navigation, screenProps }) => ({
     }),
@@ -57,7 +57,7 @@ const TabNav = createMaterialTopTabNavigator({
             }),
         },
         labelStyle: {
-            fontSize: FontSize(16),
+            fontSize: utils.FontSize(16),
             fontFamily: 'Microsoft Tai Le',
         },
     },
@@ -98,7 +98,7 @@ class Wagering extends React.Component {
                 flex: 1,
                 ...Platform.select({
                     ios: {
-                        paddingTop: isIphoneX()?92:77,
+                        paddingTop: utils.isIphoneX()?92:77,
                     },
                     android: {
                         paddingTop: 55
@@ -115,11 +115,11 @@ class Wagering extends React.Component {
                     <HeaderTitle>Wagering</HeaderTitle>
                 </Header>
                 <TabNav screenProps={{navigate:this.props.navigation.navigate}}/>
-                {wm.legalDisclaimer(this,styles)}
+                {/*wm.legalDisclaimer(this,styles)*/}
                 <Loader style={{
                     ...Platform.select({
                         ios: {
-                            top: isIphoneX()?92:77,
+                            top: utils.isIphoneX()?92:77,
                         },
                         android: {
                             top: 55

@@ -44,12 +44,14 @@ export const getBalance = (refresh = false) => {
                 });
             }else{
                 d.balance = Number(d.balance);
+                d.sbalance = Number(d.sbalance);
                 AsyncStorage.setItem('balance',JSON.stringify(d.balance));
                 dispatch({
                     type: types.GET_BALANCE,
                     payload: {
                         balance:d.balance,
                         ubalance:d.ubalance,
+                        sbalance:d.sbalance,
                         balanceLoader: false,
                         infoMsg: refresh?('Updated Balance: '+
                         (params.currency_type === constants.CURRENCY_TYPE.FLASH?
@@ -101,6 +103,7 @@ export const getBalanceV2 = (currency_type=constants.CURRENCY_TYPE.FLASH ,refres
                 });
             }else{
                 d.balance = Number(d.balance);
+                d.sbalance = Number(d.sbalance);
                 params = getState().params;
                 let balances = params.balances;
                 let idx  =  balances.findIndex(bal => bal.currency_type === currency_type);
@@ -123,6 +126,7 @@ export const getBalanceV2 = (currency_type=constants.CURRENCY_TYPE.FLASH ,refres
                     payload: {
                         balance,
                         ubalance,
+                        sbalance:d.sbalance,
                         fiat_balance,
                         fiat_per_value,
                         balances,

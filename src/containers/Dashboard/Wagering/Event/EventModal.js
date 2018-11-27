@@ -1,12 +1,17 @@
 import React from 'react';
 import {
+    Platform,
     Alert,
     View,
     Image,
     TextInput,
     TouchableOpacity,
+    DatePickerAndroid,
+    TimePickerAndroid,
+    DatePickerIOS
 } from 'react-native';
 import {
+    Content,
     Icon,
     Text,
     Button,
@@ -16,6 +21,7 @@ import {
 import * as utils from '@lib/utils';
 import * as constants from '@src/constants';
 import { APP_URL } from '@src/config';
+import moment from 'moment-timezone';
 
 /**
  * Edit oracle event
@@ -28,83 +34,123 @@ export const editOracleEvent = (self,styles) => <Modal transparent={false} anima
         <Text style={styles.wagerCancelBtnText}>x</Text>
     </TouchableOpacity>
     <Text style={styles.wagerTitle}>Edit Event</Text>
-    <View style={styles.oracleProfileContent}>
-        <View style={styles.oracleProfile}>
-            <Text style={styles.oracleProfileLabel}>
-                Expire Datetime
-                <Text style={styles.mandatoryField}>*</Text>
-            </Text>
-            <TouchableOpacity
-                activeOpacity={0.7}
-                onPress={()=>self.dateAndTimePicker('expires_on_ts')}
-                style={styles.oracleProfileInputBox}>
-                <TextInput
-                    editable={false}
-                    underlineColorAndroid='transparent'
-                    style={styles.oracleProfileInput}
-                    placeholder={'Select event expiry datetime'}
-                    autoCapitalize={'none'}
-                    autoCorrect={false}
-                    value={self.state.display_expires_on_ts || ''}
-                />
-                <Icon style={{
-                    position: 'absolute',
-                    right: 15,
-                    fontSize: 25,
-                    color: '#787878',
-                }} name={'calendar'} />
-            </TouchableOpacity>
-        </View>
-        <View style={styles.oracleProfile}>
-            <Text style={styles.oracleProfileLabel}>
-                End Datetime
-                <Text style={styles.mandatoryField}>*</Text>
-            </Text>
-            <TouchableOpacity
-                activeOpacity={0.7}
-                onPress={()=>self.dateAndTimePicker('ends_on_ts')}
-                style={styles.oracleProfileInputBox}>
-                <TextInput
-                    editable={false}
-                    underlineColorAndroid='transparent'
-                    style={styles.oracleProfileInput}
-                    placeholder={'Select event expiry datetime'}
-                    autoCapitalize={'none'}
-                    autoCorrect={false}
-                    value={self.state.display_ends_on_ts || ''}
-                />
-                <Icon style={{
-                    position: 'absolute',
-                    right: 15,
-                    fontSize: 25,
-                    color: '#787878',
-                }} name={'calendar'} />
-            </TouchableOpacity>
-        </View>
-        <View style={styles.oracleProfile}>
-            <Text style={styles.oracleProfileLabel}>
-                Event Description
-            </Text>
-            <View style={[styles.oracleProfileInputBox,{
-                height: 80
-            }]}>
-                <TextInput
-                    multiline={true}
-                    numberOfLines={3}
-                    underlineColorAndroid='transparent'
-                    style={styles.oracleProfileInput}
-                    placeholder={'Enter extra notes (optional)'}
-                    autoCapitalize={'none'}
-                    autoCorrect={false}
-                    value={self.state.description}
-                    onChangeText={(description)=>self.setState({description})}
-                />
+    <Content hasHeader={false}>
+        <View style={styles.oracleProfileContent}>
+            {/*
+            <View style={styles.oracleProfile}>
+                <Text style={styles.oracleProfileLabel}>
+                    1st Team / Player
+                    <Text style={styles.mandatoryField}>*</Text>
+                </Text>
+                <View style={styles.oracleProfileInputBox}>
+                    <TextInput
+                        underlineColorAndroid='transparent'
+                        style={styles.oracleProfileInput}
+                        placeholder={'i.e Portugal'}
+                        autoCapitalize={'none'}
+                        autoCorrect={false}
+                        value={self.state.p1}
+                        onChangeText={(p1)=>self.setState({p1})}
+                    />
+                </View>
+            </View>
+            <View style={styles.oracleProfile}>
+                <Text style={styles.oracleProfileLabel}>
+                    2nd Team / Player
+                    <Text style={styles.mandatoryField}>*</Text>
+                </Text>
+                <View style={styles.oracleProfileInputBox}>
+                    <TextInput
+                        underlineColorAndroid='transparent'
+                        style={styles.oracleProfileInput}
+                        placeholder={'i.e Brazil'}
+                        autoCapitalize={'none'}
+                        autoCorrect={false}
+                        value={self.state.p2}
+                        onChangeText={(p2)=>self.setState({p2})}
+                    />
+                </View>
+            </View>
+            */}
+            <View style={styles.oracleProfile}>
+                <Text style={styles.oracleProfileLabel}>
+                    Wagering End Time
+                    <Text style={styles.mandatoryField}>*</Text>
+                </Text>
+                <TouchableOpacity
+                    activeOpacity={0.7}
+                    onPress={()=>dateAndTimePicker(self,'expires_on_ts')}
+                    style={styles.oracleProfileInputBox}>
+                    <TextInput
+                        editable={false}
+                        underlineColorAndroid='transparent'
+                        style={styles.oracleProfileInput}
+                        placeholder={'Select event expiry datetime'}
+                        autoCapitalize={'none'}
+                        autoCorrect={false}
+                        value={self.state.display_expires_on_ts || ''}
+                    />
+                    <Icon style={{
+                        position: 'absolute',
+                        right: 15,
+                        fontSize: 25,
+                        color: '#787878',
+                    }} name={'calendar'} />
+                </TouchableOpacity>
+            </View>
+            <View style={styles.oracleProfile}>
+                <Text style={styles.oracleProfileLabel}>
+                    Result Declaration time
+                    <Text style={styles.mandatoryField}>*</Text>
+                </Text>
+                <TouchableOpacity
+                    activeOpacity={0.7}
+                    onPress={()=>dateAndTimePicker(self,'ends_on_ts')}
+                    style={styles.oracleProfileInputBox}>
+                    <TextInput
+                        editable={false}
+                        underlineColorAndroid='transparent'
+                        style={styles.oracleProfileInput}
+                        placeholder={'Select event expiry datetime'}
+                        autoCapitalize={'none'}
+                        autoCorrect={false}
+                        value={self.state.display_ends_on_ts || ''}
+                    />
+                    <Icon style={{
+                        position: 'absolute',
+                        right: 15,
+                        fontSize: 25,
+                        color: '#787878',
+                    }} name={'calendar'} />
+                </TouchableOpacity>
+            </View>
+            <View style={styles.oracleProfile}>
+                <Text style={styles.oracleProfileLabel}>
+                    Event Description
+                </Text>
+                <View style={[styles.oracleProfileInputBox,{
+                    height: 80
+                }]}>
+                    <TextInput
+                        multiline={true}
+                        numberOfLines={3}
+                        underlineColorAndroid='transparent'
+                        style={styles.oracleProfileInput}
+                        placeholder={'Enter extra notes (optional)'}
+                        autoCapitalize={'none'}
+                        autoCorrect={false}
+                        value={self.state.description}
+                        onChangeText={(description)=>self.setState({description})}
+                    />
+                </View>
             </View>
         </View>
-    </View>
-    <Button
-        onPress={()=>self.setState({editEvent:false},self.updateEvent.bind(self))}
-        value='SAVE'/>
+        <Button
+            style={{marginBottom: 30}}
+            onPress={()=>self.setState({editEvent:false},self.updateEvent.bind(self))}
+            value='SAVE'/>
+        {dateAndTimePickerIOS(self)}
+    </Content>
 </Modal>
 
 /**
@@ -223,8 +269,11 @@ export const wagerEvent = (self,styles) => <Modal transparent={false} animationT
                     let amount = (self.props.fiat_per_value?utils.toOrginalNumber(
                         utils.otherCurrencyToCrypto(fiat_amount, self.props.fiat_per_value)
                     ):0);
+                    let fee = utils.calcFee(amount, self.props.currency_type,
+                        self.props.bcMedianTxSize, self.props.satoshiPerByte, self.props.fixedTxnFee)
                     self.setState({
                         amount: amount>0?utils.formatAmountInput(amount):'',
+                        fee,
                     });
                 })}
             />
@@ -248,28 +297,37 @@ export const wagerEvent = (self,styles) => <Modal transparent={false} animationT
                     let fiat_amount = (self.props.fiat_per_value?utils.toOrginalNumber(
                         utils.cryptoToOtherCurrency(amount, self.props.fiat_per_value, 0)
                     ):0);
+                    let fee = utils.calcFee(amount, self.props.currency_type,
+                        self.props.bcMedianTxSize, self.props.satoshiPerByte, self.props.fixedTxnFee)
                     self.setState({
-                        fiat_amount: fiat_amount>0?utils.formatAmountInput(fiat_amount):''
+                        fiat_amount: fiat_amount>0?utils.formatAmountInput(fiat_amount):'',
+                        fee
                     });
                 })}
             />
         </View>
-        <Text style={styles.wagerSetAllFlash}
-            onPress={()=>{
-                let amount = utils.flashNFormatter(utils.satoshiToFlash(self.props.balance).toFixed(10),2);
-                self.setState({amount},()=>{
-                    amount = utils.toOrginalNumber(amount);
-                    if(isNaN(amount)) amount=0;
-                    let fiat_amount = (self.props.fiat_per_value?utils.toOrginalNumber(
-                        utils.cryptoToOtherCurrency(amount, self.props.fiat_per_value, 0)
-                    ):0);
-                    self.setState({
-                        fiat_amount: fiat_amount>0?utils.formatAmountInput(fiat_amount):''
-                    });
-                })
-            }}>All FLASH</Text>
+        <View style={{flexDirection: 'row',justifyContent:'space-between'}}>
+            <Text style={styles.wagerTxnFeeText}>
+                +{self.state.fee} {utils.getCurrencyUnitUpcase(self.props.currency_type)} transaction fee
+            </Text>
+            <Text style={styles.wagerSetAllFlash}
+                onPress={()=>{
+                    let amount = utils.flashNFormatter(utils.satoshiToFlash(self.props.balance).toFixed(10),2);
+                    self.setState({amount},()=>{
+                        amount = utils.toOrginalNumber(amount);
+                        if(isNaN(amount)) amount=0;
+                        let fiat_amount = (self.props.fiat_per_value?utils.toOrginalNumber(
+                            utils.cryptoToOtherCurrency(amount, self.props.fiat_per_value, 0)
+                        ):0);
+                        self.setState({
+                            fiat_amount: fiat_amount>0?utils.formatAmountInput(fiat_amount):''
+                        });
+                    })
+                }}>All FLASH</Text>
+        </View>
     </View>
     <Button
+        style={{marginTop:-30}}
         onPress={()=>self.setState({wager:false},self.addOracleWager.bind(self))}
         value='JOIN'/>
 </Modal>
@@ -338,13 +396,13 @@ export const cancelEvent = (self,styles) => <Modal transparent={false} animation
 export const passwordRequest = (self,styles) => <Modal
     transparent={true}
     visible={!!self.state.visibleGetPassword}
-    onRequestClose={()=>self.setState({visibleGetPassword:false})}>
+    onRequestClose={()=>self.setState({visibleGetPassword:false, password:'', errorMsg: ''})}>
     <View style={styles.reqDetailModal}>
         <View style={styles.reqDetailBox}>
             <View style={styles.reqDetailHeader}>
                 <Text style={styles.reqDetailTitle}>Password</Text>
                 <Text style={styles.reqDetailCloseIcon}
-                    onPress={()=>self.setState({visibleGetPassword:false})}>X</Text>
+                    onPress={()=>self.setState({visibleGetPassword:false, password:'', errorMsg: ''})}>X</Text>
             </View>
             <View style={styles.reqDetailBody}>
                 <Text style={{
@@ -387,4 +445,71 @@ export const passwordRequest = (self,styles) => <Modal
             </View>
         </View>
     </View>
+</Modal>
+
+
+/**
+ * Date & Time Picker
+ */
+export const dateAndTimePicker = async (self,key) => {
+    try{
+        let date = new Date(self.state[key]);
+        if(Platform.OS !== 'ios'){
+            let dateRes = await DatePickerAndroid.open({
+                // mode: 'spinner',
+                date: date,
+                minDate: new Date()
+            });
+            if (dateRes.action !== DatePickerAndroid.dismissedAction) {
+                let timerRes = await TimePickerAndroid.open({
+                    // mode: 'spinner',
+                    hour: date.getHours(),
+                    minute: date.getMinutes(),
+                    is24Hour: false, // Will display '2 PM'
+                });
+                if (timerRes.action !== TimePickerAndroid.dismissedAction) {
+                    let dateStr = `${dateRes.year}-${(dateRes.month+1) < 10?
+                     ('0'+(dateRes.month+1)):(dateRes.month+1)}-${dateRes.day < 10 ?
+                    ('0'+dateRes.day):dateRes.day}`;
+                    dateStr += ` ${timerRes.hour < 10 ? ('0'+timerRes.hour):
+                    timerRes.hour}:${timerRes.minute < 10 ?('0'+timerRes.minute):
+                    timerRes.minute}`;
+                    let state = {};
+                    state[key] = new Date(moment(dateStr)).getTime();
+                    state[`display_${key}`] = moment(dateStr).format('MMM DD, YYYY hh:mm A');
+                    self.setState(state);
+                }
+            }
+        } else {
+            console.log("iOS");
+            self.setState({chooseDateTime:true, datetime_key:key});
+        }
+    }catch(e){
+        console.log(e);
+    }
+}
+
+/**
+ * Date & Time Picker
+ */
+export const dateAndTimePickerIOS = (self,key) => <Modal transparent={true} animationType="slide"
+    onRequestClose={() => self.setState({chooseDateTime:false})}
+    visible={!!self.state.chooseDateTime}>
+    <View style={{flex:1,justifyContent: 'center',backgroundColor:'#0003'}}>
+        <View style={{backgroundColor:'#fff', marginHorizontal: 10, paddingVertical: 10}}>
+        <DatePickerIOS
+            minimumDate={new Date()}
+            date={new Date(self.state[self.state.datetime_key])}
+            mode={'datetime'}
+            onDateChange={(d) =>{
+                let state = {};
+                state[self.state.datetime_key] = d.getTime();
+                state[`display_${self.state.datetime_key}`] = moment(d).format('MMM DD, YYYY hh:mm A');
+                self.setState(state);
+                console.log(state);
+            }} />
+        <Button value={'SET'}
+            onPress={()=>self.setState({chooseDateTime:false})}/>
+        </View>
+   </View>
 </Modal>

@@ -20,6 +20,7 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ActionCreators } from '@actions';
 
+import * as wm from './WageringModal';
 import * as constants from '@src/constants';
 import * as utils from '@lib/utils';
 import { APP_URL } from '@src/config';
@@ -58,7 +59,10 @@ class MyEvents extends Component<{}> {
                             colors={['#191714']}
                             tintColor='#191714'
                             refreshing={false}
-                            onRefresh={()=>this.props.getMyActiveOracleEvents(true)}/>
+                            onRefresh={()=>{
+                                this.props.getMyActiveOracleEvents(true);
+                                this.props.getBalance();
+                            }}/>
                     }
                     keyExtractor={(event, index) => (index+'_'+event.id)}
                     renderItem={({item, index})=>{
@@ -94,21 +98,29 @@ class MyEvents extends Component<{}> {
                                         Odds: {odds.p1}:{odds.p2}
                                     </Text>
                                     <Text numberOfLines={1} style={styles.eventTabTotalBid}>
+                                        My Wager: {utils.flashNFormatter(item.my_total_wager,2)} FLASH
+                                    </Text>
+                                    <Text numberOfLines={1} style={styles.eventTabTotalBid}>
                                         Vol: {utils.flashNFormatter(item.volume,2)} FLASH
-                                        by {item.total_wagers} Wager
+                                        by {item.total_wagers} player{item.total_wagers > 1?'s':''}
                                     </Text>
                                     {expiry && item.status == constants.ORACLE_EVENT.ACTIVE_WAITING_FOR_RESULT &&
-                                    <View style={styles.eventTabExpireTime}>
-                                        <Icon style={styles.eventTabExpireTimeIcon}
-                                            name="clock-o"/>
-                                        <Text style={styles.eventTabExpireTimeText}>
-                                            {expiry}
+                                    <View>
+                                        <Text numberOfLines={1} style={styles.eventTabTotalBid}>
+                                            Wagering Closes in
                                         </Text>
+                                        <View style={styles.eventTabExpireTime}>
+                                            <Icon style={styles.eventTabExpireTimeIcon}
+                                                name="clock-o"/>
+                                            <Text style={styles.eventTabExpireTimeText}>
+                                                {expiry}
+                                            </Text>
+                                        </View>
                                     </View>}
                                     {!expiry && item.status == constants.ORACLE_EVENT.ACTIVE_WAITING_FOR_RESULT &&
                                          item.ends_on_ts > new Date().getTime() &&
                                     <Text style={styles.eventTabEventExpired}>
-                                        Wagering time ended!
+                                        Wagering closed!
                                     </Text>}
                                     {(item.ends_on_ts < new Date().getTime() ||
                                         item.status !== constants.ORACLE_EVENT.ACTIVE_WAITING_FOR_RESULT) &&
@@ -140,6 +152,7 @@ class MyEvents extends Component<{}> {
                             </Text>
                         </View>
                     }
+                    ListHeaderComponent={()=>wm.balanceHeader(this,styles)}
                 />
             </View>
         );
@@ -151,6 +164,9 @@ function mapStateToProps({params}) {
         loading: params.loading || false,
         nightMode: params.nightMode,
         activeOracleEvents: params.activeOracleEvents || [],
+        balance: params.balance,
+        currency_type: params.currency_type,
+        sbalance: params.sbalance,
     };
 }
 

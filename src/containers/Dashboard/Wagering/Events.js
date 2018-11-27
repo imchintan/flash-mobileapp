@@ -20,7 +20,10 @@ import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ActionCreators } from '@actions';
 
+import * as wm from './WageringModal';
 import * as utils from '@lib/utils';
+import * as constants from '@src/constants';
+
 import { APP_URL } from '@src/config';
 
 const noImg = require('@images/image-not-available.png');
@@ -55,7 +58,10 @@ class Events extends Component<{}> {
                             colors={['#191714']}
                             tintColor='#191714'
                             refreshing={false}
-                            onRefresh={()=>this.props.getOracleEvents()}/>
+                            onRefresh={()=>{
+                                this.props.getOracleEvents();
+                                this.props.getBalance();
+                            }}/>
                     }
                     showsVerticalScrollIndicator={false}
                     data={this.props.oracleEvents}
@@ -68,8 +74,7 @@ class Events extends Component<{}> {
                                 onPress={()=>this.props.viewWagerEventDetail(item,
                                     ()=>this.props.screenProps.navigate('EventDetail'))}
                                 style={[
-                                    styles.eventTab,
-                                    index == 0 && { marginTop: 15 },
+                                    styles.eventTab, index == 0 && { marginTop: 15 },
                                     index == this.props.oracleEvents.length - 1 &&
                                     { marginBottom: 15 }
                                 ]}>
@@ -94,26 +99,45 @@ class Events extends Component<{}> {
                                         Odds: {odds.p1}:{odds.p2}
                                     </Text>
                                     <Text numberOfLines={1} style={styles.eventTabTotalBid}>
-                                        Vol: {utils.flashNFormatter((item.volume || 0),2)} FLASH
-                                        by {item.total_wagers} Wager
+                                        Vol: {utils.flashNFormatter(item.volume,2)} FLASH
+                                        by {item.total_wagers} player{item.total_wagers > 1?'s':''}
                                     </Text>
-                                    {expiry &&
-                                    <View style={styles.eventTabExpireTime}>
-                                        <Icon style={styles.eventTabExpireTimeIcon}
-                                            name="clock-o"/>
-                                        <Text style={styles.eventTabExpireTimeText}>
-                                            {expiry}
+                                    {expiry && item.status == constants.ORACLE_EVENT.ACTIVE_WAITING_FOR_RESULT &&
+                                    <View>
+                                        <Text numberOfLines={1} style={styles.eventTabTotalBid}>
+                                            Wagering Closes in
                                         </Text>
+                                        <View style={styles.eventTabExpireTime}>
+                                            <Icon style={styles.eventTabExpireTimeIcon}
+                                                name="clock-o"/>
+                                            <Text style={styles.eventTabExpireTimeText}>
+                                                {expiry}
+                                            </Text>
+                                        </View>
                                     </View>}
-                                    {!expiry && new Date(item.ends_on_ts)
-                                        .getTime() > new Date().getTime() &&
+                                    {!expiry && item.status == constants.ORACLE_EVENT.ACTIVE_WAITING_FOR_RESULT &&
+                                         item.ends_on_ts > new Date().getTime() &&
                                     <Text style={styles.eventTabEventExpired}>
-                                        Wagering time expired!
+                                        Wagering closed!
                                     </Text>}
-                                    {new Date(item.ends_on_ts).getTime() < new Date().getTime() &&
-                                    <Text style={item.winner?styles.eventTabResultDeclare:
-                                        styles.eventTabResultWaiting}>
-                                        {item.winner?(item.winner+' won!' ):'Waiting for result!'}
+                                    {(item.ends_on_ts < new Date().getTime() ||
+                                        item.status !== constants.ORACLE_EVENT.ACTIVE_WAITING_FOR_RESULT) &&
+                                    <Text style={item.status == constants.ORACLE_EVENT.ACTIVE_WAITING_FOR_RESULT?
+                                            styles.eventTabResultWaiting:(
+                                        item.status == constants.ORACLE_EVENT.WINNER_DECLARED?
+                                            (item.result_amount > 0 ? styles.eventTabResultDeclare:
+                                            styles.eventTabEventExpired) : (
+                                        item.status == constants.ORACLE_EVENT.TIED?
+                                            styles.eventTabResultTied:styles.eventTabResultCancelled
+                                    ))}>
+                                        {item.status == constants.ORACLE_EVENT.ACTIVE_WAITING_FOR_RESULT?
+                                            'Waiting for result!':(
+                                        item.status == constants.ORACLE_EVENT.WINNER_DECLARED?
+                                        `You ${item.result_amount > 0 ?'won':'lost'} ${utils
+                                        .flashNFormatter(Math.abs(item.result_amount),2)} FLASH`: (
+                                        item.status == constants.ORACLE_EVENT.TIED?
+                                            'Tie!': 'Event is canelled!'
+                                        ))}
                                     </Text>}
                                 </View>
                             </TouchableOpacity>
@@ -126,6 +150,7 @@ class Events extends Component<{}> {
                             </Text>
                         </View>
                     }
+                    ListHeaderComponent={()=>wm.balanceHeader(this,styles)}
                 />
             </View>
         );
@@ -136,6 +161,9 @@ function mapStateToProps({params}) {
     return {
         nightMode: params.nightMode,
         oracleEvents: params.oracleEvents || [],
+        balance: params.balance,
+        currency_type: params.currency_type,
+        sbalance: params.sbalance,
     };
 }
 

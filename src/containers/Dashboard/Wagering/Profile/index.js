@@ -138,20 +138,25 @@ class WageringProfile extends Component<{}> {
                                         </Text>
                                         <Text numberOfLines={1} style={styles.eventTabTotalBid}>
                                             Vol: {utils.flashNFormatter(item.volume,2)} FLASH
-                                            by {item.total_wagers} Wager
+                                            by {item.total_wagers} player{item.total_wagers > 1?'s':''}
                                         </Text>
                                         {expiry && item.status == constants.ORACLE_EVENT.ACTIVE_WAITING_FOR_RESULT &&
-                                        <View style={styles.eventTabExpireTime}>
-                                            <Icon style={styles.eventTabExpireTimeIcon}
-                                                name="clock-o"/>
-                                            <Text style={styles.eventTabExpireTimeText}>
-                                                {expiry}
+                                        <View>
+                                            <Text numberOfLines={1} style={styles.eventTabTotalBid}>
+                                                Wagering Closes in
                                             </Text>
+                                            <View style={styles.eventTabExpireTime}>
+                                                <Icon style={styles.eventTabExpireTimeIcon}
+                                                    name="clock-o"/>
+                                                <Text style={styles.eventTabExpireTimeText}>
+                                                    {expiry}
+                                                </Text>
+                                            </View>
                                         </View>}
                                         {!expiry && item.status == constants.ORACLE_EVENT.ACTIVE_WAITING_FOR_RESULT &&
                                              item.ends_on_ts > new Date().getTime() &&
                                         <Text style={styles.eventTabEventExpired}>
-                                            Wagering time ended!
+                                            Wagering closed!
                                         </Text>}
                                         {(item.ends_on_ts < new Date().getTime() ||
                                             item.status !== constants.ORACLE_EVENT.ACTIVE_WAITING_FOR_RESULT) &&

@@ -1,4 +1,5 @@
 import {
+    Alert,
     AsyncStorage
 } from 'react-native';
 import * as types from '@actions/types'
@@ -39,7 +40,7 @@ export const wageringInit = () => {
                 payout_sharing_fee: 0,
             }
         });
-        account.getBalance();
+        dispatch(account.getBalance());
     }
 }
 
@@ -468,13 +469,13 @@ export const getMyActiveOracleEvents = (refresh=false) => {
     }
 }
 
-export const addOracleWager = (event_id, receiver_address, p, amount) => {
+export const addOracleWager = (event_id, receiver_address, p, amount, fee) => {
     return (dispatch,getState) => {
         dispatch({ type: types.LOADING_START });
         let params = getState().params;
         let signed_tx = '';
         apis.rawTransaction(params.profile.auth_version, params.profile.sessionToken,
-            constants.CURRENCY_TYPE.FLASH, amount, 0, receiver_address, null).then((d)=>{
+            constants.CURRENCY_TYPE.FLASH, amount, fee, receiver_address, null).then((d)=>{
             if(d.rc == 1){
                 let wallet = params.decryptedWallet;
                 let tx = wallet.signTx(d.transaction.rawtx);
@@ -491,7 +492,14 @@ export const addOracleWager = (event_id, receiver_address, p, amount) => {
                         dispatch(getMyActiveOracleEvents());
                         dispatch(getOracleEvents());
                         dispatch(account.getBalance(true));
-                        Toast.successTop("Wager added successfully.")
+                        // Toast.successTop("Wager added successfully.")
+                        Alert.alert(
+                            'Success!',
+                            `${amount} FLASH is staked for this wager.`,
+                            [
+                                {text: 'OK'},
+                            ],
+                        )
                     }
                 }).catch(e=>{
                     console.log(e);
