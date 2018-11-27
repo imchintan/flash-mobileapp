@@ -318,6 +318,9 @@ class CreateEvent extends Component<{}> {
                                     }}
                                 />
                             </View>}
+                            <Text style={styles.oracleProfileNote}>
+                                30% of the oracle fees will go to FLASH.
+                            </Text>
                         </View>
                         <View style={styles.oracleProfile}>
                             <Text style={styles.oracleProfileLabel}>
@@ -370,6 +373,9 @@ class CreateEvent extends Component<{}> {
                                     color: '#787878',
                                 }} name={'calendar'} />
                             </TouchableOpacity>
+                            <Text style={styles.oracleProfileNote}>
+                                Event will be cancelled if result is not declared after 24 hours of result declaration time.
+                            </Text>
                         </View>
                         <View style={styles.oracleProfile}>
                             <Text style={styles.oracleProfileLabel}>

@@ -12,6 +12,7 @@ import * as txns from '@actions/transactions';
 import * as reqs from '@actions/request';
 import * as send from '@actions/send';
 import * as sharing from '@actions/sharing';
+import * as wagering from '@actions/wagering';
 
 export const getBalance = (refresh = false) => {
     return (dispatch,getState) => {
@@ -152,6 +153,28 @@ export const getBalanceV2 = (currency_type=constants.CURRENCY_TYPE.FLASH ,refres
     }
 }
 
+export const getModulesStatus = () => {
+    return (dispatch,getState) => {
+        let params = getState().params;
+        apis.getModulesStatus(params.profile.auth_version, params.profile.sessionToken)
+        .then((d)=>{
+            if(d.rc == 1){
+                dispatch({
+                    type: types.GET_MODULES_STATUS,
+                    payload: {
+                        module_status: d.modules
+                    }
+                });
+            }else{
+                dispatch({type: types.GET_MODULES_STATUS});
+            }
+        }).catch(e=>{
+            console.log(e);
+            dispatch({type: types.GET_MODULES_STATUS});
+        })
+    }
+}
+
 export const getProfile = () => {
     return (dispatch,getState) => {
         let params = getState().params;
@@ -166,7 +189,9 @@ export const getProfile = () => {
                         profile
                     }
                 });
+                dispatch(wagering.getOracleProfileAccessList());
                 dispatch(getFiatCurrencyRate());
+                dispatch(getModulesStatus());
             }else if(d.rc == 3){
                 dispatch({
                     type: types.CUSTOM_ACTION,

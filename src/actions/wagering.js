@@ -44,9 +44,35 @@ export const wageringInit = () => {
     }
 }
 
-export const getOracleEvents = () => {
+export const getOracleProfileAccessList = () => {
     return (dispatch,getState) => {
-        dispatch({ type: types.LOADING_START });
+        let params = getState().params;
+        apis.getOracleProfileAccessList(params.profile.auth_version, params.profile.sessionToken)
+            .then((d)=>{
+            if(d.rc !== 1){
+                dispatch({
+                    type: types.GET_ORACLE_PROFILE_ACCESS_LIST
+                });
+            }else{
+                dispatch({
+                    type: types.GET_ORACLE_PROFILE_ACCESS_LIST,
+                    payload: {
+                        oracleProfileAccessEmails: d.emails
+                    }
+                });
+            }
+        }).catch(e=>{
+            console.log(e);
+            dispatch({
+                type: types.GET_ORACLE_PROFILE_ACCESS_LIST
+            });
+        })
+    }
+}
+
+export const getOracleEvents = (refresh = true) => {
+    return (dispatch,getState) => {
+        if(refresh)dispatch({ type: types.LOADING_START });
         let params = getState().params;
         apis.getOracleEvents(params.profile.auth_version, params.profile.sessionToken)
             .then((d)=>{

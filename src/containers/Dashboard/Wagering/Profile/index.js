@@ -108,7 +108,10 @@ class WageringProfile extends Component<{}> {
                         data={this.props.myOracleEvents}
                         keyExtractor={(event, index) => (index+'_'+event.id)}
                         renderItem={({item, index})=>{
-                            let expiry = utils.getExpierTime(item.expires_on_ts);
+                            let expiry = item.status == constants.ORACLE_EVENT.ACTIVE_WAITING_FOR_RESULT?
+                                utils.getExpierTime(item.expires_on_ts):null;
+                            let endIn = item.status == constants.ORACLE_EVENT.ACTIVE_WAITING_FOR_RESULT
+                                && !expiry?utils.getExpierTime(item.ends_on_ts):null;
                             let odds = utils.getOdds(item.p1_wagers,item.p2_wagers);
                             return(
                                 <TouchableOpacity
@@ -141,18 +144,17 @@ class WageringProfile extends Component<{}> {
                                             by {item.total_wagers} player{item.total_wagers > 1?'s':''}
                                         </Text>
                                         {expiry && item.status == constants.ORACLE_EVENT.ACTIVE_WAITING_FOR_RESULT &&
-                                        <View>
-                                            <Text numberOfLines={1} style={styles.eventTabTotalBid}>
-                                                Wagering Closes in
+                                        <Text numberOfLines={1} style={styles.eventTabTotalBid}>
+                                            Wagering Closes in: <Text style={styles.eventTabExpireTimeText}>
+                                                {expiry}
                                             </Text>
-                                            <View style={styles.eventTabExpireTime}>
-                                                <Icon style={styles.eventTabExpireTimeIcon}
-                                                    name="clock-o"/>
-                                                <Text style={styles.eventTabExpireTimeText}>
-                                                    {expiry}
-                                                </Text>
-                                            </View>
-                                        </View>}
+                                        </Text>}
+                                        {endIn && item.status == constants.ORACLE_EVENT.ACTIVE_WAITING_FOR_RESULT &&
+                                        <Text numberOfLines={1} style={styles.eventTabTotalBid}>
+                                            Result after: <Text style={styles.eventTabEndTimeText}>
+                                                {endIn}
+                                            </Text>
+                                        </Text>}
                                         {!expiry && item.status == constants.ORACLE_EVENT.ACTIVE_WAITING_FOR_RESULT &&
                                              item.ends_on_ts > new Date().getTime() &&
                                         <Text style={styles.eventTabEventExpired}>
@@ -172,7 +174,7 @@ class WageringProfile extends Component<{}> {
                                             item.status == constants.ORACLE_EVENT.WINNER_DECLARED?
                                                 item.winner+' won!': (
                                             item.status == constants.ORACLE_EVENT.TIED?
-                                                'Tie!': 'Event is canelled'
+                                                'Tie!': 'Event is cancelled'
                                             ))}
                                         </Text>}
                                     </View>

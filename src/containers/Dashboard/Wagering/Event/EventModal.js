@@ -36,42 +36,6 @@ export const editOracleEvent = (self,styles) => <Modal transparent={false} anima
     <Text style={styles.wagerTitle}>Edit Event</Text>
     <Content hasHeader={false}>
         <View style={styles.oracleProfileContent}>
-            {/*
-            <View style={styles.oracleProfile}>
-                <Text style={styles.oracleProfileLabel}>
-                    1st Team / Player
-                    <Text style={styles.mandatoryField}>*</Text>
-                </Text>
-                <View style={styles.oracleProfileInputBox}>
-                    <TextInput
-                        underlineColorAndroid='transparent'
-                        style={styles.oracleProfileInput}
-                        placeholder={'i.e Portugal'}
-                        autoCapitalize={'none'}
-                        autoCorrect={false}
-                        value={self.state.p1}
-                        onChangeText={(p1)=>self.setState({p1})}
-                    />
-                </View>
-            </View>
-            <View style={styles.oracleProfile}>
-                <Text style={styles.oracleProfileLabel}>
-                    2nd Team / Player
-                    <Text style={styles.mandatoryField}>*</Text>
-                </Text>
-                <View style={styles.oracleProfileInputBox}>
-                    <TextInput
-                        underlineColorAndroid='transparent'
-                        style={styles.oracleProfileInput}
-                        placeholder={'i.e Brazil'}
-                        autoCapitalize={'none'}
-                        autoCorrect={false}
-                        value={self.state.p2}
-                        onChangeText={(p2)=>self.setState({p2})}
-                    />
-                </View>
-            </View>
-            */}
             <View style={styles.oracleProfile}>
                 <Text style={styles.oracleProfileLabel}>
                     Wagering End Time
@@ -123,6 +87,9 @@ export const editOracleEvent = (self,styles) => <Modal transparent={false} anima
                         color: '#787878',
                     }} name={'calendar'} />
                 </TouchableOpacity>
+                <Text style={styles.oracleProfileNote}>
+                    Event will be cancelled if result is not declared after 24 hours of result declaration time.
+                </Text>
             </View>
             <View style={styles.oracleProfile}>
                 <Text style={styles.oracleProfileLabel}>
@@ -481,7 +448,6 @@ export const dateAndTimePicker = async (self,key) => {
                 }
             }
         } else {
-            console.log("iOS");
             self.setState({chooseDateTime:true, datetime_key:key});
         }
     }catch(e){
@@ -506,7 +472,6 @@ export const dateAndTimePickerIOS = (self,key) => <Modal transparent={true} anim
                 state[self.state.datetime_key] = d.getTime();
                 state[`display_${self.state.datetime_key}`] = moment(d).format('MMM DD, YYYY hh:mm A');
                 self.setState(state);
-                console.log(state);
             }} />
         <Button value={'SET'}
             onPress={()=>self.setState({chooseDateTime:false})}/>

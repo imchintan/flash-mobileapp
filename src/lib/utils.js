@@ -22,9 +22,13 @@ export const getLocation = async endpoint => {
   return response.json();
 };
 
-export const FontSize = (size) => {
-    if(width <= 320)
-        size *= 0.85;
+export const FontSize = (size, ratio=0) => {
+    if(width <= 320){
+        if(ratio == 0)
+            size *= 0.85;
+        else
+            size *= ratio;
+    }
     return size;
 }
 

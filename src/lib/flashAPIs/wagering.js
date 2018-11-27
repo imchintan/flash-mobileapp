@@ -1,7 +1,31 @@
-import {
-    AsyncStorage
-} from 'react-native';
 import { APP_URL, API_URL, RESOURCE, APP_VERSION } from '@src/config';
+
+/**
+ * Get Oracle Profile Access List
+ * @param  {Number} auth_version        API authentication version
+ * @param  {String} sessionToken        User authorization token
+ * @return {Promise}
+ */
+export const getOracleProfileAccessList = (auth_version, sessionToken) => {
+    return new Promise((resolve,reject) => {
+        let params = 'appversion='+APP_VERSION+'&res='+RESOURCE;
+        fetch(`${API_URL}/get-oracle-profile-access-list?${params}`,{
+            method: 'GET',
+            body: null,
+            headers: {
+               'Content-Type': 'application/json; charset=utf-8',
+               'authorization': sessionToken,
+               'fl_auth_version': auth_version
+            }
+        })
+        .then(res => res.json())
+        .then(json =>resolve(json))
+        .catch(e =>{
+            console.log(e);
+            reject('Something went wrong!')
+        });
+    });
+}
 
 /**
  * Get Oracle Events

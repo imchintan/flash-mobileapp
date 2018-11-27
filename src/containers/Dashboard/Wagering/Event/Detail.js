@@ -145,9 +145,9 @@ class EventDetail extends Component<{}> {
 
     addOracleWager(){
         let amt = utils.toOrginalNumber(this.state.amount);
-        // let minLimit = this.props.oracleEvent.min || 100;
-        // if(amt < minLimit)
-        //     return Toast.errorTop("Amount must be greater than min limit.");
+        let minLimit = this.props.oracleEvent.min || 100;
+        if(amt < minLimit)
+            return Toast.errorTop("Amount must be greater than min limit.");
 
         if(this.props.oracleEvent.max !== 0 && amt > this.props.oracleEvent.max)
             return Toast.errorTop("Amount must be less than max limit.");
@@ -180,16 +180,6 @@ class EventDetail extends Component<{}> {
 
     updateEvent(){
         data={};
-        // if(!this.state.p1.trim()){
-        //     return Toast.errorTop("1st player name is required!");
-        // }
-        // data.p1 = this.state.p1.trim();
-        //
-        // if(!this.state.p2.trim()){
-        //     return Toast.errorTop("2nd player name is required!");
-        // }
-        // data.p2 = this.state.p2.trim();
-
         if(this.state.expires_on_ts <= new Date().getTime()){
             return Toast.errorTop("Expire time is invalid!");
         }
@@ -212,6 +202,8 @@ class EventDetail extends Component<{}> {
             require('@styles/nightMode/wagering'):require('@styles/wagering'));
         const expire = this.props.oracleEvent.status == constants.ORACLE_EVENT.ACTIVE_WAITING_FOR_RESULT?
             utils.getExpierTime(this.props.oracleEvent.expires_on_ts):null;
+        const endIn = this.props.oracleEvent.status == constants.ORACLE_EVENT.ACTIVE_WAITING_FOR_RESULT && !expire?
+            utils.getExpierTime(this.props.oracleEvent.ends_on_ts):null;
         const odds = utils.getOdds(this.props.oracleEvent.p1_wagers,this.props.oracleEvent.p2_wagers);
 
         return (
@@ -329,8 +321,7 @@ class EventDetail extends Component<{}> {
                                     {odds.p2}
                                 </Text>
                             </View>
-                            {this.props.oracleEvent.username !== this.props.profile.username && expire &&
-                                this.props.oracleEvent.status == constants.ORACLE_EVENT.ACTIVE_WAITING_FOR_RESULT &&
+                            {expire && this.props.oracleEvent.status == constants.ORACLE_EVENT.ACTIVE_WAITING_FOR_RESULT &&
                             <View style={styles.eventPlayerDetailRow}>
                                 <Text style={styles.eventPlayerDetailLabel} />
                                 <View style={styles.eventPlayerJoin}>
@@ -367,6 +358,12 @@ class EventDetail extends Component<{}> {
                             <Text style={styles.eventExpiryOnLabel}>Wagering Closes in</Text>
                             <Text style={styles.eventExpiryOnText}>
                                 {expire}
+                            </Text>
+                        </View>}
+                        {endIn && <View>
+                            <Text style={styles.eventExpiryOnLabel}>Result in</Text>
+                            <Text style={[styles.eventExpiryOnText,{backgroundColor:'#0080ff',color:'#fff'}]}>
+                                {endIn}
                             </Text>
                         </View>}
                         {this.props.oracleEvent.status == constants.ORACLE_EVENT.CANCELLED_OR_ABANDONED && <View>
@@ -406,7 +403,13 @@ class EventDetail extends Component<{}> {
                         {(!expire && this.props.oracleEvent.ends_on_ts < new Date().getTime() && this.props.profile.username == this.props.oracleEvent.username) &&
                         <Button
                             onPress={()=>{
-                                if(this.props.oracleEvent.p1_wagers == 0 || this.props.oracleEvent.p2_wagers == 0){
+                                if(this.props.oracleEvent.fee_type == 0 && this.props.oracleEvent.fees > this.props.oracleEvent.volume){
+                                    Alert.alert(
+                                        this.props.oracleEvent.event_name,
+                                        `As total volume is less than Oracle fee, you can not declare winner, please cancel event with proper reason.`,
+                                        [{text: 'OK'}],
+                                    )
+                                } else if(this.props.oracleEvent.p1_wagers == 0 || this.props.oracleEvent.p2_wagers == 0){
                                     Alert.alert(
                                         this.props.oracleEvent.event_name,
                                         `You can not declare winner as there is no wager for ${
@@ -416,7 +419,7 @@ class EventDetail extends Component<{}> {
                                         }, please cancel this event and mention proper reason.`,
                                         [{text: 'OK'}],
                                     )
-                                }else{
+                                } else {
                                     this.setState({declareWiner:true})
                                 }
                             }}
@@ -450,7 +453,7 @@ class EventDetail extends Component<{}> {
                         this.props.oracleEvent.status == constants.ORACLE_EVENT.ACTIVE_WAITING_FOR_RESULT?
                             '#0080ff':(
                         this.props.oracleEvent.status == constants.ORACLE_EVENT.WINNER_DECLARED?
-                            (this.props.oracleEvent.username !== this.props.profile.username &&
+                            (this.props.oracleEvent.wagers && this.props.oracleEvent.wagers.length > 0 &&
                                 this.props.oracleEvent.result_amount < 0?'#d33':'#0D0'): (
                         this.props.oracleEvent.status == constants.ORACLE_EVENT.TIED?
                             '#FFA500':'#d33'))}]}>
@@ -458,12 +461,12 @@ class EventDetail extends Component<{}> {
                     {this.props.oracleEvent.status == constants.ORACLE_EVENT.ACTIVE_WAITING_FOR_RESULT?
                         'Waiting for result!':(
                     this.props.oracleEvent.status == constants.ORACLE_EVENT.WINNER_DECLARED?
-                        (this.props.oracleEvent.username === this.props.profile.username?
+                        (this.props.oracleEvent.wagers && this.props.oracleEvent.wagers.length == 0?
                             this.props.oracleEvent.winner+' won!': `You ${this.props.oracleEvent
                                 .result_amount > 0 ? 'won':'lost'} ${utils.flashNFormatter(Math
-                                .abs(this.props.oracleEvent.result_amount),2)} FLASH`) : (
+                                .abs(this.props.oracleEvent.result_amount || 0),2)} FLASH`) : (
                     this.props.oracleEvent.status == constants.ORACLE_EVENT.TIED?
-                        'Tie!': 'Event is canelled'
+                        'Tie!': 'Event is cancelled'
                     ))}
                     </Text>
                 </View>}

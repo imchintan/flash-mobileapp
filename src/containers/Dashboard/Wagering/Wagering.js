@@ -30,11 +30,7 @@ import MyEvents from './MyEvents';
 import Profile from './Profile/index';
 // import * as wm from './WageringModal';
 
-const TabNav = createMaterialTopTabNavigator({
-    'Events': { screen: Events },
-    'My Events': { screen: MyEvents },
-    'Oracle Profile': { screen: Profile },
-},{
+const tabNavigatorConfig = {
     navigationOptions: ({ navigation, screenProps }) => ({
     }),
     tabBarOptions: {
@@ -65,7 +61,7 @@ const TabNav = createMaterialTopTabNavigator({
     tabBarPosition: 'top',
     animationEnabled: true,
     swipeEnabled: true,
-});
+};
 
 class Wagering extends React.Component {
 
@@ -80,6 +76,14 @@ class Wagering extends React.Component {
 
     componentDidMount(){
         this.props.wageringInit();
+        this.refreshTime = setInterval(()=>{
+            this.props.getOracleEvents(false);
+            this.props.getMyActiveOracleEvents();
+            this.props.getMyOracleEvents();
+        },5000);
+    }
+    componentWillUnmount(){
+        clearInterval(this.refreshTime);
     }
 
     legalDisclaimer(){
@@ -91,7 +95,27 @@ class Wagering extends React.Component {
         });
     }
 
+    getTabNav(){
+        if(this.tabNav) return this.tabNav;
+        let hasMyProifle = (this.props.oracleProfileAccessEmails
+            .findIndex(email => email == this.props.profile.email) > -1);
+        let routeConfigs = {
+            'Events': { screen: Events },
+            'My Events': { screen: MyEvents }
+        }
+        if(hasMyProifle){
+            routeConfigs = {
+                'Events': { screen: Events },
+                'My Events': { screen: MyEvents },
+                'Oracle Profile': { screen: Profile }
+            }
+        }
+        this.tabNav = createMaterialTopTabNavigator(routeConfigs, tabNavigatorConfig);
+        return this.tabNav;
+    }
+
     render() {
+        const TabNav = this.getTabNav();
         const styles = (this.props.nightMode?require('@styles/nightMode/wagering'):require('@styles/wagering'));
         return (
             <View style={{
@@ -135,7 +159,9 @@ function mapStateToProps({params}) {
     return {
         loading: params.loading,
         nightMode: params.nightMode,
-        wagerLegalDisclaimer: params.wagerLegalDisclaimer || false
+        profile: params.profile,
+        wagerLegalDisclaimer: params.wagerLegalDisclaimer || false,
+        oracleProfileAccessEmails: params.oracleProfileAccessEmails || []
     };
 }
 

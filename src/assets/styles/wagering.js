@@ -14,6 +14,11 @@ const styles = StyleSheet.create({
         flex:1,
         backgroundColor: '#EFEFEF',
     },
+    label:{
+        fontSize: FontSize(18,0.75),
+        color: '#4A4A4A',
+        marginTop: 15,
+    },
     eventTab:{
         flexDirection: 'row',
         backgroundColor: '#FFFFFF',
@@ -45,37 +50,31 @@ const styles = StyleSheet.create({
         width: width - 125,
     },
     eventTabTitle:{
-        fontSize: 17,
+        fontSize: FontSize(17,0.75),
         fontWeight: '400',
         color: '#333',
     },
     eventTabPlayers:{
-        fontSize: 14,
+        fontSize: FontSize(14,0.75),
         color: '#4A4A4A',
     },
     eventTabCreatedBy:{
-        fontSize: 13,
+        fontSize: FontSize(13,0.75),
         color: '#787878',
         marginBottom: 2,
     },
-    eventTabT1otalBid:{
-        fontSize: 15,
+    eventTabTotalBid:{
+        fontSize: FontSize(15,0.75),
         color: '#4A4A4A',
         marginBottom: 2,
     },
-    eventTabExpireTime:{
-        flexDirection:'row',
-        alignItems: 'center',
-        marginTop: 2,
-    },
-    eventTabExpireTimeIcon:{
-        fontSize: 22,
-        color: '#cf9f1e',
-        marginRight: 5,
-    },
     eventTabExpireTimeText:{
-        fontSize: 18,
+        fontSize: FontSize(18,0.75),
         color: '#B98E1B',
+    },
+    eventTabEndTimeText:{
+        fontSize: FontSize(18,0.75),
+        color: '#0080ff',
     },
     eventTabJoinBtn:{
         backgroundColor: '#E0AE27',
@@ -85,7 +84,7 @@ const styles = StyleSheet.create({
     },
     eventTabJoinBtnText:{
         color: '#191714',
-        fontSize: 16,
+        fontSize: FontSize(16,0.75),
     },
     oracleProfileDetail:{
         width: '100%',
@@ -119,13 +118,13 @@ const styles = StyleSheet.create({
     oracleProfileNameText:{
         alignSelf: 'center',
         color: '#FFFFFF',
-        fontSize: 20,
+        fontSize: FontSize(20,0.75),
         fontWeight: '500'
     },
     oracleProfileEditIcon:{
         bottom: -5,
         paddingLeft: 10,
-        fontSize: 22,
+        fontSize: FontSize(22,0.75),
         color: '#c2c2c2'
     },
     oracleProfileRow:{
@@ -134,16 +133,16 @@ const styles = StyleSheet.create({
     },
     oracleProfileCompanyText:{
         color: '#FEFEFE',
-        fontSize: 16,
+        fontSize: FontSize(16,0.75),
     },
     oracleProfileCompanyIcon:{
         paddingRight: 10,
-        fontSize: 20,
+        fontSize: FontSize(20,0.75),
         color: '#c2c2c2'
     },
     oracleProfileEmailIcon:{
         paddingRight: 10,
-        fontSize: 18,
+        fontSize: FontSize(18,0.75),
         color: '#c2c2c2'
     },
     oracleCreateEventBtn:{
@@ -161,7 +160,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center'
     },
     oracleProfileSetupTitle:{
-        fontSize: 20,
+        fontSize: FontSize(20,0.75),
         fontWeight: 'bold',
         color: '#E2E2E2',
         textAlign: 'center',
@@ -169,7 +168,7 @@ const styles = StyleSheet.create({
         marginBottom: 30,
     },
     oracleProfileSetupNote:{
-        fontSize: 16,
+        fontSize: FontSize(16,0.75),
         color: '#E2E2E2',
         textAlign: 'center',
         marginHorizontal: 30,
@@ -191,16 +190,22 @@ const styles = StyleSheet.create({
         borderColor: '#ddd'
     },
     oracleProfileInput:{
-        fontSize: 16,
+        fontSize: FontSize(16,0.75),
         width: '100%',
         color: '#333'
     },
     oracleProfileLabel:{
-        fontSize: 16,
+        fontSize: FontSize(16,0.75),
         paddingHorizontal: 5,
         marginBottom:2,
         fontWeight: "500",
         color: '#565656'
+    },
+    oracleProfileNote:{
+        fontSize: FontSize(13,0.75),
+        marginTop: 2,
+        paddingHorizontal: 5,
+        color: '#666',
     },
     oracleActiveDeactiveLink:{
         alignSelf: 'center',
@@ -209,7 +214,7 @@ const styles = StyleSheet.create({
         marginBottom: 30,
     },
     oracleActiveDeactiveLinkText:{
-        fontSize: 14,
+        fontSize: FontSize(14,0.75),
         color: '#787878',
         fontStyle: 'italic',
     },
@@ -223,16 +228,16 @@ const styles = StyleSheet.create({
         marginLeft: 20
     },
     eventRadioBtnIcon:{
-        fontSize: 17,
+        fontSize: FontSize(17,0.75),
         color: '#333',
         marginRight: 5
     },
     eventRadioBtnText:{
-        fontSize: 17,
+        fontSize: FontSize(17,0.75),
         color: '#333',
     },
     optionalText:{
-        fontSize: 14,
+        fontSize: FontSize(14,0.75),
         fontWeight: 'normal',
         color: '#565656',
     },
@@ -243,7 +248,7 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     eventLimitIcon:{
-        fontSize: 30,
+        fontSize: FontSize(30,0.75),
         fontWeight: 'bold',
         color: '#666'
     },
@@ -260,7 +265,7 @@ const styles = StyleSheet.create({
         marginTop: 50,
         textAlign: 'center',
         color: '#4A4A4A',
-        fontSize: 16,
+        fontSize: FontSize(16,0.75),
     },
     eventDetail:{
         margin: 20,
@@ -272,7 +277,7 @@ const styles = StyleSheet.create({
         alignItems: 'center',
     },
     eventDetailTitleText:{
-        fontSize: 25,
+        fontSize: FontSize(25,0.75),
         fontWeight: 'bold',
         color: '#333',
     },
@@ -281,17 +286,17 @@ const styles = StyleSheet.create({
     },
     eventDetailCreatedBy:{
         marginTop: 2,
-        fontSize: 20,
+        fontSize: FontSize(20,0.75),
         color: '#333'
     },
     eventDetailVol:{
         marginTop: 2,
-        fontSize: 18,
+        fontSize: FontSize(18,0.75),
         color: '#4A4A4A'
     },
     eventDetailEndsOn:{
         marginTop: 2,
-        fontSize: 16,
+        fontSize: FontSize(16,0.75),
         color: '#666'
     },
     eventPlayerDetail:{
@@ -308,7 +313,7 @@ const styles = StyleSheet.create({
     },
     eventPlayerDetailLabel:{
         textAlign: 'right',
-        fontSize: 16,
+        fontSize: FontSize(16,0.75),
         paddingRight: 5,
         color: '#4A4A4A',
         width: 45,
@@ -316,33 +321,33 @@ const styles = StyleSheet.create({
     eventPlayerDetailVs:{
         width: 25,
         textAlign: 'center',
-        fontSize: 18,
+        fontSize: FontSize(18,0.75),
         color: '#4A4A4A',
     },
     eventPlayerDetailHeader:{
         width: (width/2) - 70,
         textAlign: 'center',
-        fontSize: 16,
+        fontSize: FontSize(16,0.75),
         color: '#4A4A4A',
     },
     eventPlayerDetailValue:{
         textAlign: 'center',
         width: (width/2) - 70,
-        fontSize: 20,
+        fontSize: FontSize(20,0.75),
         fontWeight: 'bold',
         color: '#4A4A4A',
     },
     eventPlayerDetailWon:{
         textAlign: 'center',
         width: (width/2) - 70,
-        fontSize: 20,
+        fontSize: FontSize(20,0.75),
         fontWeight: 'bold',
         color: '#0D0',
     },
     eventPlayerDetailLoss:{
         textAlign: 'center',
         width: (width/2) - 70,
-        fontSize: 20,
+        fontSize: FontSize(20,0.75),
         fontWeight: 'bold',
         color: '#F55',
     },
@@ -356,27 +361,27 @@ const styles = StyleSheet.create({
         paddingHorizontal: 18
     },
     eventPlayerJoinBtnText:{
-        fontSize: 15
+        fontSize: FontSize(15,0.75)
     },
     eventCancelledReason:{
         textAlign: 'justify',
-        fontSize: 15,
+        fontSize: FontSize(15,0.75),
         color: '#D33',
     },
     eventDescription:{
         textAlign: 'justify',
-        fontSize: 14,
+        fontSize: FontSize(14,0.75),
         color: '#666666',
     },
     eventExpiryOnLabel:{
         marginTop: 20,
         marginBottom: 10,
-        fontSize: 18,
+        fontSize: FontSize(18,0.75),
         color: '#666666',
         textAlign: 'center',
     },
     eventExpiryOnText:{
-        fontSize: 30,
+        fontSize: FontSize(30,0.75),
         color: '#E0AE27',
         marginBottom: 20,
         alignSelf: 'center',
@@ -385,8 +390,8 @@ const styles = StyleSheet.create({
         borderRadius: 10,
     },
     wagerLimit:{
-        fontSize: 16,
-        color: '#666',
+        fontSize: FontSize(16,0.75),
+        color: '#000',
         marginBottom: 10,
         paddingHorizontal: 5,
     },
@@ -396,12 +401,12 @@ const styles = StyleSheet.create({
         right: 15
     },
     wagerCancelBtnText:{
-        fontSize: 40,
+        fontSize: FontSize(40,0.75),
         color: '#E1E1E1'
     },
     wagerTitle:{
         width: 250,
-        fontSize: 25,
+        fontSize: FontSize(25,0.75),
         fontFamily: 'futura-medium',
         paddingVertical: 15,
         textAlign: 'center',
@@ -433,7 +438,7 @@ const styles = StyleSheet.create({
     },
     walletBalanceLabel:{
         color:'#787878',
-        fontSize: FontSize(18),
+        fontSize: FontSize(18,0.75),
         marginBottom: -5,
     },
     walletBalanceDetail:{
@@ -443,18 +448,18 @@ const styles = StyleSheet.create({
     },
     walletBalance:{
         color:'#454545',
-        fontSize: FontSize(18),
+        fontSize: FontSize(18,0.75),
         top: 1,
     },
     exchangeIcon:{
         marginHorizontal: 8,
         color:'#989898',
-        fontSize: FontSize(18),
+        fontSize: FontSize(18,0.75),
     },
     walletBalanceInFiatCurrency:{
         color:'#333',
         fontWeight: '500',
-        fontSize: FontSize(25),
+        fontSize: FontSize(25,0.75),
     },
     eventMyWagerRow:{
         flexDirection: 'row',
@@ -462,23 +467,23 @@ const styles = StyleSheet.create({
         marginBottom: 7,
     },
     eventMyWagerPlayer:{
-        fontSize: 15,
+        fontSize: FontSize(15,0.75),
         color: '#333'
     },
     eventMyWagerVol:{
-        fontSize: 13,
+        fontSize: FontSize(13,0.75),
         color: '#666',
     },
     eventMyWagerVolWon:{
-        fontSize: 13,
+        fontSize: FontSize(13,0.75),
         color: '#0D0',
     },
     eventMyWagerVolLost:{
-        fontSize: 13,
+        fontSize: FontSize(13,0.75),
         color: '#D33',
     },
     headerBtnText:{
-        fontSize: 17,
+        fontSize: FontSize(17,0.75),
         padding:5,
         color: '#fff',
     },
@@ -491,7 +496,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
     },
     eventExpiredText:{
-        fontSize: 15,
+        fontSize: FontSize(15,0.75),
         color: '#fff',
         padding: 5,
     },
@@ -506,27 +511,27 @@ const styles = StyleSheet.create({
         alignItems: 'center'
     },
     eventTabResultWaiting:{
-        fontSize: 17,
+        fontSize: FontSize(17,0.75),
         color: '#0080ff',
         fontStyle: 'italic'
     },
     eventTabResultTied:{
-        fontSize: 17,
+        fontSize: FontSize(17,0.75),
         color: '#FFA500',
         fontStyle: 'italic'
     },
     eventTabResultCancelled:{
-        fontSize: 17,
+        fontSize: FontSize(17,0.75),
         color: '#d33',
         fontStyle: 'italic'
     },
     eventTabResultDeclare:{
-        fontSize: 17,
+        fontSize: FontSize(17,0.75),
         color: '#0D0',
         fontStyle: 'italic'
     },
     eventTabEventExpired:{
-        fontSize: 17,
+        fontSize: FontSize(17,0.75),
         color: '#F33',
         fontStyle: 'italic'
     },
@@ -550,7 +555,7 @@ const styles = StyleSheet.create({
     },
     legalDisclaimerText:{
         paddingVertical: 10,
-        fontSize: 16,
+        fontSize: FontSize(16,0.75),
         color: '#666666',
     },
     legalDisclaimerDNS:{
@@ -560,11 +565,11 @@ const styles = StyleSheet.create({
         marginLeft: 5
     },
     legalDisclaimerDNSText:{
-        fontSize: 15,
+        fontSize: FontSize(15,0.75),
         color: '#565656'
     },
     legalDisclaimerDNSIcon:{
-        fontSize: 18,
+        fontSize: FontSize(18,0.75),
         color: '#565656'
     },
     legalDisclaimerBtn:{
@@ -572,12 +577,12 @@ const styles = StyleSheet.create({
         alignSelf: 'center'
     },
     legalDisclaimerBtnText:{
-        fontSize: 17,
+        fontSize: FontSize(17,0.75),
         fontWeight: 'bold',
         color: '#E0AE27'
     },
     wagerTxnFeeText:{
-        fontSize: 14,
+        fontSize: FontSize(14,0.75),
         color: '#666',
         alignSelf: 'center',
         marginTop: 5,

@@ -104,6 +104,15 @@ class Wallet extends Component<{}> {
                                 utils.flashNFormatter(this.props.fiat_balance,2)}
                             </Text>
                         </TouchableOpacity>
+                        {this.props.currency_type == constants.CURRENCY_TYPE.FLASH &&
+                        <View style={{alignItems:'flex-end'}}>
+                            <Text style={[styles.walletBalanceLabel,{marginVertical:3}]}>Staked Balance</Text>
+                            <Text style={styles.walletBalance}>{
+                                utils.getCurrencyUnitUpcase(this.props.currency_type) + ' ' +
+                                utils.flashNFormatter((this.props.currency_type == constants.CURRENCY_TYPE.FLASH?
+                                    utils.satoshiToFlash(this.props.sbalance).toFixed(10):this.props.sbalance),2)}
+                            </Text>
+                        </View>}
                     </View>
                     <View style={{paddingHorizontal: 20}}>
                         <Text style={styles.label}>Recent Transactions</Text>
@@ -150,7 +159,8 @@ function mapStateToProps({params}) {
         refreshingHomeLoader: params.refreshingHome ||  false,
         errorMsg: params.errorMsg || null,
         successMsg: params.successMsg || null,
-        balance: params.balance,
+        balance: params.balance || 0,
+        sbalance: params.sbalance || 0,
         txns: params.recentTxns || [],
         txnDetail: params.txnDetail || {},
         txnLoader: params.txnLoader || false,
