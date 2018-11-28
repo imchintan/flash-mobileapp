@@ -2,13 +2,13 @@
  *  Application configuration
  */
 export const  RESOURCE = 'app';
-export const  APP_MODE = 'DEV'; // DEV , PROD
-export const  APP_VERSION = '1.9.6-rc.4.2';
+export const  APP_MODE = 'PROD'; // DEV , PROD
+export const  APP_VERSION = '1.9.6-stage.4';
 
 let appUrl;
 
 if(APP_MODE == 'PROD')
-    appUrl = 'https://mkeys.flashcoin.io';
+    appUrl = 'https://keysstg.flashcoin.io';
 else
     appUrl = 'https://dev02keys.flashcoin.io';
 

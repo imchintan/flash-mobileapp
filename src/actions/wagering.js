@@ -40,7 +40,7 @@ export const wageringInit = () => {
                 payout_sharing_fee: 0,
             }
         });
-        dispatch(account.getBalance());
+        dispatch(account.getBalanceV2(currency_type));
     }
 }
 
@@ -74,27 +74,26 @@ export const getOracleEvents = (refresh = true) => {
     return (dispatch,getState) => {
         if(refresh)dispatch({ type: types.LOADING_START });
         let params = getState().params;
+        let payload=refresh?{loading: false}:{};
         apis.getOracleEvents(params.profile.auth_version, params.profile.sessionToken)
             .then((d)=>{
             if(d.rc !== 1){
                 dispatch({
                     type: types.GET_ORACLE_EVENTS,
-                    payload: { loading: false }
+                    payload
                 });
             }else{
+                payload.oracleEvents = d.events;
                 dispatch({
                     type: types.GET_ORACLE_EVENTS,
-                    payload: {
-                        oracleEvents: d.events,
-                        loading: false
-                    }
+                    payload
                 });
             }
         }).catch(e=>{
             console.log(e);
             dispatch({
                 type: types.GET_ORACLE_EVENTS,
-                payload: { loading: false }
+                payload
             });
         })
     }
@@ -428,6 +427,7 @@ export const declareOracleEventResult = (id, result, winner, cancel_reason) => {
                 });
                 dispatch(getMyOracleEvents());
                 dispatch(getOracleEvent());
+                dispatch(account.getBalanceV2(params.currency_type, true));
             }
         }).catch(e=>{
             Toast.errorTop(e.message);
@@ -501,7 +501,7 @@ export const addOracleWager = (event_id, receiver_address, p, amount, fee) => {
         let params = getState().params;
         let signed_tx = '';
         apis.rawTransaction(params.profile.auth_version, params.profile.sessionToken,
-            constants.CURRENCY_TYPE.FLASH, amount, fee, receiver_address, null).then((d)=>{
+            params.currency_type, amount, fee, receiver_address, null).then((d)=>{
             if(d.rc == 1){
                 let wallet = params.decryptedWallet;
                 let tx = wallet.signTx(d.transaction.rawtx);
@@ -517,7 +517,7 @@ export const addOracleWager = (event_id, receiver_address, p, amount, fee) => {
                         dispatch(getOracleEvent());
                         dispatch(getMyActiveOracleEvents());
                         dispatch(getOracleEvents());
-                        dispatch(account.getBalance(true));
+                        dispatch(account.getBalanceV2(params.currency_type));
                         // Toast.successTop("Wager added successfully.")
                         Alert.alert(
                             'Success!',

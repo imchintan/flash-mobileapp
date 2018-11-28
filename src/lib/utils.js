@@ -28,6 +28,8 @@ export const FontSize = (size, ratio=0) => {
             size *= 0.85;
         else
             size *= ratio;
+    } else if (width < 400) {
+        size *= 0.95;
     }
     return size;
 }

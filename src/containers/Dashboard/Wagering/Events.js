@@ -59,7 +59,7 @@ class Events extends Component<{}> {
                             refreshing={false}
                             onRefresh={()=>{
                                 this.props.getOracleEvents();
-                                this.props.getBalance();
+                                this.props.getBalanceV2(this.props.currency_type);
                             }}/>
                     }
                     showsVerticalScrollIndicator={false}
@@ -137,7 +137,7 @@ class Events extends Component<{}> {
                                         `You ${item.result_amount > 0 ?'won':'lost'} ${utils
                                         .flashNFormatter(Math.abs(item.result_amount),2)} FLASH`: (
                                         item.status == constants.ORACLE_EVENT.TIED?
-                                            'Tie!': 'Event is cancelled!'
+                                            'Result is a Tie!': 'Event is cancelled!'
                                         ))}
                                     </Text>}
                                 </View>

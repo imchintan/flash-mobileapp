@@ -60,7 +60,7 @@ class MyEvents extends Component<{}> {
                             refreshing={false}
                             onRefresh={()=>{
                                 this.props.getMyActiveOracleEvents(true);
-                                this.props.getBalance();
+                                this.props.getBalanceV2(this.props.currency_type);
                             }}/>
                     }
                     keyExtractor={(event, index) => (index+'_'+event.id)}
@@ -139,7 +139,7 @@ class MyEvents extends Component<{}> {
                                         `You ${item.result_amount > 0 ?'won':'lost'} ${utils
                                         .flashNFormatter(Math.abs(item.result_amount),2)} FLASH`: (
                                         item.status == constants.ORACLE_EVENT.TIED?
-                                            'Tie!': 'Event is cancelled!'
+                                            'Result is a Tie!': 'Event is cancelled!'
                                         ))}
                                     </Text>}
                                 </View>

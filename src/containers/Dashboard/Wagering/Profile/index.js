@@ -174,7 +174,7 @@ class WageringProfile extends Component<{}> {
                                             item.status == constants.ORACLE_EVENT.WINNER_DECLARED?
                                                 item.winner+' won!': (
                                             item.status == constants.ORACLE_EVENT.TIED?
-                                                'Tie!': 'Event is cancelled'
+                                                'Result is a Tie!': 'Event is cancelled'
                                             ))}
                                         </Text>}
                                     </View>
@@ -194,10 +194,7 @@ class WageringProfile extends Component<{}> {
                     <View style={styles.oracleProfileSetup}>
                         <Text style={styles.oracleProfileSetupTitle}>
                             Be an Oracle
-                        </Text>
-                        <Text style={styles.oracleProfileSetupNote}>
-                            {"Lorem ipsum dolor sit amet, consectetur adipisicing magna aliqua. Ut enim ad minim veniam,mollit anim id est laborum."}
-                        </Text>
+                        </Text>                        
                         <Button
                             value={this.props.oracleProfile.company_name?
                                 'Activate Oracle Profile':'Setup Oracle Profile'}

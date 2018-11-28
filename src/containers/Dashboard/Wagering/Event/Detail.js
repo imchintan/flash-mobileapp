@@ -145,7 +145,7 @@ class EventDetail extends Component<{}> {
 
     addOracleWager(){
         let amt = utils.toOrginalNumber(this.state.amount);
-        let minLimit = this.props.oracleEvent.min || 100;
+        let minLimit = this.props.oracleEvent.min || 10;
         if(amt < minLimit)
             return Toast.errorTop("Amount must be greater than min limit.");
 
@@ -153,7 +153,7 @@ class EventDetail extends Component<{}> {
             return Toast.errorTop("Amount must be less than max limit.");
 
         if(utils.flashToSatoshi(amt+this.state.fee) > this.props.balance){
-            return Toast.errorTop("You don’t have enough FLASH to wager.");
+            return Toast.errorTop("You don't have enough FLASH to wager.");
         }
 
         if(!this.props.decryptedWallet){
@@ -231,7 +231,7 @@ class EventDetail extends Component<{}> {
                             refreshing={false}
                             onRefresh={()=>{
                                 this.props.getOracleEvent()
-                                this.props.getBalance()
+                                this.props.getBalanceV2(this.props.currency_type)
                             }}/>
                     }>
                     <View style={styles.eventDetail}>
@@ -466,7 +466,7 @@ class EventDetail extends Component<{}> {
                                 .result_amount > 0 ? 'won':'lost'} ${utils.flashNFormatter(Math
                                 .abs(this.props.oracleEvent.result_amount || 0),2)} FLASH`) : (
                     this.props.oracleEvent.status == constants.ORACLE_EVENT.TIED?
-                        'Tie!': 'Event is cancelled'
+                        'Result is a Tie!': 'Event is cancelled'
                     ))}
                     </Text>
                 </View>}

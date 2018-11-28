@@ -65,7 +65,7 @@ class Home extends Component<{}> {
 
     _handleAppStateChange(nextAppState){
         if ((!!this.props.pin && !this.props.lockApp && this.state.appState.match(/inactive|background/) && nextAppState === 'active')){
-            if((this.state.backgroundStateTime + 1000*60*10) < new Date().getTime()){
+            if((this.state.backgroundStateTime + 1000*60*5) < new Date().getTime()){
                 this.props.navigation.navigate('Lock');
             }
         }

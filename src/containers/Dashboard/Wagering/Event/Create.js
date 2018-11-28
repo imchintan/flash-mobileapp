@@ -149,11 +149,11 @@ class CreateEvent extends Component<{}> {
             }
             data.min = res.percentage;
         }else{
-            data.min = 100;
+            data.min = 10;
         }
 
-        if(data.min < 100){
-            return Toast.errorTop("Min value must be 100 FLASH or more.");
+        if(data.min < 10){
+            return Toast.errorTop("Min value must be 10 FLASH or more.");
         }
 
         if(this.state.max){

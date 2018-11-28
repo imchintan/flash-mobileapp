@@ -12,7 +12,7 @@ export const getFiatCurrencyExchangeRate = (auth_version, sessionToken, currenci
         let params = 'currencies='+currencies
             +'&appversion='+APP_VERSION
             +'&res='+RESOURCE;
-        fetch(`https://dev04.flashcoin.io/api/get-currency-value?${params}`,{
+        fetch(`${API_URL}/get-currency-value?${params}`,{
             method: 'GET',
             body: null,
             headers: {
@@ -22,7 +22,7 @@ export const getFiatCurrencyExchangeRate = (auth_version, sessionToken, currenci
             }
         })
         .then(res => res.json())
-        .then(json =>resolve(json))
+        .then(json => resolve(json))
         .catch(e =>{
             console.log(e);
             reject('Something went wrong!')

@@ -28,7 +28,7 @@ import { ActionCreators } from '@actions';
 import Events from './Events';
 import MyEvents from './MyEvents';
 import Profile from './Profile/index';
-// import * as wm from './WageringModal';
+import * as wm from './WageringModal';
 
 const tabNavigatorConfig = {
     navigationOptions: ({ navigation, screenProps }) => ({
@@ -139,7 +139,7 @@ class Wagering extends React.Component {
                     <HeaderTitle>Wagering</HeaderTitle>
                 </Header>
                 <TabNav screenProps={{navigate:this.props.navigation.navigate}}/>
-                {/*wm.legalDisclaimer(this,styles)*/}
+                {wm.legalDisclaimer(this,styles)}
                 <Loader style={{
                     ...Platform.select({
                         ios: {

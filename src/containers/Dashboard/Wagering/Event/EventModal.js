@@ -400,7 +400,7 @@ export const passwordRequest = (self,styles) => <Modal
             </View>
             <View style={{flexDirection:'row'}}>
                 <Button
-                    onPress={()=>self.setState({visibleGetPassword:false})}
+                    onPress={()=>self.setState({visibleGetPassword:false, password:'', errorMsg: ''})}
                     style={[styles.reqBtn,{backgroundColor: self.props.nightMode?'#b98e1b':'#EFEFEF'}]}
                     textstyle={[styles.reqBtnLabel,{color: self.props.nightMode?'#191714':'#333'}]}
                     value='Cancel' />
