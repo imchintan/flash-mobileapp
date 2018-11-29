@@ -140,8 +140,10 @@ class WageringProfile extends Component<{}> {
                                             Odds: {odds.p1}:{odds.p2}
                                         </Text>
                                         <Text numberOfLines={1} style={styles.eventTabTotalBid}>
-                                            Vol: {utils.flashNFormatter(item.volume,2)} FLASH
-                                            by {item.total_wagers} player{item.total_wagers > 1?'s':''}
+                                            Total Stake - {utils.flashNFormatter(item.volume,2)} FLASH
+                                        </Text>
+                                        <Text numberOfLines={1} style={styles.eventTabTotalBid}>
+                                            Total Players - {item.total_wagers}
                                         </Text>
                                         {expiry && item.status == constants.ORACLE_EVENT.ACTIVE_WAITING_FOR_RESULT &&
                                         <Text numberOfLines={1} style={styles.eventTabTotalBid}>
@@ -194,7 +196,7 @@ class WageringProfile extends Component<{}> {
                     <View style={styles.oracleProfileSetup}>
                         <Text style={styles.oracleProfileSetupTitle}>
                             Be an Oracle
-                        </Text>                        
+                        </Text>
                         <Button
                             value={this.props.oracleProfile.company_name?
                                 'Activate Oracle Profile':'Setup Oracle Profile'}

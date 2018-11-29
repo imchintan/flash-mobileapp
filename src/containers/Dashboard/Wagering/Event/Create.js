@@ -273,10 +273,10 @@ class CreateEvent extends Component<{}> {
                         </View>
                         <View style={styles.oracleProfile}>
                             <Text style={styles.oracleProfileLabel}>
-                                Event Fee
+                                Oracle Fee(%)
                                 <Text style={styles.mandatoryField}>*</Text>
                             </Text>
-                            <View style={styles.eventRadioBtnGrp}>
+                            {/*<View style={styles.eventRadioBtnGrp}>
                                 <TouchableOpacity style={styles.eventRadioBtn}
                                     onPress={()=>this.setState({fee_type:0})}>
                                     <Icon style={styles.eventRadioBtnIcon}
@@ -293,7 +293,7 @@ class CreateEvent extends Component<{}> {
                                         Percentage
                                     </Text>
                                 </TouchableOpacity>
-                            </View>
+                            </View>*/}
                             {typeof this.state.fee_type !== 'undefined' &&
                             <View style={styles.oracleProfileInputBox}>
                                 <TextInput

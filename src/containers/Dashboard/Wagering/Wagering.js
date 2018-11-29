@@ -98,7 +98,7 @@ class Wagering extends React.Component {
     getTabNav(){
         if(this.tabNav) return this.tabNav;
         let hasMyProifle = (this.props.oracleProfileAccessEmails
-            .findIndex(email => email == this.props.profile.email) > -1);
+            .findIndex(email => email == this.props.profile.email || email == '*') > -1);
         let routeConfigs = {
             'Events': { screen: Events },
             'My Events': { screen: MyEvents }
