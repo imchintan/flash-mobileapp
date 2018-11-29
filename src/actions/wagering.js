@@ -455,7 +455,8 @@ export const getMyActiveOracleEvents = (refresh=false) => {
                 let activeOracleEvents =  d.events;
                 let currnt_time = new Date().getTime();
                 activeOracleEvents.sort((e1,e2) =>{
-                    if(e1.status == e2.status){
+                    if(e1.status == constants.ORACLE_EVENT.ACTIVE_WAITING_FOR_RESULT &&
+                        e1.status == e2.status){
                         if(currnt_time < e1.expires_on_ts && currnt_time < e2.expires_on_ts){
                             if(e1.expires_on_ts < e2.expires_on_ts) return -1;
                             else return 1;
@@ -465,13 +466,16 @@ export const getMyActiveOracleEvents = (refresh=false) => {
                             return 1;
                         } else if(e1.ends_on_ts < e2.ends_on_ts){
                             return 1;
+                        }else{
+                            return -1;
+                        }
+                    } else if(e1.status !== constants.ORACLE_EVENT.ACTIVE_WAITING_FOR_RESULT &&
+                        e2.status !== constants.ORACLE_EVENT.ACTIVE_WAITING_FOR_RESULT){
+                        if(e1.result_on_ts < e2.result_on_ts){
+                            return 1;
                         } else{
                             return -1;
                         }
-                    } else if(e1.status == constants.ORACLE_EVENT.CANCELLED_OR_ABANDONED){
-                        return 1;
-                    } else if(e2.status == constants.ORACLE_EVENT.CANCELLED_OR_ABANDONED){
-                        return -1;
                     } else if(e1.status !== constants.ORACLE_EVENT.ACTIVE_WAITING_FOR_RESULT){
                         return 1;
                     } else {

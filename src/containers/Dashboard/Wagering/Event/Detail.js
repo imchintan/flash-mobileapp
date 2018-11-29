@@ -381,7 +381,7 @@ class EventDetail extends Component<{}> {
                         <View style={styles.hr}/>
                         <Text style={styles.eventDetailEndsOn}>
                             Total Stake - {utils.flashNFormatter(this.props.oracleEvent.volume,2)+' FLASH \n'}
-                            Total Players - {this.props.oracleEvent.total_wagers}
+                            Total Participant{this.props.oracleEvent.total_wagers > 1?'s':''} - {this.props.oracleEvent.total_wagers}
                         </Text>
                         <Text style={styles.eventDetailEndsOn}>
                             Result declaration after - {moment(this.props.oracleEvent.ends_on_ts)

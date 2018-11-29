@@ -2,7 +2,9 @@
  * Dashboard Navigation Routes defind
  */
 import React from 'react';
+import { NetInfo, View } from 'react-native';
 import {
+    Text,
     Toast
 } from '@components'
 import {
@@ -102,18 +104,26 @@ const EnhancedComponent = class extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = {
+            online:true,
+            show: false,
+        };
     }
     componentDidMount(){
-
+        this.mount = true;
         if(!this.coinmarketcapValue)
             this.coinmarketcapValue = setInterval(this.props.getFiatCurrencyRate, 60000);
 
         if(!this.getMessages)
             this.getMessages = setInterval(this.props.getMessages, 10000);
+
+        NetInfo.getConnectionInfo().then(this.handleConnectivityChange.bind(this));
+        NetInfo.addEventListener('connectionChange',this.handleConnectivityChange.bind(this));
     }
 
     componentWillUnmount(){
+        this.mount = false;
+        NetInfo.removeEventListener('connectionChange',this.handleConnectivityChange.bind(this));
         clearInterval(this.coinmarketcapValue);
         clearInterval(this.getMessages);
     }
@@ -135,9 +145,33 @@ const EnhancedComponent = class extends React.Component {
         }
     }
 
+    handleConnectivityChange(connectionInfo){
+        let status = this.state.online ;
+        let online = connectionInfo.type !== 'none'
+            && connectionInfo.type !== 'unknown';
+        this.setState({
+            online,
+            show: status !== online
+        },()=>{
+            if(status !== this.state.online && this.state.online) setTimeout(()=>this.mount &&
+                this.setState({show:false}),1500)
+        });
+    }
+
     render() {
         return(
-            <Dashboard />
+            <View style={{flex:1}}>
+                <Dashboard />
+                {this.state.show && <Text style={{
+                    backgroundColor: this.state.online?'#228B22':'#d33',
+                    color: '#fff',
+                    textAlign: 'center',
+                    paddingVertical: 3,
+                    fontSize: 13
+                }}>
+                    {this.state.online?'Internet Connection Available!':'No Internet Connection!'}
+                </Text>}
+            </View>
         )
     }
 }

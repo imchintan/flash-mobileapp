@@ -100,12 +100,12 @@ class Wagering extends React.Component {
         let hasMyProifle = (this.props.oracleProfileAccessEmails
             .findIndex(email => email == this.props.profile.email || email == '*') > -1);
         let routeConfigs = {
-            'Events': { screen: Events },
+            'Live Events': { screen: Events },
             'My Events': { screen: MyEvents }
         }
         if(hasMyProifle){
             routeConfigs = {
-                'Events': { screen: Events },
+                'Live Events': { screen: Events },
                 'My Events': { screen: MyEvents },
                 'Oracle Profile': { screen: Profile }
             }

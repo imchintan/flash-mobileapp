@@ -143,7 +143,7 @@ class WageringProfile extends Component<{}> {
                                             Total Stake - {utils.flashNFormatter(item.volume,2)} FLASH
                                         </Text>
                                         <Text numberOfLines={1} style={styles.eventTabTotalBid}>
-                                            Total Players - {item.total_wagers}
+                                            Total Participant{item.total_wagers > 1?'s':''} - {item.total_wagers}
                                         </Text>
                                         {expiry && item.status == constants.ORACLE_EVENT.ACTIVE_WAITING_FOR_RESULT &&
                                         <Text numberOfLines={1} style={styles.eventTabTotalBid}>
