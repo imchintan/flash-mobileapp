@@ -376,7 +376,7 @@ class EventDetail extends Component<{}> {
                             </Text>
                         </View>}
                         <Text style={styles.label}>
-                            Other Detail
+                            Other Details
                         </Text>
                         <View style={styles.hr}/>
                         <Text style={styles.eventDetailEndsOn}>
