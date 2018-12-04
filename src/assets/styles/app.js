@@ -52,7 +52,7 @@ module.exports = StyleSheet.create({
         width,
     },
     webViewCreateWallet:{
-        marginTop: 10,
+        marginTop: 50,
         width,
     },
     label:{
@@ -65,5 +65,10 @@ module.exports = StyleSheet.create({
         borderBottomWidth: 1,
         borderColor: '#9F9F9F',
         marginBottom: 15,
+    },
+    mandatoryField:{
+        bottom: -10,
+        fontSize: 20,
+        color: 'red'
     },
 });

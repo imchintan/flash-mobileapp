@@ -91,18 +91,19 @@ def enableSeparateBuildPerCPUArchitecture = false
 /**
  * Run Proguard to shrink the Java bytecode in release builds.
  */
-def enableProguardInReleaseBuilds = false
+def enableProguardInReleaseBuilds = true
 
 android {
     compileSdkVersion 27
     buildToolsVersion "27.0.3"
 
     defaultConfig {
+        vectorDrawables.useSupportLibrary = true
         applicationId "com.flash.wallet.android"
         minSdkVersion 16
         targetSdkVersion 26
-        versionCode 20
-        versionName "1.9.4"
+        versionCode 22
+        versionName "1.9.6"
         ndk {
             abiFilters "armeabi-v7a", "x86"
         }
@@ -148,6 +149,7 @@ android {
 }
 
 dependencies {
+    compile project(':react-native-image-crop-picker')
     compile project(':react-native-camera')
     compile project(':react-native-touch-id')
     compile project(':react-native-sound')

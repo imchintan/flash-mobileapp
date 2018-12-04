@@ -11,6 +11,7 @@ const initialState = {
     fiat_per_value: 0,
     total_fiat_balance: 0,
     nightMode: false,
+    sbalance: 0,
     balances: [
         {color: '#191714', amt:0, uamt:0, amt2:0, per_value:0, currency_type: constants.CURRENCY_TYPE.FLASH}, // Flash
         {color: '#343434', amt:0, uamt:0, amt2:0, per_value:0, currency_type: constants.CURRENCY_TYPE.BTC}, // BTC

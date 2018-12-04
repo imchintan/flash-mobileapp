@@ -5,6 +5,7 @@
 import React, { Component } from 'react';
 import {
     View,
+    Alert,
     Image,
     ScrollView,
     AppState,
@@ -54,7 +55,7 @@ class Home extends Component<{}> {
             this.props.customAction({isNewSession:false});
             constants.SOUND.SUCCESS.play();
         }
-        this.refreshingHome();
+        setTimeout(this.refreshingHome.bind(this),100);
     }
 
     componentWillUnmount(){
@@ -64,7 +65,12 @@ class Home extends Component<{}> {
 
     _handleAppStateChange(nextAppState){
         if ((!!this.props.pin && !this.props.lockApp && this.state.appState.match(/inactive|background/) && nextAppState === 'active')){
-            this.props.navigation.navigate('Lock');
+            if((this.state.backgroundStateTime + 1000*60*5) < new Date().getTime()){
+                this.props.navigation.navigate('Lock');
+            }
+        }
+        if(nextAppState !== 'active'){
+            this.setState({backgroundStateTime: new Date().getTime()});
         }
         this.mount && this.setState({appState: nextAppState});
     }
@@ -143,6 +149,29 @@ class Home extends Component<{}> {
                                 </View>
                             </TouchableOpacity>
                         )}
+                        {false && this.props.module_status && this.props.module_status.wagering &&
+                        <View>
+                            <Text style={styles.label}>Features</Text>
+                            <View style={styles.hr}/>
+                            <TouchableOpacity style={styles.featuresTab}
+                                onPress={()=>{
+                                    if(this.props.location.country_code !== 'US')
+                                        return this.props.navigation.navigate('Wagering');
+                                    Alert.alert(
+                                        'Not Available!',
+                                        'Wagering feature is currently not available in your country.',
+                                        [
+                                            {text: 'OK'},
+                                        ],
+                                    )
+                                }}>
+                                <View style={styles.adminTabTitle}>
+                                    <Icon style={styles.featuresTabTitleIcon} name='cubes'/>
+                                    <Text style={styles.featuresTabTitleLabel}>Wagering</Text>
+                                </View>
+                                <Icon style={styles.featuresTabRightIcon} name='angle-right'/>
+                            </TouchableOpacity>
+                        </View>}
                         <Text style={styles.label}>Admin</Text>
                         <View style={styles.hr}/>
                         <TouchableOpacity style={styles.adminTab}
@@ -168,16 +197,6 @@ class Home extends Component<{}> {
                             </View>
                             <Icon style={styles.adminTabRightIcon} name='angle-right'/>
                         </TouchableOpacity>
-                        {/*
-                        <TouchableOpacity style={styles.adminTab}
-                            onPress={()=>this.props.navigation.navigate('Settings')}>
-                            <View style={styles.adminTabTitle}>
-                                <Icon style={styles.adminTabTitleIcon} name='cog'/>
-                                <Text style={styles.adminTabTitleLabel}>Settings</Text>
-                            </View>
-                            <Icon style={styles.adminTabRightIcon} name='angle-right'/>
-                        </TouchableOpacity>
-                        */}
                         <TouchableOpacity style={styles.adminTab}
                             onPress={()=>this.props.navigation.navigate('SecurityCenter')}>
                             <View style={styles.adminTabTitle}>
@@ -201,6 +220,14 @@ class Home extends Component<{}> {
                             <View style={styles.adminTabTitle}>
                                 <Icon style={styles.adminTabTitleIcon} name='info'/>
                                 <Text style={styles.adminTabTitleLabel}>About</Text>
+                            </View>
+                            <Icon style={styles.adminTabRightIcon} name='angle-right'/>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.adminTab}
+                            onPress={()=>this.props.logout(false)}>
+                            <View style={styles.adminTabTitle}>
+                                <Icon style={styles.adminTabTitleIcon} name='power-off'/>
+                                <Text style={styles.adminTabTitleLabel}>Logout</Text>
                             </View>
                             <Icon style={styles.adminTabRightIcon} name='angle-right'/>
                         </TouchableOpacity>
@@ -264,6 +291,8 @@ function mapStateToProps({params}) {
         fiat_currency: params.fiat_currency,
         total_fiat_balance: params.total_fiat_balance,
         isNewSession: params.isNewSession || false,
+        location: params.location || {},
+        module_status: params.module_status || {},
         lockApp: params.lockApp || false,
         pin: params.pin,
         nightMode: params.nightMode,

@@ -22,9 +22,15 @@ export const getLocation = async endpoint => {
   return response.json();
 };
 
-export const FontSize = (size) => {
-    if(width <= 320)
-        size *= 0.85;
+export const FontSize = (size, ratio=0) => {
+    if(width <= 320){
+        if(ratio == 0)
+            size *= 0.85;
+        else
+            size *= ratio;
+    } else if (width < 400) {
+        size *= 0.95;
+    }
     return size;
 }
 
@@ -648,8 +654,53 @@ export const getCurrencySymbol = (fiat_currency) => {
 export const getFiatCurrencyUnit = (fiat_currency) => {
     return constants.FIAT_CURRENCY_UNIT[fiat_currency];
 }
+
 export const getFiatCurrencyByCountry = (country_code) => {
     let fiat_currency_unit = constants.FIAT_CURRENCY_UNIT_BY_COUNTRY[country_code];
     if(fiat_currency_unit) return constants.FIAT_CURRENCY[fiat_currency_unit];
     else return constants.FIAT_CURRENCY.USD;
+}
+
+export const getExpierTime = (expiry_time) => {
+    let diff = expiry_time - new Date().getTime();
+    let exipre = moment(expiry_time).fromNow();
+    if(diff <= 0) return null;
+    if(diff > 1000 * 60 * 60 * 24 * 2){
+        return exipre;
+    }
+    let hr = 0;
+    if(diff > 1000 * 60 * 60){
+        hr = Math.floor(diff/(1000 * 60 * 60));
+        diff -= (hr * 1000 * 60 * 60)
+    }
+    hr = (hr>9?'':'0')+hr;
+    let mint = 0;
+    if(diff > 1000 * 60){
+        mint = Math.floor(diff/(1000 * 60));
+        diff -= (mint * 1000 * 60)
+    }
+    mint = (mint>9?'':'0')+mint;
+    let sec = 0;
+    if(diff > 1000){
+        sec = Math.floor(diff/(1000));
+    }
+    sec = (sec>9?'':'0')+sec;
+    return (hr + ' : ' + mint + ' : ' + sec + ' Hrs');
+}
+
+export const gcd = (a, b) => {
+    return (b == 0) ? a : gcd (b, a%b);
+}
+
+export const getOdds = (p1,p2) => {
+    if(p1 == p2) return {p1:1,p2:1};
+    let r = gcd(p1, p2);
+    if(r < 10 && p1 > 10 && p2 > 10){
+        if(p1 > p2)
+            return getOdds(Math.round(p1/p2),1)
+        else
+            return getOdds(1,Math.round(p2/p1))
+    }else{
+        return {p1:p1/r,p2:p2/r};
+    }
 }

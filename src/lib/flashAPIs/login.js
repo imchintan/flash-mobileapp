@@ -1,9 +1,10 @@
 import { API_URL, RESOURCE, APP_VERSION } from '@src/config';
 
-export const login = (email,password) => {
+export const login = (email, password, g_recaptcha_response) => {
     return new Promise((resolve,reject) => {
         let form = 'email='+encodeURIComponent(email)
             +'&password='+password
+            +'&g_recaptcha_response='+g_recaptcha_response
             +'&appversion='+APP_VERSION
             +'&res='+RESOURCE;
         fetch(API_URL+'/login',{

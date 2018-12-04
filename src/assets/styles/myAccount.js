@@ -29,6 +29,36 @@ const styles = StyleSheet.create({
     profileActionBtnGrp:{
         flexDirection: 'row',
     },
+    profileImageBox:{
+        alignItems: 'center',
+        marginBottom: 10,
+    },
+    profileImage:{
+        width: 100,
+        height: 100,
+        borderRadius: 50,
+    },
+    profileImageBtn:{
+        backgroundColor: '#E0AE27',
+        borderRadius: 5,
+        marginVertical: 10
+    },
+    profileCancelBtn:{
+        backgroundColor: '#dfdfdf',
+        borderRadius: 5,
+        marginVertical: 10,
+        marginLeft: 5,
+    },
+    profileImageBtnTxt:{
+        padding: 10,
+        fontSize: 15,
+        color: '#191714'
+    },
+    profileImageOptionTxt:{
+        fontSize: 18,
+        color: '#191714',
+        textAlign: 'center'
+    },
     profileRowLabel:{
         fontSize: 16,
         paddingHorizontal: 15,

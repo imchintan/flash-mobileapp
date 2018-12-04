@@ -13,7 +13,7 @@ import secrets from 'secrets.js-grempe';
 import nacl from 'tweetnacl';
 import TouchID from 'react-native-touch-id'
 
-import { getCoinMarketCapDetail, getProfile, changeFiatCurrency } from '@actions/account';
+import { getFiatCurrencyRate, getProfile, changeFiatCurrency } from '@actions/account';
 
 export const init = () => {
     return async (dispatch,getState) => {
@@ -49,6 +49,11 @@ export const init = () => {
             payload.pin = pin.toString();
         }
 
+        let wagerLegalDisclaimer = await AsyncStorage.getItem('wagerLegalDisclaimer');
+        if(wagerLegalDisclaimer){
+            payload.wagerLegalDisclaimer = true;
+        }
+
         let nightMode = await AsyncStorage.getItem('nightMode');
         if(nightMode !== null){
             payload.nightMode = (nightMode == 'true');
@@ -61,7 +66,6 @@ export const init = () => {
 
         if(!user){
             dispatch({ type: types.INIT, payload });
-            dispatch(getCoinMarketCapDetail());
         } else {
             payload.profile = JSON.parse(user);
             if(payload.profile.auth_version < 4){
@@ -72,19 +76,23 @@ export const init = () => {
             if(last_message_datetime){
                 payload.last_message_datetime = Number(last_message_datetime);
             }
+            let oracleProfile = await AsyncStorage.getItem('oracleProfile');
+            if(oracleProfile){
+                payload.oracleProfile = Number(oracleProfile);
+            }
             dispatch({
                 type: types.LOGIN_SUCCESS,
                 payload
             });
             dispatch(getProfile());
             dispatch(getMyWallets(payload.profile));
-            dispatch(getCoinMarketCapDetail(true));
+            dispatch(getFiatCurrencyRate(true));
         }
         utils.getLocation().then(res => {
             if(res.rc == 1){
                 let location = res.info;
-                dispatch({ type: types.SET_LOCATION, location });
-                dispatch({ type: types.SET_PUBLIC_IP, ip: res.info.ip });
+                dispatch({ type: types.SET_LOCATION, payload:{location} });
+                dispatch({ type: types.SET_PUBLIC_IP, payload:{ip: res.info.ip} });
                 if(location.country_code && !fiat_currency){
                     fiat_currency = utils.getFiatCurrencyByCountry(location.country_code);
                     if(fiat_currency)
@@ -139,10 +147,10 @@ export const forgotPassword = (email) => {
     }
 }
 
-export const login = (email,password) => {
+export const login = (email, password, g_recaptcha_response) => {
     return (dispatch,getState) => {
         dispatch({ type: types.LOADING_START });
-        apis.login(email,password).then((d)=>{
+        apis.login(email, password, g_recaptcha_response).then((d)=>{
             if(d.rc == 1){
                 dispatch({
                     type: d.profile.auth_version < 4?types.MIGRATE_ACCOUNT:((!d.profile.totp_enabled)?types.LOGIN_SUCCESS:types.VERIFY_2FA),
@@ -171,7 +179,7 @@ export const login = (email,password) => {
                         errorMsg = 'Email or password is not correct. This is your '+attmpt_count+
                         ' failed attempt. After 5 failed attempts, your account will be locked.';
 
-                    }else{
+                    }else if(d.status !== 'RECAPTCHA_NOT_VERIFIED'){
                         errorMsg = 'Email or password is not correct';
                     }
                 }
@@ -716,10 +724,10 @@ export const _logout = async(dispatch, clearAll=false) => {
     dispatch({ type: types.LOADING_START });
     let payload={};
     if(!clearAll){
-        let pin = await AsyncStorage.getItem('pin');
-        if(pin){
-            payload.pin = pin.toString();
-        }
+        // let pin = await AsyncStorage.getItem('pin');
+        // if(pin){
+        //     payload.pin = pin.toString();
+        // }
         let isEnableTouchID = await AsyncStorage.getItem('isEnableTouchID');
         if(isEnableTouchID){
             payload.isEnableTouchID = (isEnableTouchID === 'true');
