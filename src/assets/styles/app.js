@@ -52,7 +52,7 @@ module.exports = StyleSheet.create({
         width,
     },
     webViewCreateWallet:{
-        marginTop: 10,
+        marginTop: 50,
         width,
     },
     label:{

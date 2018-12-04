@@ -149,7 +149,7 @@ class Home extends Component<{}> {
                                 </View>
                             </TouchableOpacity>
                         )}
-                        {this.props.module_status && this.props.module_status.wagering &&
+                        {false && this.props.module_status && this.props.module_status.wagering &&
                         <View>
                             <Text style={styles.label}>Features</Text>
                             <View style={styles.hr}/>
@@ -220,6 +220,14 @@ class Home extends Component<{}> {
                             <View style={styles.adminTabTitle}>
                                 <Icon style={styles.adminTabTitleIcon} name='info'/>
                                 <Text style={styles.adminTabTitleLabel}>About</Text>
+                            </View>
+                            <Icon style={styles.adminTabRightIcon} name='angle-right'/>
+                        </TouchableOpacity>
+                        <TouchableOpacity style={styles.adminTab}
+                            onPress={()=>this.props.logout(false)}>
+                            <View style={styles.adminTabTitle}>
+                                <Icon style={styles.adminTabTitleIcon} name='power-off'/>
+                                <Text style={styles.adminTabTitleLabel}>Logout</Text>
                             </View>
                             <Icon style={styles.adminTabRightIcon} name='angle-right'/>
                         </TouchableOpacity>

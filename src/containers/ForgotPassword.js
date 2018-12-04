@@ -20,7 +20,7 @@ import { bindActionCreators } from 'redux';
 import { ActionCreators } from '@actions';
 
 const styles = require("@styles/app");
-const url = 'https://wallet.flashcoin.io/home.html#submit_email';
+const url = 'https://walletstg.flashcoin.io/reset-pass.html';
 
 class ForgotPassword extends Component<{}> {
 
@@ -36,15 +36,18 @@ class ForgotPassword extends Component<{}> {
     }
 
     componentDidMount(){
-        BackHandler.addEventListener('hardwareBackPress', this.backHandler);
+        this.isMount=true;
+        BackHandler.addEventListener('hardwareBackPress', this.backHandler.bind(this));
     }
 
     componentWillUnmount(){
-        BackHandler.removeEventListener('hardwareBackPress', this.backHandler);
+        this.isMount=false;
+        BackHandler.removeEventListener('hardwareBackPress', this.backHandler.bind(this));
     }
 
-    backHandler=()=>{
-        return this.props.navigation.goBack();
+    backHandler(){
+        this.props.navigation.goBack();
+        return this.isMount;
     }
 
     getInjectScript(){
@@ -52,20 +55,12 @@ class ForgotPassword extends Component<{}> {
           (function ready() {
             $("body").css('cssText','background-color:#191714 !important;background:#191714;');
             setTimeout(()=>{
-                $(".form-common.form-submit-email").css('margin-top','60px');
-                $("a.pull-left").remove();
-                $("button.btn.btn-primary").css({'background':'#E0AE27',
-                    'border': 0,
-                    'padding': '10px',
-                    'margin-top': '10px',
-                    'border-radius': '25px',
-                    'height': '50px',
-                    'width': '150px',
-                    'color': '#000000',
-                    'font-weight': '400',
-                    'font-size': '22px',
+                $("#header").remove();
+                $('#footer .container:first').remove();
+                $(".col-lg-4.login-form-container").css({
+                  'margin-top': '-50px',
+                  'padding-top': '30px',
                 });
-                $("button.btn.btn-primary").parent().css('cssText','text-align: center !important');
             },1000);
           })();
         `
@@ -76,7 +71,7 @@ class ForgotPassword extends Component<{}> {
             <Container>
                 <Header>
                     <HeaderLeft>
-                        <Icon onPress={()=>this.props.navigation.goBack()} style={styles.headerBackIcon} name='angle-left' />
+                        <Icon onPress={this.backHandler.bind(this)} style={styles.headerBackIcon} name='angle-left' />
                     </HeaderLeft>
                     <HeaderTitle>Forgot Password</HeaderTitle>
                 </Header>
@@ -87,7 +82,7 @@ class ForgotPassword extends Component<{}> {
                         if(e && e.url && e.url != url)
                             this.props.navigation.goBack()
                     }}
-                    style={styles.webViewFP}
+                    style={styles.webViewCreateWallet}
                     source={{uri: url}}
                 />
                 <Loader style={{backgroundColor: '#191714'}} show={this.state.loading} />

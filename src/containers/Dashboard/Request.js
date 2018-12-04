@@ -186,7 +186,7 @@ class Request extends Component<{}> {
                                 utils.flashNFormatter(this.props.fiat_balance,2)}
                             </Text>
                         </TouchableOpacity>
-                        {this.props.currency_type == constants.CURRENCY_TYPE.FLASH &&
+                        {false && this.props.currency_type == constants.CURRENCY_TYPE.FLASH &&
                         <View style={{alignItems:'flex-end'}}>
                             <Text style={[styles.walletBalanceLabel,{marginVertical:3}]}>Staked Balance</Text>
                             <Text style={styles.walletBalance}>{
