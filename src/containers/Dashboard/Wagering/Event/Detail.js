@@ -132,7 +132,6 @@ class EventDetail extends Component<{}> {
         if(!this.state.password){
             return this.setState({errorMsg:'Password is invalid!'});
         }
-
         try{
             Premium.xaesDecrypt(this.state.password, this.props.profile.privateKey);
         }catch(e){
@@ -145,6 +144,10 @@ class EventDetail extends Component<{}> {
 
     addOracleWager(){
         let amt = utils.toOrginalNumber(this.state.amount);
+        let res = Validation.amount(amt);
+        if(!res.success){
+            return Toast.errorTop(res.message);
+        }
         let minLimit = this.props.oracleEvent.min || 10;
         if(amt < minLimit)
             return Toast.errorTop("Amount must be greater than min limit.");
@@ -166,7 +169,7 @@ class EventDetail extends Component<{}> {
         this.props.addOracleWager(this.props.oracleEvent.id,
             this.props.oracleEvent.receiver_address, this.state.p, amt,this.state.fee);
 
-        setTimeout(()=>this.setState({p:null,amount:0}),1000);
+        setTimeout(()=>this.setState({p:null,amount:0,fiat_amount:0}),1000);
 
     }
 

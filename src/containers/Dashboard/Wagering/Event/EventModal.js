@@ -168,8 +168,8 @@ export const declareWinner = (self,styles) => <Modal transparent={false} animati
     <Button
         style={styles.declareWinerBtn}
         onPress={()=>Alert.alert(
-            'Tied',
-            `Are you sure, you want to declare tide event?`,
+            'Tie!',
+            `Are you sure, you want to declare this event as a tie? `,
             [
                 {text: 'Cancel', style: 'cancel'},
                 {text: 'OK', onPress: () => self.setState({declareWiner:false},
@@ -181,7 +181,7 @@ export const declareWinner = (self,styles) => <Modal transparent={false} animati
                 ))},
             ],
         )}
-        value='Tied'/>
+        value='Tie'/>
 </Modal>
 
 /**
