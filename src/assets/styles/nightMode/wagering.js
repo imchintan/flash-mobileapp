@@ -1,10 +1,7 @@
 import {
-    StyleSheet,
-    Dimensions,
-    Platform
+    StyleSheet
 } from 'react-native';
 
-const { width } = Dimensions.get('window');
 const appStyles = require('./app');
 const wageringStyles = require('@styles/wagering');
 const styles = StyleSheet.create({
@@ -13,6 +10,6 @@ const styles = StyleSheet.create({
 
 module.exports = {
     ...wageringStyles,
-    ...appStyles,    
+    ...appStyles,
     ...styles,
 }
