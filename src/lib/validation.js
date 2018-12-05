@@ -82,6 +82,7 @@ export const shareCode = (value) => {
     else
         return {success:true,message:''};
 }
+
 export const sharePercent = (value) => {
     if(!value || isNaN(value)){
          return {success:false,message:'Invalid share percentage!'};

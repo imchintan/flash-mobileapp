@@ -13,3 +13,5 @@ export * from './kwayisi';
 export * from './coinmarketcap';
 export * from './coingecko';
 export * from './advertisement';
+export * from './utils';
+export * from './wagering';

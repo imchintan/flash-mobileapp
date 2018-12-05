@@ -36,15 +36,18 @@ class SignUP extends Component<{}> {
     }
 
     componentDidMount(){
-        BackHandler.addEventListener('hardwareBackPress', this.backHandler);
+        this.isMount = true;
+        BackHandler.addEventListener('hardwareBackPress', this.backHandler.bind(this));
     }
 
     componentWillUnmount(){
-        BackHandler.removeEventListener('hardwareBackPress', this.backHandler);
+        this.isMount = false;
+        BackHandler.removeEventListener('hardwareBackPress', this.backHandler.bind(this));
     }
 
-    backHandler=()=>{
-        return this.props.navigation.goBack();
+    backHandler(){
+        this.props.navigation.goBack();
+        return this.isMount
     }
 
     getInjectScript(){
@@ -55,13 +58,19 @@ class SignUP extends Component<{}> {
                   window.signup = true;
                   showSignUp();
                   $("#header").remove();
+                  $('#notify-check').remove();
+                  $('.col-lg-12.login-form').remove();
+                  $(".about-flash-section.page-section").remove();
                   $('#social-forum').remove();
                   $('#wallet').remove();
                   $('#footer').remove();
-                  $('.page-section.topmargin-sm').remove();
-                  $(".col-lg-7.d-none.d-sm-block.textcenter-sm").remove();
                   $(".back-login").remove();
-                  $('#gcaptcha > div').css({'margin': '0 auto'});
+                  $(".col-lg-4.login-form-container").css({
+                    'margin-top': '-25px',
+                    'padding-bottom': '5px',
+                    'padding-top': '15px'
+                  });
+                  $('.row.clearfix > div.col-lg-4:first').remove();
               },1000);
           })();
         `
@@ -72,7 +81,7 @@ class SignUP extends Component<{}> {
             <Container>
                 <Header>
                     <HeaderLeft>
-                        <Icon onPress={()=>this.props.navigation.goBack()} style={styles.headerBackIcon} name='angle-left' />
+                        <Icon onPress={this.backHandler.bind(this)} style={styles.headerBackIcon} name='angle-left' />
                     </HeaderLeft>
                     <HeaderTitle>Create Wallet</HeaderTitle>
                 </Header>

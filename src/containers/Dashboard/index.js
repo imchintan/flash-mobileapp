@@ -2,7 +2,9 @@
  * Dashboard Navigation Routes defind
  */
 import React from 'react';
+import { NetInfo, View } from 'react-native';
 import {
+    Text,
     Toast
 } from '@components'
 import {
@@ -31,6 +33,7 @@ import Pending from './Pending';
 import Sharing from './Sharing';
 import About from './About';
 import Trades from './Trades';
+import Wagering from './Wagering';
 
 const routes = {
     Home: {
@@ -87,6 +90,9 @@ const routes = {
     Trades: {
         screen: Trades,
     },
+    Wagering: {
+        screen: Wagering,
+    },
 
 };
 
@@ -104,20 +110,29 @@ const EnhancedComponent = class extends React.Component {
 
     constructor(props) {
         super(props);
-        this.state = {};
+        this.state = {
+            online:true,
+            show: false,
+        };
     }
     componentDidMount(){
+        this.mount = true;
         this.props.customAction({
             DashboardNavigation:this.refs.dashboard._navigation
         });
         if(!this.coinmarketcapValue)
-            this.coinmarketcapValue = setInterval(this.props.getCoinMarketCapDetail, 60000);
+            this.coinmarketcapValue = setInterval(this.props.getFiatCurrencyRate, 60000);
 
         if(!this.getMessages)
             this.getMessages = setInterval(this.props.getMessages, 10000);
+
+        NetInfo.getConnectionInfo().then(this.handleConnectivityChange.bind(this));
+        NetInfo.addEventListener('connectionChange',this.handleConnectivityChange.bind(this));
     }
 
     componentWillUnmount(){
+        this.mount = false;
+        NetInfo.removeEventListener('connectionChange',this.handleConnectivityChange.bind(this));
         clearInterval(this.coinmarketcapValue);
         clearInterval(this.getMessages);
     }
@@ -139,9 +154,33 @@ const EnhancedComponent = class extends React.Component {
         }
     }
 
+    handleConnectivityChange(connectionInfo){
+        let status = this.state.online ;
+        let online = connectionInfo.type !== 'none'
+            && connectionInfo.type !== 'unknown';
+        this.setState({
+            online,
+            show: status !== online
+        },()=>{
+            if(status !== this.state.online && this.state.online) setTimeout(()=>this.mount &&
+                this.setState({show:false}),1500)
+        });
+    }
+
     render() {
         return(
-            <Dashboard  ref={'dashboard'}/>
+            <View style={{flex:1}}>
+                <Dashboard ref={'dashboard'}/>
+                {this.state.show && <Text style={{
+                    backgroundColor: this.state.online?'#228B22':'#d33',
+                    color: '#fff',
+                    textAlign: 'center',
+                    paddingVertical: 3,
+                    fontSize: 13
+                }}>
+                    {this.state.online?'Internet Connection Available!':'No Internet Connection!'}
+                </Text>}
+            </View>
         )
     }
 }

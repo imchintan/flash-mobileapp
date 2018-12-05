@@ -55,6 +55,11 @@ export const init = () => {
             payload.tradeCaution = true;
         }
 
+        let wagerLegalDisclaimer = await AsyncStorage.getItem('wagerLegalDisclaimer');
+        if(wagerLegalDisclaimer){
+            payload.wagerLegalDisclaimer = true;
+        }
+
         let nightMode = await AsyncStorage.getItem('nightMode');
         if(nightMode !== null){
             payload.nightMode = (nightMode == 'true');
@@ -72,7 +77,6 @@ export const init = () => {
 
         if(!user){
             dispatch({ type: types.INIT, payload });
-            dispatch(account.getCoinMarketCapDetail());
             dispatch(chat.savePushToken());
         } else {
             payload.profile = JSON.parse(user);
@@ -84,13 +88,17 @@ export const init = () => {
             if(last_message_datetime){
                 payload.last_message_datetime = Number(last_message_datetime);
             }
+            let oracleProfile = await AsyncStorage.getItem('oracleProfile');
+            if(oracleProfile){
+                payload.oracleProfile = Number(oracleProfile);
+            }
             dispatch({
                 type: types.LOGIN_SUCCESS,
                 payload
             });
             dispatch(account.getProfile());
             dispatch(getMyWallets(payload.profile));
-            dispatch(account.getCoinMarketCapDetail());
+            dispatch(account.getFiatCurrencyRate(true));
         }
         utils.getLocation().then(res => {
             if(res.rc == 1){

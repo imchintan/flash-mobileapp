@@ -151,6 +151,14 @@ export const CURRENCY_ICON = {
     5: require('@images/eth-icon.png'),
 };
 
+export const COIN_GECKO_CURRENCY_IDS = {
+    1: 'flash',
+    2: 'bitcoin',
+    3: 'litecoin',
+    4: 'dash',
+    5: 'ethereum',
+};
+
 //Coinmarketcap currency ID
 export const COIN_MARKET_CAP_CURRENCY_ID = {
     FLASH: 1755,
@@ -634,3 +642,19 @@ export const COIN_GECKO_EXCHANGES = [
         NAME :'Kraken',
     }
 ];
+
+// Wagering Oracle Event status
+export const ORACLE_EVENT = {
+    ACTIVE_WAITING_FOR_RESULT: 0,
+    WINNER_DECLARED: 1,
+    TIED: 2,
+    CANCELLED_OR_ABANDONED: 3
+}
+
+export const ORACLE_EVENT_WAGER = {
+    ACTIVE_WAITING_FOR_RESULT: 0,
+    WON: 1,
+    LOST: 2,
+    TIED: 3,
+    CANCELLED_OR_ABANDONED: 4
+}

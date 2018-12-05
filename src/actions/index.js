@@ -8,6 +8,7 @@ import * as SharingActions from '@actions/sharing'
 import * as HTMActions from '@actions/htm'
 import * as ExchangesActions from '@actions/exchanges'
 import * as ChatActions from '@actions/chat'
+import * as WageringActions from '@actions/wagering'
 
 export const ActionCreators = Object.assign({},
     NavigationActions,
@@ -19,5 +20,6 @@ export const ActionCreators = Object.assign({},
     SharingActions,
     HTMActions,
     ExchangesActions,
-    ChatActions
+    ChatActions,
+    WageringActions
 );

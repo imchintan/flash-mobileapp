@@ -12,6 +12,7 @@ import * as htm from '@actions/htm';
 import * as chat from '@actions/chat';
 import * as sharing from '@actions/sharing';
 import * as exchanges from '@actions/exchanges';
+import * as wagering from '@actions/wagering';
 import { _logout } from '@actions/navigation';
 import Chat from '@helpers/chatHelper';
 import notifcationHelper from '@helpers/notifcationHelper';
@@ -60,12 +61,14 @@ export const getBalance = (refresh = false) => {
                 });
             }else{
                 d.balance = Number(d.balance);
+                d.sbalance = Number(d.sbalance);
                 AsyncStorage.setItem('balance',JSON.stringify(d.balance));
                 dispatch({
                     type: types.GET_BALANCE,
                     payload: {
                         balance:d.balance,
                         ubalance:d.ubalance,
+                        sbalance:d.sbalance,
                         balanceLoader: false,
                         infoMsg: refresh?('Updated Balance: '+
                         (params.currency_type === constants.CURRENCY_TYPE.FLASH?
@@ -73,7 +76,7 @@ export const getBalance = (refresh = false) => {
                         + ' '+ utils.getCurrencyUnitUpcase( params.currency_type)):null
                     }
                 });
-                dispatch(getCoinMarketCapDetail());
+                dispatch(getFiatCurrencyRate());
             }
         }).catch(e=>{
             dispatch({
@@ -117,6 +120,7 @@ export const getBalanceV2 = (currency_type=constants.CURRENCY_TYPE.FLASH ,refres
                 });
             }else{
                 d.balance = Number(d.balance);
+                d.sbalance = Number(d.sbalance);
                 params = getState().params;
                 let balances = params.balances;
                 let idx  =  balances.findIndex(bal => bal.currency_type === currency_type);
@@ -139,6 +143,7 @@ export const getBalanceV2 = (currency_type=constants.CURRENCY_TYPE.FLASH ,refres
                     payload: {
                         balance,
                         ubalance,
+                        sbalance:d.sbalance,
                         fiat_balance,
                         fiat_per_value,
                         balances,
@@ -160,6 +165,28 @@ export const getBalanceV2 = (currency_type=constants.CURRENCY_TYPE.FLASH ,refres
                     balanceLoader: false,
                 }
             });
+        })
+    }
+}
+
+export const getModulesStatus = () => {
+    return (dispatch,getState) => {
+        let params = getState().params;
+        apis.getModulesStatus(params.profile.auth_version, params.profile.sessionToken)
+        .then((d)=>{
+            if(d.rc == 1){
+                dispatch({
+                    type: types.GET_MODULES_STATUS,
+                    payload: {
+                        module_status: d.modules
+                    }
+                });
+            }else{
+                dispatch({type: types.GET_MODULES_STATUS});
+            }
+        }).catch(e=>{
+            console.log(e);
+            dispatch({type: types.GET_MODULES_STATUS});
         })
     }
 }
@@ -188,6 +215,9 @@ export const getProfile = () => {
                 dispatch(htm.getHTMProfile());
                 dispatch(chat.savePushToken());
                 // dispatch(chat.getChatRooms());
+                dispatch(wagering.getOracleProfileAccessList());
+                dispatch(getFiatCurrencyRate());
+                dispatch(getModulesStatus());
             }else if(d.rc == 3){
                 dispatch({
                     type: types.CUSTOM_ACTION,
@@ -209,6 +239,7 @@ export const getProfile = () => {
                 constants.SOUND.ERROR.play();
             }
         }).catch(e=>{
+            console.log(e);
             dispatch({
                 type: types.GET_PROFILE,
                 payload: {
@@ -605,7 +636,8 @@ export const isValidEmailForWallet = (email, profile, currency_type) => {
 
 export const changeFiatCurrency = (fiat_currency) =>{
     return (dispatch,getState) => {
-        let balances = getState().params.balances
+        let params = getState().params;
+        let balances = params.balances
             .map((bal)=>({...bal,per_value:0,amt2:0}))
         dispatch({
             type: types.CHANGE_CURRENCY,
@@ -618,7 +650,7 @@ export const changeFiatCurrency = (fiat_currency) =>{
             }
         });
         AsyncStorage.setItem('fiat_currency',fiat_currency.toString());
-        dispatch(getCoinMarketCapDetail(true));
+        if(params.profile) dispatch(getFiatCurrencyRate(true));
     }
 }
 
@@ -715,7 +747,7 @@ export const refreshingHome = (refresh=true) =>{
     }
 }
 
-export const getCoinMarketCapDetail = (loading=false) =>{
+export const getFiatCurrencyRate = (loading=false) =>{
     return (dispatch,getState) => {
         if(loading)
             dispatch({
@@ -731,18 +763,14 @@ export const getCoinMarketCapDetail = (loading=false) =>{
                         type: types.CUSTOM_ACTION,
                         payload: {balanceLoader:true}
                     })
-                await apis.getCoinMarketCapDetail(bal.currency_type, _fiat_currency).then((d)=>{
+                await apis.getFiatCurrencyRate(constants.COIN_GECKO_CURRENCY_IDS[bal.currency_type]).then((d)=>{
                     if(!d) return;
-                    let per_value = 0;
-                    if(d.quotes &&
-                        d.quotes[constants.FIAT_CURRENCY_UNIT[_fiat_currency]] &&
-                        d.quotes[constants.FIAT_CURRENCY_UNIT[_fiat_currency]].price){
-                        per_value = Number(d.quotes[constants.FIAT_CURRENCY_UNIT[_fiat_currency]].price.toFixed(3));
-                    }
+                    params = getState().params;
+                    let per_value = d.toFixed(3);
                     if(_fiat_currency !== params.fiat_currency){
                         per_value *= (params.fiat_per_usd || 0)
                     }
-                    let balances = getState().params.balances;
+                    let balances = params.balances;
                     let idx  =  balances.findIndex(b => b.currency_type === bal.currency_type);
                     let balance = (params.currency_type == bal.currency_type)?
                         params.balance:balances[idx].amt;
@@ -775,18 +803,11 @@ export const getCoinMarketCapDetail = (loading=false) =>{
             });
         }
         let fiat_currency = getState().params.fiat_currency;
-        let _fiat_currency = fiat_currency;
-        switch (fiat_currency) {
-            case constants.FIAT_CURRENCY.GHS:
-            case constants.FIAT_CURRENCY.NGN:
-            case constants.FIAT_CURRENCY.AED:
-                _fiat_currency = constants.FIAT_CURRENCY.USD;
-                dispatch(exchanges.getFiatExchangeRates(()=>cb(_fiat_currency)));
-                break;
-            default:
-                cb(_fiat_currency);
-                break;
-        }
+        let _fiat_currency = constants.FIAT_CURRENCY.USD;
+        if(fiat_currency !== constants.FIAT_CURRENCY.USD)
+            dispatch(exchanges.getFiatExchangeRates(()=>cb(_fiat_currency)));
+        else
+            cb(fiat_currency);
     }
 }
 

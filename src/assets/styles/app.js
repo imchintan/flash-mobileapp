@@ -70,5 +70,5 @@ module.exports = StyleSheet.create({
         bottom: -10,
         fontSize: 20,
         color: 'red'
-    }
+    },
 });
