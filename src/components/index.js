@@ -9,6 +9,7 @@ import FAB from './FAB';
 import Loader from './Loader';
 import Transaction from './Transaction';
 import Toast from './Toast';
+import FToast from './FToast';
 import TabBarBottom from './TabBarBottom';
 import WalletMenu from './WalletMenu';
 import Rating from './Rating';
@@ -32,6 +33,7 @@ module.exports = {
     Loader,
     ...Transaction,
     Toast,
+    FToast,
     WalletMenu,
     WalletFooter,
     Rating,

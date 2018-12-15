@@ -65,8 +65,8 @@ class MyAds extends Component < {} > {
                     showsVerticalScrollIndicator={false}
                     data={this.props.htmMyAds}
                     keyExtractor={(ad, index) => (index+'_'+ad.id)}
-                    onEndReachedThreshold={2}
-                    onEndReached={()=>!this.props.htmAdCreateOrEdit && this.props.getHTMAds(this.props.htmMyAds.length)}
+                    // onEndReachedThreshold={2}
+                    // onEndReached={()=>!this.props.htmAdCreateOrEdit && this.props.getHTMAds(this.props.htmMyAds.length)}
                     renderItem={({item, index})=>{
                         let price_per = (this.props.screenProps.getPricePer(item.buy,item.sell) * (1+item.margin/100)).toFixed(8);
                         let trade_limit = item.max > 0?
@@ -95,17 +95,17 @@ class MyAds extends Component < {} > {
                                         </View>
                                         <View style={styles.htmAdPriceDetail}>
                                             <Text style={styles.htmAdPriceTitle}>
-                                                Price / {utils.getCurrencyUnitUpcase(item.buy)}
+                                                Price / {utils.getCurrencyUnitUpcase(price_per > 1?item.sell:item.buy)}
                                             </Text>
                                             <Text style={styles.htmAdPriceValue}>{
-                                                utils.flashNFormatter(price_per,2) + ' ' +
-                                                utils.getCurrencyUnitUpcase(item.sell)}
+                                                (price_per > 1?(1/price_per).toFixed(8):price_per) + ' ' +
+                                                utils.getCurrencyUnitUpcase(price_per > 1?item.buy:item.sell)}
                                             </Text>
                                         </View>
                                     </View>
                                     <Text style={styles.htmAdConversion}>
-                                        Want to sell {utils.getCurrencyUnitUpcase(item.buy) + ' against ' +
-                                        utils.getCurrencyUnitUpcase(item.sell)}
+                                        Want to sell {utils.getCurrencyUnitUpcase(item.sell) + ' against ' +
+                                        utils.getCurrencyUnitUpcase(item.buy)}
                                     </Text>
                                 </View>
                             </TouchableOpacity>

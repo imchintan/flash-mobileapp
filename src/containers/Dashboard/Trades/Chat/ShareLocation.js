@@ -45,7 +45,8 @@ class ShareLocation extends Component < {} > {
         super(props);
         this.state = {
             loading: true,
-            setLocation: (this.props.navigation.state.params.setLocation)
+            setLocation: (this.props.navigation.state.params
+                && this.props.navigation.state.params.setLocation)
         };
     }
 

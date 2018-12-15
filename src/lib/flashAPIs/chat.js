@@ -14,6 +14,7 @@ export const getRooms = (auth_version, sessionToken) => {
             res         :RESOURCE,
             appversion  :APP_VERSION,
         });
+        let _res='';
         fetch(CHAT_API_URL+`/get-rooms?${params}`,{
             method: 'GET',
             body: null,
@@ -23,11 +24,46 @@ export const getRooms = (auth_version, sessionToken) => {
                'fl_auth_version': auth_version
             },
         })
-        .then(res =>res.json())
+        .then(res =>res.text())
+        .then(res =>{_res=res;return JSON.parse(res);})
         .then(json => resolve(json))
         .catch(e =>{
-            console.log(e);
-            reject('Something went wrong!')
+            console.log(_res,e);
+            reject({message:'Something went wrong!'})
+        });
+    });
+}
+
+/**
+ * Get chat room
+ * @param  {Number} auth_version             API authentication version
+ * @param  {String} sessionToken             User authorization token
+ * @param  {String} c                        Chat room channel id
+ * @return {Object}                          Return API response
+ */
+export const getRoom = (auth_version, sessionToken, c) => {
+    return new Promise((resolve,reject) => {
+        let params=utils.buildURLQuery({
+            c,
+            res         :RESOURCE,
+            appversion  :APP_VERSION,
+        });
+        let _res='';
+        fetch(CHAT_API_URL+`/get-rooms?${params}`,{
+            method: 'GET',
+            body: null,
+            headers: {
+               'Content-Type': 'application/json; charset=utf-8',
+               'authorization': sessionToken,
+               'fl_auth_version': auth_version
+            },
+        })
+        .then(res =>res.text())
+        .then(res =>{_res=res;return JSON.parse(res);})
+        .then(json => resolve(json))
+        .catch(e =>{
+            console.log(_res,e);
+            reject({message:'Something went wrong!'})
         });
     });
 }
@@ -46,6 +82,7 @@ export const markAsRead = (auth_version, sessionToken, c) => {
             res         :RESOURCE,
             appversion  :APP_VERSION,
         });
+        let _res='';
         fetch(CHAT_API_URL+`/mark-as-read?${params}`,{
             method: 'GET',
             body: null,
@@ -55,11 +92,12 @@ export const markAsRead = (auth_version, sessionToken, c) => {
                'fl_auth_version': auth_version
             },
         })
-        .then(res =>res.json())
+        .then(res =>res.text())
+        .then(res =>{_res=res;return JSON.parse(res);})
         .then(json => resolve(json))
         .catch(e =>{
-            console.log(e);
-            reject('Something went wrong!')
+            console.log(_res,e);
+            reject({message:'Something went wrong!'})
         });
     });
 }
@@ -78,7 +116,7 @@ export const markAsRead = (auth_version, sessionToken, c) => {
 export const createChannel = (auth_version, sessionToken, receiver_username,
     receiver_name, receiver_dp, sender_name, sender_dp) => {
     return new Promise((resolve,reject) => {
-
+        let _res='';
         fetch(CHAT_API_URL+'/create-channel',{
             method: 'POST',
             body: JSON.stringify({
@@ -96,11 +134,12 @@ export const createChannel = (auth_version, sessionToken, receiver_username,
                'fl_auth_version': auth_version
             },
         })
-        .then(res =>res.json())
+        .then(res =>res.text())
+        .then(res =>{_res=res;return JSON.parse(res);})
         .then(json => resolve(json))
         .catch(e =>{
-            console.log(e);
-            reject('Something went wrong!')
+            console.log(_res,e);
+            reject({message:'Something went wrong!'})
         });
     });
 }
@@ -120,6 +159,7 @@ export const createChannel = (auth_version, sessionToken, receiver_username,
 export const updateRoomMemberDetail = (auth_version, sessionToken, r, receiver_username,
     receiver_name, receiver_dp, sender_name, sender_dp) => {
     return new Promise((resolve,reject) => {
+        let _res='';
         fetch(CHAT_API_URL+'/update-room-member-detail',{
             method: 'POST',
             body: JSON.stringify({
@@ -138,11 +178,12 @@ export const updateRoomMemberDetail = (auth_version, sessionToken, r, receiver_u
                'fl_auth_version': auth_version
             },
         })
-        .then(res =>res.json())
+        .then(res =>res.text())
+        .then(res =>{_res=res;return JSON.parse(res);})
         .then(json => resolve(json))
         .catch(e =>{
-            console.log(e);
-            reject('Something went wrong!')
+            console.log(_res,e);
+            reject({message:'Something went wrong!'})
         });
     });
 }
@@ -162,6 +203,7 @@ export const updateRoomMemberDetail = (auth_version, sessionToken, r, receiver_u
  */
 export const sendChatMessage = (auth_version, sessionToken, c, r, txt) => {
     return new Promise((resolve,reject) => {
+        let _res='';
         fetch(CHAT_API_URL+'/send-message',{
             method: 'POST',
             body: JSON.stringify({
@@ -177,11 +219,12 @@ export const sendChatMessage = (auth_version, sessionToken, c, r, txt) => {
                'fl_auth_version': auth_version
             },
         })
-        .then(res =>res.json())
+        .then(res =>res.text())
+        .then(res =>{_res=res;return JSON.parse(res);})
         .then(json => resolve(json))
         .catch(e =>{
-            console.log(e);
-            reject('Something went wrong!')
+            console.log(_res,e);
+            reject({message:'Something went wrong!'})
         });
     });
 }
@@ -204,6 +247,7 @@ export const getChatMessages = (auth_version, sessionToken, c, l, p=1) => {
             res         :RESOURCE,
             appversion  :APP_VERSION,
         });
+        let _res='';
         fetch(CHAT_API_URL+`/get-messages?${params}`,{
             method: 'GET',
             body: null,
@@ -213,11 +257,12 @@ export const getChatMessages = (auth_version, sessionToken, c, l, p=1) => {
                'fl_auth_version': auth_version
             },
         })
-        .then(res =>res.json())
+        .then(res =>res.text())
+        .then(res =>{_res=res;return JSON.parse(res);})
         .then(json => resolve(json))
         .catch(e =>{
-            console.log(e);
-            reject('Something went wrong!')
+            console.log(_res,e);
+            reject({message:'Something went wrong!'})
         });
     });
 }
@@ -246,11 +291,12 @@ export const addFeedback = (auth_version, sessionToken, c, f) => {
                'fl_auth_version': auth_version
             },
         })
-        .then(res =>res.json())
+        .then(res =>res.text())
+        .then(res =>{_res=res;return JSON.parse(res);})
         .then(json => resolve(json))
         .catch(e =>{
-            console.log(e);
-            reject('Something went wrong!')
+            console.log(_res,e);
+            reject({message:'Something went wrong!'})
         });
     });
 }
@@ -264,6 +310,7 @@ export const addFeedback = (auth_version, sessionToken, c, f) => {
  */
 export const savePushToken = (auth_version, sessionToken, t ) => {
     return new Promise((resolve,reject) => {
+        let _res='';
         fetch(CHAT_API_URL+'/save-push-token',{
             method: 'POST',
             body: JSON.stringify({
@@ -278,11 +325,12 @@ export const savePushToken = (auth_version, sessionToken, t ) => {
                'fl_auth_version': auth_version
             },
         })
-        .then(res =>res.json())
+        .then(res =>res.text())
+        .then(res =>{_res=res;return JSON.parse(res);})
         .then(json => resolve(json))
         .catch(e =>{
-            console.log(e);
-            reject('Something went wrong!')
+            console.log(_res,e);
+            reject({message:'Something went wrong!'})
         });
     });
 }

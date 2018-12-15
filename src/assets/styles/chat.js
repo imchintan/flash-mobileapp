@@ -4,6 +4,7 @@ import {
 } from 'react-native';
 
 const appStyles = require('./app');
+const requestStyles = require('./request');
 
 const { width } = Dimensions.get('window');
 
@@ -287,9 +288,50 @@ const styles = StyleSheet.create({
         marginBottom: 2,
         backgroundColor: '#EFEFEF'
     },
+    tradeDetailTab:{
+        justifyContent: 'center',
+        paddingVertical: 15,
+        paddingHorizontal: 20,
+        width: '100%',
+        backgroundColor: '#191714',
+    },
+    tradeDetailTitle:{
+        color:'#FFFFFF',
+        fontWeight: '500',
+        fontSize: 18,
+    },
+    tradeDetailRate:{
+        color:'rgba(255,255,255,0.9)',
+        fontWeight: 'normal',
+        fontSize: 14,
+    },
+    tradeDetailPaymentText:{
+        width: width - 150,
+        color:'#FFFFFF',
+        fontSize: 17,
+        marginVertical: 5
+    },
+    tradeDetailBtn:{
+        alignSelf: 'center',
+        borderRadius: 5,
+        paddingHorizontal: 15,
+        paddingVertical: 5,
+    },
+    tradeDetailBtnText:{
+        fontSize: 18,
+        color: '#191714',
+    },
+    tradeDetailGrayeBtn:{
+        alignSelf: 'center',
+        borderRadius: 5,
+        paddingHorizontal: 15,
+        paddingVertical: 5,
+        backgroundColor: '#DFDFDF'
+    },
 });
 
 module.exports = {
     ...appStyles,
+    ...requestStyles,
     ...styles
 }

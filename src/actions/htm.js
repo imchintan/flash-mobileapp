@@ -1,13 +1,15 @@
 import {
+    Platform,
     AsyncStorage
 } from 'react-native';
 import * as types from '@actions/types';
+import * as chat from '@actions/chat';
 import * as apis from '@flashAPIs';
 import * as utils from '@lib/utils';
 import * as constants from '@src/constants';
 import _ from 'lodash';
 
-const Toast =  require('@components/Toast');
+const Toast =  Platform.OS == 'ios'?require('@components/Toast'):require('@components/FToast');
 
 var htmLocationIntRef = null; // Set time interval reference
 
@@ -250,6 +252,8 @@ export const htmLocationThread = (start=0) => {
                     else
                         dispatch(updateHTMLocation(params.position.latitude,
                             params.position.longitude));
+                }else{
+                    dispatch(updateHTMLocation(null,null));
                 }
             },(1 * 60 * 1000)) // every mint
             dispatch({ type: types.START_HTM_LOCATION_THREAD });
@@ -265,6 +269,7 @@ export const htmLocationThread = (start=0) => {
 export const updateHTMLocation = (lat, long) => {
     return (dispatch,getState) => {
         let params = getState().params;
+        if(!params.profile) return;
         apis.updateHTMLocation(params.profile.auth_version,
             params.profile.sessionToken, lat, long).then((d)=>{
             dispatch({ type: types.UPDATE_HTM_LOCATION });
@@ -614,7 +619,7 @@ export const addHTMAd = (data, goBack) => {
                         htmAdCreateOrEdit: false,
                     }
                 });
-                dispatch(getHTMAds());
+                dispatch(getHTMAds(0,true));
                 goBack();
             }
         }).catch(e=>{
@@ -713,7 +718,10 @@ export const getHTMAds = (start=0,reset=false) => {
         dispatch({ type: types.LOADING_START });
         let params = getState().params;
         let htmMyAdsReq = (params.htmMyAdsReq !== false || reset);
-        if(!htmMyAdsReq) return ;
+        if(!htmMyAdsReq) return dispatch({
+            type: types.MY_HTM_TRADE_ADS,
+            payload: { loading: false }
+        });
         let htmMyAds = reset?[]:params.htmMyAds;
         apis.getHTMAds(params.profile.auth_version, params.profile.sessionToken,start)
             .then((d)=>{
@@ -767,8 +775,8 @@ export const findHTMAds = (start=0,reset=false) => {
             buy:  filter.buy?filter.buy.currency_type:0,
             sell:  filter.sell?filter.sell.currency_type:0,
         }
-        apis.findHTMAds(params.profile.auth_version, params.profile.sessionToken, _filter)
-            .then((d)=>{
+        apis.findHTMAds(params.profile.auth_version, params.profile.sessionToken,
+            _filter, start).then((d)=>{
             if(d.rc !== 1){
                 Toast.errorTop(d.reason);
                 dispatch({
@@ -791,6 +799,303 @@ export const findHTMAds = (start=0,reset=false) => {
             Toast.errorTop(e.message);
             dispatch({
                 type: types.FIND_HTM_TRADE_ADS,
+                payload: { loading: false }
+            });
+        })
+    }
+}
+
+export const getHTMTrade = (trade_id, loading=false) => {
+    return (dispatch,getState) => {
+        let params = getState().params;
+        let payload = {};
+        if(loading)dispatch({ type: types.LOADING_START });
+        if(loading) payload.loading = false;
+        apis.getHTMTrade(params.profile.auth_version,
+            params.profile.sessionToken, trade_id).then((d)=>{
+            if(d.rc !== 1){
+                Toast.errorTop(d.reason);
+                dispatch({
+                    type: types.GET_HTM_TRADE,
+                    payload
+                });
+            }else{
+                payload.htm_trade = d.htm_trade;
+                dispatch({
+                    type: types.GET_HTM_TRADE,
+                    payload
+                });
+            }
+        }).catch(e=>{
+            Toast.errorTop(e.message);
+            dispatch({
+                type: types.GET_HTM_TRADE,
+                payload
+            });
+        })
+    }
+}
+
+export const getActiveHTMTrade = (ad_id,cb=null) => {
+    return (dispatch,getState) => {
+        dispatch({ type: types.LOADING_START });
+        let params = getState().params;
+        apis.getActiveHTMTrade(params.profile.auth_version,
+            params.profile.sessionToken, ad_id).then((d)=>{
+            if(d.rc !== 1){
+                Toast.errorTop(d.reason);
+                dispatch({
+                    type: types.GET_ACTIVE_HTM_TRADE,
+                    payload: { loading: false }
+                });
+            }else{
+                dispatch({
+                    type: types.GET_ACTIVE_HTM_TRADE,
+                    payload: {
+                        loading: false,
+                        isLoadAllPreviousMesages: false,
+                        chatMessages:[],
+                        htm_trade: null,
+                        channelFeedbacks:null,
+                        chatRoom:null,
+                        chatRoomChannel:null
+                    }
+                });
+                if(cb) cb(d.htm_trade || null);
+            }
+        }).catch(e=>{
+            Toast.errorTop(e.message);
+            dispatch({
+                type: types.GET_ACTIVE_HTM_TRADE,
+                payload: { loading: false }
+            });
+        })
+    }
+}
+
+export const openTrade = (htm_trade,cb=null) => {
+    return (dispatch,getState) => {
+        dispatch({ type: types.LOADING_START });
+        let params = getState().params;
+        let payload = { loading: false };
+        let chatRooms =  params.chatRooms;
+        let chatRoomIdx = chatRooms.findIndex(r => r._id == htm_trade.room_id);
+        if(chatRoomIdx !== -1){
+            let chatRoom = chatRooms[chatRoomIdx];
+            let chatRoomChannelIdx = chatRoom.c.findIndex(ch=> ch.id == htm_trade.channel_id);
+            if(chatRoomChannelIdx !== -1){
+                let chatRoomChannel = chatRoom.c[chatRoomChannelIdx];
+                payload = {
+                    loading: false,
+                    isLoadAllPreviousMesages: false,
+                    chatMessages:[],
+                    htm_trade: null,
+                    channelFeedbacks:null,
+                    chatRoom,
+                    chatRoomChannel
+                }
+                if(cb)cb();
+                return dispatch({
+                    type: types.OPEN_HTM_TRADE,
+                    payload
+                });
+            }
+        }
+        apis.getRoom(params.profile.auth_version, params.profile.sessionToken,
+            htm_trade.channel_id).then((d)=>{
+            if(d.rc !== 1){
+                Toast.errorTop(d.reason);
+                dispatch({
+                    type: types.OPEN_HTM_TRADE,
+                    payload: { loading: false }
+                });
+            }else{
+                if(d.total_rooms > 0){
+                    let chatRoom = d.rooms[0];
+                    let chatRoomChannelIdx = chatRoom.c.findIndex(ch=> ch.id == htm_trade.channel_id);
+                    if(chatRoomChannelIdx !== -1){
+                        let chatRoomChannel = chatRoom.c[chatRoomChannelIdx];
+                        payload = {
+                            loading: false,
+                            isLoadAllPreviousMesages: false,
+                            chatMessages:[],
+                            htm_trade: null,
+                            channelFeedbacks:null,
+                            chatRoom,
+                            chatRoomChannel
+                        }
+                        if(cb)cb();
+                        return dispatch({
+                            type: types.OPEN_HTM_TRADE,
+                            payload
+                        });
+                    }else{
+                        Toast.errorTop("Something went wrong!!");
+                        dispatch({
+                            type: types.OPEN_HTM_TRADE,
+                            payload: { loading: false }
+                        });
+                    }
+                }else{
+                    Toast.errorTop("Something went wrong!!");
+                    dispatch({
+                        type: types.OPEN_HTM_TRADE,
+                        payload: { loading: false }
+                    });
+                }
+            }
+        }).catch(e=>{
+            console.log(e);
+            Toast.errorTop(e.message);
+            dispatch({
+                type: types.OPEN_HTM_TRADE,
+                payload: { loading: false }
+            });
+        })
+    }
+}
+
+export const addHTMTrade = (data, message, cb=null) => {
+    return (dispatch,getState) => {
+        dispatch({ type: types.LOADING_START });
+        let params = getState().params;
+        apis.addHTMTrade(params.profile.auth_version,
+            params.profile.sessionToken, data).then((d)=>{
+            if(d.rc !== 1){
+                Toast.errorTop(d.reason);
+                dispatch({
+                    type: types.ADD_HTM_TRADE,
+                    payload: { loading: false }
+                });
+            }else{
+                let chatRooms =  params.chatRooms;
+                let chatRoom = d.room;
+                let chatRoomIdx = chatRooms.findIndex(r => r._id == chatRoom._id);
+                if(chatRoomIdx == -1){
+                    chatRooms.push(chatRoom);
+                }else{
+                    chatRooms[chatRoomIdx] = chatRoom;
+                }
+
+                let chatRoomChannel = chatRoom.c.filter(ch=> ch.a && ch.ai == data.ad_id)[0];
+                dispatch({
+                    type: types.ADD_HTM_TRADE,
+                    payload: {
+                        loading: false,
+                        isLoadAllPreviousMesages: false,
+                        chatMessages:[],
+                        htm_trade: null,
+                        channelFeedbacks:null,
+                        chatRoom,
+                        chatRoomChannel
+                    }
+                });
+                dispatch(chat.sendChatMessage(message));
+                if(cb)cb();
+            }
+        }).catch(e=>{
+            Toast.errorTop(e.message);
+            dispatch({
+                type: types.ADD_HTM_TRADE,
+                payload: { loading: false }
+            });
+        })
+    }
+}
+
+export const cancelHTMTrade = (msg,cb=null) => {
+    return (dispatch,getState) => {
+        dispatch({ type: types.LOADING_START });
+        let params = getState().params;
+        apis.cancelHTMTrade(params.profile.auth_version,
+            params.profile.sessionToken, params.htm_trade.id, msg).then((d)=>{
+            if(d.rc !== 1){
+                Toast.errorTop(d.reason);
+                dispatch({
+                    type: types.CANCEL_HTM_TRADE,
+                    payload: { loading: false }
+                });
+                if(cb)cb(false);
+            }else{
+                dispatch({
+                    type: types.CANCEL_HTM_TRADE,
+                    payload: {
+                        loading: false,
+                    }
+                });
+                dispatch(getHTMTrade(params.htm_trade.id));
+                if(cb)cb(true);
+            }
+        }).catch(e=>{
+            Toast.errorTop(e.message);
+            dispatch({
+                type: types.CANCEL_HTM_TRADE,
+                payload: { loading: false }
+            });
+            if(cb)cb(false);
+        })
+    }
+}
+
+export const rejectHTMTrade = (msg,cb=null) => {
+    return (dispatch,getState) => {
+        dispatch({ type: types.LOADING_START });
+        let params = getState().params;
+        apis.rejectHTMTrade(params.profile.auth_version,
+            params.profile.sessionToken, params.htm_trade.id, msg).then((d)=>{
+            if(d.rc !== 1){
+                Toast.errorTop(d.reason);
+                dispatch({
+                    type: types.REJECT_HTM_TRADE,
+                    payload: { loading: false }
+                });
+                if(cb)cb(false);
+            }else{
+                dispatch({
+                    type: types.REJECT_HTM_TRADE,
+                    payload: {
+                        loading: false,
+                    }
+                });
+                dispatch(getHTMTrade(params.htm_trade.id));
+                if(cb)cb(true);
+            }
+        }).catch(e=>{
+            Toast.errorTop(e.message);
+            dispatch({
+                type: types.REJECT_HTM_TRADE,
+                payload: { loading: false }
+            });
+            if(cb)cb(false);
+        })
+    }
+}
+
+export const acceptHTMTrade = () => {
+    return (dispatch,getState) => {
+        dispatch({ type: types.LOADING_START });
+        let params = getState().params;
+        apis.acceptHTMTrade(params.profile.auth_version,
+            params.profile.sessionToken, params.htm_trade.id).then((d)=>{
+            if(d.rc !== 1){
+                Toast.errorTop(d.reason);
+                dispatch({
+                    type: types.ACCEPT_HTM_TRADE,
+                    payload: { loading: false }
+                });
+            }else{
+                dispatch({
+                    type: types.ACCEPT_HTM_TRADE,
+                    payload: {
+                        loading: false,
+                    }
+                });
+                dispatch(getHTMTrade(params.htm_trade.id));
+            }
+        }).catch(e=>{
+            Toast.errorTop(e.message);
+            dispatch({
+                type: types.ACCEPT_HTM_TRADE,
                 payload: { loading: false }
             });
         })

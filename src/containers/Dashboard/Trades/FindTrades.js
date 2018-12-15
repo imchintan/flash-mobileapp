@@ -374,7 +374,7 @@ class FindTrades extends Component < {} > {
                 {this.state.showFilter?<View style={styles.htmFilter}>
                     <Icon style={styles.htmFilterArrow} name='sort-up'/>
                     <View style={styles.htmFilterContent}>
-                        <View style={styles.htmFilterRow}>
+                        <View style={styles.htmFilterRow1}>
                             <View style={styles.htmFilterWantToTitle}>
                                 <Text style={styles.htmFilterWantToLabel}>I want to?</Text>
                                 <Text style={styles.htmFilterWantToVal}>
@@ -445,7 +445,7 @@ class FindTrades extends Component < {} > {
                                 }}
                                 sliderLength={225} />
                         </View>
-                        <View style={styles.htmFilterRow}>
+                        <View style={styles.htmFilterRow1}>
                             <View style={styles.htmFilterWantToTitle}>
                                 <Text style={styles.htmFilterWantToLabel}>Distance</Text>
                                 <Text style={styles.htmFilterWantToVal}>
@@ -473,7 +473,7 @@ class FindTrades extends Component < {} > {
                                 }}
                                 sliderLength={225} />
                         </View>
-                        <View style={styles.htmFilterRow}>
+                        <View style={styles.htmFilterRow1}>
                             <View style={styles.htmFilterWantToTitle}>
                                 <Text style={styles.htmFilterWantToLabel}>
                                     Show only online HTMs
@@ -505,7 +505,7 @@ class FindTrades extends Component < {} > {
                                 </TouchableOpacity>
                             </View>
                         </View>
-                        <View style={styles.htmFilterRow}>
+                        <View style={styles.htmFilterRow1}>
                             <View style={styles.htmFilterWantToTitle}>
                                 <Text style={styles.htmFilterWantToLabel}>Currencies</Text>
                                 <Text style={styles.htmFilterWantToVal}>
@@ -544,7 +544,7 @@ class FindTrades extends Component < {} > {
                                 </View>
                             )}
                         </View>
-                        <View style={[styles.htmFilterRow, {
+                        <View style={[styles.htmFilterRow1, {
                             flexDirection: 'row',
                             alignSelf: 'center',
                             justifyContent: 'space-between',

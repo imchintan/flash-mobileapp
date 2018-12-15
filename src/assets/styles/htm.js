@@ -3,8 +3,7 @@ import {
     Dimensions,
     Platform
 } from 'react-native';
-import { isIphoneX } from '@lib/utils'
-
+import { isIphoneX, FontSize } from '@lib/utils'
 const appStyles = require('./app');
 const myAccountStyles = require('./myAccount');
 const { width } = Dimensions.get('window');
@@ -478,6 +477,9 @@ const styles = StyleSheet.create({
     htmFilterRow:{
         flexDirection: 'row',
     },
+    htmFilterRow1:{
+        width: 270,
+    },
     htmFilterWantTo:{
         flexDirection: 'row',
         paddingHorizontal: 10,
@@ -894,6 +896,47 @@ const styles = StyleSheet.create({
     htmProfileFixLocationBtnText:{
         fontSize: 18,
         color: '#0645AD'
+    },
+
+    walletBalanceTab:{
+        alignItems: 'flex-end',
+        justifyContent: 'center',
+        paddingHorizontal: 12,
+        paddingVertical: 15,
+        marginHorizontal: 15,
+        borderRadius: 10,
+        backgroundColor: '#E9E9E9',
+    },
+    walletBalanceRowBox:{
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'space-between',
+        width: '100%'
+    },
+    walletBalanceLabel:{
+        color:'#787878',
+        fontSize: FontSize(18,0.75),
+        marginBottom: -5,
+    },
+    walletBalanceDetail:{
+        flexDirection: 'row',
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    walletBalance:{
+        color:'#454545',
+        fontSize: FontSize(18,0.75),
+        top: 1,
+    },
+    exchangeIcon:{
+        marginHorizontal: 8,
+        color:'#989898',
+        fontSize: FontSize(18,0.75),
+    },
+    walletBalanceInFiatCurrency:{
+        color:'#333',
+        fontWeight: '500',
+        fontSize: FontSize(25,0.75),
     },
 });
 

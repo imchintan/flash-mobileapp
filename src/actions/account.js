@@ -153,7 +153,7 @@ export const getBalanceV2 = (currency_type=constants.CURRENCY_TYPE.FLASH ,refres
                         (currency_type === constants.CURRENCY_TYPE.FLASH?
                             utils.flashNFormatter(utils.satoshiToFlash(d.balance).toFixed(10)):
                             utils.flashNFormatter(d.balance.toFixed(8))) + ' ' +
-                            utils.getCurrencyUnitUpcase( params.currency_type)):null
+                            utils.getCurrencyUnitUpcase( currency_type)):null
                     }
                 });
             }
@@ -584,12 +584,12 @@ export const getWalletsByEmail = () => {
     }
 }
 
-export const searchWallet = (term, loading=false) => {
+export const searchWallet = (term, loading=false, currency_type = null) => {
     return (dispatch,getState) => {
         if(loading) dispatch({ type: types.LOADING_START });
         let params = getState().params;
         apis.searchWallet(params.profile.auth_version, params.profile.sessionToken,
-            params.currency_type, term).then((d)=>{
+            currency_type || params.currency_type, term).then((d)=>{
             if(d.rc !== 1){
                 dispatch({
                     type: types.SEARCH_WALLET,

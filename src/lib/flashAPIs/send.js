@@ -143,11 +143,12 @@ export const getEthTransactionCount = (auth_version, sessionToken='',
  * @param {String} [receiver_public_address=''] [description]
  * @param {String} [transaction_hex='']         [description]
  * @param {String} [transaction_id='']          [description]
+ * @param {Number} [trade_id=0]                 [description]
  * @return {Promise}                            [description]
  */
 export const addTransaction = (auth_version, sessionToken='', currency_type = 1,
     amount=0, ip='', memo='', receiver_bare_uid='', receiver_id='',
-    receiver_public_address='', transaction_hex='', transaction_id= '') => {
+    receiver_public_address='', transaction_hex='', transaction_id= '', trade_id = 0) => {
     return new Promise((resolve,reject) => {
         fetch(API_URL+'/add-transaction',{
             method: 'POST',
@@ -161,6 +162,7 @@ export const addTransaction = (auth_version, sessionToken='', currency_type = 1,
                 receiver_public_address,
                 transaction_hex,
                 transaction_id,
+                trade_id,
                 appversion:APP_VERSION,
                 res:RESOURCE,
             }),
@@ -201,12 +203,13 @@ export const addTransaction = (auth_version, sessionToken='', currency_type = 1,
  * @param {String} [transaction_id='']          [description]
  * @param {Array} [toAddresses]                 [description]
  * @param {Object} [payout_info]                [description]
+ * @param {Object} [trade_id]                   [description]
  * @return {Promise}                            [description]
  */
 export const addTransactionMulti = (auth_version, sessionToken='', currency_type = 1,
     amount=0, ip='', memo='', receiver_bare_uid='', receiver_id='',
     receiver_public_address='', transaction_hex='', transaction_id= '',
-    toAddresses, payout_info) => {
+    toAddresses, payout_info, trade_id = 0) => {
     return new Promise((resolve,reject) => {
         fetch(API_URL+'/add-transaction-multi',{
             method: 'POST',
@@ -221,6 +224,7 @@ export const addTransactionMulti = (auth_version, sessionToken='', currency_type
                 transaction_hex,
                 transaction_id,
                 toAddresses,
+                trade_id,
                 sharing_fee_percentage: payout_info?payout_info.payout_sharing_fee:0,
                 payout_code: payout_info?payout_info.payout_code:null,
                 appversion:APP_VERSION,

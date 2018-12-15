@@ -60,6 +60,11 @@ export const init = () => {
             payload.wagerLegalDisclaimer = true;
         }
 
+        let onlineTradeDisclaimer = await AsyncStorage.getItem('onlineTradeDisclaimer');
+        if(onlineTradeDisclaimer){
+            payload.onlineTradeDisclaimer = true;
+        }
+
         let nightMode = await AsyncStorage.getItem('nightMode');
         if(nightMode !== null){
             payload.nightMode = (nightMode == 'true');
@@ -589,7 +594,7 @@ export const getMyWallets = (profile,password=null) => {
     }
 }
 
-export const decryptWallet = (currency_type,password,sendMoney=false) => {
+export const decryptWallet = (currency_type,password,sendMoney=false,forTrade=false) => {
     return (dispatch,getState) => {
         try {
             dispatch({ type: types.LOADING_START });
@@ -603,13 +608,12 @@ export const decryptWallet = (currency_type,password,sendMoney=false) => {
             }
 
             decryptedWallet = send.getActiveWallet(decryptedWallets, currency_type);
+            let payload = { loading: sendMoney };
             if(decryptedWallet){
+                payload[`${forTrade?'trade_':''}decryptedWallet`] = decryptedWallet;
                 return dispatch({
                     type: types.STORE_FOUNTAIN_SECRET,
-                    payload: {
-                        decryptedWallet,
-                        loading: sendMoney,
-                    }
+                    payload
                 });
             }
 
@@ -632,13 +636,11 @@ export const decryptWallet = (currency_type,password,sendMoney=false) => {
                 decryptedWallet = wallet;
             }
             decryptedWallets.push(decryptedWallet);
+            payload[`${forTrade?'trade_':''}decryptedWallet`] = decryptedWallet;
+            payload['decryptedWallets'] = decryptedWallets;
             dispatch({
                 type: types.STORE_FOUNTAIN_SECRET,
-                payload: {
-                    decryptedWallets,
-                    decryptedWallet,
-                    loading: sendMoney,
-                }
+                payload
             });
         } catch (e) {
             console.log(e);

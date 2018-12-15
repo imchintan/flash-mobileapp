@@ -4,6 +4,7 @@
 
  import React, {Component} from 'react';
  import {
+     BackHandler,
      Platform,
      View,
      Image,
@@ -85,7 +86,23 @@ class TradeDetail extends Component < {} > {
         };
     }
 
+    componentDidMount() {
+        this.mount = true;
+        BackHandler.addEventListener('hardwareBackPress', this.backHandler.bind(this));
+    }
+
+    componentWillUnmount(){
+        this.mount = false;
+        BackHandler.removeEventListener('hardwareBackPress', this.backHandler.bind(this));
+    }
+
+    backHandler(){
+        this.props.navigation.goBack();
+        return this.mount;
+    }
+
     render() {
+        const isBack = this.props.navigation.state.params && this.props.navigation.state.params.isBack;
         const styles = (this.props.nightMode?require('@styles/nightMode/htm'):require('@styles/htm'));
         const os = this.props.chatRoom?(this.props.chatRoom.os && this.props.chatRoom.os[this.props.htm.username]):this.props.htm.isOnline;
         return (
@@ -175,7 +192,8 @@ class TradeDetail extends Component < {} > {
                             </View>:null}
                             <Button style={{marginVertical: 10}}
                                 value={'Contact for Trade'}
-                                onPress={()=>this.props.goToChatRoom(this.props.htm.username,
+                                onPress={()=>isBack?this.props.navigation.goBack():
+                                    this.props.goToChatRoom(this.props.htm.username,
                                     (feedback)=>this.props.navigation
                                         .navigate(feedback?'FeedBack':'ChatRoom'))}/>
                         </View>

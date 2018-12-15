@@ -157,11 +157,11 @@ export const localizeFlash = (num, digits=8) => {
     return parseFloat(num).toLocaleString('en',{maximumFractionDigits:digits});
 }
 
-export const cryptoToOtherCurrency = (value,othCur, p=0) => {
+export const cryptoToOtherCurrency = (value,othCur, p=0, digit=3) => {
     if (value == undefined || value === '') return;
     if (othCur == undefined || othCur === '') return;
     return parseFloat(new Big(value).times(othCur).div(Math.pow(10,p)).toString())
-        .toFixed(3).toLocaleString('en',{maximumFractionDigits:3});
+        .toFixed(digit).toLocaleString('en',{maximumFractionDigits:digit});
 }
 
 export const otherCurrencyToCrypto = (value,othCur) => {
@@ -722,5 +722,36 @@ export const getOdds = (p1,p2) => {
             return getOdds(1,Math.round(p2/p1))
     }else{
         return {p1:p1/r,p2:p2/r};
+    }
+}
+
+export const getTransactionDetailURL = (currency_type,txn_id) => {
+    switch (currency_type) {
+        case constants.CURRENCY_TYPE.BTC:
+            if(APP_MODE == 'PROD')
+                return 'https://btc.flashcoin.io/tx/' + txn_id;
+            else
+                return 'http://82.221.106.138:3001/tx/' + txn_id;
+            break;
+        case constants.CURRENCY_TYPE.LTC:
+            if (APP_MODE == 'PROD')
+                return 'https://ltc.flashcoin.io/tx/' + txn_id;
+            else
+                return 'http://82.221.106.143:3001/tx/' + txn_id;
+            break;
+        case constants.CURRENCY_TYPE.DASH:
+            if (APP_MODE == 'PROD')
+                return 'https://dash.flashcoin.io/tx/' + txn_id;
+            else
+                return 'http://82.221.106.172:3001/tx/' + txn_id;
+            break;
+        case constants.CURRENCY_TYPE.ETH:
+            if (APP_MODE == 'PROD')
+                return 'https://etherscan.io/tx/' + txn_id;
+            else
+                return 'https://rinkeby.etherscan.io/tx/' + txn_id;
+            break;
+        default:
+            return 'https://explorer.flashcoin.io/tx/' + txn_id;
     }
 }

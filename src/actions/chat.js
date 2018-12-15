@@ -52,36 +52,43 @@ export const getChatRooms = () => {
     }
 }
 
-export const goToChatRoom = (username, cb, channelId=null) => {
+export const goToChatRoom = (username, cb, channelId=null, n=0) => {
     return (dispatch,getState) => {
         let params = getState().params;
         let rooms =  params.chatRooms || [];
         let room = rooms.filter(r => r.m[0] == username || r.m[1] == username)
         let chatRoom = room.length == 0?null:room[0];
         let chatRoomChannel = null;
+        if(channelId && !chatRoom){
+            if(n >= 5) return cb(true);
+            return setTimeout(()=>goToChatRoom(username, cb, channelId,++n),1000);
+        }
         if(chatRoom){
             let activeChannel = chatRoom.c.filter(ch=> (channelId == ch.id) ||
                 (!channelId
-                    && (ch.a || !ch.f ||
-                        typeof ch.f[params.htmProfile.username] == 'undefined')
+                    && (ch.ty != 2 && (ch.a || !ch.f ||
+                        typeof ch.f[params.htmProfile.username] == 'undefined'))
                 ));
             if(activeChannel.length > 0)
                 chatRoomChannel = activeChannel[0];
         }
         let _cb = () =>{
+            let forceFeedBack = (chatRoomChannel && ((!chatRoomChannel.a
+                && chatRoomChannel.ty != 2) || chatRoomChannel.s == 7) && !channelId);
             dispatch({
                 type: types.GO_TO_CHAT_ROOM,
                 payload: {
                     chatMessages:[],
+                    htm_trade: null,
                     chatRoom,
                     chatRoomChannel,
                     chatNotification: null,
                     channelFeedbacks:null,
                     isLoadAllPreviousMesages:false,
-                    forceFeedBack: (chatRoomChannel && !chatRoomChannel.a && !channelId)
+                    forceFeedBack
                 }
             });
-            if(cb)cb((chatRoomChannel && !chatRoomChannel.a && !channelId));
+            if(cb)cb(forceFeedBack);
         }
         if(!params.htm || params.htm.username !== username)
             dispatch(htm.getHTMDetail(username,_cb));
@@ -99,7 +106,7 @@ export const checkTradingFeedBack = () => {
             return setTimeout(()=>dispatch(checkTradingFeedBack),500);
 
         let hasFeedBackRemainChatRooms = chatRooms.filter((chatRoom)=>{
-            let feedBackRemains = chatRoom.c.filter((ch)=>!ch.a && (!ch.f
+            let feedBackRemains = chatRoom.c.filter((ch)=>((!ch.a && ch.ty != 2) || ch.s == 7) && (!ch.f
                 || typeof ch.f[params.htmProfile.username] == 'undefined'));
             return feedBackRemains.length
         });
@@ -111,14 +118,15 @@ export const checkTradingFeedBack = () => {
             params.DashboardNavigation.navigate('Trades');
         let _cb = () =>{
             params = getState().params;
-            let hasFeedBackRemain = chatRoom.c.filter((ch)=>!ch.a && (!ch.f
-                || typeof ch.f[params.htmProfile.username] == 'undefined'));
+            let hasFeedBackRemain = chatRoom.c.filter((ch)=>((!ch.a && ch.ty != 2) || ch.s == 7)
+            && (!ch.f || typeof ch.f[params.htmProfile.username] == 'undefined'));
             let chatRoomChannel = hasFeedBackRemain.length > 0?hasFeedBackRemain[0]:null;
             if(!chatRoomChannel) return ;
             dispatch({
                 type: types.CHECK_TRADING_FEEDBACK,
                 payload: {
                     chatMessages:[],
+                    htm_trade: null,
                     isLoadAllPreviousMesages: false,
                     chatRoom,
                     chatRoomChannel,
@@ -138,13 +146,14 @@ export const selectChatRoom = (username, chatRoom, navigate) => {
     return (dispatch,getState) => {
         let params = getState().params;
         let _cb = () =>{
-            let hasFeedBackRemain = chatRoom.c.filter((ch)=>!ch.a && (!ch.f
-                || typeof ch.f[params.htmProfile.username] == 'undefined'));
+            let hasFeedBackRemain = chatRoom.c.filter((ch)=>((!ch.a && ch.ty != 2) || ch.s == 7)
+            && (!ch.f || typeof ch.f[params.htmProfile.username] == 'undefined'));
             let chatRoomChannel = hasFeedBackRemain.length > 0?hasFeedBackRemain[0]:null;
             dispatch({
                 type: types.SELECT_CHAT_ROOM,
                 payload: {
                     chatMessages:[],
+                    htm_trade: null,
                     channelFeedbacks:null,
                     isLoadAllPreviousMesages: false,
                     chatRoom,
@@ -169,8 +178,15 @@ export const selectChatRoomChannel = (chatRoomChannel, navigate) => {
             payload: {
                 isLoadAllPreviousMesages:false,
                 chatMessages:[],
+                htm_trade: null,
                 channelFeedbacks:null,
-                chatRoomChannel
+                chatRoomChannel,
+                search_wallet: null,
+                trade_bcMedianTxSize: 250,
+                trade_satoshiPerByte: 20,
+                trade_thresholdAmount: 0.00001,
+                trade_fixedTxnFee: 0.00002,
+                trade_decryptedWallet: null,
             }
         });
         navigate('ChatRoom');
@@ -211,13 +227,14 @@ export const createChannel = (receiver_username,cb=null) => {
                     chatRooms[chatRoomIdx] = chatRoom;
                 }
 
-                let chatRoomChannel = chatRoom.c.filter(ch=>ch.a)[0];
+                let chatRoomChannel = chatRoom.c.filter(ch=>ch.a && ch.ty != 2)[0];
                 dispatch({
                     type: types.CREATE_CHAT_CHANNEL,
                     payload: {
                         loading: false,
                         isLoadAllPreviousMesages: false,
                         chatMessages:[],
+                        htm_trade: null,
                         channelFeedbacks:null,
                         chatRoom,
                         chatRoomChannel

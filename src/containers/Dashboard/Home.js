@@ -161,7 +161,7 @@ class Home extends Component<{}> {
                             onPress={()=>this.props.navigation.navigate('Trades')}>
                             <View style={styles.adminTabTitle}>
                                 <Icon style={styles.featuresTabTitleIcon} name='globe'/>
-                                <Text style={styles.featuresTabTitleLabel}>Trades</Text>
+                                <Text style={styles.featuresTabTitleLabel}>P2P Marketplace</Text>
                             </View>
                             <Icon style={styles.featuresTabRightIcon} name='angle-right'/>
                         </TouchableOpacity>

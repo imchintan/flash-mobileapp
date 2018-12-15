@@ -48,7 +48,7 @@ class ChatChannel extends Component < {} > {
         const un = this.props.chatRoom.m[0] == this.props.htmProfile.username?
             this.props.chatRoom.m[1]:this.props.chatRoom.m[0];
         const os = (this.props.chatRoom.os && this.props.chatRoom.os[un]);
-        const hasActiveChannel = (this.props.chatRoom.c.filter(ch=>ch.a).length > 0);
+        const hasActiveChannel = (this.props.chatRoom.c.filter(ch=>ch.a && ch.ty != 2).length > 0);
         let chatRoomChannels =  this.props.chatRoom.c.filter(ch=>!!ch.l)
         chatRoomChannels = chatRoomChannels.sort((a,b) => a.id < b.id?1:-1);
         return (
@@ -114,6 +114,11 @@ class ChatChannel extends Component < {} > {
                                 }
                             }
                         })
+                        let status = !ch.f?(ch.s == 2 || ch.s == 3?3:1):(
+                            ch.f[this.props.htmProfile.username] === true?
+                            2:(
+                            ch.f[this.props.htmProfile.username] === false?
+                            3:4))
                         return (
                             <TouchableOpacity
                                activeOpacity={ch.a?0.5:1}
@@ -124,14 +129,12 @@ class ChatChannel extends Component < {} > {
                                onPress={()=>this.props
                                    .selectChatRoomChannel(ch, this.props.navigation.navigate)}>
                                 <View style={[styles.chatProfileIcon,styles.chatChannelIconBox]}>
-                                    <Icon style={!ch.f?styles.chatChannelIcon:(
-                                        ch.f[this.props.htmProfile.username] === true?
-                                        styles.chatChannelSuccessIcon:(
-                                        ch.f[this.props.htmProfile.username] === false?
-                                        styles.chatChannelFailedIcon:styles.chatChannelPendingIcon))}
-                                    name={!ch.f?'exchange':(ch.f[this.props.htmProfile.username] ===true?
-                                        'check':(ch.f[this.props.htmProfile.username] ===false?
-                                            'exclamation':'hourglass-half'))}/>
+                                    <Icon style={status==1?styles.chatChannelIcon:
+                                        (status==2?styles.chatChannelSuccessIcon:
+                                        (status==3?styles.chatChannelFailedIcon:
+                                            styles.chatChannelPendingIcon))}
+                                    name={status==1?'exchange':(status==2?
+                                        'check':(status==3?'exclamation':'hourglass-half'))}/>
                                 </View>
                                 <View style={styles.chatMsgBox}>
                                     <View style={styles.chatMsgDetailBox}>

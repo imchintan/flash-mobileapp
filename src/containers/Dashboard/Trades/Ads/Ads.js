@@ -8,24 +8,25 @@
      Image,
      TouchableOpacity,
      RefreshControl,
-     FlatList,
-     ScrollView
+     FlatList
  } from 'react-native';
  import {
      Icon,
      Text,
-     Button,
      Loader,
-     Modal
+     FToast
  } from '@components';
- import moment from 'moment-timezone';
+
 import * as utils from '@lib/utils';
 import * as constants from '@src/constants';
+import * as Validation from '@lib/validation';
 import { PROFILE_URL } from '@src/config';
 
 import {connect} from 'react-redux';
 import {bindActionCreators} from 'redux';
 import {ActionCreators} from '@actions';
+
+import * as am from './AdsModal';
 
 class Ads extends Component < {} > {
 
@@ -45,6 +46,70 @@ class Ads extends Component < {} > {
         this.props.findHTMAds(0,true);
     }
 
+    verifyAmount(){
+        this.setState({isAmtVerify: false});
+        if(!this.state.buy_amount) return false;
+        let buy_amount = utils.toOrginalNumber(this.state.buy_amount);
+        let sell_amount = utils.toOrginalNumber(this.state.sell_amount);
+        let res = Validation.amount(buy_amount);
+        if(!res.success){
+            return FToast.errorTop(res.message);
+        }
+        this.setState({
+            isAmtVerify: true,
+            sell_amount: Number(sell_amount)>1?utils.formatAmountInput(Number(sell_amount)):sell_amount,
+            buy_amount: res.amount>1?utils.formatAmountInput(res.amount):res.amount
+        });
+    }
+
+    addHTMTrade(){
+        let buy_amount = utils.toOrginalNumber(this.state.buy_amount);
+        let sell_amount = utils.toOrginalNumber(this.state.sell_amount);
+        let res = Validation.amount(buy_amount);
+        if(!res.success){
+            return FToast.errorTop(res.message);
+        }
+
+        if(this.state.htmAd.min > sell_amount){
+            return FToast.errorTop('Amount must be greater than min limit.');
+        }
+
+        if(this.state.htmAd.max && this.state.htmAd.max < sell_amount){
+            return FToast.errorTop('Amount must be less than max limit.');
+        }
+
+        let message = (this.state.message || '').trim();
+        if(!message) return FToast.errorTop('Message is required!');
+
+        let balance = this.props.balances
+            .filter(bal => bal.currency_type == this.state.htmAd.buy)[0].amt;
+        if(this.state.htmAd.buy == constants.CURRENCY_TYPE.FLASH){
+            balance = utils.satoshiToFlash(balance);
+        }
+
+        if(balance < buy_amount){
+            return FToast.errorTop('You do not have enough '
+            +utils.getCurrencyUnitUpcase(this.state.htmAd.buy)
+            +' to create this trad!');
+        }
+
+        let data = {
+            ad_id: this.state.htmAd.id,
+            base_amount: sell_amount,
+            to_amount: buy_amount,
+            rate: utils.toOrginalNumber(this.state.htmAd.price_per),
+            receiver_name: this.props.htm.display_name,
+            receiver_dp: this.props.htm.profile_pic_url,
+            sender_name: this.props.htmProfile.display_name,
+            sender_dp: this.props.htmProfile.profile_pic_url,
+        }
+        this.props.addHTMTrade(data, message, ()=>
+            this.setState({htmAd:{},contactForTrade:false,
+                buy_amount:0, sell_amount:0, message:''},()=>
+                this.props.screenProps.navigate('ChatRoom')
+        ));
+    }
+
     render() {
         const styles = (this.props.nightMode?require('@styles/nightMode/htm'):require('@styles/htm'));
         return(
@@ -61,8 +126,8 @@ class Ads extends Component < {} > {
                     showsVerticalScrollIndicator={false}
                     data={this.props.htmAds}
                     keyExtractor={(ad, index) => (index+'_'+ad.id)}
-                    onEndReachedThreshold={2}
-                    onEndReached={()=>!this.props.htmAdCreateOrEdit && this.props.findHTMAds(this.props.htmAds.length)}
+                    // onEndReachedThreshold={2}
+                    // onEndReached={()=>!this.props.htmAdCreateOrEdit && this.props.findHTMAds(this.props.htmAds.length)}
                     renderItem={({item, index})=>{
                         let price_per = (this.props.screenProps.getPricePer(item.buy,item.sell) * (1+item.margin/100)).toFixed(8);
                         let trade_limit = item.max > 0?
@@ -75,13 +140,17 @@ class Ads extends Component < {} > {
                         return(
                             <TouchableOpacity activeOpacity={0.5}
                                 onPress={()=>this.props.getHTMDetail(item.username,
-                                    ()=>this.setState({
-                                        htmAd:{
-                                            ...item,
-                                            price_per,
-                                            trade_limit
-                                        }
-                                    })
+                                    ()=>this.setState({htm_trade:null},
+                                    ()=>this.props.getActiveHTMTrade(item.id,
+                                        (htm_trade)=>this.setState({
+                                            htmAd:{
+                                                ...item,
+                                                price_per,
+                                                trade_limit
+                                            },
+                                            htm_trade,
+                                            trade_balance:null,
+                                        },()=>this.props.getBalanceV2(this.state.htmAd.buy,true))))
                                 )}
                                 style={styles.htmAdTab}>
                                 <Image style={styles.htmAdUserImage}
@@ -105,17 +174,17 @@ class Ads extends Component < {} > {
                                         </View>
                                         <View style={styles.htmAdPriceDetail}>
                                             <Text style={styles.htmAdPriceTitle}>
-                                                Price / {utils.getCurrencyUnitUpcase(item.buy)}
+                                                Price / {utils.getCurrencyUnitUpcase(price_per > 1?item.sell:item.buy)}
                                             </Text>
                                             <Text style={styles.htmAdPriceValue}>{
-                                                utils.flashNFormatter(price_per,2) + ' ' +
-                                                utils.getCurrencyUnitUpcase(item.sell)}
+                                                (price_per > 1?(1/price_per).toFixed(8):price_per) + ' ' +
+                                                utils.getCurrencyUnitUpcase(price_per > 1?item.buy:item.sell)}
                                             </Text>
                                         </View>
                                     </View>
                                     <Text style={styles.htmAdConversion}>
-                                        Want to sell {utils.getCurrencyUnitUpcase(item.buy) + ' against ' +
-                                        utils.getCurrencyUnitUpcase(item.sell)}
+                                        Want to sell {utils.getCurrencyUnitUpcase(item.sell) + ' against ' +
+                                        utils.getCurrencyUnitUpcase(item.buy)}
                                     </Text>
                                 </View>
                             </TouchableOpacity>
@@ -131,116 +200,9 @@ class Ads extends Component < {} > {
                         )
                     }}
                 />
+                {am.viewAdDetails(this,styles)}
+                {am.contactForTrade(this,styles)}
                 <Loader show={this.props.loading} />
-                <Modal transparent={false} animationType="slide"
-                    onRequestClose={() => this.setState({htmAd:{}})}
-                    visible={!!this.state.htmAd.username}>
-                    <ScrollView
-                        showsVerticalScrollIndicator={false}
-                        bounces={false}
-                        style={styles.htmAdDetail}>
-                        <Image
-                            style={styles.htmProfileImage}
-                            source={this.props.htm.profile_pic_url?
-                                {uri:PROFILE_URL+this.props.htm.profile_pic_url}:
-                                utils.getCurrencyIcon(constants.CURRENCY_TYPE.FLASH)} />
-                        <Text numberOfLines={1} style={styles.htmAdFilterTitle}>
-                            {this.props.htm.display_name}
-                        </Text>
-                        <Text numberOfLines={1} style={styles.htmAdFilterSubTitle}>
-                            {this.state.htmAd.is_online?<Icon style={styles.htmProfileStatusIcon}
-                                    name={'circle'}/>:null}
-                            <Text style={{fontStyle: 'italic'}}>
-                                {(this.state.htmAd.is_online?' online':
-                                'last seen '+moment(this.props.htm.last_seen_at).fromNow())}
-                            </Text>
-                        </Text>
-                        <View style={{marginBottom: 10,alignItems: 'center'}}>
-                            {this.props.htm.email?
-                                <View style={styles.htmFilterRow}>
-                                    <Icon style={styles.htmAdEmailIcon}
-                                        name={'envelope'}/>
-                                    <Text style={styles.htmAdEmailText}>
-                                        {this.props.htm.email}
-                                    </Text>
-                                </View>: null
-                            }
-                            <View style={styles.htmFilterRow}>
-                                <Icon style={[styles.htmAdEmailIcon,
-                                        {fontSize: 20, top: 0}
-                                    ]}
-                                    name={'map-marker'}/>
-                                <Text style={styles.htmAdEmailText}>
-                                    {this.props.htm.country || ''}
-                                </Text>
-                            </View>
-                            {this.props.htm.total_txns > 0? <View style={{alignItems:'center'}}>
-                                {this.props.htm.avg_rating>0?<View style={styles.htmAdRating}>
-                                    {([1,2,3,4,5]).map(v=>
-                                        <Icon key={'_start_'+v} style={styles.htmAdRatingIcon}
-                                            name={this.props.htm.avg_rating>=v?'star':
-                                            (this.props.htm.avg_rating>=(v-0.5)?'star-half-o':'star-o')}/>
-                                    )}
-                                </View>:null}
-                                {this.props.htm.success_txns>0?<Text
-                                    style={styles.htmAdEmailText}>
-                                    {this.props.htm.success_txns} successful trades (
-                                        {Math.round(this.props.htm.success_txns/this.props.htm.total_txns*100)}
-                                    %)
-                                </Text>:null}
-                                {this.props.htm.trusted_by>0?<Text style={styles.htmAdEmailText}>
-                                    Trusted by {this.props.htm.trusted_by} {this.props.htm.trusted_by>1?
-                                        'traders':'trader'}
-                                </Text>:null}
-                            </View>:null}
-                        </View>
-                        <View style={styles.htmAdDetailBox}>
-                            <Text style={[styles.htmAdConversion,{
-                                fontSize: 16,
-                                color:'#333',
-                                paddingBottom: 5,
-                                textAlign: 'center'
-                            }]}>
-                                Want to sell {utils.getCurrencyUnitUpcase(this.state.htmAd.buy) + ' against ' +
-                                utils.getCurrencyUnitUpcase(this.state.htmAd.sell)}
-                            </Text>
-                            <View style={styles.htmFilterRow}>
-                                <Text style={styles.htmAdDetailLabel}>Price</Text>
-                                <Text style={styles.htmAdDetailValue}>{
-                                    utils.flashNFormatter(this.state.htmAd.price_per || 0,2) + ' ' +
-                                    utils.getCurrencyUnitUpcase(this.state.htmAd.sell) + ' / ' +
-                                    utils.getCurrencyUnitUpcase(this.state.htmAd.buy)}
-                                </Text>
-                            </View>
-                            <View style={styles.htmFilterRow}>
-                                <Text style={styles.htmAdDetailLabel}>Trade limits</Text>
-                                <Text style={styles.htmAdDetailValue}>{this.state.htmAd.trade_limit}</Text>
-                            </View>
-                            <View style={styles.htmFilterRow}>
-                                <Text style={styles.htmAdDetailLabel}>Terms of trade</Text>
-                                <Text style={styles.htmAdDetailValue}>
-                                    {this.state.htmAd.terms || '-'}
-                                </Text>
-                            </View>
-                        </View>
-                        <Button style={{marginVertical: 15}}
-                            value={'Contact for Trade'}
-                            onPress={()=>this.setState({htmAd:{}},()=>this.props.goToChatRoom(this.props.htm.username,
-                                (feedback)=>this.props.screenProps
-                                    .navigate(feedback?'FeedBack':'ChatRoom')))}/>
-                        <TouchableOpacity style={styles.htmActiveDeactiveLink}
-                            onPress={()=>this.setState({htmAd:{}},()=>this.props.screenProps
-                                .navigate('TradeDetail'))}>
-                            <Text style={styles.htmActiveDeactiveLinkText}>
-                                View Trader Profile
-                            </Text>
-                        </TouchableOpacity>
-                    </ScrollView>
-                    <TouchableOpacity style={styles.htmAdFilterBtn}
-                        onPress={()=>this.setState({htmAd:{}})}>
-                        <Text style={styles.htmAdFilterBtnText}>x</Text>
-                    </TouchableOpacity>
-                </Modal>
             </View>
         )
     }
@@ -251,8 +213,11 @@ function mapStateToProps({params}) {
         loading: params.loading,
         nightMode: params.nightMode,
         htmAds: params.htmAds || [],
+        htmProfile: params.htmProfile || {},
+        balances: params.balances,
         htm: params.htm || {},
         htmAdCreateOrEdit: params.htmAdCreateOrEdit || false,
+        fiat_currency: params.fiat_currency,
     };
 }
 

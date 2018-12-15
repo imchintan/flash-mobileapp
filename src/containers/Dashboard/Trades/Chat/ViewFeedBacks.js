@@ -6,7 +6,8 @@
  import {
      View,
      Image,
-     TouchableOpacity
+     TouchableOpacity,
+     BackHandler
  } from 'react-native';
  import {
      Container,
@@ -42,7 +43,19 @@ class ViewFeedBacks extends Component < {} > {
     }
 
     componentDidMount(){
+        this.mount = true;
         this.props.getHTMChannelFeedback();
+        BackHandler.addEventListener('hardwareBackPress', this.backHandler.bind(this));
+    }
+
+    componentWillUnmount(){
+        this.mount = false;
+        BackHandler.removeEventListener('hardwareBackPress', this.backHandler.bind(this));
+    }
+
+    backHandler(){
+        this.props.navigation.goBack();
+        return this.mount;
     }
 
     render() {

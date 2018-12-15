@@ -35,7 +35,7 @@ export const setupHTMProfile = (auth_version, sessionToken, data) => {
         .then(json => resolve(json))
         .catch(e =>{
             console.log(e);
-            reject('Something went wrong!')
+            reject({message:'Something went wrong!'})
         });
     });
 }
@@ -74,7 +74,7 @@ export const updateHTMProfile = (auth_version, sessionToken, data) => {
         .then(json => resolve(json))
         .catch(e =>{
             console.log(e);
-            reject('Something went wrong!')
+            reject({message:'Something went wrong!'})
         });
     });
 }
@@ -104,7 +104,7 @@ export const getHTMProfile = (auth_version, sessionToken) => {
         .then(json => resolve(json))
         .catch(e =>{
             console.log(e);
-            reject('Something went wrong!')
+            reject({message:'Something went wrong!'})
         });
     });
 }
@@ -137,7 +137,7 @@ export const updateHTMLocation = (auth_version, sessionToken, lat, long) => {
         .then(json => resolve(json))
         .catch(e =>{
             console.log(e);
-            reject('Something went wrong!')
+            reject({message:'Something went wrong!'})
         });
     });
 }
@@ -169,7 +169,7 @@ export const getHTMDetail = (auth_version, sessionToken, username) => {
         .then(json => resolve(json))
         .catch(e =>{
             console.log(e);
-            reject('Something went wrong!')
+            reject({message:'Something went wrong!'})
         });
     });
 }
@@ -199,7 +199,7 @@ export const disableHTMProfile = (auth_version, sessionToken) => {
         .then(json => resolve(json))
         .catch(e =>{
             console.log(e);
-            reject('Something went wrong!')
+            reject({message:'Something went wrong!'})
         });
     });
 }
@@ -229,7 +229,7 @@ export const enableHTMProfile = (auth_version, sessionToken) => {
         .then(json => resolve(json))
         .catch(e =>{
             console.log(e);
-            reject('Something went wrong!')
+            reject({message:'Something went wrong!'})
         });
     });
 }
@@ -274,7 +274,7 @@ export const findNearByHTMs = (auth_version, sessionToken, lat, long,
         .then(json => resolve(json))
         .catch(e =>{
             console.log(e);
-            reject('Something went wrong!')
+            reject({message:'Something went wrong!'})
         });
     });
 }
@@ -315,7 +315,7 @@ export const submitFeedback = (auth_version, sessionToken, feedback_to_username,
         .then(json => resolve(json))
         .catch(e =>{
             console.log(e);
-            reject('Something went wrong!')
+            reject({message:'Something went wrong!'})
         });
     });
 }
@@ -347,7 +347,7 @@ export const getHTMChannelFeedback = (auth_version, sessionToken, channel_id) =>
         .then(json => resolve(json))
         .catch(e =>{
             console.log(e);
-            reject('Something went wrong!')
+            reject({message:'Something went wrong!'})
         });
     });
 }
@@ -378,7 +378,7 @@ export const addFavoriteHTM = (auth_version, sessionToken, favorite_username) =>
         .then(json => resolve(json))
         .catch(e =>{
             console.log(e);
-            reject('Something went wrong!')
+            reject({message:'Something went wrong!'})
         });
     });
 }
@@ -409,7 +409,7 @@ export const removeFavoriteHTM = (auth_version, sessionToken, favorite_username)
         .then(json => resolve(json))
         .catch(e =>{
             console.log(e);
-            reject('Something went wrong!')
+            reject({message:'Something went wrong!'})
         });
     });
 }
@@ -439,7 +439,7 @@ export const getFavoriteHTMs = (auth_version, sessionToken) => {
         .then(json => resolve(json))
         .catch(e =>{
             console.log(e);
-            reject('Something went wrong!')
+            reject({message:'Something went wrong!'})
         });
     });
 }
@@ -471,7 +471,7 @@ export const getHTMFeedbacks = (auth_version, sessionToken, username) => {
         .then(json => resolve(json))
         .catch(e =>{
             console.log(e);
-            reject('Something went wrong!')
+            reject({message:'Something went wrong!'})
         });
     });
 }
@@ -502,7 +502,7 @@ export const addTrustedHTM = (auth_version, sessionToken, trusted_username) => {
         .then(json => resolve(json))
         .catch(e =>{
             console.log(e);
-            reject('Something went wrong!')
+            reject({message:'Something went wrong!'})
         });
     });
 }
@@ -533,7 +533,207 @@ export const removeTrustedHTM = (auth_version, sessionToken, trusted_username) =
         .then(json => resolve(json))
         .catch(e =>{
             console.log(e);
-            reject('Something went wrong!')
+            reject({message:'Something went wrong!'})
+        });
+    });
+}
+
+/**
+ * Get HTM Trade for Ad
+ * @param  {Number} auth_version             API authentication version
+ * @param  {String} sessionToken             User authorization token
+ * @param  {Number} trade_id                 HTM Trade ID
+ * @return {Object}                          Return API response
+ */
+export const getHTMTrade = (auth_version, sessionToken, trade_id) => {
+    return new Promise((resolve,reject) => {
+        let params=utils.buildURLQuery({
+            trade_id,
+            res         :RESOURCE,
+            appversion  :APP_VERSION,
+        });
+        fetch(API_URL+`/get-htm-trade?${params}`,{
+            method: 'GET',
+            body: null,
+            headers: {
+               'Content-Type': 'application/json; charset=utf-8',
+               'authorization': sessionToken,
+               'fl_auth_version': auth_version
+            },
+        })
+        .then(res => res.json())
+        .then(json => resolve(json))
+        .catch(e =>{
+            console.log(e);
+            reject({message:'Something went wrong!'})
+        });
+    });
+}
+
+/**
+ * Get Active HTM Trade for Ad
+ * @param  {Number} auth_version             API authentication version
+ * @param  {String} sessionToken             User authorization token
+ * @param  {Number} ad_id                    HTM profile username
+ * @return {Object}                          Return API response
+ */
+export const getActiveHTMTrade = (auth_version, sessionToken, ad_id) => {
+    return new Promise((resolve,reject) => {
+        let params=utils.buildURLQuery({
+            ad_id,
+            res         :RESOURCE,
+            appversion  :APP_VERSION,
+        });
+        fetch(API_URL+`/get-active-htm-trade?${params}`,{
+            method: 'GET',
+            body: null,
+            headers: {
+               'Content-Type': 'application/json; charset=utf-8',
+               'authorization': sessionToken,
+               'fl_auth_version': auth_version
+            },
+        })
+        .then(res => res.json())
+        .then(json => resolve(json))
+        .catch(e =>{
+            console.log(e);
+            reject({message:'Something went wrong!'})
+        });
+    });
+}
+
+/**
+ * Add HTM Trade Channel
+ * @param  {Number} auth_version             API authentication version
+ * @param  {String} sessionToken             User authorization token
+ * @param  {Object} data                     HTM Trade object
+ *   ⮑ @param  {Number} ad_id               Trade Ad ID
+ *      @param  {Number} base_amount         Buy amount
+ *      @param  {Number} to_amount           Sell amount
+ *      @param  {Number} rate                Conversion rate 1 base currency = ? to currency
+ *      @param  {String} receiver_name       Receiver display name
+ *      @param  {String} receiver_dp         Receiver Profile Picture
+ *      @param  {String} sender_name         Sender display name
+ *      @param  {String} sender_dp           Sender Profile Picture
+ * @return {Object}                          Return API response
+ */
+export const addHTMTrade = (auth_version, sessionToken, data) => {
+    return new Promise((resolve,reject) => {
+        fetch(API_URL+'/add-htm-trade',{
+            method: 'POST',
+            body: JSON.stringify({
+                ...data,
+                appversion:APP_VERSION,
+                res:RESOURCE,
+            }),
+            headers: {
+               'Content-Type': 'application/json; charset=utf-8',
+               'authorization': sessionToken,
+               'fl_auth_version': auth_version
+            },
+        })
+        .then(res => res.json())
+        .then(json => resolve(json))
+        .catch(e =>{
+            console.log(e);
+            reject({message:'Something went wrong!'})
+        });
+    });
+}
+
+/**
+ * Cancel HTM Trade
+ * @param  {Number} auth_version             API authentication version
+ * @param  {String} sessionToken             User authorization token
+ * @param  {Number} trade_id                 HTM Trade ID
+ * @param  {String} comment                  Reason
+ * @return {Object}                          Return API response
+ */
+export const cancelHTMTrade = (auth_version, sessionToken, trade_id, comment) => {
+    return new Promise((resolve,reject) => {
+        fetch(API_URL+'/cancel-htm-trade',{
+            method: 'POST',
+            body: JSON.stringify({
+                trade_id,
+                comment,
+                appversion:APP_VERSION,
+                res:RESOURCE,
+            }),
+            headers: {
+               'Content-Type': 'application/json; charset=utf-8',
+               'authorization': sessionToken,
+               'fl_auth_version': auth_version
+            },
+        })
+        .then(res => res.json())
+        .then(json => resolve(json))
+        .catch(e =>{
+            console.log(e);
+            reject({message:'Something went wrong!'})
+        });
+    });
+}
+
+/**
+ * Accept HTM Trade
+ * @param  {Number} auth_version             API authentication version
+ * @param  {String} sessionToken             User authorization token
+ * @param  {Number} trade_id                 HTM Trade ID
+ * @return {Object}                          Return API response
+ */
+export const acceptHTMTrade = (auth_version, sessionToken, trade_id) => {
+    return new Promise((resolve,reject) => {
+        fetch(API_URL+'/accept-htm-trade',{
+            method: 'POST',
+            body: JSON.stringify({
+                trade_id,
+                appversion:APP_VERSION,
+                res:RESOURCE,
+            }),
+            headers: {
+               'Content-Type': 'application/json; charset=utf-8',
+               'authorization': sessionToken,
+               'fl_auth_version': auth_version
+            },
+        })
+        .then(res => res.json())
+        .then(json => resolve(json))
+        .catch(e =>{
+            console.log(e);
+            reject({message:'Something went wrong!'})
+        });
+    });
+}
+
+/**
+ * Reject HTM Trade
+ * @param  {Number} auth_version             API authentication version
+ * @param  {String} sessionToken             User authorization token
+ * @param  {Number} trade_id                 HTM Trade ID
+ * @param  {String} comment                  Reason
+ * @return {Object}                          Return API response
+ */
+export const rejectHTMTrade = (auth_version, sessionToken, trade_id, comment) => {
+    return new Promise((resolve,reject) => {
+        fetch(API_URL+'/reject-htm-trade',{
+            method: 'POST',
+            body: JSON.stringify({
+                trade_id,
+                comment,
+                appversion:APP_VERSION,
+                res:RESOURCE,
+            }),
+            headers: {
+               'Content-Type': 'application/json; charset=utf-8',
+               'authorization': sessionToken,
+               'fl_auth_version': auth_version
+            },
+        })
+        .then(res => res.json())
+        .then(json => resolve(json))
+        .catch(e =>{
+            console.log(e);
+            reject({message:'Something went wrong!'})
         });
     });
 }

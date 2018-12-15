@@ -52,8 +52,45 @@ class FeedBack extends Component < {} > {
         };
     }
 
+    componentDidUpdate(prevProps, prevState){
+        if(this.props.htm_trade !== null && this.props.htm_trade !== prevProps.htm_trade){
+            let currencies_traded = [];
+            currencies_traded[this.props.htm_trade.base_currency] = {
+                currency: this.props.htm_trade.base_currency,
+                amount: this.props.htm_trade.base_amount,
+            }
+            currencies_traded[this.props.htm_trade.to_currency] = {
+                currency: this.props.htm_trade.to_currency,
+                amount: this.props.htm_trade.to_amount,
+            }
+            this.setState({
+                is_txn_success: true,
+                currencies_traded
+            })
+        }
+    }
     componentDidMount(){
         this.mount = true;
+        if(this.props.chatRoomChannel && this.props.chatRoomChannel.ti){
+            if(this.props.chatRoomChannel.ty==2  && (!this.props.htm_trade ||
+                this.props.htm_trade.id != this.props.chatRoomChannel.ti)){
+                this.props.getHTMTrade(this.props.chatRoomChannel.ti,true);
+            }else if(this.props.htm_trade){
+                let currencies_traded = [];
+                currencies_traded[this.props.htm_trade.base_currency] = {
+                    currency: this.props.htm_trade.base_currency,
+                    amount: this.props.htm_trade.base_amount,
+                }
+                currencies_traded[this.props.htm_trade.to_currency] = {
+                    currency: this.props.htm_trade.to_currency,
+                    amount: this.props.htm_trade.to_amount,
+                }
+                this.setState({
+                    is_txn_success: true,
+                    currencies_traded
+                })
+            }
+        }
         BackHandler.addEventListener('hardwareBackPress', this.backHandler.bind(this));
         this.props.getHTMChannelFeedback();
     }
@@ -232,6 +269,7 @@ class FeedBack extends Component < {} > {
                             )}
                         )}
                         </View>}
+                        {!this.props.chatRoomChannel.ti && <View>
                         <Text style={styles.label}>
                             Was trading successful?
                             <Text style={styles.mandatoryField}>*</Text>
@@ -263,6 +301,7 @@ class FeedBack extends Component < {} > {
                                 <Text style={styles.feedBacRadioBtnText}>No</Text>
                             </TouchableOpacity>
                         </View>
+                        </View>}
                         <Text style={styles.label}>
                             Overall experience with Trader
                             <Text style={styles.mandatoryField}>*</Text>
@@ -285,7 +324,7 @@ class FeedBack extends Component < {} > {
                                 onFinishRating={(rating)=>this.setState({prof_rating:rating})}
                             />*/}
                         </View>
-                        {this.state.is_txn_success === true?<View>
+                        {this.state.is_txn_success === true && !this.props.chatRoomChannel.ti?<View>
                             <Text style={styles.label}>Currency Traded (optional)</Text>
                             <View style={styles.hr}/>
                             <View style={[styles.feedBackValueRow,{flexDirection: 'column'}]}>
@@ -370,6 +409,7 @@ function mapStateToProps({params}) {
         chatRoomChannel: params.chatRoomChannel || {},
         forceFeedBack: params.forceFeedBack || false,
         channelFeedbacks: params.channelFeedbacks || [],
+        htm_trade: params.htm_trade || null,
     };
 }
 

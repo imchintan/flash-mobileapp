@@ -61,7 +61,7 @@ class Profile extends Component < {} > {
                                 style={styles.headerBackIcon} name='angle-left' />
                         </TouchableOpacity>
                     </HeaderLeft>
-                    <HeaderTitle>Trades</HeaderTitle>
+                    <HeaderTitle>P2P Marketplace</HeaderTitle>
                     <HeaderRight>
                         <TouchableOpacity onPress={()=>this.props.navigation.navigate('ChatHistory')}>
                             <Icon style={styles.headerFAIcon}
@@ -137,7 +137,7 @@ class Profile extends Component < {} > {
                         </View>
                     </View>
                     <Text style={styles.htmProfileDetailTitle}>
-                        Welcome to Trades!
+                        Welcome to P2P Marketplace!
                     </Text>
                     <Text style={styles.htmProfileDetailNote}>
                         {"Find cryptocurrency traders from around the globe."}
@@ -145,12 +145,13 @@ class Profile extends Component < {} > {
                     <Button
                         style={[{
                             marginBottom: 20,
-                            width: 230,
+                            width: 270,
                             alignItems: 'center'
                         },!this.props.htmProfile.is_active && {
                             backgroundColor: '#C2C2C2',
                         }]}
-                        value={'Find a Local Trade'}
+                        textstyle={{fontSize: 18}}
+                        value={'HTM'}
                         onPress={()=>{
                             if(!!this.props.htmProfile.is_active)
                                 this.props.navigation.navigate('FindTrades')
@@ -160,21 +161,23 @@ class Profile extends Component < {} > {
                     <Button
                         style={[{
                             marginBottom: 20,
-                            width: 230,
+                            width: 270,
                             alignItems: 'center'
                         },!this.props.htmProfile.is_active && {
                             backgroundColor: '#C2C2C2',
                         }]}
-                        value={'Online Trades'}
+                        textstyle={{fontSize: 18}}
+                        value={'Trust based Online Trades'}
                         onPress={()=>this.props.navigation.navigate('Ads')} />
                     <Button
                         style={[{
                             marginBottom: 20,
-                            width: 230,
+                            width: 270,
                             alignItems: 'center'
                         },!this.props.htmProfile.is_active && {
                             backgroundColor: '#C2C2C2',
                         }]}
+                        textstyle={{fontSize: 18}}
                         value={'Trade History'}
                         onPress={()=>this.props.navigation.navigate('ChatHistory')} />
                     {this.props.favorite_htms.length > 0?
@@ -259,7 +262,7 @@ class Profile extends Component < {} > {
                 {!this.props.loading && !this.props.htmProfile.is_active?
                     <View style={styles.htmProfileSetup}>
                         <Text style={styles.htmProfileSetupTitle}>
-                            Welcome to Trades!
+                            Welcome to P2P Marketplace!
                         </Text>
                         <Text style={styles.htmProfileSetupNote}>
                             {"Find cryptocurrency traders from around the globe."}

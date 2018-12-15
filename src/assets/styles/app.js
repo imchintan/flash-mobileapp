@@ -3,7 +3,7 @@ import {
     Dimensions,
     Platform
 } from 'react-native';
-
+import { FontSize } from '@lib/utils';
 const { width } = Dimensions.get('window');
 
 module.exports = StyleSheet.create({
@@ -70,5 +70,51 @@ module.exports = StyleSheet.create({
         bottom: -10,
         fontSize: 20,
         color: 'red'
+    },
+
+    legalDisclaimer:{
+        flex: 1,
+        alignItems: 'center',
+        justifyContent: 'center',
+        backgroundColor: '#0002'
+    },
+    legalDisclaimerBox:{
+        backgroundColor: '#FFF',
+        margin: 20,
+        paddingHorizontal: 20,
+        borderRadius: 5,
+    },
+    legalDisclaimerHr:{
+        width: width - 80,
+        borderBottomWidth: 1,
+        borderColor: '#989898',
+    },
+    legalDisclaimerText:{
+        paddingVertical: 10,
+        fontSize: FontSize(16,0.75),
+        color: '#666666',
+    },
+    legalDisclaimerDNS:{
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 10,
+        marginLeft: 5
+    },
+    legalDisclaimerDNSText:{
+        fontSize: FontSize(15,0.75),
+        color: '#565656'
+    },
+    legalDisclaimerDNSIcon:{
+        fontSize: FontSize(18,0.75),
+        color: '#565656'
+    },
+    legalDisclaimerBtn:{
+        marginVertical: 12,
+        alignSelf: 'center'
+    },
+    legalDisclaimerBtnText:{
+        fontSize: FontSize(17,0.75),
+        fontWeight: 'bold',
+        color: '#E0AE27'
     },
 });
