@@ -213,8 +213,10 @@ export const getProfile = () => {
                 })
                 .catch(e=>console.log(e))
                 dispatch(htm.getHTMProfile());
+                dispatch(txns.getMaxFees());
+                dispatch(txns.getThresholdValues());
                 dispatch(chat.savePushToken());
-                // dispatch(chat.getChatRooms());
+                dispatch(chat.getChatRooms());
                 dispatch(wagering.getOracleProfileAccessList());
                 dispatch(getFiatCurrencyRate());
                 dispatch(getModulesStatus());

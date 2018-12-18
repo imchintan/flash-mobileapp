@@ -601,3 +601,35 @@ export const setEtherGasValues = (currency_type=null) => {
         })
     }
 }
+
+export const getMaxFees = () => {
+    return (dispatch,getState) => {
+        let params = getState().params;
+        apis.getMaxFees(params.profile.auth_version, params.profile.sessionToken).then((d)=>{
+            if(d.rc ==1) dispatch({
+                type: types.GET_MAX_FEES,
+                payload: { max_fees: d.max_fees }
+            })
+        }).catch(e=>{
+            dispatch({
+                type: types.GET_MAX_FEES,
+            });
+        })
+    }
+}
+
+export const getThresholdValues = () => {
+    return (dispatch,getState) => {
+        let params = getState().params;
+        apis.thresholdAmount(params.profile.auth_version, params.profile.sessionToken).then((d)=>{
+            if(d.rc ==1) dispatch({
+                type: types.GET_THRESHOLD_VALUES,
+                payload: { threshold_values: d.threshold_amount }
+            })
+        }).catch(e=>{
+            dispatch({
+                type: types.GET_THRESHOLD_VALUES,
+            });
+        })
+    }
+}

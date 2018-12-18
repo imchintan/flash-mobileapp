@@ -279,7 +279,8 @@ class ChatRoom extends Component < {} > {
                             if(currency_type == constants.CURRENCY_TYPE.FLASH){
                                 balance = utils.satoshiToFlash(balance);
                             }
-                            if(balance < amount){
+                            let maxFee = this.props.max_fees[currency_type];
+                            if(balance < (amount+maxFee)){
                                 return Toast.errorTop('You do not have enough '
                                 +utils.getCurrencyUnitUpcase(currency_type)
                                 +' to accept this trade request!');
@@ -780,6 +781,7 @@ function mapStateToProps({params}) {
         fixedTxnFee: params.trade_fixedTxnFee || 0.00002,
         decryptedWallet: params.trade_decryptedWallet || null,
         sendTxnSuccess: params.sendTxnSuccess || null,
+        max_fees: params.max_fees,
     };
 }
 

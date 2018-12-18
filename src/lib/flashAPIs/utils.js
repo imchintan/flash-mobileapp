@@ -2,8 +2,8 @@ import { API_URL, RESOURCE, APP_VERSION } from '@src/config';
 
 /**
  * Get Fiat Currency exchange rate
- * @param  {Number} auth_version     [description]
- * @param  {String} sessionToken     [description]
+ * @param  {Number} auth_version        API authentication version
+ * @param  {String} sessionToken        User authorization token
  * @param  {String} currencies
  * @return {Promise}
  */
@@ -32,11 +32,11 @@ export const getFiatCurrencyExchangeRate = (auth_version, sessionToken, currenci
 
 /**
  * Get Modules Status
- * @param  {Number} auth_version     [description]
- * @param  {String} sessionToken     [description]
+ * @param  {Number} auth_version        API authentication version
+ * @param  {String} sessionToken        User authorization tokention]
  * @return {Promise}
  */
-export const getModulesStatus = (auth_version, sessionToken,) => {
+export const getModulesStatus = (auth_version, sessionToken) => {
     return new Promise((resolve,reject) => {
         let params = 'appversion='+APP_VERSION +'&res='+RESOURCE;
         fetch(`${API_URL}/get-modules-status?${params}`,{

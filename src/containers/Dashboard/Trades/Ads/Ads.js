@@ -38,7 +38,7 @@ class Ads extends Component < {} > {
     constructor(props) {
         super(props);
         this.state = {
-            htmAd:{}            
+            htmAd:{}
         };
     }
 
@@ -55,10 +55,16 @@ class Ads extends Component < {} > {
         if(!res.success){
             return FToast.errorTop(res.message);
         }
+        buy_amount = Number(res.amount).toFixed(8).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1');
+        res = Validation.amount(sell_amount);
+        if(!res.success){
+            return FToast.errorTop(res.message);
+        }
+        sell_amount = Number(res.amount).toFixed(8).replace(/([0-9]+(\.[0-9]+[1-9])?)(\.?0+$)/,'$1');
         this.setState({
             isAmtVerify: true,
-            sell_amount: Number(sell_amount)>1?utils.formatAmountInput(Number(sell_amount)):sell_amount.toString(),
-            buy_amount: res.amount>1?utils.formatAmountInput(res.amount):res.amount.toString()
+            sell_amount: Number(sell_amount)>1?utils.formatAmountInput(Number(sell_amount)):sell_amount,
+            buy_amount: Number(buy_amount)>1?utils.formatAmountInput(Number(buy_amount)):buy_amount
         });
     }
 
@@ -77,6 +83,15 @@ class Ads extends Component < {} > {
         if(this.state.htmAd.max && this.state.htmAd.max < sell_amount){
             return FToast.errorTop('Amount must be less than max limit.');
         }
+        let sellThresholdAmount =  this.props.threshold_values[this.state.htmAd.sell];
+        if(sell_amount < sellThresholdAmount){
+            return FToast.errorTop('Sell amount is less than threshold value');
+        }
+
+        let buyThresholdAmount =  this.props.threshold_values[this.state.htmAd.buy];
+        if(buy_amount < buyThresholdAmount){
+            return FToast.errorTop('Buy amount is less than threshold value');
+        }
 
         let message = (this.state.message || '').trim();
         if(!message) return FToast.errorTop('Message is required!');
@@ -87,12 +102,12 @@ class Ads extends Component < {} > {
             balance = utils.satoshiToFlash(balance);
         }
 
-        if(balance < buy_amount){
+        let maxFee = this.props.max_fees[this.state.htmAd.buy];
+        if(balance < (buy_amount+maxFee)){
             return FToast.errorTop('You do not have enough '
             +utils.getCurrencyUnitUpcase(this.state.htmAd.buy)
             +' to create this trad!');
         }
-
         let data = {
             ad_id: this.state.htmAd.id,
             base_amount: sell_amount,
@@ -224,6 +239,8 @@ function mapStateToProps({params}) {
         htm: params.htm || {},
         htmAdCreateOrEdit: params.htmAdCreateOrEdit || false,
         fiat_currency: params.fiat_currency,
+        max_fees: params.max_fees,
+        threshold_values: params.threshold_values,
     };
 }
 
