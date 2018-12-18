@@ -30,30 +30,6 @@ export const getFiatExchangeRates = (cb=null) => {
     }
 }
 
-export const getCoinGeckoExchangeRates = () => {
-    return (dispatch,getState) => {
-        dispatch({ type: types.LOADING_START });
-        let params = getState().params;
-        let fiat_currency = constants.FIAT_CURRENCY_UNIT[params.fiat_currency].toLowerCase();
-        apis.getCoinGeckoExchangeRates().then((d)=>{
-            let fiat_per_usd =  Number((d[fiat_currency].value / d['usd'].value).toFixed(3));
-            dispatch({
-                type: types.GET_COIN_GECKO_EXCHANGE_RATES,
-                payload: {
-                    fiat_per_usd,
-                    loading: false
-                }
-            });
-        }).catch(e=>{
-            Toast.errorTop(e.message);
-            dispatch({
-                type: types.GET_COIN_GECKO_EXCHANGE_RATES,
-                payload: { loading: false }
-            });
-        })
-    }
-}
-
 export const getCoinGeckoExchangesByID = (exchange) => {
     return (dispatch,getState) => {
         dispatch({ type: types.LOADING_START });

@@ -45,7 +45,7 @@ class Profile extends Component < {} > {
     }
 
     componentDidMount(){
-        this.props.getCoinGeckoExchangeRates();
+        this.props.getFiatExchangeRates();
         this.props.getFavoriteHTMs();
         this.props.getHTMProfile();
     }

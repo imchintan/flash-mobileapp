@@ -774,7 +774,9 @@ export const findHTMAds = (start=0,reset=false) => {
         let _filter = {
             buy:  filter.buy?filter.buy.currency_type:0,
             sell:  filter.sell?filter.sell.currency_type:0,
+            sort_by:  filter.sort_by,
         }
+        if(filter.buy_amount > 0) _filter.buy_amount = filter.buy_amount;
         apis.findHTMAds(params.profile.auth_version, params.profile.sessionToken,
             _filter, start).then((d)=>{
             if(d.rc !== 1){

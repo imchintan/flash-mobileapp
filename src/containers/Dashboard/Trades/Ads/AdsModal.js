@@ -11,11 +11,13 @@ import {
     Text,
     Button,
     Modal,
-    Loader
+    Loader,
+    FToast
 } from '@components';
 import moment from 'moment-timezone';
 import * as constants from '@src/constants';
 import * as utils from '@lib/utils';
+import * as Validation from '@lib/validation';
 import { PROFILE_URL } from '@src/config';
 
 /**
@@ -75,7 +77,7 @@ export const adsFilter = (self,styles) => <Modal transparent={false}
             onPress={()=>self.setState({selectCurrency:true, selectCurrencyFor:0})}
             style={styles.htmProfileInputBox}>
             <Text style={styles.htmProfileInput}>
-                {self.state.filter && self.state.filter.buy?
+                {self.state.filter.buy?
                     self.state.filter.buy.currency_name:'Select Currency'}
             </Text>
             <Icon style={{
@@ -85,13 +87,45 @@ export const adsFilter = (self,styles) => <Modal transparent={false}
                 color: '#787878',
             }} name={'angle-down'} />
         </TouchableOpacity>
+        {self.state.filter.buy &&
+        <View style={{marginHorizontal: 20, marginTop: -5, marginBottom: 5}}>
+            <Text style={[styles.label,styles.htmAdFilterLabel]}>Trade Amount</Text>
+            <TextInput
+                 underlineColorAndroid='transparent'
+                 style={[styles.htmProfileInputBox,{paddingLeft:10}]}
+                 keyboardType='numeric'
+                 returnKeyType='next'
+                 placeholder={'Enter amount for '+utils
+                    .getCurrencyUnitUpcase(self.state.filter.buy.currency_type)}
+                 value={(self.state.filter.buy_amount || '').toString()}
+                 onBlur={()=>{
+                     let filter = self.state.filter;
+                     if(!filter.buy_amount) return false;
+                     filter.isBuyAmtVerify = false;
+                     self.setState({filter});
+                     let buy_amount = utils.toOrginalNumber(filter.buy_amount);
+                     let res = Validation.amount(buy_amount);
+                     if(!res.success){
+                         return FToast.errorTop(res.message);
+                     }
+                     filter.isBuyAmtVerify = true;
+                     filter.buy_amount= res.amount;
+                     self.setState({filter});
+                 }}
+                 onChangeText={(buy_amount) =>{
+                     let filter = self.state.filter;
+                     filter.buy_amount = buy_amount;
+                     self.setState({filter})
+                 }}
+             />
+        </View>}
         <Text style={[styles.label,styles.htmAdFilterLabel]}>Want to Sell</Text>
         <TouchableOpacity
             activeOpacity={0.7}
             onPress={()=>self.setState({selectCurrency:true, selectCurrencyFor:1})}
             style={styles.htmProfileInputBox}>
             <Text style={styles.htmProfileInput}>
-            {self.state.filter && self.state.filter.sell?
+            {self.state.filter.sell?
                 self.state.filter.sell.currency_name:'Select Currency'}
             </Text>
             <Icon style={{
@@ -101,6 +135,29 @@ export const adsFilter = (self,styles) => <Modal transparent={false}
                 color: '#787878',
             }} name={'angle-down'} />
         </TouchableOpacity>
+        <Text style={[styles.label,styles.htmAdFilterLabel]}>Sort By</Text>
+        <View style={styles.htmFilterWantTo}>
+            <TouchableOpacity style={styles.htmFilterWantToValue}
+                onPress={()=>{
+                    let filter = self.state.filter;
+                    filter.sort_by = "ratings";
+                    self.setState({filter})
+                }}>
+                <Icon style={styles.htmFilterWantToValueIcon}
+                    name={(self.state.filter.sort_by !== 'ratings')?"circle-o":"dot-circle-o"} />
+                <Text style={styles.htmFilterWantToValueText}>Ratings</Text>
+            </TouchableOpacity>
+            <TouchableOpacity style={styles.htmFilterWantToValue}
+                onPress={()=>{
+                    let filter = self.state.filter;
+                    filter.sort_by = "margin";
+                    self.setState({filter})
+                }}>
+                <Icon style={styles.htmFilterWantToValueIcon}
+                    name={(self.state.filter.sort_by !== 'margin')?"circle-o":"dot-circle-o"} />
+                <Text style={styles.htmFilterWantToValueText}>Best Rate</Text>
+            </TouchableOpacity>
+        </View>
     </View>
     <View style={[styles.htmFilterRow, {
         flexDirection: 'row',
@@ -110,7 +167,7 @@ export const adsFilter = (self,styles) => <Modal transparent={false}
         marginTop: 30,
     }]}>
         <Button value={'Reset'}
-            onPress={()=>self.setState({showFilter:false,filter:{apply:false}},
+            onPress={()=>self.setState({showFilter:false,filter:{apply:false, sort_by:'ratings'}},
                 ()=>self.props.findHTMAdsFilterApply(self.state.filter))}
             style={styles.htmFilterBtn}
             textstyle={styles.htmFilterBtnText}/>
@@ -121,6 +178,14 @@ export const adsFilter = (self,styles) => <Modal transparent={false}
             }]}
             onPress={()=>{
                 let filter = self.state.filter || {};
+                if(filter.buy_amount){
+                    let buy_amount = utils.toOrginalNumber(filter.buy_amount);
+                    let res = Validation.amount(buy_amount);
+                    if(!res.success){
+                        return FToast.errorTop(res.message);
+                    }
+                    filter.buy_amount = res.amount;
+                }
                 filter.apply = true;
                 self.setState({showFilter:false,filter},
                 ()=>self.props.findHTMAdsFilterApply(self.state.filter))
@@ -214,7 +279,7 @@ export const selectCurrency = (self,styles) => <Modal
  */
  export const viewAdDetails = (self,styles) => <Modal transparent={false} animationType="slide"
      onRequestClose={() => self.setState({htmAd:{}})}
-     visible={!!self.state.htmAd.username}>
+     visible={!!self.state.htmAd.username && self.props.screenProps.isFocused}>
     <ScrollView
          showsVerticalScrollIndicator={false}
          bounces={false}
@@ -320,8 +385,8 @@ export const selectCurrency = (self,styles) => <Modal
              }}
              />
         <TouchableOpacity style={styles.htmActiveDeactiveLink}
-             onPress={()=>self.setState({htmAd:{}},()=>self.props.screenProps
-                 .navigate('TradeDetail'))}>
+             onPress={()=>self.props.screenProps
+                 .navigate('TradeDetail')}>
             <Text style={styles.htmActiveDeactiveLinkText}>
                  View Trader Profile
             </Text>
@@ -375,7 +440,7 @@ export const selectCurrency = (self,styles) => <Modal
                          utils.cryptoToOtherCurrency(buy_amount, price_per, 0, 8)
                      ).toFixed(8);
                      self.setState({
-                         sell_amount: Number(sell_amount)>1?utils.formatAmountInput(Number(sell_amount)):sell_amount
+                         sell_amount: Number(sell_amount)>1?utils.formatAmountInput(Number(sell_amount)):sell_amount.toString()
                      });
                  })}
              />
@@ -431,7 +496,7 @@ export const selectCurrency = (self,styles) => <Modal
                         utils.otherCurrencyToCrypto(sell_amount, price_per, 0)
                     ).toFixed(8);
                     self.setState({
-                        buy_amount: Number(buy_amount)>1?utils.formatAmountInput(Number(buy_amount)):buy_amount
+                        buy_amount: Number(buy_amount)>1?utils.formatAmountInput(Number(buy_amount)):buy_amount.toString()
                     });
                 })}
              />

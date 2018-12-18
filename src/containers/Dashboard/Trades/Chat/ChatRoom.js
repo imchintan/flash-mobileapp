@@ -236,7 +236,7 @@ class ChatRoom extends Component < {} > {
                     <View>
                         <Text style={styles.tradeDetailRate}>Rate: {(this.props.htm_trade.rate>1?
                             (1/this.props.htm_trade.rate).toFixed(8):
-                            this.props.htm_trade.rate).toFixed(8) + ' ' +
+                            this.props.htm_trade.rate.toFixed(8)) + ' ' +
                             utils.getCurrencyUnitUpcase(this.props.htm_trade.rate>1?this.props.htm_trade.to_currency:
                                 this.props.htm_trade.base_currency) + ' / ' +
                             utils.getCurrencyUnitUpcase(this.props.htm_trade.rate>1?this.props.htm_trade.base_currency:
@@ -246,8 +246,16 @@ class ChatRoom extends Component < {} > {
                         <Text style={styles.tradeDetailRate}>
                             Waiting for trader
                         </Text>}
+                        {((this.props.htm_trade.status == 4 &&
+                            this.props.htm_trade.first_payer !== this.props.htmProfile.username) ||
+                            (this.props.htm_trade.status == 5 &&
+                                this.props.htm_trade.first_payer == this.props.htmProfile.username)) &&
+                        <Text style={styles.tradeDetailRate}>
+                            Waiting for payment from {this.props.htm.display_name}
+                        </Text>}
                     </View>
-                    {this.props.htm_trade.status ==1 && isInitByMe &&
+                    {((this.props.htm_trade.status ==1 && isInitByMe) || (this.props.htm_trade.status == 4 &&
+                        this.props.htm_trade.first_payer !== this.props.htmProfile.username)) &&
                     <Button
                         style={styles.tradeDetailBtn}
                         textstyle={styles.tradeDetailBtnText}
@@ -352,44 +360,40 @@ class ChatRoom extends Component < {} > {
                     textstyle={styles.tradeDetailBtnText}
                     onPress={()=>this.props.navigation.navigate('ViewFeedBacks')}
                     value='View Feeedback' />}
-                {((this.props.htm_trade.status == 4 &&
-                    this.props.htm_trade.first_payer !== this.props.htmProfile.username) ||
-                    (this.props.htm_trade.status == 5 &&
-                        this.props.htm_trade.first_payer == this.props.htmProfile.username)) &&
-                <Text style={styles.tradeDetailRate}>
-                    Waiting for payment from {this.props.htm.display_name}
-                </Text>}
-                {this.props.htm_trade.status ==4 &&
-                    this.props.htm_trade.first_payer == this.props.htmProfile.username &&
-                <View style={{flexDirection: 'row', justifyContent: 'space-between', marginTop: 5}}>
-                    <Text style={styles.tradeDetailPaymentText}>
+                {((this.props.htm_trade.status ==4 &&
+                    this.props.htm_trade.first_payer == this.props.htmProfile.username) ||
+                (this.props.htm_trade.status ==5 &&
+                    this.props.htm_trade.first_payer !== this.props.htmProfile.username)) &&
+                <View style={this.props.htm_trade.status ==4?{
+                    flexDirection: 'column',
+                    alignItem: 'center',
+                    marginTop: -3,
+                }:{
+                    flexDirection: 'row',
+                    justifyContent: 'space-between',
+                    alignItem: 'center',
+                    marginTop: 5
+                }}>
+                    <Text style={[styles.tradeDetailPaymentText,
+                        this.props.htm_trade.status ==5 && {marginBottom:5}]}>
                         You need to pay {isInitByMe?v1:v2}
                     </Text>
-                    <Button
-                        onPress={()=>this.setState({
-                            visible:true,
-                            fee: utils.calcFee(0,this.state.currency_type, this.props.bcMedianTxSize,
-                            this.props.satoshiPerByte, this.props.fixedTxnFee)
-                        })}
-                        style={styles.tradeDetailBtn}
-                        textstyle={styles.tradeDetailBtnText}
-                        value='Pay Now' />
-                </View>}
-                {this.props.htm_trade.status ==5 &&
-                    this.props.htm_trade.first_payer !== this.props.htmProfile.username &&
-                <View style={{flexDirection: 'row', justifyContent: 'space-between', marginTop: 5}}>
-                    <Text style={styles.tradeDetailPaymentText}>
-                        You need to pay {isInitByMe?v1:v2}
-                    </Text>
-                    <Button
-                        onPress={()=>this.setState({
-                            visible:true,
-                            fee: utils.calcFee(0,this.state.currency_type, this.props.bcMedianTxSize,
-                            this.props.satoshiPerByte, this.props.fixedTxnFee)
-                        })}
-                        style={styles.tradeDetailBtn}
-                        textstyle={styles.tradeDetailBtnText}
-                        value='Pay Now' />
+                    <View style={{flexDirection: 'row', justifyContent:'center', alignItem:'center'}}>
+                        {this.props.htm_trade.status ==4 && <Button
+                            style={[styles.tradeDetailGrayeBtn,{marginRight: 10}]}
+                            textstyle={styles.tradeDetailBtnText}
+                            onPress={()=>this.setState({isCancel:true})}
+                            value='Cancel' />}
+                        <Button
+                            onPress={()=>this.setState({
+                                visible:true,
+                                fee: utils.calcFee(0,this.state.currency_type, this.props.bcMedianTxSize,
+                                this.props.satoshiPerByte, this.props.fixedTxnFee)
+                            })}
+                            style={styles.tradeDetailBtn}
+                            textstyle={styles.tradeDetailBtnText}
+                            value='Pay Now' />
+                    </View>
                 </View>}
             </View>
         );

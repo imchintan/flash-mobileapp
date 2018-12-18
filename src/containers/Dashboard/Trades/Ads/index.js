@@ -74,18 +74,27 @@ class AdsTab extends React.Component {
     constructor(props) {
         super(props);
         this.state ={
-            filter: this.props.htmAdsFilter
+            filter: this.props.htmAdsFilter,
+            isFocuse: false,
         }
+    }
+
+    componentDidMount(){
+        this._willFocus =this.props.navigation.addListener('willFocus',
+            ()=>this.setState({isFocused:true}));
+        this._willBlur =this.props.navigation.addListener('willBlur',
+            ()=>this.setState({isFocused:false}));
+    }
+
+    componentWillUnmount(){
+        this._willFocus.remove();
+        this._willBlur.remove();
     }
 
     getPricePer=(buy, sell)=>{
         let buy_currency = this.props.balances.filter(bal=>bal.currency_type == buy)[0];
         let sell_currency = this.props.balances.filter(bal=>bal.currency_type == sell)[0];
-        let price_per = Number((buy_currency.per_value / sell_currency.per_value).toFixed(8));
-        if(price_per > 1){
-            price_per = Number((1 / price_per).toFixed(8));
-            price_per = Number((1 / price_per).toFixed(8));
-        }
+        let price_per = Number((buy_currency.per_btc / sell_currency.per_btc).toFixed(8));
         return price_per;
     }
 
@@ -131,7 +140,11 @@ class AdsTab extends React.Component {
                         </TouchableOpacity>
                     </HeaderRight>
                 </Header>
-                <TabNav screenProps={{navigate:this.props.navigation.navigate, getPricePer: this.getPricePer}}/>
+                <TabNav screenProps={{
+                    navigate:this.props.navigation.navigate,
+                    getPricePer: this.getPricePer,
+                    isFocused: this.state.isFocused
+                }}/>
                 {am.legalDisclaimer(this,styles)}
                 {am.adsFilter(this,styles)}
                 {am.selectCurrency(this,styles)}
@@ -144,7 +157,7 @@ function mapStateToProps({params}) {
   return {
       nightMode: params.nightMode,
       balances: params.balances,
-      htmAdsFilter: params.htmAdsFilter || {},
+      htmAdsFilter: params.htmAdsFilter || { sort_by: 'ratings'},
       onlineTradeDisclaimer: params.onlineTradeDisclaimer || false,
   };
 }

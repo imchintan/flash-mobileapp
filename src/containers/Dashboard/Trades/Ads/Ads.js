@@ -38,7 +38,7 @@ class Ads extends Component < {} > {
     constructor(props) {
         super(props);
         this.state = {
-            htmAd:{}
+            htmAd:{}            
         };
     }
 
@@ -57,8 +57,8 @@ class Ads extends Component < {} > {
         }
         this.setState({
             isAmtVerify: true,
-            sell_amount: Number(sell_amount)>1?utils.formatAmountInput(Number(sell_amount)):sell_amount,
-            buy_amount: res.amount>1?utils.formatAmountInput(res.amount):res.amount
+            sell_amount: Number(sell_amount)>1?utils.formatAmountInput(Number(sell_amount)):sell_amount.toString(),
+            buy_amount: res.amount>1?utils.formatAmountInput(res.amount):res.amount.toString()
         });
     }
 
@@ -129,7 +129,13 @@ class Ads extends Component < {} > {
                     // onEndReachedThreshold={2}
                     // onEndReached={()=>!this.props.htmAdCreateOrEdit && this.props.findHTMAds(this.props.htmAds.length)}
                     renderItem={({item, index})=>{
-                        let price_per = (this.props.screenProps.getPricePer(item.buy,item.sell) * (1+item.margin/100)).toFixed(8);
+                        let price_per = this.props.screenProps.getPricePer(item.buy,item.sell);
+                        if(price_per > 1){
+                            price_per = ((1/price_per) * (1+item.margin/100)).toFixed(8);
+                            price_per = (1/Number(price_per)).toFixed(8);
+                        }else{
+                            price_per = (price_per * (1-item.margin/100)).toFixed(8);
+                        }
                         let trade_limit = item.max > 0?
                             ('Limits: ' + utils.flashNFormatter(item.min,2) +
                             ' - ' + utils.flashNFormatter(item.max,2) +

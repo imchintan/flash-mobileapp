@@ -68,7 +68,13 @@ class MyAds extends Component < {} > {
                     // onEndReachedThreshold={2}
                     // onEndReached={()=>!this.props.htmAdCreateOrEdit && this.props.getHTMAds(this.props.htmMyAds.length)}
                     renderItem={({item, index})=>{
-                        let price_per = (this.props.screenProps.getPricePer(item.buy,item.sell) * (1+item.margin/100)).toFixed(8);
+                        let price_per = this.props.screenProps.getPricePer(item.buy,item.sell);
+                        if(price_per > 1){
+                            price_per = ((1/price_per) * (1+item.margin/100)).toFixed(8);
+                            price_per = (1/Number(price_per)).toFixed(8);
+                        }else{
+                            price_per = (price_per * (1-item.margin/100)).toFixed(8);
+                        }
                         let trade_limit = item.max > 0?
                             ('Limits: ' + utils.flashNFormatter(item.min,2) +
                             ' - ' + utils.flashNFormatter(item.max,2) +

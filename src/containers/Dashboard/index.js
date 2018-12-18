@@ -120,8 +120,8 @@ const EnhancedComponent = class extends React.Component {
         this.props.customAction({
             DashboardNavigation:this.refs.dashboard._navigation
         });
-        if(!this.coinmarketcapValue)
-            this.coinmarketcapValue = setInterval(this.props.getFiatCurrencyRate, 60000);
+        if(!this.coinGeckoValue)
+            this.coinGeckoValue = setInterval(this.props.getFiatCurrencyRate, 60000);
 
         if(!this.getMessages)
             this.getMessages = setInterval(this.props.getMessages, 10000);
@@ -133,7 +133,7 @@ const EnhancedComponent = class extends React.Component {
     componentWillUnmount(){
         this.mount = false;
         NetInfo.removeEventListener('connectionChange',this.handleConnectivityChange.bind(this));
-        clearInterval(this.coinmarketcapValue);
+        clearInterval(this.coinGeckoValue);
         clearInterval(this.getMessages);
     }
 
