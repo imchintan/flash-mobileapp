@@ -94,6 +94,13 @@ class ChatHistory extends Component < {} > {
                         if(filterBy == 2 && hasActiveChannel)
                             return;
                         let un = cr.m[0] == this.props.htmProfile.username?cr.m[1]:cr.m[0];
+                        let ur = cr.c.length > 1?cr.c.reduce((c,d)=>{
+                            if(!d.uc) return 0;
+                            let urC = c || 0;
+                            if(isNaN(urC)) urC = c.uc[this.props.htmProfile.username] || 0;
+                            let urD = d.uc[this.props.htmProfile.username] || 0;
+                            return urC + urD;
+                        }):(cr.c[0].uc[this.props.htmProfile.username]||0)
                         let d = {
                             id: cr.l._id,
                             un,
@@ -115,8 +122,7 @@ class ChatHistory extends Component < {} > {
                                 }
                             }),
                             m: cr.l?(cr.l.text?cr.l.text:'📍 Location'):'-',
-                            ur: cr.c[cr.c.length-1].uc?
-                                cr.c[cr.c.length-1].uc[this.props.htmProfile.username]:0
+                            ur
                         }
                         return (
                             <TouchableOpacity activeOpacity={0.5}

@@ -50,6 +50,7 @@ class ChatRoom extends Component < {} > {
     constructor(props) {
         super(props);
         this.state = {
+            password: this.props.password,
         };
     }
 
@@ -154,6 +155,27 @@ class ChatRoom extends Component < {} > {
     _chatHandler=(d)=>{
         this.props.receiveChatMessage(d);
         this.props.markAsRead();
+    }
+
+    confirmRequest(){
+        let amount = utils.toOrginalNumber(this.state.amount);
+        let fee = utils.calcFee(amount,this.state.currency_type, this.props.bcMedianTxSize,
+            this.props.satoshiPerByte, this.props.fixedTxnFee);
+
+        if(amount < this.props.thresholdAmount){
+            return Toast.errorTop("Amount is less than threshold value");
+        }
+
+        let balance = this.props.balances
+            .filter(bal => bal.currency_type == this.state.currency_type)[0].amt;
+        if(this.state.currency_type == constants.CURRENCY_TYPE.FLASH){
+            balance = utils.satoshiToFlash(balance);
+        }
+        if((amount+fee) > balance){
+            return Toast.errorTop("You do not have enough fee to make this payment");
+        }
+
+        this.setState({visible:true, fee});
     }
 
     sendMoney(force=false){
@@ -367,30 +389,26 @@ class ChatRoom extends Component < {} > {
                     this.props.htm_trade.first_payer !== this.props.htmProfile.username)) &&
                 <View style={this.props.htm_trade.status ==4?{
                     flexDirection: 'column',
-                    alignItem: 'center',
+                    alignItems: 'center',
                     marginTop: -3,
                 }:{
                     flexDirection: 'row',
                     justifyContent: 'space-between',
-                    alignItem: 'center',
+                    alignItems: 'center',
                     marginTop: 5
                 }}>
                     <Text style={[styles.tradeDetailPaymentText,
                         this.props.htm_trade.status ==5 && {marginBottom:5}]}>
                         You need to pay {isInitByMe?v1:v2}
                     </Text>
-                    <View style={{flexDirection: 'row', justifyContent:'center', alignItem:'center'}}>
+                    <View style={{flexDirection: 'row', justifyContent:'center', alignItems:'center'}}>
                         {this.props.htm_trade.status ==4 && <Button
                             style={[styles.tradeDetailGrayeBtn,{marginRight: 10}]}
                             textstyle={styles.tradeDetailBtnText}
                             onPress={()=>this.setState({isCancel:true})}
                             value='Cancel' />}
                         <Button
-                            onPress={()=>this.setState({
-                                visible:true,
-                                fee: utils.calcFee(0,this.state.currency_type, this.props.bcMedianTxSize,
-                                this.props.satoshiPerByte, this.props.fixedTxnFee)
-                            })}
+                            onPress={this.confirmRequest.bind(this)}
                             style={styles.tradeDetailBtn}
                             textstyle={styles.tradeDetailBtnText}
                             value='Pay Now' />
@@ -771,6 +789,7 @@ function mapStateToProps({params}) {
         htmProfile: params.htmProfile,
         chatRoom: params.chatRoom,
         balances: params.balances || 0,
+        password: params.password || null,
         chatRoomChannel: params.chatRoomChannel,
         chatMessages: params.chatMessages || [],
         forceFeedBack: params.forceFeedBack || false,

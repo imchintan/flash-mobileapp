@@ -1,6 +1,7 @@
 import {
     StyleSheet,
-    Dimensions
+    Dimensions,
+    Platform
 } from 'react-native';
 
 const appStyles = require('./app');
@@ -289,6 +290,7 @@ const styles = StyleSheet.create({
         backgroundColor: '#EFEFEF'
     },
     tradeDetailTab:{
+        marginTop: Platform.OS == 'ios'? 15:0,
         justifyContent: 'center',
         paddingVertical: 15,
         paddingHorizontal: 20,

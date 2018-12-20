@@ -119,9 +119,10 @@ class Ads extends Component < {} > {
             sender_dp: this.props.htmProfile.profile_pic_url,
         }
         this.props.addHTMTrade(data, message, ()=>
-            this.setState({htmAd:{},contactForTrade:false,
-                buy_amount:0, sell_amount:0, message:''},()=>
-                this.props.screenProps.navigate('ChatRoom')
+            this.setState({contactForTrade:false,
+                buy_amount:0, sell_amount:0, message:''},
+                ()=>this.setState({htmAd:{}},
+                    ()=>this.props.screenProps.navigate('ChatRoom'))
         ));
     }
 
@@ -222,7 +223,6 @@ class Ads extends Component < {} > {
                     }}
                 />
                 {am.viewAdDetails(this,styles)}
-                {am.contactForTrade(this,styles)}
                 <Loader show={this.props.loading} />
             </View>
         )

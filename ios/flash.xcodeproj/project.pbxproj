@@ -44,6 +44,8 @@
 		361BABB5207238B400C3F6B4 /* FontAwesome.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 361BABB3207238B300C3F6B4 /* FontAwesome.ttf */; };
 		361BABB6207238B400C3F6B4 /* Microsoft Tai Le.ttf in Resources */ = {isa = PBXBuildFile; fileRef = 361BABB4207238B300C3F6B4 /* Microsoft Tai Le.ttf */; };
 		365E38EA2168B2CC00C85F87 /* GoogleService-Info.plist in Resources */ = {isa = PBXBuildFile; fileRef = 365E38BA2168B2CC00C85F87 /* GoogleService-Info.plist */; };
+		3698360121CB6E8600E18A4D /* FToast.m in Sources */ = {isa = PBXBuildFile; fileRef = 369835FE21CB6E8600E18A4D /* FToast.m */; };
+		3698360221CB6E8600E18A4D /* UIView+Toast.m in Sources */ = {isa = PBXBuildFile; fileRef = 369835FF21CB6E8600E18A4D /* UIView+Toast.m */; };
 		36C6471520E12770004CDCB4 /* LoadingScreen.xib in Resources */ = {isa = PBXBuildFile; fileRef = 36C6471420E1276F004CDCB4 /* LoadingScreen.xib */; };
 		36D1A1A320DA9067000C06CE /* app-text-logo-new.png in Resources */ = {isa = PBXBuildFile; fileRef = 36D1A1A220DA9067000C06CE /* app-text-logo-new.png */; };
 		46C48F8A47CC41BDA11F8B36 /* libRNSound.a in Frameworks */ = {isa = PBXBuildFile; fileRef = A176802BD3D14AF592E6760C /* libRNSound.a */; };
@@ -440,6 +442,9 @@
 		3638678E20CA5974006474A7 /* futura-light.ttf */ = {isa = PBXFileReference; lastKnownFileType = file; name = "futura-light.ttf"; path = "../android/app/src/main/assets/fonts/futura-light.ttf"; sourceTree = "<group>"; };
 		3638678F20CA7B5A006474A7 /* flash.entitlements */ = {isa = PBXFileReference; lastKnownFileType = text.plist.entitlements; name = flash.entitlements; path = flash/flash.entitlements; sourceTree = "<group>"; };
 		365E38BA2168B2CC00C85F87 /* GoogleService-Info.plist */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = text.plist.xml; path = "GoogleService-Info.plist"; sourceTree = "<group>"; };
+		369835FE21CB6E8600E18A4D /* FToast.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = FToast.m; sourceTree = "<group>"; };
+		369835FF21CB6E8600E18A4D /* UIView+Toast.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = "UIView+Toast.m"; sourceTree = "<group>"; };
+		3698360021CB6E8600E18A4D /* UIView+Toast.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = "UIView+Toast.h"; sourceTree = "<group>"; };
 		36C6471420E1276F004CDCB4 /* LoadingScreen.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = LoadingScreen.xib; sourceTree = "<group>"; };
 		36D1A1A220DA9067000C06CE /* app-text-logo-new.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "app-text-logo-new.png"; sourceTree = "<group>"; };
 		4FF55EFFE57E482D846133E5 /* RNCamera.xcodeproj */ = {isa = PBXFileReference; explicitFileType = undefined; fileEncoding = 9; includeInIndex = 0; lastKnownFileType = "wrapper.pb-project"; name = RNCamera.xcodeproj; path = "../node_modules/react-native-camera/ios/RNCamera.xcodeproj"; sourceTree = "<group>"; };
@@ -606,6 +611,7 @@
 		13B07FAE1A68108700A75B9A /* flash */ = {
 			isa = PBXGroup;
 			children = (
+				369835FD21CB6E6000E18A4D /* FToast */,
 				36C6471420E1276F004CDCB4 /* LoadingScreen.xib */,
 				3638678F20CA7B5A006474A7 /* flash.entitlements */,
 				36D1A1A220DA9067000C06CE /* app-text-logo-new.png */,
@@ -706,6 +712,16 @@
 				3658210D2063791600923838 /* libRNRandomBytes.a */,
 			);
 			name = Products;
+			sourceTree = "<group>";
+		};
+		369835FD21CB6E6000E18A4D /* FToast */ = {
+			isa = PBXGroup;
+			children = (
+				369835FE21CB6E8600E18A4D /* FToast.m */,
+				3698360021CB6E8600E18A4D /* UIView+Toast.h */,
+				369835FF21CB6E8600E18A4D /* UIView+Toast.m */,
+			);
+			path = FToast;
 			sourceTree = "<group>";
 		};
 		36A63C9F2168B7C900B72DA0 /* Products */ = {
@@ -1518,7 +1534,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				3698360221CB6E8600E18A4D /* UIView+Toast.m in Sources */,
 				13B07FBC1A68108700A75B9A /* AppDelegate.m in Sources */,
+				3698360121CB6E8600E18A4D /* FToast.m in Sources */,
 				13B07FC11A68108700A75B9A /* main.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;

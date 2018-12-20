@@ -449,7 +449,7 @@ export const getHTMChannelFeedback = (data, cb=null) => {
     return (dispatch,getState) => {
         dispatch({ type: types.LOADING_START });
         let params = getState().params;
-        if(params.channelFeedbacks)
+        if(params.channelFeedbacks && params.channelFeedbacks.length > 0)
             return dispatch({
                 type: types.GET_CHANNEL_FEEDBACK,
                 payload: { loading: false }

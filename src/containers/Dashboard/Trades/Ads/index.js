@@ -146,8 +146,7 @@ class AdsTab extends React.Component {
                     isFocused: this.state.isFocused
                 }}/>
                 {am.legalDisclaimer(this,styles)}
-                {am.adsFilter(this,styles)}
-                {am.selectCurrency(this,styles)}
+                {am.adsFilter(this,styles)}                
             </View>
         );
     }

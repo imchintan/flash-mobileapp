@@ -47,7 +47,7 @@ export const rawTransaction = (amount=0, custom_fee=0, receiver_public_address='
                 currency_type, toAddresses, custom_fee, memo).then((d)=>{
                 if(d.rc == 1){
                     dispatch({type: types.RAW_TRANSACTION});
-                    let wallet = params.decryptedWallet;
+                    let wallet = getActiveWallet(params.decryptedWallets, currency_type);
                     let tx = wallet.signTx(d.transaction.rawtx);
                     let ip = params.ip;
                     dispatch(addTransaction(amount, ip, memo, receiver_bare_uid,
@@ -64,6 +64,7 @@ export const rawTransaction = (amount=0, custom_fee=0, receiver_public_address='
                     constants.SOUND.ERROR.play();
                 }
             }).catch(e=>{
+                console.log(e);
                 dispatch({
                     type: types.RAW_TRANSACTION,
                     payload: {
@@ -107,6 +108,7 @@ export const rawTransaction = (amount=0, custom_fee=0, receiver_public_address='
                     constants.SOUND.ERROR.play();
                 }
             }).catch(e=>{
+                console.log(e);
                 dispatch({
                     type: types.RAW_TRANSACTION,
                     payload: {
@@ -139,6 +141,7 @@ export const rawTransaction = (amount=0, custom_fee=0, receiver_public_address='
                     constants.SOUND.ERROR.play();
                 }
             }).catch(e=>{
+                console.log(e);
                 dispatch({
                     type: types.RAW_TRANSACTION,
                     payload: {
@@ -218,6 +221,7 @@ export const addTransaction = (amount, ip, memo, receiver_bare_uid, receiver_id,
                     constants.SOUND.ERROR.play();
                 }
             }).catch(e=>{
+                console.log(e);
                 dispatch({
                     type: types.ADD_TRANSACTION,
                     payload: {

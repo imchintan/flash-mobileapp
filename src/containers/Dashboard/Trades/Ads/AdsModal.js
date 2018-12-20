@@ -94,7 +94,7 @@ export const adsFilter = (self,styles) => <Modal transparent={false}
                  underlineColorAndroid='transparent'
                  style={[styles.htmProfileInputBox,{paddingLeft:10}]}
                  keyboardType='numeric'
-                 returnKeyType='next'
+                 returnKeyType='done'
                  placeholder={'Enter amount for '+utils
                     .getCurrencyUnitUpcase(self.state.filter.buy.currency_type)}
                  value={(self.state.filter.buy_amount || '').toString()}
@@ -192,6 +192,7 @@ export const adsFilter = (self,styles) => <Modal transparent={false}
             }}
             textstyle={styles.htmFilterBtnText}/>
     </View>
+    {selectCurrency(self,styles)}
 </Modal>
 
 /**
@@ -278,7 +279,7 @@ export const selectCurrency = (self,styles) => <Modal
  * View Ad details modal
  */
  export const viewAdDetails = (self,styles) => <Modal transparent={false} animationType="slide"
-     onRequestClose={() => self.setState({htmAd:{}})}
+     onRequestClose={() => setTimeout(()=>self.setState({htmAd:{}}),200)}
      visible={!!self.state.htmAd.username && self.props.screenProps.isFocused}>
     <ScrollView
          showsVerticalScrollIndicator={false}
@@ -396,6 +397,7 @@ export const selectCurrency = (self,styles) => <Modal
          onPress={()=>self.setState({htmAd:{}})}>
         <Text style={styles.htmAdFilterBtnText}>x</Text>
     </TouchableOpacity>
+    {contactForTrade(self,styles)}
     <Loader show={self.props.loading} />
 </Modal>
 
@@ -426,7 +428,7 @@ export const selectCurrency = (self,styles) => <Modal
                  underlineColorAndroid='transparent'
                  style={[styles.requestRowInput,{paddingLeft:10}]}
                  keyboardType='numeric'
-                 returnKeyType='next'
+                 returnKeyType='done'
                  placeholder={'Enter amount in '+utils.getCurrencyUnitUpcase(self.state.htmAd.buy)}
                  value={self.state.buy_amount || ''}
                  onBlur={self.verifyAmount.bind(self)}
@@ -445,32 +447,49 @@ export const selectCurrency = (self,styles) => <Modal
                  })}
              />
         </View>
-        {self.state.trade_balance &&<Text style={{
-            alignSelf: 'flex-end',
-            marginRight: 5,
+        {self.state.trade_balance &&
+        <View style={{
+            flexDirection: 'row',
+            justifyContent: 'space-between',
+            alignItems: 'center',
             marginTop: 5,
-            marginBottom: -20,
-            borderBottomWidth: 1,
-            borderBottomColor: '#1a0dab',
-            color:'#1a0dab'
-        }}
-        onPress={()=> self.setState({buy_amount:self.state.trade_balance.amt.toString()},()=>{
-            buy_amount = utils.toOrginalNumber(self.state.buy_amount);
-            if(self.state.trade_balance.currency_type == constants.CURRENCY_TYPE.FLASH)
-                buy_amount =utils.toOrginalNumber(utils.satoshiToFlash(self.state.trade_balance.amt)
-                    .toFixed(10))   ;
-            let price_per = Number(self.state.htmAd.price_per);
-            if(isNaN(buy_amount)) buy_amount=0;
-            let sell_amount = utils.toOrginalNumber(
-                price_per > 1?utils.otherCurrencyToCrypto(buy_amount,
-                    Number((1/price_per).toFixed(8)), 0, 8):
-                utils.cryptoToOtherCurrency(buy_amount, price_per, 0, 8)
-            ).toFixed(8);
-            self.setState({
-                sell_amount: Number(sell_amount)>1?utils.formatAmountInput(Number(sell_amount)):sell_amount.toString(),
-                buy_amount: Number(buy_amount)>1?utils.formatAmountInput(Number(buy_amount)):buy_amount.toString()
-            });
-        })}>All {utils.getCurrencyUnitUpcase(self.state.htmAd.buy)}</Text>}
+            marginBottom: -10,
+        }}>
+            <Text style={{
+                marginLeft: 5,
+                color:'#666'
+            }}>+ max {self.props.max_fees[self.state.htmAd.buy]} {utils.getCurrencyUnitUpcase(self.state.htmAd.buy)} fee</Text>
+            <Text style={{
+                marginRight: 5,
+                borderBottomWidth: 1,
+                borderBottomColor: '#1a0dab',
+                color:'#1a0dab'
+            }}
+            onPress={()=>{
+                buy_amount = utils.toOrginalNumber(self.state.trade_balance.amt);
+                if(self.state.trade_balance.currency_type == constants.CURRENCY_TYPE.FLASH)
+                    buy_amount =utils.toOrginalNumber(utils.satoshiToFlash(self.state.trade_balance.amt)
+                        .toFixed(10));
+                buy_amount -= self.props.max_fees[self.state.htmAd.buy];
+                if(buy_amount < 0) {
+                    buy_amount=0;
+                    return FToast.errorTop("You don't have enough "+
+                    utils.getCurrencyUnitUpcase(self.state.htmAd.buy) +
+                    " to initiate trade");
+                }
+                let price_per = Number(self.state.htmAd.price_per);
+                if(isNaN(buy_amount)) buy_amount=0;
+                let sell_amount = utils.toOrginalNumber(
+                    price_per > 1?utils.otherCurrencyToCrypto(buy_amount,
+                        Number((1/price_per).toFixed(8)), 0, 8):
+                    utils.cryptoToOtherCurrency(buy_amount, price_per, 0, 8)
+                ).toFixed(8);
+                self.setState({
+                    sell_amount: Number(sell_amount)>1?utils.formatAmountInput(Number(sell_amount)):sell_amount.toString(),
+                    buy_amount: Number(buy_amount)>1?utils.formatAmountInput(Number(buy_amount)):buy_amount.toString()
+                });
+            }}>All {utils.getCurrencyUnitUpcase(self.state.htmAd.buy)}</Text>
+        </View>}
         <Text style={[styles.label,styles.htmAdFilterLabel]}>Buy</Text>
         <View style={[styles.requestRowInputBox,{flexDirection: 'row', marginTop:5}]}>
             <View style={styles.requestRowAmtLabelBox}>
@@ -482,7 +501,7 @@ export const selectCurrency = (self,styles) => <Modal
                 underlineColorAndroid='transparent'
                 style={[styles.requestRowInput,{paddingLeft:10}]}
                 keyboardType='numeric'
-                returnKeyType='next'
+                returnKeyType='done'
                 placeholder={'Enter amount in '+utils.getCurrencyUnitUpcase(self.state.htmAd.sell)}
                 value={self.state.sell_amount || ''}
                 onBlur={self.verifyAmount.bind(self)}

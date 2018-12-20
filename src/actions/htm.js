@@ -1,6 +1,6 @@
 import {
-    Platform,
-    AsyncStorage
+    AsyncStorage,
+    FToast as Toast
 } from 'react-native';
 import * as types from '@actions/types';
 import * as chat from '@actions/chat';
@@ -8,8 +8,6 @@ import * as apis from '@flashAPIs';
 import * as utils from '@lib/utils';
 import * as constants from '@src/constants';
 import _ from 'lodash';
-
-const Toast =  Platform.OS == 'ios'?require('@components/Toast'):require('@components/FToast');
 
 var htmLocationIntRef = null; // Set time interval reference
 
@@ -233,7 +231,7 @@ export const htmLocationThread = (start=0) => {
             let parmas = getState().params;
             if(parmas.htmProfile && parmas.htmProfile.show_on_map == 1 &&
                 parmas.htmProfile.show_live_location == 1){
-                dispatch(getCurrentPosition(true));
+                dispatch(getCurrentPosition(false));
             }
             let n = 0;
             htmLocationIntRef = setInterval(()=>{
@@ -244,7 +242,7 @@ export const htmLocationThread = (start=0) => {
                     if(n%5 == 0 || !params.position){
                         if(parmas.htmProfile && parmas.htmProfile.show_on_map == 1 &&
                             parmas.htmProfile.show_live_location == 1)
-                                dispatch(getCurrentPosition(true));
+                                dispatch(getCurrentPosition(false));
                         if(params.location && params.location.latitude)
                             dispatch(updateHTMLocation(params.location.latitude,
                                 params.location.longitude));
@@ -989,7 +987,13 @@ export const addHTMTrade = (data, message, cb=null) => {
                         htm_trade: null,
                         channelFeedbacks:null,
                         chatRoom,
-                        chatRoomChannel
+                        chatRoomChannel,
+                        search_wallet: null,
+                        trade_bcMedianTxSize: 250,
+                        trade_satoshiPerByte: 20,
+                        trade_thresholdAmount: 0.00001,
+                        trade_fixedTxnFee: 0.00002,
+                        trade_decryptedWallet: null,
                     }
                 });
                 dispatch(chat.sendChatMessage(message));

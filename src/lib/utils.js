@@ -22,7 +22,7 @@ export const getLocation = async endpoint => {
   return response.json();
 };
 
-export const getCurrentPosition=(enableHighAccuracy=true)=>{
+export const getCurrentPosition=(enableHighAccuracy=false)=>{
     return new Promise((resolve,reject) => {
         navigator.geolocation.getCurrentPosition(
             (position) => resolve(position),

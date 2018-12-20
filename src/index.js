@@ -91,7 +91,7 @@ class Root extends React.Component {
         });
 
         FCM.onMessage((message: RemoteMessage) => {
-            console.log(message);
+            // console.log(message);
         });
 
         if(Platform.OS == 'android'){
