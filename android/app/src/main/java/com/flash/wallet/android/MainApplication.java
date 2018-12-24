@@ -4,10 +4,14 @@ import android.app.Application;
 
 import com.facebook.react.ReactApplication;
 import com.reactnative.ivpusic.imagepicker.PickerPackage;
+import io.invertase.firebase.RNFirebasePackage;
+import io.invertase.firebase.messaging.RNFirebaseMessagingPackage;
+import io.invertase.firebase.notifications.RNFirebaseNotificationsPackage;
+import com.levelasquez.androidopensettings.AndroidOpenSettingsPackage;
+import com.airbnb.android.react.maps.MapsPackage;
 import org.reactnative.camera.RNCameraPackage;
 import com.rnfingerprint.FingerprintAuthPackage;
 import com.zmxv.RNSound.RNSoundPackage;
-import com.dieam.reactnativepushnotification.ReactNativePushNotificationPackage;
 import com.bitgo.randombytes.RandomBytesPackage;
 import com.facebook.react.ReactNativeHost;
 import com.facebook.react.ReactPackage;
@@ -29,11 +33,16 @@ public class MainApplication extends Application implements ReactApplication {
     protected List<ReactPackage> getPackages() {
       return Arrays.<ReactPackage>asList(
           new MainReactPackage(),
+            new FToastPackage(),
+            new RNFirebasePackage(),
+            new RNFirebaseMessagingPackage(),
+            new RNFirebaseNotificationsPackage(),
+            new AndroidOpenSettingsPackage(),
+            new MapsPackage(),
             new PickerPackage(),
             new RNCameraPackage(),
             new FingerprintAuthPackage(),
             new RNSoundPackage(),
-            new ReactNativePushNotificationPackage(),
             new RandomBytesPackage()
       );
     }

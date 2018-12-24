@@ -22,6 +22,23 @@ export const getLocation = async endpoint => {
   return response.json();
 };
 
+export const getCurrentPosition=(enableHighAccuracy=false)=>{
+    return new Promise((resolve,reject) => {
+        navigator.geolocation.getCurrentPosition(
+            (position) => resolve(position),
+            (error) => {
+                if(enableHighAccuracy)
+                    getCurrentPosition(false)
+                    .then(position=>resolve(position))
+                    .catch(error=>reject(error));
+                else
+                    reject(error);
+            },
+            {enableHighAccuracy, timeout: 10000, maximumAge: 3000}
+        );
+    });
+};
+
 export const FontSize = (size, ratio=0) => {
     if(width <= 320){
         if(ratio == 0)
@@ -43,6 +60,9 @@ export const isIphoneX = () => {
         (height === 812 || width === 812)
     );
 }
+
+export const buildURLQuery = (d) => Object.keys(d).filter(k => d[k] !== null)
+    .map((k) => [k, d[k]].map(encodeURIComponent).join("=")).join("&");
 
 export const decryptPassphraseV2 = (email, wallets, password, userKey) => {
     let nonce = 'nnfyPFFbK7NdGtf73uGwt+CsS6mHAmAq';
@@ -137,11 +157,11 @@ export const localizeFlash = (num, digits=8) => {
     return parseFloat(num).toLocaleString('en',{maximumFractionDigits:digits});
 }
 
-export const cryptoToOtherCurrency = (value,othCur, p=0) => {
+export const cryptoToOtherCurrency = (value,othCur, p=0, digit=3) => {
     if (value == undefined || value === '') return;
     if (othCur == undefined || othCur === '') return;
     return parseFloat(new Big(value).times(othCur).div(Math.pow(10,p)).toString())
-        .toFixed(3).toLocaleString('en',{maximumFractionDigits:3});
+        .toFixed(digit).toLocaleString('en',{maximumFractionDigits:digit});
 }
 
 export const otherCurrencyToCrypto = (value,othCur) => {
@@ -179,10 +199,10 @@ export const dashToOtherCurrency = (dash,othCur) => {
         .toLocaleString('en',{maximumFractionDigits:8});
 }
 
-export const flashNFormatter = (num, digits) => {
+export const flashNFormatter = (num, digits, minVal = 10000) => {
     if (num == undefined || num === '') return 0.00;
     num = parseFloat(num);
-    if(num <= 10000)
+    if(num <= minVal)
         return localizeFlash(num.toFixed(8),8);
     let si = [
         { value: 1, symbol: "" },
@@ -702,5 +722,36 @@ export const getOdds = (p1,p2) => {
             return getOdds(1,Math.round(p2/p1))
     }else{
         return {p1:p1/r,p2:p2/r};
+    }
+}
+
+export const getTransactionDetailURL = (currency_type,txn_id) => {
+    switch (currency_type) {
+        case constants.CURRENCY_TYPE.BTC:
+            if(APP_MODE == 'PROD')
+                return 'https://btc.flashcoin.io/tx/' + txn_id;
+            else
+                return 'http://82.221.106.138:3001/tx/' + txn_id;
+            break;
+        case constants.CURRENCY_TYPE.LTC:
+            if (APP_MODE == 'PROD')
+                return 'https://ltc.flashcoin.io/tx/' + txn_id;
+            else
+                return 'http://82.221.106.143:3001/tx/' + txn_id;
+            break;
+        case constants.CURRENCY_TYPE.DASH:
+            if (APP_MODE == 'PROD')
+                return 'https://dash.flashcoin.io/tx/' + txn_id;
+            else
+                return 'http://82.221.106.172:3001/tx/' + txn_id;
+            break;
+        case constants.CURRENCY_TYPE.ETH:
+            if (APP_MODE == 'PROD')
+                return 'https://etherscan.io/tx/' + txn_id;
+            else
+                return 'https://rinkeby.etherscan.io/tx/' + txn_id;
+            break;
+        default:
+            return 'https://explorer.flashcoin.io/tx/' + txn_id;
     }
 }

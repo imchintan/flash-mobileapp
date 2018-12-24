@@ -1,5 +1,5 @@
 import * as types from '@actions/types'
-import apis from '@flashAPIs'
+import * as apis from '@flashAPIs';
 import { _logout } from '@actions/navigation';
 
 export const updateTransactionReportDate = (date_from,date_to) => {
@@ -469,30 +469,32 @@ export const getSharingTransactionDetail = (transaction_id) => {
     }
 }
 
-export const setBcMedianTxSize = () => {
+export const setBcMedianTxSize = (currency_type=null) => {
     return (dispatch,getState) => {
         let params = getState().params;
-        apis.bcMedianTxSize(params.profile.auth_version, params.profile.sessionToken,
-            params.currency_type).then((d)=>{
-            if(d.rc !== 1){
-                dispatch({
-                    type: types.SET_BC_MEDIAN_TX_SIZE,
-                    payload: {
-                        errorMsg:d.reason,
-                    }
-                });
-            }else{
-                dispatch({
-                    type: types.SET_BC_MEDIAN_TX_SIZE,
-                    payload: {
-                        bcMedianTxSize:d.median_tx_size,
-                    }
-                });
+        dispatch({
+            type: types.CUSTOM_ACTION,
+            payload: {
+                tx_size_loading:true
             }
+        });
+        let payload = {tx_size_loading:false};
+        apis.bcMedianTxSize(params.profile.auth_version, params.profile.sessionToken,
+            currency_type || params.currency_type).then((d)=>{
+            if(d.rc !== 1){
+                payload['errorMsg'] = d.reason;
+            }else{
+                payload[`${currency_type?'trade_':''}bcMedianTxSize`] = d.median_tx_size;
+            }
+            dispatch({
+                type: types.SET_BC_MEDIAN_TX_SIZE,
+                payload
+            });
         }).catch(e=>{
             dispatch({
                 type: types.SET_BC_MEDIAN_TX_SIZE,
                 payload: {
+                    tx_size_loading:false,
                     errorMsg: e.message,
                 }
             });
@@ -500,11 +502,11 @@ export const setBcMedianTxSize = () => {
     }
 }
 
-export const setThresholdAmount = () => {
+export const setThresholdAmount = (currency_type=null) => {
     return (dispatch,getState) => {
         let params = getState().params;
         apis.thresholdAmount(params.profile.auth_version, params.profile.sessionToken,
-            params.currency_type).then((d)=>{
+            currency_type || params.currency_type).then((d)=>{
             if(d.rc !== 1){
                 dispatch({
                     type: types.SET_THRESHOLD_AMOUNT,
@@ -513,11 +515,11 @@ export const setThresholdAmount = () => {
                     }
                 });
             }else{
+                payload = {};
+                payload[`${currency_type?'trade_':''}thresholdAmount`] = d.threshold_amount;
                 dispatch({
                     type: types.SET_THRESHOLD_AMOUNT,
-                    payload: {
-                        thresholdAmount:d.threshold_amount,
-                    }
+                    payload
                 });
             }
         }).catch(e=>{
@@ -531,21 +533,28 @@ export const setThresholdAmount = () => {
     }
 }
 
-export const setSatoshiPerByte = () => {
+export const setSatoshiPerByte = (currency_type=null) => {
     return (dispatch,getState) => {
         let params = getState().params;
-        apis.getSatoshiPerByte(params.currency_type)
+        dispatch({
+            type: types.CUSTOM_ACTION,
+            payload: {
+                fee_loading:true
+            }
+        });
+        let payload = {fee_loading:false};
+        apis.getSatoshiPerByte(currency_type || params.currency_type)
         .then((satoshiPerByte)=>{
+            payload[`${currency_type?'trade_':''}satoshiPerByte`] = satoshiPerByte;
             dispatch({
                 type: types.SET_SATOSHI_PER_BYTE,
-                payload: {
-                    satoshiPerByte,
-                }
+                payload
             });
         }).catch(e=>{
             dispatch({
                 type: types.SET_SATOSHI_PER_BYTE,
                 payload: {
+                    fee_loading:true,
                     errorMsg: e.message,
                 }
             });
@@ -553,21 +562,30 @@ export const setSatoshiPerByte = () => {
     }
 }
 
-export const setFixedTxnFee = () => {
+export const setFixedTxnFee = (currency_type=null) => {
     return (dispatch,getState) => {
         let params = getState().params;
+        dispatch({
+            type: types.CUSTOM_ACTION,
+            payload: {
+                fee_loading:true
+            }
+        });
+        let payload = {fee_loading:false};
         apis.fixedTxnFee(params.profile.auth_version, params.profile.sessionToken,
-            params.currency_type).then((d)=>{
-            if(d.rc == 1) dispatch({
+            currency_type || params.currency_type).then((d)=>{
+            if(d.rc == 1){
+                payload[`${currency_type?'trade_':''}fixedTxnFee`] = d.fixed_txn_fee;
+            }
+            dispatch({
                 type: types.SET_FIXED_TXN_FEE,
-                payload: {
-                    fixedTxnFee: d.fixed_txn_fee,
-                }
+                payload
             });
         }).catch(e=>{
             dispatch({
                 type: types.SET_FIXED_TXN_FEE,
                 payload: {
+                    fee_loading: false,
                     errorMsg: e.message,
                 }
             });
@@ -575,24 +593,65 @@ export const setFixedTxnFee = () => {
     }
 }
 
-export const setEtherGasValues = () => {
+export const setEtherGasValues = (currency_type=null) => {
     return (dispatch,getState) => {
         let params = getState().params;
+        dispatch({
+            type: types.CUSTOM_ACTION,
+            payload: {
+                fee_loading:true
+            }
+        });
+        let payload = {fee_loading:false};
         apis.getEtherGasValues(params.profile.auth_version, params.profile.sessionToken,
-            params.currency_type).then((d)=>{
-            if(d.rc == 1 && d.gas_price && d.gas_limit) dispatch({
+            currency_type || params.currency_type).then((d)=>{
+            if(d.rc == 1 && d.gas_price && d.gas_limit){
+                payload[`${currency_type?'trade_':''}satoshiPerByte`] = parseInt(d.gas_price);
+                payload[`${currency_type?'trade_':''}bcMedianTxSize`] = parseInt(d.gas_limit);
+            }
+            dispatch({
                 type: types.SET_ETHER_GAS_VALUES,
-                payload: {
-                    satoshiPerByte: parseInt(d.gas_price),  //price per gas in Wei (Wei unit of Ether)
-                    bcMedianTxSize: parseInt(d.gas_limit)   //max gas to be used
-                }
+                payload
             });
         }).catch(e=>{
             dispatch({
                 type: types.SET_ETHER_GAS_VALUES,
                 payload: {
+                    fee_loading: false,
                     errorMsg: e.message,
                 }
+            });
+        })
+    }
+}
+
+export const getMaxFees = () => {
+    return (dispatch,getState) => {
+        let params = getState().params;
+        apis.getMaxFees(params.profile.auth_version, params.profile.sessionToken).then((d)=>{
+            if(d.rc ==1) dispatch({
+                type: types.GET_MAX_FEES,
+                payload: { max_fees: d.max_fees }
+            })
+        }).catch(e=>{
+            dispatch({
+                type: types.GET_MAX_FEES,
+            });
+        })
+    }
+}
+
+export const getThresholdValues = () => {
+    return (dispatch,getState) => {
+        let params = getState().params;
+        apis.thresholdAmount(params.profile.auth_version, params.profile.sessionToken).then((d)=>{
+            if(d.rc ==1) dispatch({
+                type: types.GET_THRESHOLD_VALUES,
+                payload: { threshold_values: d.threshold_amount }
+            })
+        }).catch(e=>{
+            dispatch({
+                type: types.GET_THRESHOLD_VALUES,
             });
         })
     }

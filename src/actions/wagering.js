@@ -6,7 +6,7 @@ import * as types from '@actions/types'
 import * as send from '@actions/send';
 import * as account from '@actions/account';
 import * as constants from '@src/constants';
-import apis from '@flashAPIs'
+import * as apis from '@flashAPIs';
 
 const Toast =  require('@components/Toast');
 

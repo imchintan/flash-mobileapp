@@ -10,9 +10,11 @@ import {
 import {
     createStackNavigator
 } from 'react-navigation';
+
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';
 import { ActionCreators } from '@actions';
+
 import Home from './Home';
 import Wallet from './Wallet';
 import Profile from './Profile';
@@ -30,6 +32,7 @@ import Activity from './Activity';
 import Pending from './Pending';
 import Sharing from './Sharing';
 import About from './About';
+import Trades from './Trades';
 import Wagering from './Wagering';
 
 const routes = {
@@ -84,6 +87,9 @@ const routes = {
     SetOrUpdatePIN: {
         screen: SetOrUpdatePIN,
     },
+    Trades: {
+        screen: Trades,
+    },
     Wagering: {
         screen: Wagering,
     },
@@ -111,8 +117,11 @@ const EnhancedComponent = class extends React.Component {
     }
     componentDidMount(){
         this.mount = true;
-        if(!this.coinmarketcapValue)
-            this.coinmarketcapValue = setInterval(this.props.getFiatCurrencyRate, 60000);
+        this.props.customAction({
+            DashboardNavigation:this.refs.dashboard._navigation
+        });
+        if(!this.coinGeckoValue)
+            this.coinGeckoValue = setInterval(this.props.getFiatCurrencyRate, 60000);
 
         if(!this.getMessages)
             this.getMessages = setInterval(this.props.getMessages, 10000);
@@ -124,7 +133,7 @@ const EnhancedComponent = class extends React.Component {
     componentWillUnmount(){
         this.mount = false;
         NetInfo.removeEventListener('connectionChange',this.handleConnectivityChange.bind(this));
-        clearInterval(this.coinmarketcapValue);
+        clearInterval(this.coinGeckoValue);
         clearInterval(this.getMessages);
     }
 
@@ -161,7 +170,7 @@ const EnhancedComponent = class extends React.Component {
     render() {
         return(
             <View style={{flex:1}}>
-                <Dashboard />
+                <Dashboard ref={'dashboard'}/>
                 {this.state.show && <Text style={{
                     backgroundColor: this.state.online?'#228B22':'#d33',
                     color: '#fff',

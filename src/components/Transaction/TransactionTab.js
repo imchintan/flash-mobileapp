@@ -115,9 +115,9 @@ export default class TransactionTab extends Component {
                                     {this.props.txn.type == 1 && !this.props.sharingUsage?
                                     <View style={styles.txnDetailRow}>
                                         <Text style={styles.txnDetailLabel}>Total</Text>
-                                        <Text selectable={true} style={styles.txnDetailText}>- { this.props.txn.amount +
+                                        <Text selectable={true} style={styles.txnDetailText}>- {utils.localizeFlash((this.props.txn.amount +
                                             (this.props.currency_type === constants.CURRENCY_TYPE.FLASH?0.001
-                                                :this.props.txnDetail.fees) + this.props.txn.sharing_fee
+                                                :this.props.txnDetail.fees) + (this.props.txn.sharing_fee || 0)).toFixed(8))
                                         } {utils.getCurrencyUnitUpcase(this.props.currency_type)}</Text>
                                     </View>:null}
                                     {this.props.displayNote?

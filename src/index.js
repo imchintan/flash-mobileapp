@@ -6,7 +6,8 @@ import React from 'react';
 import {
     View,
     StatusBar,
-    PushNotificationIOS
+    AsyncStorage,
+    Platform
 } from 'react-native';
 import {
     createStore,
@@ -17,14 +18,20 @@ import {
     connect
 } from 'react-redux';
 import {
-    createReduxBoundAddListener,
+    reduxifyNavigator,
     createReactNavigationReduxMiddleware,
 } from 'react-navigation-redux-helpers';
-import PushNotification from 'react-native-push-notification';
 import { createLogger } from 'redux-logger';
 import thunk from 'redux-thunk';
 import AppNavigator from '@src/AppNavigation';
-import reducer from '@reducers'
+import reducer from '@reducers';
+import notifcationHelper from '@helpers/notifcationHelper';
+
+import firebase from 'react-native-firebase';
+import type { RemoteMessage } from 'react-native-firebase';
+
+import * as config from './config';
+console.log(config);
 
 console.disableYellowBox = true;
 
@@ -36,18 +43,82 @@ const middleware = createReactNavigationReduxMiddleware(
   "root",
   state => state.nav,
 );
-const addListener = createReduxBoundAddListener("root");
+const App = reduxifyNavigator(AppNavigator, "root");
 
-class App extends React.Component {
+const mapStateToProps = (state) => ({
+    state: state.nav
+});
+
+const AppWithNavigationState = connect(mapStateToProps)(App);
+
+const store = createStore(
+    reducer,
+    applyMiddleware(middleware,thunk,loggerMiddleware),
+);
+
+class Root extends React.Component {
 
     componentDidMount(){
-        PushNotification.checkPermissions((res)=>{
-            if(!res.alert){
-                PushNotificationIOS.requestPermissions(['alert', 'badge', 'sound'])
+        global.store = store;
+        const FCM = firebase.messaging();
+        const FCMNotification = firebase.notifications();
+
+        // check permissions
+        FCM.hasPermission().then((enabled) => {
+            if (enabled) {
+                this._setPermission(true);
+            } else {
+                // request permissions from the user
+                FCM.requestPermission().then(()=>{
+                    this._setPermission(true);
+                }).catch(e=>{
+                    console.log(e);
+                    this._setPermission(false);
+                });
             }
         });
 
+        FCM.getToken().then(fcmToken => {
+            if (fcmToken) {
+                AsyncStorage.setItem('fcmToken',fcmToken);
+            }
+        });
+
+        FCM.onTokenRefresh(fcmToken => {
+            if (fcmToken) {
+                AsyncStorage.setItem('fcmToken',fcmToken);
+            }
+        });
+
+        FCM.onMessage((message: RemoteMessage) => {
+            // console.log(message);
+        });
+
+        if(Platform.OS == 'android'){
+            // Build a channel
+            const channel = new firebase.notifications.Android.Channel('flashcoin','flashcoin',
+                firebase.notifications.Android.Importance.Default);
+
+            // Create the channel
+            FCMNotification.android.createChannel(channel);
+        }
+        FCMNotification.getInitialNotification().then(notifcation =>
+            notifcation && notifcationHelper.actionHandler(notifcation));
+        FCMNotification.onNotificationOpened(notifcationHelper.actionHandler);
+
+        FCMNotification.onNotification(notifcationHelper.foregroundNotificationHandler);
     }
+
+    _setPermission(notification_permission){
+        AsyncStorage.setItem('notification_permission',notification_permission.toString());
+        store.dispatch({
+            type: 'SET_NOTIFICATION_PERMISSION',
+            payload: {
+                notification_permission,
+            }
+        });
+    }
+
     render() {
         return (
             <View style={{flex:1}}>
@@ -55,37 +126,10 @@ class App extends React.Component {
                     backgroundColor="#000000"
                     barStyle="light-content"
                   />
-                <AppNavigator navigation={{
-                    dispatch: this.props.dispatch,
-                    state: this.props.nav,
-                    addListener,
-                }} />
+                <Provider store={store}>
+                    <AppWithNavigationState ref={'appNav'} />
+                </Provider>
             </View>
-        );
-    }
-}
-
-const mapStateToProps = (state) => ({
-    nav: state.nav
-});
-
-const AppWithNavigationState = connect(mapStateToProps)(App);
-
-const store = createStore(
-    reducer,
-    applyMiddleware(loggerMiddleware,middleware,thunk),
-);
-
-class Root extends React.Component {
-    componentDidMount(){
-        global.store = store;
-    }
-
-    render() {
-        return (
-            <Provider store={store}>
-                <AppWithNavigationState />
-            </Provider>
         );
     }
 }

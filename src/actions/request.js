@@ -1,5 +1,5 @@
 import * as types from '@actions/types'
-import apis from '@flashAPIs'
+import * as apis from '@flashAPIs';
 
 export const addMoneyRequest = (amount=0, bare_uid='', to='', note='') => {
     return (dispatch,getState) => {

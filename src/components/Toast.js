@@ -63,10 +63,11 @@ module.exports = {
         ...centerProps,
         ...errorProps
     }),
-    showTop: (msg)=> Toast.show(msg,{
+    showTop: (msg, props={})=> Toast.show(msg,{
         ...commonProps,
         ...topProps,
-        ...infoProps
+        ...infoProps,
+        ...props
     }),
     showBottom: (msg)=> Toast.show(msg,{
         ...commonProps,

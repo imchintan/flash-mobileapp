@@ -1,5 +1,5 @@
 import * as types from '@actions/types'
-import apis from '@flashAPIs'
+import * as apis from '@flashAPIs';
 import * as utils from '@lib/utils';
 
 export const addPayoutCode = (sharing_code='') => {

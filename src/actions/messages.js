@@ -1,13 +1,14 @@
 import {
-    AsyncStorage
+    AsyncStorage,
+    Platform
 } from 'react-native';
-import PushNotification from 'react-native-push-notification';
-import * as types from '@actions/types';
+import firebase from 'react-native-firebase';
 import * as constants from '@src/constants';
-import apis from '@flashAPIs';
-import * as Request from '@actions/request';
-import * as Transactions from '@actions/transactions';
-import * as Account from '@actions/account';
+import * as apis from '@flashAPIs';
+import * as types from '@actions/types';
+import * as reqs from '@actions/request';
+import * as txns from '@actions/transactions';
+import * as account from '@actions/account';
 
 export const getMessages = () => {
     return (dispatch,getState) => {
@@ -44,45 +45,47 @@ export const getMessages = () => {
                     }
                 });
             }
-        }).catch(e=>{})
+        }).catch(e=>console.log(e))
     }
 }
 
 
 export const onBeRequested = (dispatch, message) => {
-    dispatch(Request.getIncomingRequests(0,true));
-    dispatch(Request.getOutgoingRequests(0,true));
+    dispatch(reqs.getIncomingRequests(0,true));
+    dispatch(reqs.getOutgoingRequests(0,true));
     let currencyType = message.currency ? parseInt(message.currency) : constants.CURRENCY_TYPE.FLASH;
     let currency_name = constants.CURRENCY_TYPE_UNIT_UPCASE[currencyType];
     let infoMsg = `${message.email_sender} sent you a request for ${message.amount} ${currency_name}`;
-    PushNotification.localNotification({
-        message: infoMsg,
-    })
+    // PushNotification.localNotification({
+    //     message: infoMsg,
+    // })
+    createLocalNotification('FLASH',infoMsg);
 }
 
 export const onTxAdded = (dispatch, message, params) => {
     let currencyType = message.currency_type ? parseInt(message.currency_type) : constants.CURRENCY_TYPE.FLASH;
-    dispatch(Account.getBalanceV2(currencyType,(params.currency_type == currencyType)));
+    dispatch(account.getBalanceV2(currencyType,(params.currency_type == currencyType)));
     if(params.currency_type == currencyType){
-        dispatch(Transactions.getRecentTransactions());
-        dispatch(Transactions.getAllTransactions(0, true));
-        dispatch(Transactions.getSentTransactions(0, true));
-        dispatch(Transactions.getReceivedTransactions(0, true));
+        dispatch(txns.getRecentTransactions());
+        dispatch(txns.getAllTransactions(0, true));
+        dispatch(txns.getSentTransactions(0, true));
+        dispatch(txns.getReceivedTransactions(0, true));
     }
     if(message.sender_email != params.profile.email){
         let currency_name = constants.CURRENCY_TYPE_UNIT_UPCASE[currencyType];
         let infoMsg = `${message.sender_email} sent you ${message.amount} ${currency_name}`;
         constants.SOUND.RECEIVE.play();
-        PushNotification.localNotification({
-            message: infoMsg,
-            playSound: false,
-        })
+        // PushNotification.localNotification({
+        //     message: infoMsg,
+        //     playSound: false,
+        // })
+        createLocalNotification('FLASH',infoMsg);
     }
 }
 
 export const onRequestStateChanged = (dispatch, message) => {
-    dispatch(Request.getIncomingRequests(0,true));
-    dispatch(Request.getOutgoingRequests(0,true));
+    dispatch(reqs.getIncomingRequests(0,true));
+    dispatch(reqs.getOutgoingRequests(0,true));
     let infoMsg = null;
     let playSound = true;
     switch (message.status) {
@@ -101,8 +104,26 @@ export const onRequestStateChanged = (dispatch, message) => {
             break;
     }
     if(infoMsg)
-        PushNotification.localNotification({
-            message: infoMsg,
-            playSound
-        })
+        createLocalNotification('FLASH',infoMsg);
+        // PushNotification.localNotification({
+        //     message: infoMsg,
+        //     playSound
+        // })
+
+}
+
+const createLocalNotification = (title, body) => {
+    let notification = new firebase.notifications.Notification()
+      .setNotificationId('flashcoin'+new Date().getTime())
+      // .setTitle(title)
+      .setBody(body);
+      if(Platform.OS == 'android'){
+          notification
+              .android.setChannelId('flashcoin')
+              .android.setColor('#E0AE27')
+              .android.setAutoCancel(true)
+              .android.setSmallIcon('ic_stat_ic_notification');
+      }
+
+    firebase.notifications().displayNotification(notification)
 }

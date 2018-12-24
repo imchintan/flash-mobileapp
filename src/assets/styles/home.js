@@ -94,11 +94,11 @@ const styles = StyleSheet.create({
         marginBottom: 10,
     },
     featuresTabTitleIcon:{
-        width: 26,
+        width: 25,
         textAlign: 'center',
-        fontSize: 22,
+        fontSize: 24,
         color: '#E2E2E2',
-        marginRight: 6,
+        marginRight: 8,
     },
     featuresTabTitleLabel:{
         fontSize: 17,
