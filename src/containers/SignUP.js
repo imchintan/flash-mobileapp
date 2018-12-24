@@ -58,7 +58,6 @@ class SignUP extends Component<{}> {
                   window.signup = true;
                   showSignUp();
                   $("#header").remove();
-                  $('#notify-check').remove();
                   $('.col-lg-12.login-form').remove();
                   $(".about-flash-section.page-section").remove();
                   $('#social-forum').remove();
