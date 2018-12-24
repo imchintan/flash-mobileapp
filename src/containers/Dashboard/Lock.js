@@ -17,7 +17,7 @@ import {
     Content,
     Icon,
     Text,
-    Toast
+    FToast as Toast
 } from '@components';
 import { connect } from 'react-redux';
 import { bindActionCreators } from 'redux';

@@ -5,11 +5,13 @@
 import React, {Component} from 'react';
 import {
     View,
-    TouchableOpacity,
-    Platform,
-    Linking,
-    PermissionsAndroid,
     Image,
+    ScrollView,
+    TouchableOpacity,
+    PermissionsAndroid,
+    Dimensions,
+    Linking,
+    Platform,
     AsyncStorage
 } from 'react-native';
 import {
@@ -38,11 +40,13 @@ import * as utils from '@lib/utils';
 import * as constants from '@src/constants';
 import { PROFILE_URL } from '@src/config';
 
-const mapPin = __DEV__?require('@images/map-pin-debug.png'):
-    require('@images/map-pin.png');
-const mapPinOnline = __DEV__?require('@images/map-pin-online-debug.png'):
-    require('@images/map-pin-online.png');
-const mapPinCurrentLocation = __DEV__?require('@images/current-position-debug.png'):
+const { width, height } = Dimensions.get('window');
+
+const mapPin = __DEV__ && Platform.OS !== 'ios'?require('@images/map-pin-debug-circle.png'):
+    require('@images/map-pin-circle.png');
+const mapPinOnline = __DEV__ && Platform.OS !== 'ios'?require('@images/map-pin-online-debug-circle.png'):
+    require('@images/map-pin-online-circle.png');
+const mapPinCurrentLocation = __DEV__ && Platform.OS !== 'ios'?require('@images/current-position-debug.png'):
     require('@images/current-position.png');
 
 class FindTrades extends Component < {} > {
@@ -79,6 +83,7 @@ class FindTrades extends Component < {} > {
 
     componentDidMount(){
         this.mount = true;
+        this.currentZoomLevel = 0;
         if(this.props.htmProfile.show_on_map == 1 &&
             this.props.htmProfile.show_live_location == 1)
             this.checkLocationPermission();
@@ -190,6 +195,7 @@ class FindTrades extends Component < {} > {
                         latitude: htm.lat,
                         longitude: htm.long
                     }}
+                    htm={htm}
                     onPress={()=>this.setState({htm})}
                     image={htm.isOnline?mapPinOnline:mapPin}/>
             );
@@ -279,10 +285,12 @@ class FindTrades extends Component < {} > {
                 {this.props.position || this.state.location?<MapView
                     onPress={()=>{
                         if(this.state.htm)this.setState({htm:null})
+                        if(this.state.cluster_htms)this.setState({cluster_htms:null})
                         if(this.state.showFilter)this.setState({showFilter:false})
                     }}
                     provider={PROVIDER_GOOGLE}
                     style={styles.htmMap}
+                    maxZoomLevel={10.5}
                     clusterColor = '#E0AE27'
                     clusterTextColor = '#191714'
                     clusterBorderColor = '#191714'
@@ -290,6 +298,16 @@ class FindTrades extends Component < {} > {
                     customMapStyle={constants.CUSTOM_MAP_STYLE}
                     followsUserLocation={true}
                     showsMyLocationButton={true}
+                    onRegionChangeComplete={({longitudeDelta})=>{
+                        // let zoom = Math.round(Math.log(360 / longitudeDelta) / Math.LN2)
+                        this.currentZoomLevel = Number(Math.log2(360 * ((width/256) / longitudeDelta)).toFixed(2))
+                    }}
+                    onClusterPress={(data)=>{
+                        if(this.currentZoomLevel < 10.5) return;
+                        if(!data || data.zoom < 7 || !data.markers || data.markers.length == 0) return;
+                        cluster_htms=data.markers.map(m=>m.props.htm);
+                        this.setState({cluster_htms});
+                    }}
                     initialRegion={this.calculateDelta(
                         this.props.position || this.state.location,
                         this.props.htms)}
@@ -298,79 +316,32 @@ class FindTrades extends Component < {} > {
                         this.props.htms)}>
                     {markers}
                 </MapView>:null}
-                {this.state.htm?
-                    <TouchableOpacity
-                        onPress={()=>this.props.getHTMDetail(this.state.htm.username,
-                            ()=>this.setState({htm:null},
-                            ()=>this.props.navigation.navigate('TradeDetail')))}
-                        style={styles.htmProfileDetailTab}>
-                        <Image style={styles.htmProfileDetailTabImg}
-                            source={this.state.htm.profile_pic_url?
-                                {uri: PROFILE_URL+this.state.htm.profile_pic_url}:
-                                utils.getCurrencyIcon(constants.CURRENCY_TYPE.FLASH)}/>
-                        <View style={styles.htmProfileDetailTabBox}>
-                            <Text style={styles.htmProfileDetailTabLabel}>
-                                <Text style={{ fontSize: 16, fontWeight: 'bold'}}>
-                                    {this.state.htm.display_name}
-                                </Text>
-                                {' ('+utils.flashNFormatter(this.state.htm.distance,2,100)+' '+
-                                (this.props.htmProfile.show_distance_in=='kms'?
-                                'km':'mile')+(this.state.htm.distance> 0?'s':'')+')'}
-                            </Text>
-                            <Text style={{bottom: 2}}>
-                                {this.state.htm.isOnline?
-                                    <Icon style={styles.htmProfileStatusIcon}
-                                        name={'circle'}/>:null}
-                                <Text style={styles.htmProfileStatusText}>
-                                    {(this.state.htm.isOnline?' online': 'last seen '
-                                        +moment(this.state.htm.last_seen_at).fromNow())}
-                                </Text>
-                            </Text>
-                            <Text style={styles.htmProfileDetailTabCurrency}>
-                                {this.state.htm.currencies.split(',')
-                                .map(currency_type => utils
-                                    .getCurrencyUnit(Number(currency_type))).join(', ')}
-                            </Text>
-                            <View style={styles.htmProfileDetailTabBuySell}>
-                                <Text style={styles.htmProfileDetailTabBuySellText}>
-                                    Buying @
-                                </Text>
-                                <Icon style={[styles.htmProfileDetailTabBuySellIcon,{
-                                    bottom:(this.state.htm.buy_at < 0)?8:-4,
-                                    color: (this.state.htm.buy_at < 0)?'#FF0000':'#00FF00'}]}
-                                    name={(this.state.htm.buy_at < 0)?'sort-down':'sort-up'}/>
-                                <Text style={[styles.htmProfileDetailTabBuySellValue,{
-                                    color: (this.state.htm.buy_at < 0)?'#FF0000':'#00FF00'}]}>
-                                    {Math.abs(this.state.htm.buy_at)+' %'}
-                                </Text>
+                {this.state.htm && htmDetailTab(this,this.state.htm,styles)}
+                {!this.props.loading && this.state.cluster_htms && <Modal transparent={true}
+                    visible={!!this.state.cluster_htms}
+                    onRequestClose={() => this.setState({htm:null,cluster_htms:null})}>
+                    <TouchableOpacity activeOpacity={1}
+                        onPress={() => this.setState({htm:null,cluster_htms:null})}
+                        style={{paddingTop: 55,height}}>
+                        <ScrollView
+                            style={{
+                                position: 'absolute',
+                                bottom: 0,
+                                left: 0,
+                                right: 0,
+                                maxHeight: height-55
+                            }}
+                            contentContainerStyle={{
+                                alignItems: 'center',
+                                justifyContent: 'flex-end'
+                            }}>
+                            <View style={{padding: 15}}>
+                                {this.state.cluster_htms
+                                    .map((htm)=>htmDetailTab(this,htm,styles))}
                             </View>
-                            <View style={styles.htmProfileDetailTabBuySell}>
-                                <Text style={styles.htmProfileDetailTabBuySellText}>
-                                    Selling @
-                                </Text>
-                                <Icon style={[styles.htmProfileDetailTabBuySellIcon,{
-                                    bottom:(this.state.htm.sell_at < 0)?8:-4,
-                                    color: (this.state.htm.sell_at < 0)?'#FF0000':'#00FF00'}]}
-                                    name={(this.state.htm.sell_at < 0)?'sort-down':'sort-up'}/>
-                                <Text style={[styles.htmProfileDetailTabBuySellValue,{
-                                    color: (this.state.htm.sell_at < 0)?'#FF0000':'#00FF00'}]}>
-                                    {Math.abs(this.state.htm.sell_at)+' %'}
-                                </Text>
-                            </View>
-                        </View>
-                        <TouchableOpacity style={{paddingLeft: 5}}
-                            onPress={()=>this.props.goToChatRoom(this.state.htm.username,
-                                (feedback)=>this.setState({htm:null},
-                                ()=>this.props.navigation.navigate(feedback?'FeedBack':'ChatRoom')
-                            ))}>
-                            <Icon style={[styles.headerFAIcon,{
-                                    fontSize:40,
-                                    color: this.props.nightMode?'#F2F2F2':'#333',
-                                }]}
-                                name='comments'/>
-                        </TouchableOpacity>
-                    </TouchableOpacity>:null
-                }
+                        </ScrollView>
+                    </TouchableOpacity>
+                </Modal>}
                 {this.state.showFilter?<View style={styles.htmFilter}>
                     <Icon style={styles.htmFilterArrow} name='sort-up'/>
                     <View style={styles.htmFilterContent}>
@@ -629,3 +600,80 @@ function mapDispatchToProps(dispatch) {
 }
 
 export default connect(mapStateToProps, mapDispatchToProps)(FindTrades);
+
+export const htmDetailTab = (self,htm,styles) => <TouchableOpacity
+    key={'_htm_detail_'+htm.id}
+    onPress={()=>self.props.getHTMDetail(htm.username,
+        ()=>self.setState({htm:null,cluster_htms:null},
+        ()=>self.props.navigation.navigate('TradeDetail')))}
+    style={[styles.htmProfileDetailTab, self.state.cluster_htms && {
+        position: 'relative',
+        bottom: 0,
+        marginBottom: 20,
+    }]}>
+    <Image style={styles.htmProfileDetailTabImg}
+        source={htm.profile_pic_url?
+            {uri: PROFILE_URL+htm.profile_pic_url}:
+            utils.getCurrencyIcon(constants.CURRENCY_TYPE.FLASH)}/>
+    <View style={styles.htmProfileDetailTabBox}>
+        <Text style={styles.htmProfileDetailTabLabel}>
+            <Text style={{ fontSize: 16, fontWeight: 'bold'}}>
+                {htm.display_name}
+            </Text>
+            {' ('+utils.flashNFormatter(htm.distance,2,100)+' '+
+            (self.props.htmProfile.show_distance_in=='kms'?
+            'km':'mile')+(htm.distance> 0?'s':'')+')'}
+        </Text>
+        <Text style={{bottom: 2}}>
+            {htm.isOnline?
+                <Icon style={styles.htmProfileStatusIcon}
+                    name={'circle'}/>:null}
+            <Text style={styles.htmProfileStatusText}>
+                {(htm.isOnline?' online': 'last seen '
+                    +moment(htm.last_seen_at).fromNow())}
+            </Text>
+        </Text>
+        <Text style={styles.htmProfileDetailTabCurrency}>
+            {htm.currencies.split(',')
+            .map(currency_type => utils
+                .getCurrencyUnit(Number(currency_type))).join(', ')}
+        </Text>
+        <View style={styles.htmProfileDetailTabBuySell}>
+            <Text style={styles.htmProfileDetailTabBuySellText}>
+                Buying @
+            </Text>
+            <Icon style={[styles.htmProfileDetailTabBuySellIcon,{
+                bottom:(htm.buy_at < 0)?8:-4,
+                color: (htm.buy_at < 0)?'#FF0000':'#00FF00'}]}
+                name={(htm.buy_at < 0)?'sort-down':'sort-up'}/>
+            <Text style={[styles.htmProfileDetailTabBuySellValue,{
+                color: (htm.buy_at < 0)?'#FF0000':'#00FF00'}]}>
+                {Math.abs(htm.buy_at)+' %'}
+            </Text>
+        </View>
+        <View style={styles.htmProfileDetailTabBuySell}>
+            <Text style={styles.htmProfileDetailTabBuySellText}>
+                Selling @
+            </Text>
+            <Icon style={[styles.htmProfileDetailTabBuySellIcon,{
+                bottom:(htm.sell_at < 0)?8:-4,
+                color: (htm.sell_at < 0)?'#FF0000':'#00FF00'}]}
+                name={(htm.sell_at < 0)?'sort-down':'sort-up'}/>
+            <Text style={[styles.htmProfileDetailTabBuySellValue,{
+                color: (htm.sell_at < 0)?'#FF0000':'#00FF00'}]}>
+                {Math.abs(htm.sell_at)+' %'}
+            </Text>
+        </View>
+    </View>
+    <TouchableOpacity style={{paddingLeft: 5}}
+        onPress={()=>self.props.goToChatRoom(htm.username,
+            (feedback)=>self.setState({htm:null,cluster_htms:null},
+            ()=>self.props.navigation.navigate(feedback?'FeedBack':'ChatRoom')
+        ))}>
+        <Icon style={[styles.headerFAIcon,{
+                fontSize:40,
+                color: self.props.nightMode?'#F2F2F2':'#333',
+            }]}
+            name='comments'/>
+    </TouchableOpacity>
+</TouchableOpacity>

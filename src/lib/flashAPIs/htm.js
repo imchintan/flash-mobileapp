@@ -70,7 +70,7 @@ export const updateHTMProfile = (auth_version, sessionToken, data) => {
                'fl_auth_version': auth_version
             },
         })
-        .then(res =>res.json())
+        .then(res => res.json())
         .then(json => resolve(json))
         .catch(e =>{
             console.log(e);

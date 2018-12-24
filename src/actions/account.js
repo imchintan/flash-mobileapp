@@ -216,7 +216,6 @@ export const getProfile = () => {
                 dispatch(txns.getMaxFees());
                 dispatch(txns.getThresholdValues());
                 dispatch(chat.savePushToken());
-                dispatch(chat.getChatRooms());
                 dispatch(wagering.getOracleProfileAccessList());
                 dispatch(getFiatCurrencyRate());
                 dispatch(getModulesStatus());
@@ -553,11 +552,12 @@ export const setRecoveryKeys = (data) => {
     }
 }
 
-export const getWalletsByEmail = () => {
+export const getWalletsByEmail = (currency_type=null) => {
     return (dispatch,getState) => {
         let params = getState().params;
+        currency_type = (currency_type ||  params.currency_type);
         apis.getWalletsByEmail(params.profile.auth_version, params.profile.sessionToken,
-            params.profile.email, params.currency_type).then((d)=>{
+            params.profile.email, currency_type).then((d)=>{
             if(d.rc !== 1){
                 dispatch({
                     type: types.GET_WALLET_ADDRESS,
@@ -566,7 +566,7 @@ export const getWalletsByEmail = () => {
                     }
                 });
             }else if(d.results.length > 0){
-                let wallet = send.getActiveWallet(d.results, params.currency_type);
+                let wallet = send.getActiveWallet(d.results, currency_type);
                 if(wallet)
                     dispatch({
                         type: types.GET_WALLET_ADDRESS,

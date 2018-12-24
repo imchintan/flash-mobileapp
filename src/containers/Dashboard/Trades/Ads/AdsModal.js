@@ -416,7 +416,7 @@ export const selectCurrency = (self,styles) => <Modal
     <ScrollView
         showsVerticalScrollIndicator={false}
         bounces={false}
-        style={{ marginHorizontal: 50 }}>
+        style={{ marginHorizontal: 30 }}>
         <Text style={[styles.label,styles.htmAdFilterLabel]}>Sell</Text>
         <View style={[styles.requestRowInputBox,{flexDirection: 'row', marginTop:5}]}>
             <View style={styles.requestRowAmtLabelBox}>

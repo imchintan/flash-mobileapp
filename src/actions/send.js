@@ -86,8 +86,8 @@ export const rawTransaction = (amount=0, custom_fee=0, receiver_public_address='
                         nonce       : d.tx_count,
                         to          : receiver_public_address,
                         value       : utils.ethToWei(amount),
-                        gasPrice    : params.satoshiPerByte,
-                        gasLimit    : params.bcMedianTxSize,
+                        gasPrice    : trade_id>0? params.trade_satoshiPerByte: params.satoshiPerByte,
+                        gasLimit    : trade_id>0? params.trade_bcMedianTxSize: params.bcMedianTxSize,
                         chainId     : 0  //will be changed while signing
                     };
                     let tx = wallet.signEtherBasedTx(rawTx, currency_type);

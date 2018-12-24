@@ -472,27 +472,29 @@ export const getSharingTransactionDetail = (transaction_id) => {
 export const setBcMedianTxSize = (currency_type=null) => {
     return (dispatch,getState) => {
         let params = getState().params;
+        dispatch({
+            type: types.CUSTOM_ACTION,
+            payload: {
+                tx_size_loading:true
+            }
+        });
+        let payload = {tx_size_loading:false};
         apis.bcMedianTxSize(params.profile.auth_version, params.profile.sessionToken,
             currency_type || params.currency_type).then((d)=>{
             if(d.rc !== 1){
-                dispatch({
-                    type: types.SET_BC_MEDIAN_TX_SIZE,
-                    payload: {
-                        errorMsg:d.reason,
-                    }
-                });
+                payload['errorMsg'] = d.reason;
             }else{
-                payload = {};
                 payload[`${currency_type?'trade_':''}bcMedianTxSize`] = d.median_tx_size;
-                dispatch({
-                    type: types.SET_BC_MEDIAN_TX_SIZE,
-                    payload
-                });
             }
+            dispatch({
+                type: types.SET_BC_MEDIAN_TX_SIZE,
+                payload
+            });
         }).catch(e=>{
             dispatch({
                 type: types.SET_BC_MEDIAN_TX_SIZE,
                 payload: {
+                    tx_size_loading:false,
                     errorMsg: e.message,
                 }
             });
@@ -534,9 +536,15 @@ export const setThresholdAmount = (currency_type=null) => {
 export const setSatoshiPerByte = (currency_type=null) => {
     return (dispatch,getState) => {
         let params = getState().params;
+        dispatch({
+            type: types.CUSTOM_ACTION,
+            payload: {
+                fee_loading:true
+            }
+        });
+        let payload = {fee_loading:false};
         apis.getSatoshiPerByte(currency_type || params.currency_type)
         .then((satoshiPerByte)=>{
-            let payload = {};
             payload[`${currency_type?'trade_':''}satoshiPerByte`] = satoshiPerByte;
             dispatch({
                 type: types.SET_SATOSHI_PER_BYTE,
@@ -546,6 +554,7 @@ export const setSatoshiPerByte = (currency_type=null) => {
             dispatch({
                 type: types.SET_SATOSHI_PER_BYTE,
                 payload: {
+                    fee_loading:true,
                     errorMsg: e.message,
                 }
             });
@@ -556,20 +565,27 @@ export const setSatoshiPerByte = (currency_type=null) => {
 export const setFixedTxnFee = (currency_type=null) => {
     return (dispatch,getState) => {
         let params = getState().params;
+        dispatch({
+            type: types.CUSTOM_ACTION,
+            payload: {
+                fee_loading:true
+            }
+        });
+        let payload = {fee_loading:false};
         apis.fixedTxnFee(params.profile.auth_version, params.profile.sessionToken,
             currency_type || params.currency_type).then((d)=>{
             if(d.rc == 1){
-                let payload = {};
                 payload[`${currency_type?'trade_':''}fixedTxnFee`] = d.fixed_txn_fee;
-                dispatch({
-                    type: types.SET_FIXED_TXN_FEE,
-                    payload
-                });
             }
+            dispatch({
+                type: types.SET_FIXED_TXN_FEE,
+                payload
+            });
         }).catch(e=>{
             dispatch({
                 type: types.SET_FIXED_TXN_FEE,
                 payload: {
+                    fee_loading: false,
                     errorMsg: e.message,
                 }
             });
@@ -580,21 +596,28 @@ export const setFixedTxnFee = (currency_type=null) => {
 export const setEtherGasValues = (currency_type=null) => {
     return (dispatch,getState) => {
         let params = getState().params;
+        dispatch({
+            type: types.CUSTOM_ACTION,
+            payload: {
+                fee_loading:true
+            }
+        });
+        let payload = {fee_loading:false};
         apis.getEtherGasValues(params.profile.auth_version, params.profile.sessionToken,
             currency_type || params.currency_type).then((d)=>{
             if(d.rc == 1 && d.gas_price && d.gas_limit){
-                let payload = {};
                 payload[`${currency_type?'trade_':''}satoshiPerByte`] = parseInt(d.gas_price);
                 payload[`${currency_type?'trade_':''}bcMedianTxSize`] = parseInt(d.gas_limit);
-                dispatch({
-                    type: types.SET_ETHER_GAS_VALUES,
-                    payload
-                });
             }
+            dispatch({
+                type: types.SET_ETHER_GAS_VALUES,
+                payload
+            });
         }).catch(e=>{
             dispatch({
                 type: types.SET_ETHER_GAS_VALUES,
                 payload: {
+                    fee_loading: false,
                     errorMsg: e.message,
                 }
             });

@@ -86,6 +86,7 @@ class ChatRoom extends Component < {} > {
                     fiat_amount,
                     fiat_amount_fee
                 });
+                this.props.getWalletsByEmail(currency_type);
                 this.props.searchWallet((this.props.htm_trade.status == 4?
                     this.props.htm_trade.second_payer_email:this.props.htm_trade.first_payer_email),
                      false, currency_type);
@@ -170,6 +171,11 @@ class ChatRoom extends Component < {} > {
             .filter(bal => bal.currency_type == this.state.currency_type)[0].amt;
         if(this.state.currency_type == constants.CURRENCY_TYPE.FLASH){
             balance = utils.satoshiToFlash(balance);
+        }
+        if(amount > balance){
+            return Toast.errorTop("You do not have enough " +
+            utils.getCurrencyUnitUpcase(this.state.currency_type) +
+            " to make this payment");
         }
         if((amount+fee) > balance){
             return Toast.errorTop("You do not have enough fee to make this payment");
@@ -773,7 +779,9 @@ class ChatRoom extends Component < {} > {
                         </View>
                     </View>
                 </Modal>
-                <Loader show={this.props.loading} style={{marginTop:55}} />
+                <Loader show={this.props.loading ||
+                    this.props.tx_size_loading ||
+                    this.props.fee_loading} style={{marginTop:55}} />
             </View>
         );
     }
@@ -782,6 +790,8 @@ class ChatRoom extends Component < {} > {
 function mapStateToProps({params}) {
     return {
         loading: params.loading,
+        tx_size_loading: params.tx_size_loading || false,
+        fee_loading: params.fee_loading || false,
         nightMode: params.nightMode,
         htm: params.htm || {},
         htm_trade: params.htm_trade || null,

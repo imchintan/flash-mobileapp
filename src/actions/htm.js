@@ -1,7 +1,9 @@
 import {
-    AsyncStorage,
-    FToast as Toast
+    AsyncStorage
 } from 'react-native';
+import {
+    FToast as Toast
+} from '@components';
 import * as types from '@actions/types';
 import * as chat from '@actions/chat';
 import * as apis from '@flashAPIs';
