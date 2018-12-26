@@ -59,6 +59,10 @@ class ChatRoom extends Component < {} > {
             this.props.chatRoomChannel.ty == 2 && (!prevProps.chatRoomChannel ||
             (this.props.chatRoomChannel.s != prevProps.chatRoomChannel.s))){
             this.props.getHTMTrade(this.props.chatRoomChannel.ti, true);
+            if(this.props.forcePayment && this.props.chatRoomChannel.ty != 4 &&
+                this.props.chatRoomChannel.ty != 5){
+                    this.props.customAction({forcePayment: false});
+            }
         }
 
         if(this.props.htm_trade !== null && this.props.htm_trade !== prevProps.htm_trade){
@@ -127,8 +131,17 @@ class ChatRoom extends Component < {} > {
 
     componentDidMount() {
         this.mount = true;
-        if(this.props.chatRoomChannel && this.props.chatRoomChannel.ai)
+        if(this.props.chatRoomChannel && this.props.chatRoomChannel.ai){
             this.props.getHTMTrade(this.props.chatRoomChannel.ti);
+            if(this.props.forcePayment) Alert.alert(
+                'Paynow #'+this.props.chatRoomChannel.name,
+                this.props.htm.display_name +" paid for this trade, now its your turn to pay.",
+                [
+                    {text: 'OK', onPress: () => {}},
+                ],
+                { cancelable: true }
+            );
+        }
         this.props.getChatMessages();
         this.props.markAsRead();
         Chat.addListener('nm',this._chatHandler);
@@ -146,10 +159,13 @@ class ChatRoom extends Component < {} > {
                     chatRoomChannel: null
                 }
             })
+
+        this.props.checkTradingPayment();
     }
 
     backHandler(){
-        this.props.navigation.goBack();
+        if(!this.props.forcePayment)
+            this.props.navigation.goBack();
         return this.mount;
     }
 
@@ -459,12 +475,13 @@ class ChatRoom extends Component < {} > {
         return (
             <View style={{flex:1, paddingTop: 55}}>
                 <Header>
+                    {!this.props.forcePayment &&
                     <HeaderLeft>
                         <TouchableOpacity>
                             <Icon onPress={this.backHandler.bind(this)}
                                 style={styles.headerBackIcon} name='angle-left'/>
                         </TouchableOpacity>
-                    </HeaderLeft>
+                    </HeaderLeft>}
                     <TouchableOpacity style={[styles.chatHeaderTitleBox,{
                         flexDirection: 'row',
                     }]} onPress={()=>this.props.navigation.navigate('TradeDetail',{isBack:true})}>
@@ -811,6 +828,7 @@ function mapStateToProps({params}) {
         decryptedWallet: params.trade_decryptedWallet || null,
         sendTxnSuccess: params.sendTxnSuccess || null,
         max_fees: params.max_fees,
+        forcePayment: params.forcePayment || false,
     };
 }
 

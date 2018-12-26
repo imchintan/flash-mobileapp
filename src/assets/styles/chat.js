@@ -177,7 +177,7 @@ const styles = StyleSheet.create({
         justifyContent: 'center',
         alignItems: 'center',
         bottom: 1,
-        width: '60%',
+        width: '65%',
         height:'100%',
         position: 'absolute',
         left: '20%'
@@ -185,7 +185,8 @@ const styles = StyleSheet.create({
     chatHeaderTitle:{
         fontSize: 22,
         fontWeight: '500',
-        color: '#FFFFFF'
+        color: '#FFFFFF',
+        maxWidth: width - 195,
     },
     chatHeaderSubTitle:{
         fontSize: 14,

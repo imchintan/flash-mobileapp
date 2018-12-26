@@ -78,6 +78,7 @@ export const goToChatRoom = (username, cb, channelId=null, n=0) => {
             dispatch({
                 type: types.GO_TO_CHAT_ROOM,
                 payload: {
+                    forcePayment: false,
                     chatMessages:[],
                     htm_trade: null,
                     chatRoom,
@@ -110,7 +111,7 @@ export const checkTradingFeedBack = () => {
                 || typeof ch.f[params.htmProfile.username] == 'undefined'));
             return feedBackRemains.length
         });
-        if(hasFeedBackRemainChatRooms.length == 0) return;
+        if(hasFeedBackRemainChatRooms.length == 0) return dispatch(checkTradingPayment());
         let chatRoom = hasFeedBackRemainChatRooms[0];
         let username = (chatRoom.m[0] == params.profile.username)?
             chatRoom.m[1]:chatRoom.m[0];
@@ -125,6 +126,7 @@ export const checkTradingFeedBack = () => {
             dispatch({
                 type: types.CHECK_TRADING_FEEDBACK,
                 payload: {
+                    forcePayment: false,
                     chatMessages:[],
                     htm_trade: null,
                     isLoadAllPreviousMesages: false,
@@ -142,6 +144,59 @@ export const checkTradingFeedBack = () => {
     }
 }
 
+export const checkTradingPayment = () => {
+    return (dispatch,getState) => {
+        let params = getState().params;
+        let chatRooms = params.chatRooms || [];
+
+        if(!params.htmProfile)
+            return setTimeout(()=>dispatch(checkTradingPayment),500);
+
+        let hasPaymentRemain = chatRooms.filter((chatRoom)=>{
+            let paymentRemains = chatRoom.c.filter((ch)=>(ch.a && ch.ty == 2 && ch.s == 5
+                && ch.ntp == params.htmProfile.username));
+            return paymentRemains.length
+        });
+        if(hasPaymentRemain.length == 0) return;
+        let chatRoom = hasPaymentRemain[0];
+        let username = (chatRoom.m[0] == params.profile.username)?
+            chatRoom.m[1]:chatRoom.m[0];
+        if(!params.TradesNavigation)
+            params.DashboardNavigation.navigate('Trades');
+        let _cb = () =>{
+            params = getState().params;
+            let hasPaymentRemain = chatRoom.c.filter((ch)=>(ch.a && ch.ty == 2 && ch.s == 5
+                && ch.ntp == params.htmProfile.username));
+            let chatRoomChannel = hasPaymentRemain.length > 0?hasPaymentRemain[0]:null;
+            if(!chatRoomChannel || (params.chatRoomChannel &&
+                params.chatRoomChannel.id == chatRoomChannel.id)) return ;
+            dispatch({
+                type: types.CHECK_TRADING_PAYMENT,
+                payload: {
+                    loading: false,
+                    forcePayment: true,
+                    isLoadAllPreviousMesages: false,
+                    chatMessages:[],
+                    htm_trade: null ,
+                    channelFeedbacks:null,
+                    chatRoom,
+                    chatRoomChannel,
+                    search_wallet: null,
+                    trade_bcMedianTxSize: 250,
+                    trade_satoshiPerByte: 20,
+                    trade_thresholdAmount: 0.00001,
+                    trade_fixedTxnFee: 0.00002,
+                    trade_decryptedWallet: null,
+                }
+            });
+            params.TradesNavigation.navigate('ChatRoom');
+        }
+        if(!params.htm || params.htm.username !== username)
+            dispatch(htm.getHTMDetail(username,_cb));
+        else _cb();
+    }
+}
+
 export const selectChatRoom = (username, chatRoom, navigate) => {
     return (dispatch,getState) => {
         let params = getState().params;
@@ -149,19 +204,32 @@ export const selectChatRoom = (username, chatRoom, navigate) => {
             let hasFeedBackRemain = chatRoom.c.filter((ch)=>((!ch.a && ch.ty != 2) || ch.s == 7)
             && (!ch.f || typeof ch.f[params.htmProfile.username] == 'undefined'));
             let chatRoomChannel = hasFeedBackRemain.length > 0?hasFeedBackRemain[0]:null;
+            let hasPaymentRemain = [];
+            if(chatRoomChannel == null){
+                hasPaymentRemain = chatRoom.c.filter((ch)=>(ch.a && ch.ty == 2 && ch.s == 5
+                    && ch.ntp == params.htmProfile.username));
+                chatRoomChannel = hasPaymentRemain.length > 0?hasPaymentRemain[0]:null;
+            }
             dispatch({
                 type: types.SELECT_CHAT_ROOM,
                 payload: {
+                    forcePayment: (hasPaymentRemain.length > 0),
                     chatMessages:[],
                     htm_trade: null,
                     channelFeedbacks:null,
                     isLoadAllPreviousMesages: false,
                     chatRoom,
                     chatRoomChannel,
-                    forceFeedBack: (chatRoomChannel)
+                    forceFeedBack: (chatRoomChannel),
+                    search_wallet: null,
+                    trade_bcMedianTxSize: 250,
+                    trade_satoshiPerByte: 20,
+                    trade_thresholdAmount: 0.00001,
+                    trade_fixedTxnFee: 0.00002,
+                    trade_decryptedWallet: null,
                 }
             });
-            navigate(chatRoomChannel?'FeedBack':'ChatChannel');
+            navigate(chatRoomChannel?(hasFeedBackRemain.length?'FeedBack':'ChatRoom'):'ChatChannel');
             dispatch(updateRoomMemberDetail());
         }
         if(!params.htm || params.htm.username !== username)
@@ -176,6 +244,7 @@ export const selectChatRoomChannel = (chatRoomChannel, navigate) => {
         dispatch({
             type: types.SELECT_CHAT_ROOM_CHANNEL,
             payload: {
+                forcePayment: false,
                 isLoadAllPreviousMesages:false,
                 chatMessages:[],
                 htm_trade: null,
@@ -232,6 +301,7 @@ export const createChannel = (receiver_username,cb=null) => {
                     type: types.CREATE_CHAT_CHANNEL,
                     payload: {
                         loading: false,
+                        forcePayment: false,
                         isLoadAllPreviousMesages: false,
                         chatMessages:[],
                         htm_trade: null,

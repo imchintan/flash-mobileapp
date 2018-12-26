@@ -43,6 +43,10 @@ class ChatHistory extends Component < {} > {
         };
     }
 
+    componentDidMount(){
+        this.props.checkTradingPayment()
+    }
+
     render() {
         const styles = (this.props.nightMode?require('@styles/nightMode/chat'):require('@styles/chat'));
         let chatRooms = (this.props.chatRooms || []);

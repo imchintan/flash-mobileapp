@@ -855,6 +855,7 @@ export const getActiveHTMTrade = (ad_id,cb=null) => {
                     type: types.GET_ACTIVE_HTM_TRADE,
                     payload: {
                         loading: false,
+                        forcePayment: false,
                         isLoadAllPreviousMesages: false,
                         chatMessages:[],
                         htm_trade: null,
@@ -890,6 +891,7 @@ export const openTrade = (htm_trade,cb=null) => {
                 payload = {
                     loading: false,
                     isLoadAllPreviousMesages: false,
+                    forcePayment: false,
                     chatMessages:[],
                     htm_trade: null,
                     channelFeedbacks:null,
@@ -919,6 +921,7 @@ export const openTrade = (htm_trade,cb=null) => {
                         let chatRoomChannel = chatRoom.c[chatRoomChannelIdx];
                         payload = {
                             loading: false,
+                            forcePayment: false,
                             isLoadAllPreviousMesages: false,
                             chatMessages:[],
                             htm_trade: null,
@@ -984,6 +987,7 @@ export const addHTMTrade = (data, message, cb=null) => {
                     type: types.ADD_HTM_TRADE,
                     payload: {
                         loading: false,
+                        forcePayment: false,
                         isLoadAllPreviousMesages: false,
                         chatMessages:[],
                         htm_trade: null,
