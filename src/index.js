@@ -30,8 +30,8 @@ import notifcationHelper from '@helpers/notifcationHelper';
 import firebase from 'react-native-firebase';
 import type { RemoteMessage } from 'react-native-firebase';
 
-// import * as config from './config';
-// console.log(config);
+import * as config from './config';
+console.log(config);
 
 console.disableYellowBox = true;
 

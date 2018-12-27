@@ -56,7 +56,7 @@ class TradingDetail extends Component < {} > {
                         </View>
                     )}
                 </View>:null}
-                <View style={styles.htmProfileContent}>
+                <View style={[styles.htmProfileContent,{marginBottom: -10}]}>
                     <View style={{
                         flexDirection: 'row',
                         justifyContent: 'space-between',
@@ -152,6 +152,25 @@ class TradingDetail extends Component < {} > {
                         </View>
                     )})}
                 </View>
+                {this.props.htm.fiat_currencies.length>0?
+                <View style={styles.htmProfileContent}>
+                    <Text style={styles.label}>Accepted Fiat Currenc{
+                        this.props.htm.fiat_currencies.length == 1?'y':'ies'
+                    }</Text>
+                    <View style={styles.hr}/>
+                    <View style={[styles.selectedFiatCurrencies,{marginTop:0,marginBottom:20}]}>
+                        {this.props.htm.fiat_currencies.map((cur,idx) =>
+                            <View key={'_selected_fiat_'+idx+'_'+cur}
+                                style={styles.selectedFiatCurrency}>
+                                <Text style={[styles.selectedFiatCurrencyName,{
+                                    paddingLeft:5,
+                                }]}>
+                                    {cur.currency_code}
+                                </Text>
+                            </View>
+                        )}
+                    </View>
+                </View>:null}
                 <Modal
                     transparent={true}
                     animationType="slide"

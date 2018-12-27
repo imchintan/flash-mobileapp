@@ -39,6 +39,7 @@ import {ActionCreators} from '@actions';
 import * as utils from '@lib/utils';
 import * as constants from '@src/constants';
 import { PROFILE_URL } from '@src/config';
+import * as tm from './TradeModal';
 
 const { width, height } = Dimensions.get('window');
 
@@ -76,6 +77,7 @@ class FindTrades extends Component < {} > {
                 buy_sell_at_to: 30,
                 upto_distance: 1000,
                 currency_types: {},
+                fiat_currency_codes: [],
                 onlineOnly: false,
             }
         };
@@ -141,6 +143,7 @@ class FindTrades extends Component < {} > {
             upto_distance: 1000,
             currency_types: {},
             onlineOnly: false,
+            fiat_currency_codes: []
         };
         this.setState({filter, showFilter: false});
         this.props.findNearByHTMs(filter, true);
@@ -343,8 +346,10 @@ class FindTrades extends Component < {} > {
                     </TouchableOpacity>
                 </Modal>}
                 {this.state.showFilter?<View style={styles.htmFilter}>
-                    <Icon style={styles.htmFilterArrow} name='sort-up'/>
-                    <View style={styles.htmFilterContent}>
+                <Icon style={styles.htmFilterArrow} name='sort-up'/>
+                    <ScrollView style={[styles.htmFilterContent,{
+                        height: height - 90,
+                    }]}>
                         <View style={styles.htmFilterRow1}>
                             <View style={styles.htmFilterWantToTitle}>
                                 <Text style={styles.htmFilterWantToLabel}>I want to?</Text>
@@ -515,12 +520,42 @@ class FindTrades extends Component < {} > {
                                 </View>
                             )}
                         </View>
+                        <View style={styles.htmFilterRow1}>
+                            <View style={styles.htmFilterWantToTitle}>
+                                <Text style={styles.htmFilterWantToLabel}>Fiat Currencies</Text>
+                                <Text style={styles.htmFilterWantToVal}>
+                                    {this.state.filter.fiat_currency_codes
+                                        .length == 0?'All':''}
+                                </Text>
+                            </View>
+                            <View style={[styles.hr,{marginBottom:10}]}/>
+                            <TouchableOpacity style={styles.selectFiatCurrency}
+                                onPress={()=>this.setState({selectFiatCurrency:true})}>
+                                <Text style={styles.selectFiatCurrencyText}>Select Fiat Currencies</Text>
+                            </TouchableOpacity>
+                            <View style={[styles.selectedFiatCurrencies,{marginLeft:18}]}>
+                            {this.state.filter.fiat_currency_codes.map((cur,idx) =>
+                                <View key={'_selected_fiat_'+idx+'_'+cur} style={styles.selectedFiatCurrency}>
+                                    <Text style={styles.selectedFiatCurrencyName}>{cur}</Text>
+                                    <TouchableOpacity style={styles.deselectedFiatCurrencyBtn}
+                                        onPress={()=>{
+                                            let filter = this.state.filter;
+                                            filter.fiat_currency_codes.remove(cur);
+                                            this.setState({filter});
+                                        }}>
+                                        <Text style={styles.deselectedFiatCurrencyBtnText}>X</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            )}
+                            </View>
+                        </View>
                         <View style={[styles.htmFilterRow1, {
                             flexDirection: 'row',
                             alignSelf: 'center',
                             justifyContent: 'space-between',
                             width: 180,
                             marginTop: 10,
+                            marginBottom: 40
                         }]}>
                             <Button value={'Reset'}
                                 style={styles.htmFilterBtn}
@@ -533,7 +568,7 @@ class FindTrades extends Component < {} > {
                                 textstyle={styles.htmFilterBtnText}
                                 onPress={this.findNearByHTMs.bind(this)}/>
                         </View>
-                    </View>
+                    </ScrollView>
                 </View>:null}
                 <Loader show={this.props.loading || this.state.loading} />
                 <Modal
@@ -573,6 +608,7 @@ class FindTrades extends Component < {} > {
                         </View>
                     </View>
                 </Modal>
+                {tm.selectFiatCurrency(this,styles,true)}
             </Container>
         );
     }
