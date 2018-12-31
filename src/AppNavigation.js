@@ -34,8 +34,8 @@ const routeConfig = {
     initialRouteName: 'Login',
     headerMode: 'none',
     navigationOptions: {
-     gesturesEnabled: false,
-   }
+        gesturesEnabled: false,
+    }
 };
 
 const AppNavigation = createStackNavigator(routes,routeConfig);

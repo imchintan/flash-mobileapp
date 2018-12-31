@@ -54,6 +54,7 @@ class Home extends Component<{}> {
         }else{
             this.props.customAction({isNewSession:false});
             constants.SOUND.SUCCESS.play();
+            this.props.getChatRooms();
         }
         setTimeout(this.refreshingHome.bind(this),100);
     }
@@ -67,7 +68,12 @@ class Home extends Component<{}> {
         if ((!!this.props.pin && !this.props.lockApp && this.state.appState.match(/inactive|background/) && nextAppState === 'active')){
             if((this.state.backgroundStateTime + 1000*60*5) < new Date().getTime()){
                 this.props.navigation.navigate('Lock');
+            }else{
+                this.props.postAction();
             }
+        }
+        if(this.state.appState.match(/inactive|background/) && nextAppState === 'active'){
+            this.props.preAction();
         }
         if(nextAppState !== 'active'){
             this.setState({backgroundStateTime: new Date().getTime()});
@@ -149,29 +155,35 @@ class Home extends Component<{}> {
                                 </View>
                             </TouchableOpacity>
                         )}
+                        <Text style={styles.label}>Features</Text>
+                        <View style={styles.hr}/>
+                        <TouchableOpacity style={styles.featuresTab}
+                            onPress={()=>this.props.navigation.navigate('Trades')}>
+                            <View style={styles.adminTabTitle}>
+                                <Icon style={styles.featuresTabTitleIcon} name='globe'/>
+                                <Text style={styles.featuresTabTitleLabel}>P2P Marketplace</Text>
+                            </View>
+                            <Icon style={styles.featuresTabRightIcon} name='angle-right'/>
+                        </TouchableOpacity>
                         {false && this.props.module_status && this.props.module_status.wagering &&
-                        <View>
-                            <Text style={styles.label}>Features</Text>
-                            <View style={styles.hr}/>
-                            <TouchableOpacity style={styles.featuresTab}
-                                onPress={()=>{
-                                    if(this.props.location.country_code !== 'US')
-                                        return this.props.navigation.navigate('Wagering');
-                                    Alert.alert(
-                                        'Not Available!',
-                                        'Wagering feature is currently not available in your country.',
-                                        [
-                                            {text: 'OK'},
-                                        ],
-                                    )
-                                }}>
-                                <View style={styles.adminTabTitle}>
-                                    <Icon style={styles.featuresTabTitleIcon} name='cubes'/>
-                                    <Text style={styles.featuresTabTitleLabel}>Wagering</Text>
-                                </View>
-                                <Icon style={styles.featuresTabRightIcon} name='angle-right'/>
-                            </TouchableOpacity>
-                        </View>}
+                        <TouchableOpacity style={styles.featuresTab}
+                            onPress={()=>{
+                                if(this.props.location.country_code !== 'US')
+                                    return this.props.navigation.navigate('Wagering');
+                                Alert.alert(
+                                    'Not Available!',
+                                    'Wagering feature is currently not available in your country.',
+                                    [
+                                        {text: 'OK'},
+                                    ],
+                                )
+                            }}>
+                            <View style={styles.adminTabTitle}>
+                                <Icon style={styles.featuresTabTitleIcon} name='cubes'/>
+                                <Text style={styles.featuresTabTitleLabel}>Wagering</Text>
+                            </View>
+                            <Icon style={styles.featuresTabRightIcon} name='angle-right'/>
+                        </TouchableOpacity>}
                         <Text style={styles.label}>Admin</Text>
                         <View style={styles.hr}/>
                         <TouchableOpacity style={styles.adminTab}
@@ -282,11 +294,8 @@ class Home extends Component<{}> {
 
 function mapStateToProps({params}) {
     return {
-        isLoggedIn: params.isLoggedIn,
         profile: params.profile,
         loading: params.balanceLoader || false,
-        errorMsg: params.errorMsg || null,
-        successMsg: params.successMsg || null,
         balances: params.balances,
         fiat_currency: params.fiat_currency,
         total_fiat_balance: params.total_fiat_balance,
@@ -296,6 +305,7 @@ function mapStateToProps({params}) {
         lockApp: params.lockApp || false,
         pin: params.pin,
         nightMode: params.nightMode,
+        chatNotification: params.chatNotification || null,
     };
 }
 

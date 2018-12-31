@@ -212,7 +212,7 @@ export const bcMedianTxSize = (auth_version, sessionToken='', currency_type = CU
  * @param  {Number} [currency_type=2] [description]
  * @return {Promise}                  [description]
  */
-export const thresholdAmount = (auth_version, sessionToken='', currency_type = CURRENCY_TYPE.BTC) => {
+export const thresholdAmount = (auth_version, sessionToken='', currency_type = '') => {
     return new Promise((resolve,reject) => {
         fetch(API_URL+'/threshold-amount?currency_type='+currency_type,{
             method: 'GET',
@@ -297,6 +297,33 @@ export const getEtherGasValues = (auth_version, sessionToken='', currency_type =
             }
         })
         .then(json => resolve(json))
+        .catch(e =>{
+            console.log(e);
+            reject('Something went wrong!')
+        });
+    });
+}
+
+/**
+ * Get Max Fees
+ * @param  {Number} auth_version        API authentication version
+ * @param  {String} sessionToken        User authorization token
+ * @return {Promise}
+ */
+export const getMaxFees = (auth_version, sessionToken) => {
+    return new Promise((resolve,reject) => {
+        let params = 'appversion='+APP_VERSION +'&res='+RESOURCE;
+        fetch(`${API_URL}/max-fees?${params}`,{
+            method: 'GET',
+            body: null,
+            headers: {
+               'Content-Type': 'application/json; charset=utf-8',
+               'authorization': sessionToken,
+               'fl_auth_version': auth_version
+            }
+        })
+        .then(res => res.json())
+        .then(json =>resolve(json))
         .catch(e =>{
             console.log(e);
             reject('Something went wrong!')

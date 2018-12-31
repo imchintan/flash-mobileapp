@@ -1,18 +1,34 @@
 import {
     AsyncStorage
 } from 'react-native';
-import * as types from '@actions/types';
-import apis from '@flashAPIs';
-import * as utils from '@lib/utils';
 import * as constants from '@src/constants';
-import * as exchanges from '@actions/exchanges';
-import { _logout } from '@actions/navigation';
-import { getActiveWallet } from '@actions/send';
+import * as apis from '@flashAPIs';
+import * as utils from '@lib/utils';
+import * as types from '@actions/types';
 import * as txns from '@actions/transactions';
 import * as reqs from '@actions/request';
 import * as send from '@actions/send';
+import * as htm from '@actions/htm';
+import * as chat from '@actions/chat';
 import * as sharing from '@actions/sharing';
+import * as exchanges from '@actions/exchanges';
 import * as wagering from '@actions/wagering';
+import { _logout } from '@actions/navigation';
+import Chat from '@helpers/chatHelper';
+import notifcationHelper from '@helpers/notifcationHelper';
+
+export const preAction = () => {
+    return (dispatch,getState) => {
+        dispatch(chat.getChatMessages(true));
+    }
+}
+
+export const postAction = () => {
+    return (dispatch,getState) => {
+        dispatch(chat.getChatRooms());
+        notifcationHelper.chatAction();
+    }
+}
 
 export const getBalance = (refresh = false) => {
     return (dispatch,getState) => {
@@ -137,7 +153,7 @@ export const getBalanceV2 = (currency_type=constants.CURRENCY_TYPE.FLASH ,refres
                         (currency_type === constants.CURRENCY_TYPE.FLASH?
                             utils.flashNFormatter(utils.satoshiToFlash(d.balance).toFixed(10)):
                             utils.flashNFormatter(d.balance.toFixed(8))) + ' ' +
-                            utils.getCurrencyUnitUpcase( params.currency_type)):null
+                            utils.getCurrencyUnitUpcase( currency_type)):null
                     }
                 });
             }
@@ -189,6 +205,17 @@ export const getProfile = () => {
                         profile
                     }
                 });
+                Chat.reconnect(params.profile.auth_version, params.profile.sessionToken)
+                .then((con)=>{
+                    Chat.addListener('ru',(d)=>{
+                        dispatch(chat.updateChatRoom(d))
+                    });
+                })
+                .catch(e=>console.log(e))
+                dispatch(htm.getHTMProfile());
+                dispatch(txns.getMaxFees());
+                dispatch(txns.getThresholdValues());
+                dispatch(chat.savePushToken());
                 dispatch(wagering.getOracleProfileAccessList());
                 dispatch(getFiatCurrencyRate());
                 dispatch(getModulesStatus());
@@ -213,6 +240,7 @@ export const getProfile = () => {
                 constants.SOUND.ERROR.play();
             }
         }).catch(e=>{
+            console.log(e);
             dispatch({
                 type: types.GET_PROFILE,
                 payload: {
@@ -524,11 +552,12 @@ export const setRecoveryKeys = (data) => {
     }
 }
 
-export const getWalletsByEmail = () => {
+export const getWalletsByEmail = (currency_type=null) => {
     return (dispatch,getState) => {
         let params = getState().params;
+        currency_type = (currency_type ||  params.currency_type);
         apis.getWalletsByEmail(params.profile.auth_version, params.profile.sessionToken,
-            params.profile.email, params.currency_type).then((d)=>{
+            params.profile.email, currency_type).then((d)=>{
             if(d.rc !== 1){
                 dispatch({
                     type: types.GET_WALLET_ADDRESS,
@@ -537,7 +566,7 @@ export const getWalletsByEmail = () => {
                     }
                 });
             }else if(d.results.length > 0){
-                let wallet = getActiveWallet(d.results, params.currency_type);
+                let wallet = send.getActiveWallet(d.results, currency_type);
                 if(wallet)
                     dispatch({
                         type: types.GET_WALLET_ADDRESS,
@@ -557,12 +586,12 @@ export const getWalletsByEmail = () => {
     }
 }
 
-export const searchWallet = (term, loading=false) => {
+export const searchWallet = (term, loading=false, currency_type = null) => {
     return (dispatch,getState) => {
         if(loading) dispatch({ type: types.LOADING_START });
         let params = getState().params;
         apis.searchWallet(params.profile.auth_version, params.profile.sessionToken,
-            params.currency_type, term).then((d)=>{
+            currency_type || params.currency_type, term).then((d)=>{
             if(d.rc !== 1){
                 dispatch({
                     type: types.SEARCH_WALLET,
@@ -728,46 +757,66 @@ export const getFiatCurrencyRate = (loading=false) =>{
                 payload: {balanceLoader:true}
             })
 
-        const cb = (_fiat_currency) => {
-            let params = getState().params;
-            params.balances.map(async bal => {
-                if(loading)
-                    dispatch({
+        const cb = (fiat_currency) => {
+            if(loading) dispatch({
+                type: types.CUSTOM_ACTION,
+                payload: {balanceLoader:true}
+            })
+            let coinGeckoids = Object.values(constants.COIN_GECKO_CURRENCY_IDS).join(',');
+            apis.getFiatCurrencyRateV2(coinGeckoids,fiat_currency).then((d)=>{
+                if(!d){
+                    if(loading) dispatch({
                         type: types.CUSTOM_ACTION,
-                        payload: {balanceLoader:true}
+                        payload: {balanceLoader:false}
                     })
-                await apis.getFiatCurrencyRate(constants.COIN_GECKO_CURRENCY_IDS[bal.currency_type]).then((d)=>{
-                    if(!d) return;
-                    params = getState().params;
-                    let per_value = d.toFixed(3);
-                    if(_fiat_currency !== params.fiat_currency){
-                        per_value *= (params.fiat_per_usd || 0)
+                    return;
+                }
+                let params = getState().params;
+                let balances = params.balances;
+                let fiat_balance = params.fiat_balance;
+                let fiat_per_value = params.fiat_per_value;
+                balances.map((bal,idx) => {
+                    bal.per_usd = d[constants.COIN_GECKO_CURRENCY_IDS[bal.currency_type]].usd;
+                    bal.per_btc = d[constants.COIN_GECKO_CURRENCY_IDS[bal.currency_type]].btc;
+                    let per_value = bal.per_usd;
+                    if(fiat_currency !== constants.FIAT_CURRENCY.USD){
+                        if(!!d[constants.COIN_GECKO_CURRENCY_IDS[bal.currency_type]][fiat_currency])
+                            per_value = d[constants.COIN_GECKO_CURRENCY_IDS[bal.currency_type]][fiat_currency];
+                        else per_value *= (params.fiat_per_usd || 0);
                     }
-                    let balances = params.balances;
-                    let idx  =  balances.findIndex(b => b.currency_type === bal.currency_type);
+                    per_value = Number(per_value.toFixed(4));
                     let balance = (params.currency_type == bal.currency_type)?
-                        params.balance:balances[idx].amt;
+                        params.balance:bal.amt;
 
-                    balances[idx].amt2 = utils.toOrginalNumber(
+                    bal.amt2 = utils.toOrginalNumber(
                         utils.cryptoToOtherCurrency(balance, Number(per_value),
                          (bal.currency_type === constants.CURRENCY_TYPE.FLASH?10:0)));
-                    balances[idx].per_value = per_value;
+                    bal.per_value = per_value;
 
-                    let fiat_balance = (bal.currency_type == params.currency_type)?balances[idx].amt2:params.fiat_balance;
-                    let fiat_per_value = (bal.currency_type == params.currency_type)?balances[idx].per_value:params.fiat_per_value;
-                    let total_fiat_balance = 0;
-                    balances.map(bal => (total_fiat_balance += bal.amt2));
-                    let payload = {
-                        balances,
-                        fiat_balance,
-                        fiat_per_value,
-                        total_fiat_balance
+                    balances[idx] = bal;
+                    if(bal.currency_type == params.currency_type){
+                        fiat_balance = bal.amt2;
+                        fiat_per_value = bal.per_value;
                     }
-                    dispatch({
-                        type: types.GET_COIN_MARKET_CAP_VALUE,
-                        payload
-                    });
-                }).catch(e=>console.log(e));
+                });
+                let total_fiat_balance = 0;
+                balances.map(bal => (total_fiat_balance += bal.amt2));
+                let payload = {
+                    balances,
+                    fiat_balance,
+                    fiat_per_value,
+                    total_fiat_balance
+                }
+                if(loading)
+                    payload.balanceLoader = false;
+
+                dispatch({
+                    type: types.GET_COIN_MARKET_CAP_VALUE,
+                    payload
+                });
+
+            }).catch(e=>{
+                console.log(e)
                 if(loading)
                     dispatch({
                         type: types.CUSTOM_ACTION,
@@ -776,9 +825,8 @@ export const getFiatCurrencyRate = (loading=false) =>{
             });
         }
         let fiat_currency = getState().params.fiat_currency;
-        let _fiat_currency = constants.FIAT_CURRENCY.USD;
         if(fiat_currency !== constants.FIAT_CURRENCY.USD)
-            dispatch(exchanges.getFiatExchangeRates(()=>cb(_fiat_currency)));
+            dispatch(exchanges.getFiatExchangeRates(()=>cb(fiat_currency)));
         else
             cb(fiat_currency);
     }

@@ -1,19 +1,20 @@
 import {
     AsyncStorage
 } from 'react-native';
-import * as types from '@actions/types'
-import * as send from '@actions/send'
-import * as utils from '@lib/utils'
-import * as constants from '@src/constants';
-import apis from '@flashAPIs'
-import Wallet from '@lib/wallet'
 import moment from 'moment-timezone';
+import * as constants from '@src/constants';
+import * as apis from '@flashAPIs';
+import * as send from '@actions/send';
+import * as types from '@actions/types';
+import * as account from '@actions/account';
+import * as chat from '@actions/chat';
+import * as utils from '@lib/utils';
+import Wallet from '@lib/wallet';
 import Premium from 'Premium';
 import secrets from 'secrets.js-grempe';
 import nacl from 'tweetnacl';
-import TouchID from 'react-native-touch-id'
-
-import { getFiatCurrencyRate, getProfile, changeFiatCurrency } from '@actions/account';
+import TouchID from 'react-native-touch-id';
+import Chat from '@helpers/chatHelper';
 
 export const init = () => {
     return async (dispatch,getState) => {
@@ -49,14 +50,29 @@ export const init = () => {
             payload.pin = pin.toString();
         }
 
+        let tradeCaution = await AsyncStorage.getItem('tradeCaution');
+        if(tradeCaution){
+            payload.tradeCaution = true;
+        }
+
         let wagerLegalDisclaimer = await AsyncStorage.getItem('wagerLegalDisclaimer');
         if(wagerLegalDisclaimer){
             payload.wagerLegalDisclaimer = true;
         }
 
+        let onlineTradeDisclaimer = await AsyncStorage.getItem('onlineTradeDisclaimer');
+        if(onlineTradeDisclaimer){
+            payload.onlineTradeDisclaimer = true;
+        }
+
         let nightMode = await AsyncStorage.getItem('nightMode');
         if(nightMode !== null){
             payload.nightMode = (nightMode == 'true');
+        }
+
+        let htmProfile = await AsyncStorage.getItem('htmProfile');
+        if(htmProfile !== null){
+            payload.htmProfile = JSON.parse(htmProfile);
         }
 
         let fiat_currency = await AsyncStorage.getItem('fiat_currency');
@@ -66,6 +82,7 @@ export const init = () => {
 
         if(!user){
             dispatch({ type: types.INIT, payload });
+            dispatch(chat.savePushToken());
         } else {
             payload.profile = JSON.parse(user);
             if(payload.profile.auth_version < 4){
@@ -84,23 +101,23 @@ export const init = () => {
                 type: types.LOGIN_SUCCESS,
                 payload
             });
-            dispatch(getProfile());
+            dispatch(account.getProfile());
             dispatch(getMyWallets(payload.profile));
-            dispatch(getFiatCurrencyRate(true));
+            dispatch(account.getFiatCurrencyRate(true));
         }
         utils.getLocation().then(res => {
             if(res.rc == 1){
                 let location = res.info;
-                dispatch({ type: types.SET_LOCATION, payload:{location} });
-                dispatch({ type: types.SET_PUBLIC_IP, payload:{ip: res.info.ip} });
+                dispatch({ type: types.SET_LOCATION, payload: { location } });
+                dispatch({ type: types.SET_PUBLIC_IP, payload: { ip: res.info.ip } });
                 if(location.country_code && !fiat_currency){
                     fiat_currency = utils.getFiatCurrencyByCountry(location.country_code);
                     if(fiat_currency)
-                        dispatch(changeFiatCurrency(fiat_currency));
+                        dispatch(account.changeFiatCurrency(fiat_currency));
                 }
             }else{
                 utils.publicIP().then(ip => {
-                    dispatch({ type: types.SET_PUBLIC_IP, ip });
+                    dispatch({ type: types.SET_PUBLIC_IP, payload: { ip }});
                 });
             }
         }).catch(e=>{
@@ -166,7 +183,7 @@ export const login = (email, password, g_recaptcha_response) => {
                     dispatch(getMyWallets(d.profile));
                 }
                 if(!d.profile.totp_enabled && d.profile.auth_version > 3){
-                    dispatch(getProfile());
+                    dispatch(account.getProfile());
                 }
             }else{
                 let errorMsg = d.reason;
@@ -222,7 +239,7 @@ export const check2FA = (code) =>{
                     }
                 });
                 dispatch(getMyWallets(profile));
-                dispatch(getProfile());
+                dispatch(account.getProfile());
             }else{
                 dispatch({
                     type: types.VERIFY_2FA_FAILED,
@@ -577,7 +594,7 @@ export const getMyWallets = (profile,password=null) => {
     }
 }
 
-export const decryptWallet = (currency_type,password,sendMoney=false) => {
+export const decryptWallet = (currency_type,password,sendMoney=false,forTrade=false) => {
     return (dispatch,getState) => {
         try {
             dispatch({ type: types.LOADING_START });
@@ -591,13 +608,12 @@ export const decryptWallet = (currency_type,password,sendMoney=false) => {
             }
 
             decryptedWallet = send.getActiveWallet(decryptedWallets, currency_type);
+            let payload = { loading: sendMoney };
             if(decryptedWallet){
+                payload[`${forTrade?'trade_':''}decryptedWallet`] = decryptedWallet;
                 return dispatch({
                     type: types.STORE_FOUNTAIN_SECRET,
-                    payload: {
-                        decryptedWallet,
-                        loading: sendMoney,
-                    }
+                    payload
                 });
             }
 
@@ -620,13 +636,11 @@ export const decryptWallet = (currency_type,password,sendMoney=false) => {
                 decryptedWallet = wallet;
             }
             decryptedWallets.push(decryptedWallet);
+            payload[`${forTrade?'trade_':''}decryptedWallet`] = decryptedWallet;
+            payload['decryptedWallets'] = decryptedWallets;
             dispatch({
                 type: types.STORE_FOUNTAIN_SECRET,
-                payload: {
-                    decryptedWallets,
-                    decryptedWallet,
-                    loading: sendMoney,
-                }
+                payload
             });
         } catch (e) {
             console.log(e);
@@ -737,6 +751,9 @@ export const _logout = async(dispatch, clearAll=false) => {
             payload.fiat_currency = parseInt(fiat_currency);
         }
     }
+    let fcmToken = await AsyncStorage.getItem('fcmToken');
+    let notification_permission = await AsyncStorage.getItem('notification_permission');
+    Chat.disconnect();
     await AsyncStorage.clear();
     if(!clearAll){
         if(payload.pin !== null && typeof payload.pin !== 'undefined')
@@ -745,6 +762,11 @@ export const _logout = async(dispatch, clearAll=false) => {
             await AsyncStorage.setItem('fiat_currency', payload.fiat_currency.toString());
         if(payload.isEnableTouchID !== null && typeof payload.isEnableTouchID !== 'undefined')
             AsyncStorage.setItem('isEnableTouchID', payload.isEnableTouchID.toString());
+    }
+    if(fcmToken) AsyncStorage.setItem('fcmToken', fcmToken);
+    if(notification_permission !== null){
+        AsyncStorage.setItem('notification_permission', notification_permission);
+        payload.notification_permission = (notification_permission == 'true');
     }
     dispatch({ type: types.LOGOUT, payload });
 }

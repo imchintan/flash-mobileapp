@@ -19,6 +19,20 @@ const initialState = {
         {color: '#787878', amt:0, uamt:0, amt2:0, per_value:0, currency_type: constants.CURRENCY_TYPE.LTC}, // LTC
         {color: '#989898', amt:0, uamt:0, amt2:0, per_value:0, currency_type: constants.CURRENCY_TYPE.DASH}, // DASH
     ],
+    max_fees:{
+        1: 0.001,
+        2: 0.0001,
+        3: 0.001,
+        4: 0.00009,
+        5: 0.0001
+    },
+    threshold_values:{
+        1: 1,
+        2: 0.00000546,
+        3: 0.000294,
+        4: 0.00000546,
+        5: 0.0001,
+    },
     loading: false,
     bcMedianTxSize: 250,
     satoshiPerByte: 20,
