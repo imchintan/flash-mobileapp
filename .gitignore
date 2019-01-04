@@ -21,10 +21,10 @@ DerivedData
 *.ipa
 *.xcuserstate
 project.xcworkspace
-ios/flash.xcworkspace
-ios/Pods
+ios/Pods/*
+!ios/Pods/Pods.xcodeproj
 ios/GoogleService-Info.plist
-third-party
+
 # Android/IntelliJ
 #
 build/
