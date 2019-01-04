@@ -58,7 +58,10 @@ pod install
 
 ## Configure
 
-Rename `.env.sample` to `.env` file for developing at root of source directory.
+1. Rename `.env.sample` to `.env` file for developing at root of source directory.
+2. Export push notification config files `google-services.json` and `GoogleService-Info.plist` from firebase console.
+ - Android - put `google-services.json` file into android/app directory
+ - iOS - put `GoogleService-Info.plist` file into ios/ directory
 
 ## Run
 
