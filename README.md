@@ -73,7 +73,7 @@ $ react-native run-android      // for Android
 `react-native run-ios` or `react-native run-android` is just one way to run your app. You can also run it directly from within Xcode and Android Studio respectively or [Nuclide](https://nuclide.io/). You can refer [React Native Get Started](https://facebook.github.io/react-native/docs/getting-started.html) guide for more info.
 
 #### For Xcode 10 issue
-- `'config.h' file not found`.
+- `config.h` file not found.
 
     It will fixed by following this steps. [Read more](https://github.com/facebook/react-native/issues/14382#issuecomment-313163119)
     1. Close Xcode.
