@@ -55,12 +55,6 @@ npm install
 cd ios
 pod install
 ```
-#### For xcode 10 or later
-Run the following commands in a Terminal at root of source directory:
-
-```bash
-cd node_modules/react-native/third-party/glog-0.3.4/ && ../../scripts/ios-configure-glog.sh && cd ../../../../
-```
 
 ## Configure
 
@@ -77,6 +71,20 @@ $ react-native run-android      // for Android
 ```
 
 `react-native run-ios` or `react-native run-android` is just one way to run your app. You can also run it directly from within Xcode and Android Studio respectively or [Nuclide](https://nuclide.io/). You can refer [React Native Get Started](https://facebook.github.io/react-native/docs/getting-started.html) guide for more info.
+
+#### For Xcode 10 issue
+- `'config.h' file not found`.
+
+    It will fixed by following this steps. [Read more](https://github.com/facebook/react-native/issues/14382#issuecomment-313163119)
+    1. Close Xcode.
+    2. Run the following commands in a Terminal at root of source directory:
+    ```bash
+    cd node_modules/react-native/third-party/glog-0.3.4/ && ../../scripts/ios-configure-glog.sh && cd ../../../../
+    ```
+    3. Open Xcode and try building the Project.
+- error: Build input file cannot be found: 'node_modules/react-native/Libraries/WebSocket/libfishhook.a'
+
+    Remove and add again `libfishhook.a` from Xcode and the path issue will resolve. [Read more](https://github.com/facebook/react-native/issues/19569#issuecomment-422691829)
 
 
 ## Known Issues
