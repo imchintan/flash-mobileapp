@@ -24,7 +24,7 @@ project.xcworkspace
 ios/flash.xcworkspace
 ios/Pods
 ios/GoogleService-Info.plist
-
+third-party
 # Android/IntelliJ
 #
 build/

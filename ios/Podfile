@@ -8,7 +8,7 @@ target 'flash' do
   # Pods for flash
   pod 'Firebase/Core', '~> 5.1.0'
   pod 'Firebase/Messaging', '~> 5.1.0'
-  
+
   rn_path = '../node_modules/react-native'
   rn_maps_path = '../node_modules/react-native-maps'
 
@@ -26,6 +26,11 @@ target 'flash' do
     'RCTVibration',
     'RCTWebSocket',
   ]
+
+  # Third party deps podspec link
+  pod 'DoubleConversion', :podspec => "#{rn_path}/third-party-podspecs/DoubleConversion.podspec"
+  pod 'glog', :podspec => "#{rn_path}/third-party-podspecs/glog.podspec"
+  pod 'Folly', :podspec => "#{rn_path}/third-party-podspecs/Folly.podspec"
 
   pod 'react-native-maps', path: rn_maps_path
 
