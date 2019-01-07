@@ -169,7 +169,7 @@ class ChatHistory extends Component < {} > {
                             value={'Find a Trader'}
                             onPress={()=>{
                                 if(!!this.props.htmProfile.is_active)
-                                    this.props.navigation.navigate('HTMListingMap')
+                                    this.props.navigation.navigate('FindTrades')
                                 else
                                     return Toast.showTop("Please enable your HTM profile!");
                             }} />

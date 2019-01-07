@@ -1,12 +1,20 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 
 buildscript {
+    ext {
+        buildToolsVersion = "27.0.3"
+        minSdkVersion = 16
+        compileSdkVersion = 27
+        targetSdkVersion = 26
+        supportLibVersion = "27.1.1"
+        googlePlayServicesVersion = "15.0.1"
+    }
     repositories {
         google()
         jcenter()
     }
     dependencies {
-        classpath 'com.android.tools.build:gradle:3.1.2'
+        classpath 'com.android.tools.build:gradle:3.1.4'
 
         // NOTE: Do not place your application dependencies here; they belong
         // in the individual module build.gradle files
@@ -16,21 +24,14 @@ buildscript {
 
 allprojects {
     repositories {
-        google()
         mavenLocal()
+        google()
         jcenter()
         maven { url "https://jitpack.io" }
         maven {
             // All of React Native (JS, Obj-C sources, Android binaries) is installed from npm
             url "$rootDir/../node_modules/react-native/android"
         }
-    }
-    project.ext {
-        compileSdkVersion=27
-        buildToolsVersion="27.0.3"
-        minSdkVersion=16
-        targetSdkVersion=26
-        googlePlayServicesVersion = "15.0.1"
     }
 }
 
@@ -47,10 +48,15 @@ subprojects {
     afterEvaluate{
         if((project.plugins.hasPlugin('android') || project.plugins.hasPlugin('android-library'))) {
             android {
-                compileSdkVersion project.ext.compileSdkVersion
-                buildToolsVersion project.ext.buildToolsVersion
-                googlePlayServicesVersion = "15.0.1"
+                compileSdkVersion rootProject.ext.compileSdkVersion
+                buildToolsVersion rootProject.ext.buildToolsVersion
+                googlePlayServicesVersion = rootProject.ext.googlePlayServicesVersion
             }
         }
     }
+}
+
+task wrapper(type: Wrapper) {
+    gradleVersion = '4.4'
+    distributionUrl = distributionUrl.replace("bin", "all")
 }
