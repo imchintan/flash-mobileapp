@@ -20,10 +20,14 @@
   [GMSServices provideAPIKey:@"AIzaSyCbGc_umK-JWxs6OZLXq6jzQqa3fJ3Qrlc"];
   [FIRApp configure];
   [RNFirebaseNotifications configure];
-  
+
   NSURL *jsCodeLocation;
   [NSThread sleepForTimeInterval: 1];
-  jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
+  #ifdef DEBUG
+    jsCodeLocation = [[RCTBundleURLProvider sharedSettings] jsBundleURLForBundleRoot:@"index" fallbackResource:nil];
+  #else
+    jsCodeLocation = [[NSBundle mainBundle] URLForResource:@"main" withExtension:@"jsbundle"];
+  #endif
 
   RCTRootView *rootView = [[RCTRootView alloc] initWithBundleURL:jsCodeLocation
                                                       moduleName:@"flash"
@@ -36,17 +40,17 @@
   rootViewController.view = rootView;
   self.window.rootViewController = rootViewController;
   [self.window makeKeyAndVisible];
-  
+
   // define UNUserNotificationCenter
   UNUserNotificationCenter *center = [UNUserNotificationCenter currentNotificationCenter];
   center.delegate = self;
-  
+
    UIView *launchScreen =  [[[NSBundle mainBundle] loadNibNamed:@"LoadingScreen" owner:self options:nil] objectAtIndex:0];
   launchScreen.frame = self.window.bounds;
   rootView.loadingView = launchScreen;
   rootView.loadingViewFadeDelay = 0.20;
   rootView.loadingViewFadeDuration = 0.30;
-  
+
   return YES;
 }
 
