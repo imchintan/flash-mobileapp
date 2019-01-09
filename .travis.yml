@@ -67,5 +67,5 @@ matrix:
     podfile: ios/Podfile
     script:
     - cd ios
-    - pod install
+    - pod install --repo-update
     - xcodebuild -scheme flash -sdk iphonesimulator ONLY_ACTIVE_ARCH=NO | xcpretty
