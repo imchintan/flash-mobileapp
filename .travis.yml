@@ -63,8 +63,8 @@ matrix:
     - node --version
     - travis_retry npm install -g yarn
     - yarn -version
-    - gem install cocoapods
-    - pod install --project-directory=ios
+    # - gem install cocoapods # Since Travis is not always on latest version
+    # - pod install --project-directory=ios
     install:
     - travis_retry gem install xcpretty
     - travis_retry yarn
