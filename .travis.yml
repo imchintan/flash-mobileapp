@@ -14,8 +14,9 @@ script:
   - npm install
 matrix:
   include:
-  - language: objective-c
-    jdk: oraclejdk8
+  - language: android
+    os: osx 
+    jdk: oraclejdk11
     sudo: required
     node_js: false
     
