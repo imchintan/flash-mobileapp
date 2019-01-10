@@ -47,7 +47,7 @@ matrix:
       # - if test ! -e $HOME/android-sdk-dl/sdk-tools.zip ; then curl https://dl.google.com/android/repository/sdk-tools-linux-4333796.zip > $HOME/android-sdk-dl/sdk-tools.zip ; fi
       # - unzip -qq -n $HOME/android-sdk-dl/sdk-tools.zip -d $HOME/android-sdk
       - brew cask uninstall java
-      # - brew tap caskroom/versions
+      - brew tap caskroom/versions
       - brew cask install java8
       - touch ~/.android/repositories.cfg
       - brew cask install android-sdk
