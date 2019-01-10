@@ -14,6 +14,7 @@ import * as utils from '@lib/utils';
  *      @param  {Number} show_profile_pic    Show profile picture in HTM Profile
  *      @param  {String} show_distance_in    Show distance in Miles / Kms
  *      @param  {Object} currency_types      Array of currency object in include currency_type, buy_at and sell_at
+ *      @param  {Object} fiat_currency_codes Array of fiat currency code
  * @return {Object}                          Return API response
  */
 export const setupHTMProfile = (auth_version, sessionToken, data) => {
@@ -53,6 +54,7 @@ export const setupHTMProfile = (auth_version, sessionToken, data) => {
  *      @param  {Number} show_profile_pic    Show profile picture in HTM Profile
  *      @param  {String} show_distance_in    Show distance in Miles / Kms
  *      @param  {Object} currency_types      Array of currency object in include currency_type, buy_at and sell_at
+ *      @param  {Object} fiat_currency_codes Array of fiat currency code
  * @return {Object}                          Return API response
  */
 export const updateHTMProfile = (auth_version, sessionToken, data) => {
@@ -242,13 +244,14 @@ export const enableHTMProfile = (auth_version, sessionToken) => {
  * @param  {Number}  long               HTM location longitude
  * @param  {String}  show_distance_in   Show distance in Miles / Kms
  * @param  {Object}  filter             HTM filter
- *   ⮑ @param  {Number}  upto_distance      Cover distance from current location
- *      @param  {Boolean} onlineOnly         Get only online HTMs (default: false)
- *      @param  {Number}  buy_at_from        the filter of buying percentage at from
- *      @param  {Number}  buy_at_to          the filter of buying percentage at to
- *      @param  {Number}  sell_at_from       the filter of selling percentage at from
- *      @param  {Number}  sell_at_to         the filter of selling percentage at to
- *      @param  {Array}   currency_types     Array of currency type like [1,2,3]
+ *   ⮑ @param  {Number}  upto_distance       Cover distance from current location
+ *      @param  {Boolean} onlineOnly          Get only online HTMs (default: false)
+ *      @param  {Number}  buy_at_from         the filter of buying percentage at from
+ *      @param  {Number}  buy_at_to           the filter of buying percentage at to
+ *      @param  {Number}  sell_at_from        the filter of selling percentage at from
+ *      @param  {Number}  sell_at_to          the filter of selling percentage at to
+ *      @param  {Array}   currency_types      Array of currency type like [1,2,3]
+ *      @param  {Array}   fiat_currency_codes Array of fiat currency code like ['USD','GBP']
  * @return {Object}                     Return API response
  */
 export const findNearByHTMs = (auth_version, sessionToken, lat, long,

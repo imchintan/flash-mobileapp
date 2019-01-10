@@ -6,7 +6,6 @@ import React, {Component} from 'react';
 import {
     View,
     TouchableOpacity,
-    ScrollView,
     TextInput,
 } from 'react-native';
 import {
@@ -16,7 +15,6 @@ import {
     HeaderLeft,
     HeaderTitle,
     Icon,
-    Modal,
     Text,
     Toast,
     Loader,
@@ -29,8 +27,8 @@ import {bindActionCreators} from 'redux';
 import {ActionCreators} from '@actions';
 
 import * as utils from '@lib/utils';
-import * as constants from '@src/constants'
 import * as Validation from '@lib/validation';
+import * as tm from './TradeModal';
 
 class SetupHTMProfile extends Component < {} > {
 
@@ -51,7 +49,8 @@ class SetupHTMProfile extends Component < {} > {
             show_on_map: 0,
             show_live_location: 1,
             show_distance_in: 'miles', // Miles/Kms
-            currency_types: {}
+            currency_types: {},
+            fiat_currency_codes: []
         };
     }
 
@@ -117,10 +116,11 @@ class SetupHTMProfile extends Component < {} > {
             if(data.show_live_location == 0){
                 if(!this.state.lat)
                     return Toast.errorTop("Please set fix location!");
-            
+
                 data.lat = this.state.lat;
                 data.long = this.state.long;
             }
+            data.fiat_currency_codes = this.state.fiat_currency_codes || [];
         }
         data.is_active = 1;
         this.props.setupHTMProfile(data,this.props.navigation.goBack);
@@ -779,6 +779,30 @@ class SetupHTMProfile extends Component < {} > {
                                 </View>:null}
                             </View>
                         )}
+                        <Text style={[styles.label,{marginTop:10}]}>
+                            Fiat Currencies I accept
+                        </Text>
+                        <View style={[styles.hr,{marginBottom:15}]}/>
+                        <Text style={styles.htmCurrencyNote1}>Choose fiat currencies you can trade in</Text>
+                        <TouchableOpacity style={styles.selectFiatCurrency}
+                            onPress={()=>this.setState({selectFiatCurrency:true})}>
+                            <Text style={styles.selectFiatCurrencyText}>Select Fiat Currencies</Text>
+                        </TouchableOpacity>
+                        <View style={styles.selectedFiatCurrencies}>
+                            {this.state.fiat_currency_codes && this.state.fiat_currency_codes.map((cur,index)=>
+                                <View key={'_selected_fiat_'+index+'_'+cur} style={styles.selectedFiatCurrency}>
+                                    <Text style={styles.selectedFiatCurrencyName}>{cur}</Text>
+                                    <TouchableOpacity style={styles.deselectedFiatCurrencyBtn}
+                                        onPress={()=>{
+                                            let fiat_currency_codes = this.state.fiat_currency_codes;
+                                            fiat_currency_codes.remove(cur);
+                                            this.setState({fiat_currency_codes});
+                                        }}>
+                                        <Text style={styles.deselectedFiatCurrencyBtnText}>X</Text>
+                                    </TouchableOpacity>
+                                </View>
+                            )}
+                        </View>
                         <Text style={[styles.label,{marginTop:10}]}>Map Setting</Text>
                         <View style={[styles.hr,{marginBottom:15}]}/>
                         <View style={[styles.htmProfile,styles.htmWantToBuySell,{marginTop: -8}]}>
@@ -853,40 +877,8 @@ class SetupHTMProfile extends Component < {} > {
                             onPress={this.setupProfile.bind(this)} />
                     </View>
                 </Content>
-                <Modal
-                    transparent={true}
-                    animationType="slide"
-                    visible={!!this.state.selectCountry}
-                    onRequestClose={()=>this.setState({selectCountry:false})}>
-                    <View style={styles.overlayStyle}>
-                        <View style={[styles.optionContainer,{height:'80%'}]}>
-                            <ScrollView keyboardShouldPersistTaps="always">
-                                <View style={{ paddingHorizontal: 10 }}>
-                                    {constants.COUNTRY.map((country,index) =>
-                                        <TouchableOpacity key={'_que_'+country+'_'+index}
-                                            style={styles.optionStyle}
-                                            onPress={()=>{
-                                                this.setState({selectCountry:false, country});
-                                            }}>
-                                            <Text style={styles.optionTextStyle}>
-                                                {country}
-                                            </Text>
-                                        </TouchableOpacity>
-                                    )}
-                                </View>
-                            </ScrollView>
-                        </View>
-                        <View style={styles.cancelContainer}>
-                            <TouchableOpacity onPress={()=>this.setState({selectCountry:false})}>
-                                <View style={styles.cancelStyle}>
-                                    <Text style={styles.canceTextStyle}>
-                                        Cancel
-                                    </Text>
-                                </View>
-                            </TouchableOpacity>
-                        </View>
-                    </View>
-                </Modal>
+                {tm.selectCountry(this,styles)}
+                {tm.selectFiatCurrency(this,styles)}
                 <Loader show={this.props.loading} />
             </Container>
         );

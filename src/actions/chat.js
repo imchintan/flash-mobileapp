@@ -9,7 +9,8 @@ import { PROFILE_URL, APP_SECRET } from '@src/config';
 import * as utils from '@lib/utils';
 import * as constants from '@src/constants';
 import notifcationHelper from '@helpers/notifcationHelper';
-import CryptoJS from "react-native-crypto-js";
+var CryptoJS = CryptoJS || require("crypto-js");
+
 
 const Toast =  require('@components/Toast');
 

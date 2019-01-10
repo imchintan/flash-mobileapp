@@ -329,6 +329,7 @@ export const findNearByHTMs = (filter={}, loading = false) => {
             _filter.onlineOnly = filter.onlineOnly;
             _filter.currency_types = Object.values(filter.currency_types)
                     .map(currency => currency.currency_type);
+            _filter.fiat_currency_codes = filter.fiat_currency_codes;
 
             if(filter.buy_sell_at_from > -30){
                 if(filter.want_to == 1 || filter.want_to == 0)

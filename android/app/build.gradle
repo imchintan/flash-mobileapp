@@ -94,15 +94,15 @@ def enableSeparateBuildPerCPUArchitecture = false
 def enableProguardInReleaseBuilds = true
 
 android {
-    compileSdkVersion 27
-    buildToolsVersion "27.0.3"
+    compileSdkVersion rootProject.ext.compileSdkVersion
+    buildToolsVersion rootProject.ext.buildToolsVersion
 
     defaultConfig {
         applicationId "com.flash.wallet.android"
-        minSdkVersion 16
-        targetSdkVersion 26
-        versionCode 23
-        versionName "1.9.7"
+        minSdkVersion rootProject.ext.minSdkVersion
+        targetSdkVersion rootProject.ext.targetSdkVersion
+        versionCode 25
+        versionName "1.9.9"
         resConfigs "en"
         ndk {
             abiFilters "armeabi-v7a", "x86"
@@ -157,8 +157,8 @@ dependencies {
         exclude group: 'com.google.android.gms', module: 'play-services-base'
         exclude group: 'com.google.android.gms', module: 'play-services-maps'
     }
-    implementation 'com.google.android.gms:play-services-base:15.0.1'
-    implementation 'com.google.android.gms:play-services-maps:15.0.1'
+    implementation "com.google.android.gms:play-services-base:${rootProject.ext.googlePlayServicesVersion}"
+    implementation "com.google.android.gms:play-services-maps:${rootProject.ext.googlePlayServicesVersion}"
     implementation project(':react-native-image-crop-picker')
     implementation project(':react-native-camera')
     implementation project(':react-native-touch-id')
@@ -172,7 +172,7 @@ dependencies {
 
     implementation "me.leolin:ShortcutBadger:1.1.21@aar"
     implementation fileTree(dir: "libs", include: ["*.jar"])
-    implementation "com.android.support:appcompat-v7:27.0.3"
+    implementation "com.android.support:appcompat-v7:${rootProject.ext.supportLibVersion}"
     implementation "com.facebook.react:react-native:+"  // From node_modules
 }
 

@@ -3,8 +3,6 @@ import _ from 'lodash';
 import PropTypes from "prop-types";
 import { Text as RNText, StyleSheet} from "react-native";
 
-RNText.defaultProps.allowFontScaling=false
-
 export default class Text extends Component {
 
 	render() {
@@ -20,7 +18,7 @@ export default class Text extends Component {
 			style.fontFamily = 'Microsoft Tai Le';
 		}
 		return (
-			<RNText ref={c => (this._root = c)} {...this.props} style={style}>
+			<RNText ref={c => (this._root = c)} allowFontScaling={false} {...this.props} style={style}>
 				{this.props.children}
 			</RNText>
 		);

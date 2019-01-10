@@ -6,30 +6,88 @@ This is the JavaScript and [React Native](http://facebook.github.io/react-native
 
 
 ## Installation
+You will need Node, Watchman, React Native CLI, Xcode, and CocoaPods.
+
+### Node, Watchman
+
+We recommend installing Node, Yarn, and Watchman using Homebrew. Run the following commands in a Terminal after installing Homebrew:
+
+```sh
+$ brew install node
+$ brew install watchman
+```
+
+If you have already installed Node on your system, make sure it is Node 10.11.0 or newer.
+
+### React Native CLI
+
+Node comes with npm, which lets you install the React Native command line interface. Run the following command in a Terminal:
+
+```sh
+$ npm install -g react-native-cli
+```
+
+If you get an error like `Cannot find module 'npmlog'`, try installing npm directly: `curl -0 -L https://npmjs.org/install.sh | sudo sh`.
+
+
+### CocoaPods
+
+CocoaPods is built with Ruby and is installable with the default Ruby available on macOS. We recommend you use the default ruby.
+
+```sh
+$ sudo gem install cocoapods
+```
+
+
+### Git Checkout
+
+```base
+git clone https://github.com/flash-coin/flash-mobileapp.git FLASHWallet
+```
+
+### Dependencies
+
+Run the following commands in a Terminal at root of source directory:
 
 ``` bash
-git clone https://github.com/flash-coin/flash-mobileapp.git FLASHWallet
 cd FLASHWallet
 npm install
+cd ios
+pod install
 ```
 
-## Run Application locally
+## Configure
 
-Node comes with npm, which lets you install the React Native command line interface.
+1. Rename `.env.sample` to `.env` file for developing at root of source directory.
+2. Export push notification config files `google-services.json` and `GoogleService-Info.plist` from firebase console.
+ - Android - put `google-services.json` file into android/app directory
+ - iOS - put `GoogleService-Info.plist` file into ios/ directory
 
-``` bash
-npm install -g react-native-cli
-```
+## Run
 
-Run command your React Native project folder:
+Run the following command in a Terminal at root of source directory:
 
-``` bash
-react-native run-ios    // for iOS
-         OR
-react-native run-android    // for Android
+```sh
+$ react-native run-ios          // for iOS
+        OR
+$ react-native run-android      // for Android
 ```
 
 `react-native run-ios` or `react-native run-android` is just one way to run your app. You can also run it directly from within Xcode and Android Studio respectively or [Nuclide](https://nuclide.io/). You can refer [React Native Get Started](https://facebook.github.io/react-native/docs/getting-started.html) guide for more info.
+
+#### For Xcode 10 issue
+- `double-conversion errors` or `config.h` file not found.
+
+    It will fixed by following this steps. [Read more](https://github.com/facebook/react-native/issues/14382#issuecomment-313163119)
+    1. Close Xcode.
+    2. Run the following commands in a Terminal at root of source directory:
+    ```bash
+    cd node_modules/react-native/third-party/glog-0.3.4/ && ../../scripts/ios-configure-glog.sh && cd ../../../../
+    ```
+    3. Open Xcode and try building the Project.
+- error: Build input file cannot be found: 'node_modules/react-native/Libraries/WebSocket/libfishhook.a'
+
+    Remove and add again `libfishhook.a` from Xcode and the path issue will resolve. [Read more](https://github.com/facebook/react-native/issues/19569#issuecomment-422691829)
 
 
 ## Known Issues

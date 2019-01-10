@@ -938,6 +938,54 @@ const styles = StyleSheet.create({
         fontWeight: '500',
         fontSize: FontSize(25,0.75),
     },
+    fiatCurrencyRow:{
+        flexDirection:'row',
+        justifyContent:'space-between',
+        alignItems:'center',
+        marginBottom: 10,
+    },
+    selectFiatCurrency:{
+        alignSelf: 'center',
+        borderBottomWidth: 1,
+        borderBottomColor: '#0645AD',
+    },
+    selectFiatCurrencyText:{
+        fontSize: 15,
+        color: '#0645AD'
+    },
+    selectedFiatCurrencies:{
+        flexDirection: 'row',
+        flexWrap: 'wrap',
+        marginVertical: 10 
+    },
+    selectedFiatCurrency:{
+        flexDirection: 'row',
+        alignItems: 'center',
+        paddingVertical: 7,
+        padding: 10,
+        backgroundColor: '#DFDFDF',
+        marginRight: 10,
+        marginTop: 5,
+        borderRadius: 15,
+    },
+    selectedFiatCurrencyName:{
+        fontSize: 15,
+        color: '#333',
+        paddingRight: 5
+    },
+    deselectedFiatCurrencyBtn:{
+        alignItems: 'center',
+        justifyContent: 'center',
+        borderLeftWidth: 1,
+        borderLeftColor: '#A1A1A1',
+        height: 15
+    },
+    deselectedFiatCurrencyBtnText:{
+        fontSize: 13,
+        color: '#666',
+        paddingLeft: 5
+    },
+
 });
 
 module.exports = {
