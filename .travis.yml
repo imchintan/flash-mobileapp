@@ -4,7 +4,6 @@ node_js:
 sudo: false
 cache:
   directories:
-  - "$HOME/.yarn-cache"
   - "$HOME/.gradle/caches/"
   - "$HOME/.gradle/wrapper/"
 env:
@@ -28,18 +27,11 @@ matrix:
       -in ./android/app/flash-coin-key.keystore.enc -out ./android/app/flash-coin-key.keystore -d
     - nvm install 11
     - node --version
-    # - travis_retry curl -sS https://dl.yarnpkg.com/debian/pubkey.gpg | sudo apt-key
-    #  add -
-    # - echo "deb https://dl.yarnpkg.com/debian/ stable main" | sudo tee /etc/apt/sources.list.d/yarn.list
-    # - travis_retry sudo apt-get update -qq
-    # - travis_retry sudo apt-get install -y -qq yarn
-    - travis_retry npm install -g yarn
-    - yarn -version
     - yes | sdkmanager "platforms;android-26"
     licenses:
     - android-sdk-license-.+
     install:
-    - yarn
+    - travis_retry npm install
     android:
       components:
       - tools
@@ -63,12 +55,10 @@ matrix:
     before_install:
     - nvm install 11
     - node --version
-    - travis_retry npm install -g yarn
-    - yarn -version
     # - gem install cocoapods # Since Travis is not always on latest version
     install:
     - travis_retry gem install xcpretty
-    - travis_retry yarn
+    - travis_retry npm install
     # - travis_retry pod install --project-directory=ios # Since Travis is not always on latest version
     script:
     - cd ios   
