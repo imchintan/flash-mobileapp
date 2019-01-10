@@ -14,7 +14,8 @@ script:
   - npm install
 matrix:
   include:
-  - language: objective-c
+  - language: android
+    os: osx
     jdk: oraclejdk8
     sudo: required
     node_js: false
@@ -27,8 +28,7 @@ matrix:
     cache:
       directories:
         # Android SDK
-        - $HOME/android-sdk-dl
-        - $HOME/android-sdk
+        - $ANDROID_HOME
 
         # Gradle dependencies
         - $HOME/.gradle/caches/
