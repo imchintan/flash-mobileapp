@@ -51,7 +51,6 @@ matrix:
       - brew tap caskroom/versions
       - brew cask install java8
       - touch ~/.android/repositories.cfg
-      - brew install android-sdk
       - brew cask install android-sdk
       - ls $ANDROID_HOME
       # Install or update Android SDK components (will not do anything if already up to date thanks to the cache mechanism)
