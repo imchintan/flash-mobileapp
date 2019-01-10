@@ -15,7 +15,7 @@ script:
 matrix:
   include:
   - language: objective-c
-    jdk: oraclejdk11
+    jdk: oraclejdk8
     sudo: required
     node_js: false
     
