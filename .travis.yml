@@ -45,14 +45,15 @@ matrix:
       #- sudo apt-get install linuxbrew-wrapper
       # Download and unzip the Android SDK tools (if not already there thanks to the cache mechanism)
       # Latest version available here: https://developer.android.com/studio/#command-tools
-      # - if test ! -e $HOME/android-sdk-dl/sdk-tools.zip ; then curl https://dl.google.com/android/repository/sdk-tools-linux-4333796.zip > $HOME/android-sdk-dl/sdk-tools.zip ; fi
-      # - unzip -qq -n $HOME/android-sdk-dl/sdk-tools.zip -d $HOME/android-sdk
+      - if test ! -e $HOME/android-sdk-dl/sdk-tools.zip ; then curl https://dl.google.com/android/repository/sdk-tools-linux-4333796.zip > $HOME/android-sdk-dl/sdk-tools.zip ; fi
+      - unzip -qq -n $HOME/android-sdk-dl/sdk-tools.zip -d $HOME/android-sdk
       # - sudo brew cask uninstall java
       #- sudo brew tap caskroom/versions
       #- brew cask install java8
       #- touch ~/.android/repositories.cfg
       #- brew cask install android-sdk
       - ls $ANDROID_HOME
+      - ls $HOME/android-sdk
       # Install or update Android SDK components (will not do anything if already up to date thanks to the cache mechanism)
       - yes | sdkmanager 'tools' > /dev/null
       - yes | sdkmanager 'platform-tools' > /dev/null
