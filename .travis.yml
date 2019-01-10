@@ -1,6 +1,6 @@
 language: node_js
 node_js:
-- '11'
+  - '11'
 sudo: false
 cache:
   directories:
@@ -10,16 +10,16 @@ env:
   matrix:
   - NODE_ENV='test'
 script:
-- npm install -g react-native-cli
-- npm install
+  - npm install -g react-native-cli
+  - npm install
 matrix:
   include:
   - language: android
     os: osx
     jdk: oraclejdk11
     before_cache:
-    - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
-    - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
+      - rm -f  $HOME/.gradle/caches/modules-2/modules-2.lock
+      - rm -fr $HOME/.gradle/caches/*/plugin-resolution/
     cache:
       directories:
         - $HOME/.gradle/caches/
@@ -27,43 +27,20 @@ matrix:
     sudo: required
     node_js: false
     before_install:
-    - openssl aes-256-cbc -K $encrypted_09681104ef66_key -iv $encrypted_09681104ef66_iv
-      -in ./android/app/flash-coin-key.keystore.enc -out ./android/app/flash-coin-key.keystore -d
-    - nvm install 11
-    - node --version
-    - yes | sdkmanager "platforms;android-26"
+      - nvm install 11
+      - node --version
+      - yes | sdkmanager "platforms;android-26"
     licenses:
-    - android-sdk-license-.+
+      - android-sdk-license-.+
     install:
-    - travis_retry npm install
+      - travis_retry npm install
     android:
       components:
-      - tools
-      - platform-tools
-      - build-tools-27.0.3
-      - android-27
-      - extra-android-m2repository
-      - extra-google-google_play_services
-      - extra-google-m2repository
-      - addon-google_apis-google-16
+        - build-tools-27.0.3
+        - android-27
+        - extra-android-m2repository
+        - extra-google-google_play_services
+        - extra-google-m2repository
+        - addon-google_apis-google-16
     script:
-    - cd android && ./gradlew assembleRelease
-  - language: objective-c
-    os: osx
-    osx_image: xcode9.2
-    node_js: false
-    cache: cocoapods
-    xcode_project: ios/flash.xcworkspace
-    xcode_scheme: ios/flash
-    podfile: ios/Podfile
-    before_install:
-    - nvm install 11
-    - node --version
-    # - gem install cocoapods # Since Travis is not always on latest version
-    install:
-    - travis_retry gem install xcpretty
-    - travis_retry npm install
-    # - travis_retry pod install --project-directory=ios # Since Travis is not always on latest version
-    script:
-    - cd ios   
-    - xcodebuild -scheme flash -sdk iphonesimulator ONLY_ACTIVE_ARCH=NO | xcpretty
+      - cd android && ./gradlew clean
