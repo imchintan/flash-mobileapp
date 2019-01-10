@@ -38,7 +38,7 @@ matrix:
         - $HOME/.android/build-cache
     
     env:
-      - ANDROID_HOME=$HOME/android-sdk
+      - ANDROID_HOME=/usr/local/share/android-sdk
     
     before_install:
       - nvm install 11
@@ -49,11 +49,11 @@ matrix:
       # - unzip -qq -n $HOME/android-sdk-dl/sdk-tools.zip -d $HOME/android-sdk
       - brew cask install android-sdk
       # Install or update Android SDK components (will not do anything if already up to date thanks to the cache mechanism)
-      - echo y | $HOME/android-sdk/tools/bin/sdkmanager 'tools' > /dev/null
-      - echo y | $HOME/android-sdk/tools/bin/sdkmanager 'platform-tools' > /dev/null
-      - echo y | $HOME/android-sdk/tools/bin/sdkmanager 'build-tools;27.0.3' > /dev/null
-      - echo y | $HOME/android-sdk/tools/bin/sdkmanager 'platforms;android-27' > /dev/null
-      - echo y | $HOME/android-sdk/tools/bin/sdkmanager 'extras;google;m2repository' > /dev/null
+      - echo y | $ANDROID_HOME/tools/bin/sdkmanager 'tools' > /dev/null
+      - echo y | $ANDROID_HOME/tools/bin/sdkmanager 'platform-tools' > /dev/null
+      - echo y | $ANDROID_HOME/tools/bin/sdkmanager 'build-tools;27.0.3' > /dev/null
+      - echo y | $ANDROID_HOME/tools/bin/sdkmanager 'platforms;android-27' > /dev/null
+      - echo y | $ANDROID_HOME/tools/bin/sdkmanager 'extras;google;m2repository' > /dev/null
       - yes | sdkmanager "platforms;android-26"
     
     licenses:
