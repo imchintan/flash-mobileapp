@@ -15,7 +15,6 @@ script:
 matrix:
   include:
   - language: android
-    os: osx 
     jdk: oraclejdk11
     sudo: required
     node_js: false
